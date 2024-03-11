@@ -1,14 +1,14 @@
 {
-  "name": "py-core",
+  "name": "py_core",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "libs/py-core/py_core",
+  "sourceRoot": "libs/py_core/py_core",
   "targets": {
     "lock": {
       "executor": "@nxlv/python:run-commands",
       "options": {
         "command": "poetry lock --no-update",
-        "cwd": "libs/py-core"
+        "cwd": "libs/py_core"
       }
     },
     "add": {
@@ -27,7 +27,7 @@
       "executor": "@nxlv/python:build",
       "outputs": ["{projectRoot}/dist"],
       "options": {
-        "outputPath": "libs/py-core/dist",
+        "outputPath": "libs/py_core/dist",
         "publish": false,
         "lockedVersions": true,
         "bundleLocalDependencies": true
@@ -45,20 +45,20 @@
     },
     "lint": {
       "executor": "@nxlv/python:flake8",
-      "outputs": ["{workspaceRoot}/reports/libs/py-core/pylint.txt"],
+      "outputs": ["{workspaceRoot}/reports/libs/py_core/pylint.txt"],
       "options": {
-        "outputFile": "reports/libs/py-core/pylint.txt"
+        "outputFile": "reports/libs/py_core/pylint.txt"
       }
     },
     "test": {
       "executor": "@nxlv/python:run-commands",
       "outputs": [
-        "{workspaceRoot}/reports/libs/py-core/unittests",
-        "{workspaceRoot}/coverage/libs/py-core"
+        "{workspaceRoot}/reports/libs/py_core/unittests",
+        "{workspaceRoot}/coverage/libs/py_core"
       ],
       "options": {
         "command": "poetry run pytest tests/",
-        "cwd": "libs/py-core"
+        "cwd": "libs/py_core"
       }
     }
   },

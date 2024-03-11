@@ -1,7 +1,6 @@
 """Hello unit test module."""
 
-from aacesstalk_backend.hello import hello
-
+from libs.py_core.py_core.hello import hello
 
 def test_hello():
     """Test the hello function."""

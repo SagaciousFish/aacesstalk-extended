@@ -1,6 +1,6 @@
 """Hello unit test module."""
 
-from py_core.hello import hello
+from libs.py_core.py_core.hello import hello
 
 
 def test_hello():
