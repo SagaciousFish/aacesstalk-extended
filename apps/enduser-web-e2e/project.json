@@ -1,8 +1,9 @@
 {
-  "name": "aacesstalk-web-user",
+  "name": "enduser-web-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/aacesstalk-web-user/src",
   "projectType": "application",
+  "sourceRoot": "apps/enduser-web-e2e/src",
   "targets": {},
+  "implicitDependencies": ["enduser-web"],
   "tags": []
 }

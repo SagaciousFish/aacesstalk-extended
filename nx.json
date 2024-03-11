@@ -10,7 +10,10 @@
       "!{projectRoot}/eslint.config.js",
       "!{projectRoot}/cypress/**/*",
       "!{projectRoot}/**/*.cy.[jt]s?(x)",
-      "!{projectRoot}/cypress.config.[jt]s"
+      "!{projectRoot}/cypress.config.[jt]s",
+      "!{projectRoot}/jest.config.[jt]s",
+      "!{projectRoot}/src/test-setup.[jt]s",
+      "!{projectRoot}/test-setup.[jt]s"
     ],
     "sharedGlobals": []
   },
@@ -37,6 +40,15 @@
         "targetName": "e2e",
         "componentTestingTargetName": "component-test"
       }
+    },
+    {
+      "plugin": "@nx/jest/plugin",
+      "options": {
+        "targetName": "test"
+      }
+    },
+    {
+      "plugin": "@nxlv/python"
     }
   ],
   "generators": {
@@ -56,5 +68,12 @@
       }
     }
   },
-  "nxCloudAccessToken": "NWFlNjAwZmQtY2EwZS00OWZkLThiODQtMTZmNjU2NjkxZDUxfHJlYWQtd3JpdGU="
+  "nxCloudAccessToken": "NWFlNjAwZmQtY2EwZS00OWZkLThiODQtMTZmNjU2NjkxZDUxfHJlYWQtd3JpdGU=",
+  "targetDefaults": {
+    "@nx/js:tsc": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    }
+  }
 }
