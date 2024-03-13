@@ -1,18 +1,15 @@
-"""Hello unit test module."""
-import pytest
-from libs.py_core.py_core.hello import hello
+from chatlib.llm.integration.openai_api import GPTChatCompletionAPI
+
 from libs.py_core.py_core.system.processor import ChildCardRecommendationGenerator
 
 
-def test_hello():
-    """Test the hello function."""
-    assert hello() == "Hello aacesstalk-backend"
-
-
-@pytest.mark.asyncio
 async def test_processor():
+
+    GPTChatCompletionAPI.authorize()
+
     child_card_recommender = ChildCardRecommendationGenerator()
 
     card_recommendation_result = await child_card_recommender.generate()
 
     print(card_recommendation_result)
+
