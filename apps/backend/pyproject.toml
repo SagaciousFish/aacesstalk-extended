@@ -23,10 +23,6 @@ readme = "README.md"
   [tool.poetry.dependencies]
   python = ">=3.11.8,<3.12"
 
-    [tool.poetry.dependencies.py_core]
-    path = "../../libs/py_core"
-    develop = true
-
 [tool.poetry.group.dev.dependencies]
 autopep8 = "2.0.2"
 flake8 = "6.0.0"
@@ -34,6 +30,7 @@ pytest = "7.3.1"
 pytest-sugar = "0.9.7"
 pytest-cov = "4.1.0"
 pytest-html = "3.2.0"
+py_core = { path = "../../libs/py_core", develop = true }
 
 [build-system]
 requires = [ "poetry-core" ]

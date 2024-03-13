@@ -331,7 +331,7 @@ files = [
 
 [[package]]
 name = "chatlib"
-version = "0.7.0"
+version = "0.7.1"
 description = "A generalizable Python Chatbot Library"
 optional = false
 python-versions = "^3.10"
@@ -360,18 +360,18 @@ yaspin = "^2.3.0"
 [package.source]
 type = "git"
 url = "https://github.com/yghokim/chatlib.git"
-reference = "0.7.0"
-resolved_reference = "55c77ec41967d2471cb3fa324d3b366f5c52bdf3"
+reference = "0.7.1"
+resolved_reference = "b79af186a1ef6c7c7a79314dd743a8fee2c5b360"
 
 [[package]]
 name = "cohere"
-version = "4.54"
+version = "4.55"
 description = "Python SDK for the Cohere API"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "cohere-4.54-py3-none-any.whl", hash = "sha256:6f83bd2530d461f91dfea828c1a7162b37cf03bdad4d801a218681064821f167"},
-    {file = "cohere-4.54.tar.gz", hash = "sha256:c4bd84f0d766575430db91262e3ba0f4b655e40fec8a08fde98652e49a18608d"},
+    {file = "cohere-4.55-py3-none-any.whl", hash = "sha256:0a1a05b961a8d216559378cfd21126ebc58f7d6f8ed9d5c3df18bf2a3ccc8872"},
+    {file = "cohere-4.55.tar.gz", hash = "sha256:8a18506a0ca78d6db6e7c6abe2948a3f604b7c74eb8f6f4bc62cd6fe43027edc"},
 ]
 
 [package.dependencies]
@@ -1413,7 +1413,6 @@ description = "Nvidia JIT LTO Library"
 optional = false
 python-versions = ">=3"
 files = [
-    {file = "nvidia_nvjitlink_cu12-12.4.99-py3-none-manylinux2014_aarch64.whl", hash = "sha256:75d6498c96d9adb9435f2bbdbddb479805ddfb97b5c1b32395c694185c20ca57"},
     {file = "nvidia_nvjitlink_cu12-12.4.99-py3-none-manylinux2014_x86_64.whl", hash = "sha256:c6428836d20fe7e327191c175791d38570e10762edc588fb46749217cd444c74"},
     {file = "nvidia_nvjitlink_cu12-12.4.99-py3-none-win_amd64.whl", hash = "sha256:991905ffa2144cb603d8ca7962d75c35334ae82bf92820b6ba78157277da1ad2"},
 ]
@@ -2832,4 +2831,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11.8,<3.12"
-content-hash = "6fc6d9905e2b690a6b499f4040f0fb746fbb070627e5e2cffa89bab722675117"
+content-hash = "92b1611c81803051f6c1bb023c32d6371769474fb99565a70e55a770ddf5eded"

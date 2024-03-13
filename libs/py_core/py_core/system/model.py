@@ -27,8 +27,6 @@ class ParentRecommendationResult(BaseModel):
 
 
 class DialogueRole(StrEnum):
-    model_config = ConfigDict(frozen=True)
-
     Parent = "parent"
     Child = "child"
 
@@ -37,9 +35,9 @@ class DialogueMessage(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     id: str = Field(default_factory=lambda: generate(size=20))
-    speaker: Literal["parent", "child"]
+    speaker: DialogueRole
     content: str | list[str]
-    recommendation_id: str
+    recommendation_id: str | None = None
 
 
 Dialogue: TypeAlias = list[DialogueMessage]
