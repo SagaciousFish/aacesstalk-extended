@@ -9,14 +9,14 @@ from py_core.system.model import ChildCardRecommendationResult, Dialogue, Dialog
 
 str_output_converter, output_str_converter = generate_pydantic_converter(ChildCardRecommendationResult)
 
+def convert_dialogue_to_str(dialogue: Dialogue, params) -> str:
+    script = "\n".join([f"<msg>{'Parent' if message.speaker == DialogueRole.Parent else 'Child'}: {message.content if isinstance(message.content, str) else ', '.join(message.content)}</msg>" for message in dialogue])
 
-def str_output_converter2(str, params) -> ChildCardRecommendationResult:
-    try:
-        return str_output_converter(str, params)
-    except Exception as e:
-        print(e)
-        return None
-
+    result = f"""<dialogue>
+    {script}
+</dialogue>"""
+    print(result)
+    return result
 
 class ChildCardRecommendationGenerator:
 
@@ -27,7 +27,7 @@ class ChildCardRecommendationGenerator:
                                         You are a helpful assistant that serves as an Alternative Augmented Communication tool.
 - Suppose that you are helping a communication with a child and parents in Korean. The autistic child has the language proficiency of a 6 to 8-year-old in Korean, so recommendations should consider their cognitive level.
 - Given the last message of the parents, suggest a list of keywords that can help the child pick to create a sentence as an answer.
-- Use honorific Korean for phrases.
+- Use honorific form of Korean for actions and emotions, such as "~해요" or "~어요", if possible.
 
 Proceed in the following order.
 1. [nouns] : Provide nouns that reflect detailed context based on your parents' questions.
@@ -41,14 +41,15 @@ Note that the output must be JSON, formatted like the following:
 }
 The result should be in Korean and please provide up to four options for each element.
                                         """,
-                                        input_str_converter=lambda dialogue, params: json.dumps(
-                                            [message.model_dump() for message in dialogue], indent=2),
+                                        input_str_converter=convert_dialogue_to_str,
                                         output_str_converter=output_str_converter,
-                                        str_output_converter=str_output_converter2
+                                        str_output_converter=str_output_converter
                                         ))
 
     async def generate(self) -> ChildCardRecommendationResult:
         return await self.__mapper.run(None,
-                                       input=[DialogueMessage(speaker=DialogueRole.Parent, content="오늘은 누구랑 뭐 하고 싶어?")],
-                                       params=ChatCompletionFewShotMapperParams(model=ChatGPTModel.GPT_4_0125,
+                                       input=[
+                                           DialogueMessage(speaker=DialogueRole.Parent, content="오늘 할머니네 가기로 한 거 알지? 너는 할머니랑 뭐 하고 싶어?")
+                                       ],
+                                       params=ChatCompletionFewShotMapperParams(model=ChatGPTModel.GPT_4_0613,
                                                                                 api_params={}))

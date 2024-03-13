@@ -39,7 +39,6 @@ class DialogueMessage(BaseModel):
     content: str | list[str]
     recommendation_id: str | None = None
 
-
 Dialogue: TypeAlias = list[DialogueMessage]
 
 DialogueTypeAdapter = TypeAdapter(Dialogue)

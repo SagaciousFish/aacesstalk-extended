@@ -23,7 +23,7 @@ readme = 'README.md'
   [tool.poetry.dependencies]
   python = ">=3.11.8,<3.12"
   pendulum = "^3.0.0"
-  chatlib = {git = "https://github.com/yghokim/chatlib.git", tag="0.7.1"}
+  chatlib = {git = "https://github.com/yghokim/chatlib.git", tag="0.7.2"}
   pydantic = "^2.6.4"
 
   [tool.poetry.group.dev.dependencies]
