@@ -331,7 +331,7 @@ files = [
 
 [[package]]
 name = "chatlib"
-version = "0.7.2"
+version = "0.7.3"
 description = "A generalizable Python Chatbot Library"
 optional = false
 python-versions = "^3.10"
@@ -360,8 +360,8 @@ yaspin = "^2.3.0"
 [package.source]
 type = "git"
 url = "https://github.com/yghokim/chatlib.git"
-reference = "0.7.2"
-resolved_reference = "74996e88783225d7b74229dd0770b073b3ce48eb"
+reference = "0.7.3"
+resolved_reference = "34c82bdd1de0a6b1560ca40daa057454337c0f5a"
 
 [[package]]
 name = "cohere"
@@ -1413,7 +1413,6 @@ description = "Nvidia JIT LTO Library"
 optional = false
 python-versions = ">=3"
 files = [
-    {file = "nvidia_nvjitlink_cu12-12.4.99-py3-none-manylinux2014_aarch64.whl", hash = "sha256:75d6498c96d9adb9435f2bbdbddb479805ddfb97b5c1b32395c694185c20ca57"},
     {file = "nvidia_nvjitlink_cu12-12.4.99-py3-none-manylinux2014_x86_64.whl", hash = "sha256:c6428836d20fe7e327191c175791d38570e10762edc588fb46749217cd444c74"},
     {file = "nvidia_nvjitlink_cu12-12.4.99-py3-none-win_amd64.whl", hash = "sha256:991905ffa2144cb603d8ca7962d75c35334ae82bf92820b6ba78157277da1ad2"},
 ]
@@ -2832,4 +2831,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11.8,<3.12"
-content-hash = "dccf7eb385e00f5ba6a3157e1cb7f57de966ce7a53d5d28eeea38f5c4ddac2f0"
+content-hash = "76dc225615c51954d446eb6b2779223ede6a1f2ac40cae3770364da3277a0157"

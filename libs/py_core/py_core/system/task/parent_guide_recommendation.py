@@ -31,7 +31,7 @@ Given the last message of the children, suggest a list of sentences that can hel
 
 Return a JSON object in the following format:
 {
-    recommendations: Array<{
+    "recommendations": Array<{
         "example": Provide response or question that parents can make to the child's message.
         "guide": Provide guide for parents of autistic children to consider when responding to the child's answer. Keep the guide short and concise so parents can read it quickly and move on.
     }>

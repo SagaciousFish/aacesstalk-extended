@@ -33,27 +33,22 @@ class ChildCardRecommendationGenerator:
 
     @staticmethod
     def __prompt_generator(input: Dialogue, params: ChildCardRecommendationParams) -> str:
-        prompt = f"""
+        prompt = """
 - You are a helpful assistant that serves as an Alternative Augmented Communication tool.
 - Suppose that you are helping a communication with a child and parents in Korean. The autistic child has the language proficiency of a 6 to 8-year-old in Korean, so recommendations should consider their cognitive level.
 - Given the last message of the parents, suggest a list of keywords that can help the child pick to create a sentence as an answer.
 - Use honorific form of Korean for actions and emotions, such as "~해요" or "~어요", if possible.
 
-Proceed in the following order.
-1. [nouns] : Provide nouns that reflect detailed context based on your parents' questions.
-2. [actions] : Provide words for the action that can be matched with the nouns suggested in [nouns].
-3. [emotions] : Suggest emotions that the child might want to express in the situation, including both positive and negative emotions and needs.
+Return a JSON object organizing the keywords as in the following:
+{
+  "nouns": Array<string> // Nouns that reflect detailed context based on your parents' questions.
+  "actions": Array<string> // Actions that can be matched with the nouns suggested in [nouns].
+  "emotions": Array<string> // Emotions that the child might want to express in the situation, including both positive and negative emotions and needs.
+}"""f"""
 
 {"" if params.prev_recommendation is None else "- The child had previous recommendation: " + params.prev_recommendation.json() + ". Try to generate phrases that are distinct to this previous recommendation."}
-{"" if params.interim_cards is None else "- The child had selected the following cards: " + ', '.join([card.simple_str() for card in params.interim_cards]) + ". The generated recommendation should be relevant to these selections."}
-
-Note that the output must be JSON, formatted like the following:
-
-  "nouns": Array<string>
-  "actions: Array<string>
-  "emotions": Array<string>
-
-The result should be in Korean and please provide up to four options for each element.
+{"" if params.interim_cards is None else "- The child had selected the following cards: " + ', '.join([card.text for card in params.interim_cards]) + ". The generated recommendation should be relevant to these selections."}
+- Provide up to five options for each category.
 """
         return prompt
 
