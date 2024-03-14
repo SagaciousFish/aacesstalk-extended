@@ -56,9 +56,12 @@ Return a JSON object organizing the keywords as in the following:
                        dialogue: Dialogue,
                        interim_cards: list[CardInfo] | None = None,
                        previous_recommendation: ChildCardRecommendationResult | None = None) -> ChildCardRecommendationResult:
-        return await self.__mapper.run(None,
+        recommendation = await self.__mapper.run(None,
                                        input=dialogue,
                                        params=ChildCardRecommendationParams(prev_recommendation=previous_recommendation,
                                                                             interim_cards=interim_cards,
                                                                             model=ChatGPTModel.GPT_4_0613,
                                                                             api_params={}))
+        print(recommendation.model_dump_json(indent=2))
+
+        return recommendation

@@ -1,6 +1,6 @@
 import asyncio
 
-from py_core.system.model import ChildCardRecommendationResult, Dialogue, DialogueMessage, DialogueRole, CardInfo, \
+from py_core.system.model import ChildCardRecommendationResult, Dialogue, DialogueMessage, DialogueRole, CardInfo, CardIdentity, \
     ParentGuideRecommendationResult
 from py_core.system.storage import SessionStorage
 from py_core.system.task import ChildCardRecommendationGenerator
@@ -57,10 +57,13 @@ class ModeratorSession:
             raise e
 
     @speaker(DialogueRole.Child)
-    async def refresh_child_card_recommendation(self, interim_cards: list[CardInfo],
+    async def refresh_child_card_recommendation(self, interim_cards: list[CardIdentity] | list[CardInfo],
                                                 prev_recommendation: ChildCardRecommendationResult) -> ChildCardRecommendationResult:
         try:
             dialogue = await self.__storage.get_dialogue()
+            interim_cards = [card_identity if isinstance(card_identity, CardInfo) else (await self.__storage.get_card_recommendation_result(card_identity.recommendation_id)).find_card_by_id(card_identity.id) for card_identity in interim_cards]
+            interim_cards = [c for c in interim_cards if c is not None]
+
             recommendation = await self.__child_card_recommender.generate(dialogue, interim_cards, prev_recommendation)
 
             await self.__storage.add_card_recommendation_result(recommendation)

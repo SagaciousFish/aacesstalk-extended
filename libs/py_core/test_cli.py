@@ -35,7 +35,7 @@ async def test_session_loop(session: ModeratorSession):
             continue
 
         elif session.next_speaker == DialogueRole.Child and current_card_recommendation_result is not None:
-            cards = current_card_recommendation_result.get_flatten_cards()
+            cards = current_card_recommendation_result.cards
 
             card_prompts = [card.simple_str() for card in cards]
             choices = ["[Refresh cards]"] + card_prompts
