@@ -4,17 +4,17 @@ from chatlib.tool.converter import generate_pydantic_converter
 from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompletionFewShotMapperParams
 from chatlib.llm.integration.openai_api import GPTChatCompletionAPI, ChatGPTModel
 
-from py_core.system.model import ParentRecommendationResult, Dialogue
+from py_core.system.model import ParentGuideRecommendationResult, Dialogue
 from py_core.system.task.stringify import convert_dialogue_to_str
 
-str_output_converter, output_str_converter = generate_pydantic_converter(ParentRecommendationResult)
+str_output_converter, output_str_converter = generate_pydantic_converter(ParentGuideRecommendationResult)
 
 class ParentGuideRecommendationParams(ChatCompletionFewShotMapperParams):
     pass
 
 class ParentGuideRecommendationGenerator:
     def __init__(self):
-        self.__mapper: ChatCompletionFewShotMapper[Dialogue, ParentRecommendationResult, ParentGuideRecommendationParams] = (
+        self.__mapper: ChatCompletionFewShotMapper[Dialogue, ParentGuideRecommendationResult, ParentGuideRecommendationParams] = (
             ChatCompletionFewShotMapper(GPTChatCompletionAPI(),
                                         instruction_generator=self.__prompt_generator,
                                         input_str_converter=convert_dialogue_to_str,
@@ -39,8 +39,7 @@ Return a JSON object in the following format:
 
 The result should be in Korean and please provide up to three options for each element.
 """
-        print(prompt)
         return prompt
 
-    async def generate(self, dialogue: Dialogue)->ParentRecommendationResult:
+    async def generate(self, dialogue: Dialogue)->ParentGuideRecommendationResult:
         return await self.__mapper.run(None, dialogue, ParentGuideRecommendationParams(model=ChatGPTModel.GPT_4_0613, api_params={}))

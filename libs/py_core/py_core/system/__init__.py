@@ -1,1 +1,1 @@
-from .moderator import Moderator
+from .moderator import ModeratorSession

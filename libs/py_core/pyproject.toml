@@ -25,6 +25,7 @@ readme = 'README.md'
   pendulum = "^3.0.0"
   chatlib = {git = "https://github.com/yghokim/chatlib.git", tag="0.7.2"}
   pydantic = "^2.6.4"
+  questionary = "^2.0.1"
 
   [tool.poetry.group.dev.dependencies]
   autopep8 = "2.0.2"

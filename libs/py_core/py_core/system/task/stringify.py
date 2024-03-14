@@ -10,5 +10,4 @@ def convert_dialogue_to_str(dialogue: Dialogue, params) -> str:
 <dialogue>
 {script}
 </dialogue>"""
-    print(result)
     return result

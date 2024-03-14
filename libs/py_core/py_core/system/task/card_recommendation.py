@@ -17,7 +17,7 @@ class ChildCardRecommendationParams(ChatCompletionFewShotMapperParams):
     model_config = ConfigDict(frozen=True)
 
     prev_recommendation: ChildCardRecommendationResult | None = None
-    interim_cards: list[CardInfo]
+    interim_cards: list[CardInfo] | None = None
 
 
 class ChildCardRecommendationGenerator:
@@ -55,13 +55,12 @@ Note that the output must be JSON, formatted like the following:
 
 The result should be in Korean and please provide up to four options for each element.
 """
-        print(prompt)
         return prompt
 
     async def generate(self,
                        dialogue: Dialogue,
-                       interim_cards: list[CardInfo],
-                       previous_recommendation: ChildCardRecommendationResult | None) -> ChildCardRecommendationResult:
+                       interim_cards: list[CardInfo] | None = None,
+                       previous_recommendation: ChildCardRecommendationResult | None = None) -> ChildCardRecommendationResult:
         return await self.__mapper.run(None,
                                        input=dialogue,
                                        params=ChildCardRecommendationParams(prev_recommendation=previous_recommendation,

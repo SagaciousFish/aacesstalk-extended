@@ -1,1 +1,1 @@
-from .system import Moderator
+from .system import ModeratorSession
