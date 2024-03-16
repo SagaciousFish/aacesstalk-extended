@@ -1,19 +1,15 @@
-import questionary
-from questionary import prompt
-
-from chatlib.utils.cli import make_non_empty_string_validator
-from chatlib.global_config import GlobalConfig
-from chatlib.llm.integration.openai_api import GPTChatCompletionAPI
-
-from py_core import ModeratorSession
-from py_core.system.model import ChildCardRecommendationResult, DialogueMessage, DialogueRole, CardInfo, \
-    ParentGuideRecommendationResult
-from py_core.system.storage import SessionMemoryStorage
-from py_core.system.task import ChildCardRecommendationGenerator
-
 import asyncio
 
-from py_core.system.task.parent_guide_recommendation import ParentGuideRecommendationGenerator
+import questionary
+from chatlib.global_config import GlobalConfig
+from chatlib.llm.integration.openai_api import GPTChatCompletionAPI
+from chatlib.utils.cli import make_non_empty_string_validator
+from py_core import ModeratorSession
+from py_core.system.model import ChildCardRecommendationResult, DialogueRole, CardInfo, \
+    ParentGuideRecommendationResult
+from py_core.system.storage.json import SessionJsonStorage
+from py_core.system.storage.memory import SessionMemoryStorage
+
 
 async def test_session_loop(session: ModeratorSession):
     current_card_recommendation_result: ChildCardRecommendationResult | None = None
@@ -30,7 +26,7 @@ async def test_session_loop(session: ModeratorSession):
                                                     default="오늘 학교에서 뭐 했니?" if current_parent_guide_recommendation_result is None and current_card_recommendation_result is None else "",
                                                     validate=make_non_empty_string_validator(
                                                         "A message should not be empty."), qmark="*").ask_async()
-            current_card_recommendation_result = await session.submit_parent_message(parent_message)
+            current_card_recommendation_result = await session.submit_parent_message(parent_message, current_parent_guide_recommendation_result)
             current_interim_cards.clear()
             continue
 
@@ -73,6 +69,6 @@ async def test_session_loop(session: ModeratorSession):
 GlobalConfig.is_cli_mode = True
 GPTChatCompletionAPI.assert_authorize()
 
-session = ModeratorSession(SessionMemoryStorage())
+session = ModeratorSession(SessionJsonStorage())
 
 asyncio.run(test_session_loop(session))

@@ -2351,6 +2351,17 @@ requests = ">=2.26.0"
 blobfile = ["blobfile (>=2)"]
 
 [[package]]
+name = "tinydb"
+version = "4.8.0"
+description = "TinyDB is a tiny, document oriented database optimized for your happiness :)"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "tinydb-4.8.0-py3-none-any.whl", hash = "sha256:30c06d12383d7c332e404ca6a6103fb2b32cbf25712689648c39d9a6bd34bd3d"},
+    {file = "tinydb-4.8.0.tar.gz", hash = "sha256:6dd686a9c5a75dfa9280088fd79a419aefe19cd7f4bd85eba203540ef856d564"},
+]
+
+[[package]]
 name = "tokenizers"
 version = "0.15.2"
 description = ""
@@ -2831,4 +2842,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11.8,<3.12"
-content-hash = "76dc225615c51954d446eb6b2779223ede6a1f2ac40cae3770364da3277a0157"
+content-hash = "173e7b984da7f4ebfae8db69c4862d9621ac70a43684a950b5b1f3450667e5f0"

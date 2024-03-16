@@ -35,11 +35,12 @@ class ModeratorSession:
 
 
     @speaker(DialogueRole.Parent)
-    async def submit_parent_message(self, parent_message: str) -> ChildCardRecommendationResult:
+    async def submit_parent_message(self, parent_message: str, current_parent_guide: ParentGuideRecommendationResult | None = None) -> ChildCardRecommendationResult:
 
         try:
             new_message = DialogueMessage(speaker=DialogueRole.Parent,
-                                          content=parent_message)
+                                          content=parent_message,
+                                          recommendation_id=current_parent_guide.id if current_parent_guide is not None else None)
 
             await self.__storage.add_dialogue_message(new_message)
 

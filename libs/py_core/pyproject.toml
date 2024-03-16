@@ -26,6 +26,7 @@ readme = 'README.md'
   chatlib = {git = "https://github.com/yghokim/chatlib.git", tag="0.7.3"}
   pydantic = "^2.6.4"
   questionary = "^2.0.1"
+  tinydb = "^4.8.0"
 
   [tool.poetry.group.dev.dependencies]
   autopep8 = "2.0.2"
