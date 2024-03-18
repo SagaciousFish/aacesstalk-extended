@@ -11,12 +11,15 @@ ParentGuideRecommendationAPIResult: TypeAlias = list[ParentGuideElement]
 
 str_output_converter, output_str_converter = generate_type_converter(ParentGuideRecommendationAPIResult)
 
+
 class ParentGuideRecommendationParams(ChatCompletionFewShotMapperParams):
     pass
 
+
 class ParentGuideRecommendationGenerator:
     def __init__(self):
-        self.__mapper: ChatCompletionFewShotMapper[Dialogue, ParentGuideRecommendationAPIResult, ParentGuideRecommendationParams] = (
+        self.__mapper: ChatCompletionFewShotMapper[
+            Dialogue, ParentGuideRecommendationAPIResult, ParentGuideRecommendationParams] = (
             ChatCompletionFewShotMapper(GPTChatCompletionAPI(),
                                         instruction_generator=self.__prompt_generator,
                                         input_str_converter=convert_dialogue_to_str,
@@ -41,6 +44,9 @@ The result should be in Korean and please provide up to three options for each e
 """
         return prompt
 
-    async def generate(self, dialogue: Dialogue)->ParentGuideRecommendationResult:
-        guide_list: ParentGuideRecommendationAPIResult = await self.__mapper.run(None, dialogue, ParentGuideRecommendationParams(model=ChatGPTModel.GPT_4_0613, api_params={}))
+    async def generate(self, dialogue: Dialogue) -> ParentGuideRecommendationResult:
+        guide_list: ParentGuideRecommendationAPIResult = await self.__mapper.run(None, dialogue,
+                                                                                 ParentGuideRecommendationParams(
+                                                                                     model=ChatGPTModel.GPT_4_0613,
+                                                                                     api_params={}))
         return ParentGuideRecommendationResult(recommendations=guide_list)

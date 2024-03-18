@@ -9,9 +9,11 @@ from pydantic import BaseModel, ConfigDict, TypeAdapter, Field
 def id_generator() -> str:
     return generate(size=20)
 
+
 class ModelWithIdAndTimestamp(BaseModel):
     id: str = Field(default_factory=id_generator)
     timestamp: int = Field(default_factory=get_timestamp)
+
 
 class CardIdentity(BaseModel):
     model_config = ConfigDict(frozen=True)
@@ -19,10 +21,12 @@ class CardIdentity(BaseModel):
     id: str = Field(default_factory=id_generator)
     recommendation_id: str
 
+
 class CardCategory(StrEnum):
-    Noun="noun"
-    Emotion="emotion"
-    Action="action"
+    Noun = "noun"
+    Emotion = "emotion"
+    Action = "action"
+
 
 class CardInfo(CardIdentity):
     model_config = ConfigDict(frozen=True)
@@ -39,7 +43,7 @@ class ChildCardRecommendationResult(ModelWithIdAndTimestamp):
 
     cards: list[CardInfo]
 
-    def find_card_by_id(self, card_id)-> CardInfo | None:
+    def find_card_by_id(self, card_id) -> CardInfo | None:
         filtered = [card for card in self.cards if card.id == card_id]
         if len(filtered) > 0:
             return filtered[0]

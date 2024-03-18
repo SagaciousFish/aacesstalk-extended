@@ -1,10 +1,12 @@
 import asyncio
 
-from py_core.system.model import ChildCardRecommendationResult, Dialogue, DialogueMessage, DialogueRole, CardInfo, CardIdentity, \
+from py_core.system.model import ChildCardRecommendationResult, Dialogue, DialogueMessage, DialogueRole, CardInfo, \
+    CardIdentity, \
     ParentGuideRecommendationResult
 from py_core.system.storage import SessionStorage
 from py_core.system.task import ChildCardRecommendationGenerator
 from py_core.system.task.parent_guide_recommendation import ParentGuideRecommendationGenerator
+
 
 def speaker(role: DialogueRole):
     def decorator(func):
@@ -16,8 +18,11 @@ def speaker(role: DialogueRole):
                     return await func(self, *args, **kwargs)
                 else:
                     return func(self, *args, **kwargs)
+
         return wrapper
+
     return decorator
+
 
 class ModeratorSession:
 
@@ -30,12 +35,12 @@ class ModeratorSession:
         self.__next_speaker: DialogueRole = DialogueRole.Parent
 
     @property
-    def next_speaker(self)->DialogueRole:
+    def next_speaker(self) -> DialogueRole:
         return self.__next_speaker
 
-
     @speaker(DialogueRole.Parent)
-    async def submit_parent_message(self, parent_message: str, current_parent_guide: ParentGuideRecommendationResult | None = None) -> ChildCardRecommendationResult:
+    async def submit_parent_message(self, parent_message: str,
+                                    current_parent_guide: ParentGuideRecommendationResult | None = None) -> ChildCardRecommendationResult:
 
         try:
             new_message = DialogueMessage(speaker=DialogueRole.Parent,
@@ -50,7 +55,6 @@ class ModeratorSession:
 
             await self.__storage.add_card_recommendation_result(recommendation)
 
-
             self.__next_speaker = DialogueRole.Child
 
             return recommendation
@@ -62,7 +66,9 @@ class ModeratorSession:
                                                 prev_recommendation: ChildCardRecommendationResult) -> ChildCardRecommendationResult:
         try:
             dialogue = await self.__storage.get_dialogue()
-            interim_cards = [card_identity if isinstance(card_identity, CardInfo) else (await self.__storage.get_card_recommendation_result(card_identity.recommendation_id)).find_card_by_id(card_identity.id) for card_identity in interim_cards]
+            interim_cards = [card_identity if isinstance(card_identity, CardInfo) else (
+                await self.__storage.get_card_recommendation_result(card_identity.recommendation_id)).find_card_by_id(
+                card_identity.id) for card_identity in interim_cards]
             interim_cards = [c for c in interim_cards if c is not None]
 
             recommendation = await self.__child_card_recommender.generate(dialogue, interim_cards, prev_recommendation)
@@ -83,7 +89,6 @@ class ModeratorSession:
 
             dialogue = await self.__storage.get_dialogue()
 
-
             recommendation = await self.__parent_guide_recommender.generate(dialogue)
 
             await self.__storage.add_parent_guide_recommendation_result(recommendation)
@@ -94,5 +99,3 @@ class ModeratorSession:
 
         except Exception as e:
             raise e
-
-

@@ -69,7 +69,7 @@ Return a JSON object organizing the keywords as in the following:
                                                                             model=ChatGPTModel.GPT_4_0613,
                                                                             api_params={}))
 
-        id = id_generator()
-        return ChildCardRecommendationResult(id=id, cards=[CardInfo(text=noun, category='noun', recommendation_id=id) for noun in recommendation.nouns] + \
-               [CardInfo(text=emotion, category='emotion', recommendation_id=id) for emotion in recommendation.emotions] + \
-               [CardInfo(text=action, category='action', recommendation_id=id) for action in recommendation.actions])
+        rec_id = id_generator()
+        return ChildCardRecommendationResult(id=rec_id, cards=[CardInfo(text=noun, category='noun', recommendation_id=rec_id) for noun in recommendation.nouns] + \
+               [CardInfo(text=emotion, category='emotion', recommendation_id=rec_id) for emotion in recommendation.emotions] + \
+               [CardInfo(text=action, category='action', recommendation_id=rec_id) for action in recommendation.actions])
