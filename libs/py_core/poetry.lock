@@ -331,7 +331,7 @@ files = [
 
 [[package]]
 name = "chatlib"
-version = "0.7.3"
+version = "0.7.5"
 description = "A generalizable Python Chatbot Library"
 optional = false
 python-versions = "^3.10"
@@ -360,8 +360,8 @@ yaspin = "^2.3.0"
 [package.source]
 type = "git"
 url = "https://github.com/yghokim/chatlib.git"
-reference = "0.7.3"
-resolved_reference = "34c82bdd1de0a6b1560ca40daa057454337c0f5a"
+reference = "0.7.5"
+resolved_reference = "80ec5a953911dfe61c30ad41e7ce760a74037fd7"
 
 [[package]]
 name = "cohere"
@@ -2842,4 +2842,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11.8,<3.12"
-content-hash = "173e7b984da7f4ebfae8db69c4862d9621ac70a43684a950b5b1f3450667e5f0"
+content-hash = "9ef9b409eeec9bc27803452be4132aef1c6f736f14a9530e9245684e33519ddd"

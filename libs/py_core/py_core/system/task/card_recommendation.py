@@ -1,16 +1,22 @@
-import json
-from enum import StrEnum
-from typing import Any
-from pydantic import ConfigDict
-
-from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompletionFewShotMapperParams
-from chatlib.tool.converter import generate_pydantic_converter
 from chatlib.llm.integration.openai_api import GPTChatCompletionAPI, ChatGPTModel
+from chatlib.tool.converter import generate_pydantic_converter
+from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompletionFewShotMapperParams
+from pydantic import ConfigDict, BaseModel
 
-from py_core.system.model import ChildCardRecommendationResult, Dialogue, DialogueMessage, DialogueRole, CardInfo
+from py_core.system.model import ChildCardRecommendationResult, Dialogue, CardInfo, \
+    id_generator
 from py_core.system.task.stringify import convert_dialogue_to_str
 
-str_output_converter, output_str_converter = generate_pydantic_converter(ChildCardRecommendationResult)
+
+class ChildCardRecommendationAPIResult(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    nouns: list[str]
+    emotions: list[str]
+    actions: list[str]
+
+
+str_output_converter, output_str_converter = generate_pydantic_converter(ChildCardRecommendationAPIResult)
 
 
 class ChildCardRecommendationParams(ChatCompletionFewShotMapperParams):
@@ -23,7 +29,7 @@ class ChildCardRecommendationParams(ChatCompletionFewShotMapperParams):
 class ChildCardRecommendationGenerator:
 
     def __init__(self):
-        self.__mapper: ChatCompletionFewShotMapper[Dialogue, ChildCardRecommendationResult, ChildCardRecommendationParams] = (
+        self.__mapper: ChatCompletionFewShotMapper[Dialogue, ChildCardRecommendationAPIResult, ChildCardRecommendationParams] = (
             ChatCompletionFewShotMapper(GPTChatCompletionAPI(),
                                         instruction_generator=self.__prompt_generator,
                                         input_str_converter=convert_dialogue_to_str,
@@ -62,6 +68,8 @@ Return a JSON object organizing the keywords as in the following:
                                                                             interim_cards=interim_cards,
                                                                             model=ChatGPTModel.GPT_4_0613,
                                                                             api_params={}))
-        print(recommendation.model_dump_json(indent=2))
 
-        return recommendation
+        id = id_generator()
+        return ChildCardRecommendationResult(id=id, cards=[CardInfo(text=noun, category='noun', recommendation_id=id) for noun in recommendation.nouns] + \
+               [CardInfo(text=emotion, category='emotion', recommendation_id=id) for emotion in recommendation.emotions] + \
+               [CardInfo(text=action, category='action', recommendation_id=id) for action in recommendation.actions])

@@ -1,11 +1,9 @@
 from enum import StrEnum
-from typing import Literal, TypeAlias
-from functools import cached_property
+from typing import TypeAlias
 
-from nanoid import generate
 from chatlib.utils.time import get_timestamp
-
-from pydantic import BaseModel, ConfigDict, TypeAdapter, Field, computed_field
+from nanoid import generate
+from pydantic import BaseModel, ConfigDict, TypeAdapter, Field
 
 
 def id_generator() -> str:
@@ -35,19 +33,11 @@ class CardInfo(CardIdentity):
     def simple_str(self) -> str:
         return f"{self.text} ({self.category})"
 
+
 class ChildCardRecommendationResult(ModelWithIdAndTimestamp):
     model_config = ConfigDict(frozen=True)
 
-    nouns: list[str]
-    emotions: list[str]
-    actions: list[str]
-
-    @computed_field
-    @cached_property
-    def cards(self)->list[CardInfo]:
-        return [CardInfo(text=noun, category=CardCategory.Noun, recommendation_id=self.id) for noun in self.nouns] + \
-            [CardInfo(text=emotion, category=CardCategory.Emotion, recommendation_id=self.id) for emotion in self.emotions] + \
-            [CardInfo(text=action, category=CardCategory.Action, recommendation_id=self.id) for action in self.actions]
+    cards: list[CardInfo]
 
     def find_card_by_id(self, card_id)-> CardInfo | None:
         filtered = [card for card in self.cards if card.id == card_id]
