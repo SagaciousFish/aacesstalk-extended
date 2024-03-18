@@ -30,19 +30,11 @@ class CardInfo(CardIdentity):
     def simple_str(self) -> str:
         return f"{self.text} ({self.category})"
 
+
 class ChildCardRecommendationResult(ModelWithIdAndTimestamp):
     model_config = ConfigDict(frozen=True)
 
-    nouns: list[str]
-    emotions: list[str]
-    actions: list[str]
-
-    @computed_field
-    @cached_property
-    def cards(self)->list[CardInfo]:
-        return [CardInfo(text=noun, category='noun', recommendation_id=self.id) for noun in self.nouns] + \
-            [CardInfo(text=emotion, category='emotion', recommendation_id=self.id) for emotion in self.emotions] + \
-            [CardInfo(text=action, category='action', recommendation_id=self.id) for action in self.actions]
+    cards: list[CardInfo]
 
     def find_card_by_id(self, card_id)-> CardInfo | None:
         filtered = [card for card in self.cards if card.id == card_id]

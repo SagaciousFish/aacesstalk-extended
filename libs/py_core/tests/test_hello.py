@@ -2,7 +2,6 @@
 
 import pytest
 from py_core.hello import hello
-from py_core.system.processor import ChildCardRecommendationGenerator
 
 
 def test_hello():
