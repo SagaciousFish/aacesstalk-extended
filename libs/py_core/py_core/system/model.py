@@ -80,3 +80,5 @@ class DialogueMessage(ModelWithIdAndTimestamp):
 Dialogue: TypeAlias = list[DialogueMessage]
 
 DialogueTypeAdapter = TypeAdapter(Dialogue)
+
+CardInfoListTypeAdapter = TypeAdapter(list[CardInfo])

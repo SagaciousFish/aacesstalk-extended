@@ -64,6 +64,13 @@
         "command": "poetry run pytest tests/",
         "cwd": "libs/py_database"
       }
+    },
+    "cli": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run python test_cli.py",
+        "cwd": "libs/py_database"
+      }
     }
   },
   "tags": []
