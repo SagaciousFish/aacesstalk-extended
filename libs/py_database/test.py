@@ -1,0 +1,3 @@
+from py_core.system.model import ChildCardRecommendationResult
+
+print(ChildCardRecommendationResult)

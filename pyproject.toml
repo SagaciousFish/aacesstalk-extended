@@ -2,14 +2,24 @@
 name = "aacesstalk"
 version = "0.1.0"
 description = ""
-authors = ["Young-Ho Kim <yghokim@gmail.com>"]
+authors = [ "Young-Ho Kim <yghokim@gmail.com>" ]
 readme = "README.md"
 
-[tool.poetry.dependencies]
-python = "^3.9"
+  [tool.poetry.dependencies]
+  python = "^3.9"
 
+    [tool.poetry.dependencies.py_database]
+    path = "libs/py_database"
+    develop = true
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "6.0.0"
+autopep8 = "2.0.2"
+pytest = "7.3.1"
+pytest-sugar = "0.9.7"
+pytest-cov = "4.1.0"
+pytest-html = "3.2.0"
 
 [build-system]
-requires = ["poetry-core"]
+requires = [ "poetry-core" ]
 build-backend = "poetry.core.masonry.api"
-
