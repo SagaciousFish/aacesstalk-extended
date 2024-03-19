@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlmodel import SQLModel, Column, JSON, Field, Relationship
 from sqlalchemy import DateTime, func
 
-from py_core.system.model import id_generator, DialogueRole
+from py_core.system.model import id_generator, DialogueRole, CardInfo, ModelWithIdAndTimestamp
 from chatlib.utils.time import get_timestamp
 
 
@@ -52,6 +52,14 @@ class Session(SQLModel, table=True, BaseTable):
     child: Optional[Child] = Relationship(back_populates="sessions")
 
     local_timezone: str = Field(nullable=False)
-    started_timestamp: int = Field(default_factory=get_timestamp)
-    ended_timestamp: int | None = None
+    started_timestamp: int = Field(default_factory=get_timestamp, index=True)
+    ended_timestamp: int | None = Field(default=None, index=True)
 
+
+
+class Message(SQLModel, table=True, BaseTable):
+    session_id = Field(foreign_key="session.id")
+    role: DialogueRole
+    type: Literal["text"] | Literal["json"]
+    content: str | list[CardInfo]
+    timestamp: int = Field(default_factory=get_timestamp, index=True)

@@ -72,7 +72,7 @@ class DialogueRole(StrEnum):
 class DialogueMessage(ModelWithIdAndTimestamp):
     model_config = ConfigDict(frozen=True)
 
-    speaker: DialogueRole
+    role: DialogueRole
     content: str | list[CardInfo]
     recommendation_id: str | None = None
 
