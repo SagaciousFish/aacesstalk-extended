@@ -335,7 +335,7 @@ files = [
 
 [[package]]
 name = "chatlib"
-version = "0.7.5"
+version = "0.7.6"
 description = "A generalizable Python Chatbot Library"
 optional = false
 python-versions = "^3.10"
@@ -364,8 +364,8 @@ yaspin = "^2.3.0"
 [package.source]
 type = "git"
 url = "https://github.com/yghokim/chatlib.git"
-reference = "0.7.5"
-resolved_reference = "80ec5a953911dfe61c30ad41e7ce760a74037fd7"
+reference = "0.7.6"
+resolved_reference = "b91b239ef328d09a1b5a85372013afc45328ee41"
 
 [[package]]
 name = "cohere"
@@ -1596,7 +1596,7 @@ files = []
 develop = true
 
 [package.dependencies]
-chatlib = {git = "https://github.com/yghokim/chatlib.git", tag = "0.7.5"}
+chatlib = {git = "https://github.com/yghokim/chatlib.git", tag = "0.7.6"}
 pendulum = "^3.0.0"
 pydantic = "^2.6.4"
 questionary = "^2.0.1"
