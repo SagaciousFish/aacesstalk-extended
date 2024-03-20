@@ -43,7 +43,7 @@ class ModeratorSession:
                                     current_parent_guide: ParentGuideRecommendationResult | None = None) -> ChildCardRecommendationResult:
 
         try:
-            new_message = DialogueMessage(speaker=DialogueRole.Parent,
+            new_message = DialogueMessage(role=DialogueRole.Parent,
                                           content=parent_message,
                                           recommendation_id=current_parent_guide.id if current_parent_guide is not None else None)
 
@@ -83,7 +83,7 @@ class ModeratorSession:
     async def submit_child_selected_card(self, selected_cards: list[CardInfo]) -> ParentGuideRecommendationResult:
         try:
             await self.__storage.add_dialogue_message(DialogueMessage(
-                speaker=DialogueRole.Child,
+                role=DialogueRole.Child,
                 content=selected_cards
             ))
 
