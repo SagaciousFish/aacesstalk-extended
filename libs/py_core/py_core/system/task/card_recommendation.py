@@ -16,7 +16,7 @@ class ChildCardRecommendationAPIResult(BaseModel):
     actions: list[str]
 
 
-str_output_converter, output_str_converter = generate_pydantic_converter(ChildCardRecommendationAPIResult)
+str_output_converter, output_str_converter = generate_pydantic_converter(ChildCardRecommendationAPIResult, 'yaml')
 
 
 class ChildCardRecommendationParams(ChatCompletionFewShotMapperParams):
@@ -29,8 +29,12 @@ class ChildCardRecommendationParams(ChatCompletionFewShotMapperParams):
 class ChildCardRecommendationGenerator:
 
     def __init__(self):
+
+        api = GPTChatCompletionAPI()
+        api.config().verbose = True
+
         self.__mapper: ChatCompletionFewShotMapper[Dialogue, ChildCardRecommendationAPIResult, ChildCardRecommendationParams] = (
-            ChatCompletionFewShotMapper(GPTChatCompletionAPI(),
+            ChatCompletionFewShotMapper(api,
                                         instruction_generator=self.__prompt_generator,
                                         input_str_converter=convert_dialogue_to_str,
                                         output_str_converter=output_str_converter,
@@ -45,14 +49,13 @@ class ChildCardRecommendationGenerator:
 - Given the last message of the parents, suggest a list of keywords that can help the child pick to create a sentence as an answer.
 - Use honorific form of Korean for actions and emotions, such as "~해요" or "~어요", if possible.
 
-Return a JSON object organizing the keywords as in the following:
-{
-  "nouns": Array<string> // Nouns that reflect detailed context based on your parents' questions.
-  "actions": Array<string> // Actions that can be matched with the nouns suggested in [nouns].
-  "emotions": Array<string> // Emotions that the child might want to express in the situation, including both positive and negative emotions and needs.
-}"""f"""
+Return an YAML string with variables as in the following:
+nouns: [] // list of nouns that reflect detailed context based on your parents' questions.
+actions: [] // Actions that can be matched with the nouns suggested in [nouns].
+emotions: [] // Emotions that the child might want to express in the situation, including both positive and negative emotions and needs.
+"""f"""
 
-{"" if params.prev_recommendation is None else "- The child had previous recommendation: " + params.prev_recommendation.json() + ". Try to generate phrases that are distinct to this previous recommendation."}
+{"" if params.prev_recommendation is None else "- The child had previous recommendation: " + params.prev_recommendation.json(exclude=["id", "timestamp"]) + ". Try to generate phrases that are distinct to this previous recommendation."}
 {"" if params.interim_cards is None else "- The child had selected the following cards: " + ', '.join([card.text for card in params.interim_cards]) + ". The generated recommendation should be relevant to these selections."}
 - Provide up to five options for each category.
 """

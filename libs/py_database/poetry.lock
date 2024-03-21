@@ -335,7 +335,7 @@ files = [
 
 [[package]]
 name = "chatlib"
-version = "0.7.6"
+version = "0.7.8"
 description = "A generalizable Python Chatbot Library"
 optional = false
 python-versions = "^3.10"
@@ -364,8 +364,8 @@ yaspin = "^2.3.0"
 [package.source]
 type = "git"
 url = "https://github.com/yghokim/chatlib.git"
-reference = "0.7.6"
-resolved_reference = "b91b239ef328d09a1b5a85372013afc45328ee41"
+reference = "0.7.8"
+resolved_reference = "5a2b7890b5403aa4714c66bbb4432de7c6c6e724"
 
 [[package]]
 name = "cohere"
@@ -1386,7 +1386,6 @@ description = "Nvidia JIT LTO Library"
 optional = false
 python-versions = ">=3"
 files = [
-    {file = "nvidia_nvjitlink_cu12-12.4.99-py3-none-manylinux2014_aarch64.whl", hash = "sha256:75d6498c96d9adb9435f2bbdbddb479805ddfb97b5c1b32395c694185c20ca57"},
     {file = "nvidia_nvjitlink_cu12-12.4.99-py3-none-manylinux2014_x86_64.whl", hash = "sha256:c6428836d20fe7e327191c175791d38570e10762edc588fb46749217cd444c74"},
     {file = "nvidia_nvjitlink_cu12-12.4.99-py3-none-win_amd64.whl", hash = "sha256:991905ffa2144cb603d8ca7962d75c35334ae82bf92820b6ba78157277da1ad2"},
 ]
@@ -1596,7 +1595,7 @@ files = []
 develop = true
 
 [package.dependencies]
-chatlib = {git = "https://github.com/yghokim/chatlib.git", tag = "0.7.6"}
+chatlib = {git = "https://github.com/yghokim/chatlib.git", tag = "0.7.8"}
 pendulum = "^3.0.0"
 pydantic = "^2.6.4"
 questionary = "^2.0.1"

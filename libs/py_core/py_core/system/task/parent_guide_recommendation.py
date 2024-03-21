@@ -25,11 +25,11 @@ You are a helpful assistant who help a communication between children using Alte
 Suppose that you are helping a communication with a minimally verbal autistic child and parents in Korean.
 Given the last message of the children, suggest a list of sentences that can help the parents pick to respond or ask questions.
 
-Return a JSON object in the following format:
-Array<{
-    "example": Provide response or question that parents can make to the child's message in English.
-    "guide": Provide guide for parents of autistic children to consider when responding to the child's answer. Keep the guide short and concise so parents can read it quickly and move on.
-}>
+Return an YAML list containing objects with the following attributes:
+
+example: Provide response or question that parents can make to the child's message in English.
+guide: Provide guide for parents of autistic children to consider when responding to the child's answer. Keep the guide short and concise so parents can read it quickly and move on.
+
 
 Please provide up to three options.
 """
@@ -70,16 +70,19 @@ class ParentGuideRecommendationGenerator:
         api_params={})
 
     __TRANSLATOR_PARAMS__ = ParentGuideRecommendationParams(
-        model=ChatGPTModel.GPT_4_0613,
+        model=ChatGPTModel.GPT_3_5_0125,
         api_params={})
 
     def __init__(self):
 
-        str_output_converter, output_str_converter = generate_type_converter(ParentGuideRecommendationAPIResult)
+        str_output_converter, output_str_converter = generate_type_converter(ParentGuideRecommendationAPIResult, 'yaml')
+
+        api = GPTChatCompletionAPI()
+        api.config().verbose = True
 
         self.__mapper: ChatCompletionFewShotMapper[
             Dialogue, ParentGuideRecommendationAPIResult, ParentGuideRecommendationParams] = (
-            ChatCompletionFewShotMapper(GPTChatCompletionAPI(),
+            ChatCompletionFewShotMapper(api,
                                         instruction_generator=generate_parent_guideline_prompt,
                                         input_str_converter=convert_dialogue_to_str,
                                         output_str_converter=output_str_converter,
@@ -88,10 +91,10 @@ class ParentGuideRecommendationGenerator:
 
         self.__translator: ChatCompletionFewShotMapper[
             ParentGuideRecommendationAPIResult, ParentGuideRecommendationAPIResult, ParentGuideRecommendationParams] = (
-            ChatCompletionFewShotMapper(GPTChatCompletionAPI(),
+            ChatCompletionFewShotMapper(api,
                                         instruction_generator="""
-The following JSON contains a list of example message and guide for a parent talking with their child with ASD.
-Translate the following JSON, particularly the "example" and "guide" into Korean.
+The following YAML contains a list of example message and guide for a parent talking with their child with ASD.
+Translate the following YAML, particularly the "example" and "guide" into Korean.
 Note that the "example" is the message of a parent to a kid. Don't use honorific form of Korean.
                                         """,
                                         input_str_converter=output_str_converter,
