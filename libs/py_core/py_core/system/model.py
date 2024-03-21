@@ -23,7 +23,7 @@ class CardIdentity(BaseModel):
 
 
 class CardCategory(StrEnum):
-    Noun = "noun"
+    Topic = "topic"
     Emotion = "emotion"
     Action = "action"
 
@@ -32,10 +32,11 @@ class CardInfo(CardIdentity):
     model_config = ConfigDict(frozen=True)
 
     text: str
+    localized: str
     category: CardCategory
 
     def simple_str(self) -> str:
-        return f"{self.text} ({self.category})"
+        return f"{self.localized} ({self.text}) | {self.category}"
 
 
 class ChildCardRecommendationResult(ModelWithIdAndTimestamp):

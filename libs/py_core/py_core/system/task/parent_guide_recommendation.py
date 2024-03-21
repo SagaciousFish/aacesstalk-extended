@@ -12,9 +12,9 @@ from py_core.system.task.stringify import convert_dialogue_to_str
 
 ParentGuideRecommendationAPIResult: TypeAlias = list[ParentGuideElement]
 
+
 class ParentGuideRecommendationParams(ChatCompletionFewShotMapperParams):
     pass
-
 
 
 # Variables for mapper ================================================================================================================
@@ -35,14 +35,15 @@ Please provide up to three options.
 """
     return prompt
 
+
 PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommendationAPIResult]] = [
     MapperInputOutputPair(
         input=[
             DialogueMessage(role=DialogueRole.Parent, content="오늘 학교에서 뭐 했어?"),
             DialogueMessage(role=DialogueRole.Child, content=[
-                CardInfo(text="Friend", category=CardCategory.Noun, recommendation_id=""),
-                CardInfo(text="Lunch", category=CardCategory.Noun, recommendation_id=""),
-                CardInfo(text="Delicious", category=CardCategory.Emotion, recommendation_id=""),
+                CardInfo(text="Friend", localized="친구", category=CardCategory.Topic, recommendation_id=""),
+                CardInfo(text="Lunch", localized="점심", category=CardCategory.Topic, recommendation_id=""),
+                CardInfo(text="Delicious", localized="맛있어요", category=CardCategory.Emotion, recommendation_id=""),
             ]),
         ],
         output=[
@@ -58,13 +59,12 @@ PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommend
     )
 ]
 
-# Variables for translator ===================================================
 
+# Variables for translator ===================================================
 
 
 # Generator ==========================================
 class ParentGuideRecommendationGenerator:
-
     __MAPPER_PARAMS__ = ParentGuideRecommendationParams(
         model=ChatGPTModel.GPT_4_0613,
         api_params={})
@@ -74,11 +74,10 @@ class ParentGuideRecommendationGenerator:
         api_params={})
 
     def __init__(self):
-
         str_output_converter, output_str_converter = generate_type_converter(ParentGuideRecommendationAPIResult, 'yaml')
 
         api = GPTChatCompletionAPI()
-        api.config().verbose = True
+        api.config().verbose = False
 
         self.__mapper: ChatCompletionFewShotMapper[
             Dialogue, ParentGuideRecommendationAPIResult, ParentGuideRecommendationParams] = (
@@ -105,12 +104,15 @@ Note that the "example" is the message of a parent to a kid. Don't use honorific
 
     async def generate(self, dialogue: Dialogue) -> ParentGuideRecommendationResult:
         t_start = perf_counter()
-        guide_list: ParentGuideRecommendationAPIResult = await self.__mapper.run(PARENT_GUIDE_EXAMPLES, dialogue, self.__MAPPER_PARAMS__)
+        guide_list: ParentGuideRecommendationAPIResult = await self.__mapper.run(PARENT_GUIDE_EXAMPLES, dialogue,
+                                                                                 self.__MAPPER_PARAMS__)
         print(guide_list)
         t_trans = perf_counter()
         print(f"Mapping took {t_trans - t_start} sec. Start translation...")
-        translated_guide_list: ParentGuideRecommendationAPIResult = await self.__translator.run(None, guide_list, self.__TRANSLATOR_PARAMS__)
+        translated_guide_list: ParentGuideRecommendationAPIResult = await self.__translator.run(None, guide_list,
+                                                                                                self.__TRANSLATOR_PARAMS__)
         t_end = perf_counter()
         print(f"Translation took {t_end - t_trans} sec.")
         print(f"Total latency: {t_end - t_start} sec.")
         return ParentGuideRecommendationResult(recommendations=translated_guide_list)
+
