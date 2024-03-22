@@ -50,7 +50,7 @@ actions: [] // Verb actions that can be matched with the suggested topics
 emotions: [] // Adjective or adverb Emotions that the child might want to express in the situation, including both positive and negative emotions and needs
 """f"""
 
-{"" if params.prev_recommendation is None else "- The child had previous recommendation: " + params.prev_recommendation.json(exclude=["id", "timestamp"]) + ". Try to generate phrases that are distinct to this previous recommendation."}
+{"" if params.prev_recommendation is None else "- The child had previous recommendation: " + params.prev_recommendation.json(exclude={"id", "timestamp"}) + ". Try to generate phrases that are distinct to this previous recommendation."}
 {"" if params.interim_cards is None else "- The child had selected the following cards: " + ', '.join([card.text for card in params.interim_cards]) + ". The generated recommendation should be relevant to these selections."}
 - Provide up to five options for each category.
 """
