@@ -469,6 +469,23 @@ files = [
 toml = ["tomli"]
 
 [[package]]
+name = "deepl"
+version = "1.17.0"
+description = "Python library for the DeepL API."
+optional = false
+python-versions = ">=3.6.2,<4"
+files = [
+    {file = "deepl-1.17.0-py3-none-any.whl", hash = "sha256:2fb51fa8d9c04a081123c1f17c5bc3dd9c4711acd59687a71c470a345ab9b70c"},
+    {file = "deepl-1.17.0.tar.gz", hash = "sha256:23004a8247d75d80206adec4e29012e5ff5434e998f72463e193fce704ade1cb"},
+]
+
+[package.dependencies]
+requests = ">=2,<3"
+
+[package.extras]
+keyring = ["keyring (>=23.4.1,<24.0.0)"]
+
+[[package]]
 name = "distro"
 version = "1.9.0"
 description = "Distro - an OS platform information API"
@@ -2853,4 +2870,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11.8,<3.12"
-content-hash = "d9cc31b33a3f11625efb1a321c28b1397fddbd9a889e71770a0526c35aaaa9dc"
+content-hash = "0d985668855ed9106d75412beb319b76728afe3547023d9db30670ad3e410197"

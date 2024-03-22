@@ -409,6 +409,23 @@ files = [
 ]
 
 [[package]]
+name = "deepl"
+version = "1.17.0"
+description = "Python library for the DeepL API."
+optional = false
+python-versions = ">=3.6.2,<4"
+files = [
+    {file = "deepl-1.17.0-py3-none-any.whl", hash = "sha256:2fb51fa8d9c04a081123c1f17c5bc3dd9c4711acd59687a71c470a345ab9b70c"},
+    {file = "deepl-1.17.0.tar.gz", hash = "sha256:23004a8247d75d80206adec4e29012e5ff5434e998f72463e193fce704ade1cb"},
+]
+
+[package.dependencies]
+requests = ">=2,<3"
+
+[package.extras]
+keyring = ["keyring (>=23.4.1,<24.0.0)"]
+
+[[package]]
 name = "distro"
 version = "1.9.0"
 description = "Distro - an OS platform information API"
@@ -1608,6 +1625,7 @@ develop = true
 [package.dependencies]
 aiofiles = "^23.2.1"
 chatlib = {git = "https://github.com/yghokim/chatlib.git", tag = "0.7.9"}
+deepl = "^1.17.0"
 pendulum = "^3.0.0"
 pydantic = "^2.6.4"
 questionary = "^2.0.1"

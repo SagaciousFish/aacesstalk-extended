@@ -1,5 +1,4 @@
 from time import perf_counter
-from typing import TypeAlias
 
 from chatlib.llm.integration.openai_api import GPTChatCompletionAPI, ChatGPTModel
 from chatlib.tool.converter import generate_type_converter
@@ -8,9 +7,10 @@ from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompl
 
 from py_core.system.model import ParentGuideRecommendationResult, Dialogue, ParentGuideElement, DialogueMessage, \
     DialogueRole, CardInfo, CardCategory
+from py_core.system.task.parent_guide_recommendation.common import ParentGuideRecommendationAPIResult
+from py_core.system.task.parent_guide_recommendation.translator import ParentGuideTranslator
 from py_core.system.task.stringify import convert_dialogue_to_str
 
-ParentGuideRecommendationAPIResult: TypeAlias = list[ParentGuideElement]
 
 
 class ParentGuideRecommendationParams(ChatCompletionFewShotMapperParams):
@@ -21,8 +21,8 @@ class ParentGuideRecommendationParams(ChatCompletionFewShotMapperParams):
 
 def generate_parent_guideline_prompt(input: Dialogue, params: ParentGuideRecommendationParams) -> str:
     prompt = """
-You are a helpful assistant who help a communication between children using Alternative Augmented Communication tools and their parents.
-Suppose that you are helping a communication with a minimally verbal autistic child and parents in Korean.
+You are a helpful assistant who help a communication between children and their parents.
+Suppose that you are helping a communication with a minimally verbal autistic child and parents.
 Given the last message of the children, suggest a list of sentences that can help the parents pick to respond or ask questions.
 
 Return an YAML list containing objects with the following attributes:
@@ -59,18 +59,10 @@ PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommend
     )
 ]
 
-
-# Variables for translator ===================================================
-
-
 # Generator ==========================================
 class ParentGuideRecommendationGenerator:
     __MAPPER_PARAMS__ = ParentGuideRecommendationParams(
         model=ChatGPTModel.GPT_4_0613,
-        api_params={})
-
-    __TRANSLATOR_PARAMS__ = ParentGuideRecommendationParams(
-        model=ChatGPTModel.GPT_3_5_0125,
         api_params={})
 
     def __init__(self):
@@ -80,27 +72,14 @@ class ParentGuideRecommendationGenerator:
         api.config().verbose = False
 
         self.__mapper: ChatCompletionFewShotMapper[
-            Dialogue, ParentGuideRecommendationAPIResult, ParentGuideRecommendationParams] = (
-            ChatCompletionFewShotMapper(api,
+            Dialogue, ParentGuideRecommendationAPIResult, ParentGuideRecommendationParams] = ChatCompletionFewShotMapper(api,
                                         instruction_generator=generate_parent_guideline_prompt,
                                         input_str_converter=convert_dialogue_to_str,
                                         output_str_converter=output_str_converter,
                                         str_output_converter=str_output_converter
-                                        ))
-
-        self.__translator: ChatCompletionFewShotMapper[
-            ParentGuideRecommendationAPIResult, ParentGuideRecommendationAPIResult, ParentGuideRecommendationParams] = (
-            ChatCompletionFewShotMapper(api,
-                                        instruction_generator="""
-The following YAML contains a list of example message and guide for a parent talking with their child with ASD.
-Translate the following YAML, particularly the "example" and "guide" into Korean.
-Note that the "example" is the message of a parent to a kid. Don't use honorific form of Korean.
-                                        """,
-                                        input_str_converter=output_str_converter,
-                                        output_str_converter=output_str_converter,
-                                        str_output_converter=str_output_converter
                                         )
-        )
+
+        self.__translator = ParentGuideTranslator()
 
     async def generate(self, dialogue: Dialogue) -> ParentGuideRecommendationResult:
         t_start = perf_counter()
@@ -109,8 +88,7 @@ Note that the "example" is the message of a parent to a kid. Don't use honorific
         print(guide_list)
         t_trans = perf_counter()
         print(f"Mapping took {t_trans - t_start} sec. Start translation...")
-        translated_guide_list: ParentGuideRecommendationAPIResult = await self.__translator.run(None, guide_list,
-                                                                                                self.__TRANSLATOR_PARAMS__)
+        translated_guide_list: ParentGuideRecommendationAPIResult = await self.__translator.translate(guide_list)
         t_end = perf_counter()
         print(f"Translation took {t_end - t_trans} sec.")
         print(f"Total latency: {t_end - t_start} sec.")
