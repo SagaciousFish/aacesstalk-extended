@@ -1,54 +1,46 @@
 import asyncio
 import re
+from os import path, getcwd
+from random import shuffle
+
+import yaml
 
 import deepl
 from chatlib.llm.integration import GPTChatCompletionAPI, ChatGPTModel
 from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompletionFewShotMapperParams, \
     MapperInputOutputPair
 from chatlib.utils.env_helper import get_env_variable
+from pydantic import BaseModel, TypeAdapter
 
 from py_core.system.model import ParentGuideElement
 from py_core.system.task.parent_guide_recommendation.common import ParentGuideRecommendationAPIResult
 
-_EXAMPLE_TRANSLATION_EXAMPLES = [
-    MapperInputOutputPair(
-        input=[
-            "Did you play with the teacher? What type of game was it?",
-            "Well done! Are you happy that you finished your game?",
-            "So you played a game with your teacher?"
-        ],
-        output=[
-            "선생님이랑 놀았어? 어떤 놀이를 했니?",
-            "잘했네! 놀이를 끝까지 마쳐서 행복했니?",
-            "선생님과 놀이를 했구나?"
-        ]
-    ),
-    MapperInputOutputPair(
-        input=[
-            "Did you enjoy your lunch? Can you tell me what you ate?",
-            "You had lunch with your friend? That sounds really nice! Can you tell me more about your friend?",
-            "You ate together with your friend? What did both of you have for lunch?"
-        ],
-        output=[
-            "점심 맛있게 먹었어? 뭐 먹었는데?",
-            "친구랑 점심 먹었어? 너무 좋았겠다! 그 친구에 대해 더 자세히 말해줄래?",
-            "친구랑 밥을 같이 먹었구나? 점심으로 뭘 먹었니?"
-        ]
-    ),
-    MapperInputOutputPair(
-        input=[
-            "That's great! What did you talk about with your teacher?",
-            "Which teacher did you talk to? Did it make you happy?",
-            "Did you enjoy talking with your teacher?"
-        ],
-        output=[
-            "잘했네! 선생님이랑 무슨 얘기했어?",
-            "어떤 선생님이랑 얘기했어? 그래서 기분 어땠니?",
-            "선생님이랑 이야기해서 좋았어?"
-        ]
-    )
-]
 
+class ExampleTranslationSample(BaseModel):
+    en: str
+    kr: str
+
+def convert_sample_to_pair(samples: list[ExampleTranslationSample]) -> MapperInputOutputPair[list[str], list[str]]:
+    return MapperInputOutputPair(
+        input=[s.en for s in samples],
+        output=[s.kr for s in samples]
+    )
+
+example_translation_sample_list_type_adapter = TypeAdapter(list[list[ExampleTranslationSample]])
+
+
+class ExampleTranslationSampleFactory:
+
+    def __init__(self, filepath: str):
+        self.__samples: list[list[ExampleTranslationSample]] = []
+
+        with open(filepath, 'r') as file:
+            self.__samples = example_translation_sample_list_type_adapter.validate_python(yaml.safe_load(file))
+
+    async def retrieve_samples(self, input_list: list[str], n: int = 5) -> list[MapperInputOutputPair[list[str], list[str]]]:
+        copied = [s for s in self.__samples]
+        shuffle(copied)
+        return [convert_sample_to_pair(s) for s in copied[:min(len(copied), n)]]
 
 def convert_messages_to_xml(messages: list[str], params) -> str:
     content = "\n".join([f"  <msg>{msg}</msg>" for msg in messages])
@@ -86,25 +78,33 @@ Don't use honorific form of Korean.""",
                                                                                                    str_output_converter=convert_xml_to_messages
                                                                                                    )
 
+        self.__example_translation_sample_factory = ExampleTranslationSampleFactory(path.join(getcwd(), "../../data/parent_example_translation_samples.yml"))
+
         # Initialize DeepL
         self.__deepl_translator = deepl.Translator(get_env_variable('DEEPL_API_KEY'))
 
+    async def __translate_examples(self, examples: list[str]) -> list[str]:
+        samples = await self.__example_translation_sample_factory.retrieve_samples(examples, n=3)
+
+        return await self.__example_translator.run(samples, examples, self.__TRANSLATOR_PARAMS__)
 
     async def translate(self, api_result: ParentGuideRecommendationAPIResult) -> ParentGuideRecommendationAPIResult:
         examples = [entry.example for entry in api_result]
         guides = [entry.guide for entry in api_result]
 
-        coroutine_translate_examples = self.__example_translator.run(_EXAMPLE_TRANSLATION_EXAMPLES, examples,
-                                                                  self.__TRANSLATOR_PARAMS__)
-        coroutine_translate_guides = asyncio.to_thread(self.__deepl_translator.translate_text,
-                                                             text=guides,
-                                                             source_lang="EN",
-                                                             target_lang="KO",
-                                                             context="The phrases are guides for parents' communication with children with Autism Spectrum Disorder."
-                                                             )
+        coroutine_translate_examples = self.__translate_examples(examples)
 
-        translated_examples, translated_guides = await asyncio.gather(coroutine_translate_examples, coroutine_translate_guides)
+        coroutine_translate_guides = asyncio.to_thread(self.__deepl_translator.translate_text,
+                                                       text=guides,
+                                                       source_lang="EN",
+                                                       target_lang="KO",
+                                                       context="The phrases are guides for parents' communication with children with Autism Spectrum Disorder."
+                                                       )
+
+        translated_examples, translated_guides = await asyncio.gather(coroutine_translate_examples,
+                                                                      coroutine_translate_guides)
 
         translated_guides = [text_result.text for text_result in translated_guides]
 
-        return [ParentGuideElement(example=example, guide=guide) for example, guide in zip(translated_examples, translated_guides)]
+        return [ParentGuideElement(example=example, guide=guide) for example, guide in
+                zip(translated_examples, translated_guides)]
