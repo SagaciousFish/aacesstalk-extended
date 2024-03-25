@@ -36,7 +36,7 @@ class CardTranslator:
                                                               str_output_converter=str_output_converter
                                                               )
 
-        self.__dictionary = LookupTranslator(path.join(getcwd(), "../../database/dictionary.csv"), verbose=True)
+        self.__dictionary = LookupTranslator(path.join(getcwd(), "../../data/card_translation_dictionary.csv"), verbose=True)
         self.__dictionary.load_file()
 
     async def translate(self, card_set: ChildCardRecommendationAPIResult) -> list[str]:
