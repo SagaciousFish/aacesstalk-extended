@@ -31,7 +31,7 @@ class CardCategory(StrEnum):
 class CardInfo(CardIdentity):
     model_config = ConfigDict(frozen=True)
 
-    text: str
+    text: str = Field()
     localized: str
     category: CardCategory
 

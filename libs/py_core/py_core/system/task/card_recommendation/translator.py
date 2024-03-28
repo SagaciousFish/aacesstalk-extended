@@ -1,10 +1,11 @@
-from os import path, getcwd
 from chatlib.llm.integration import GPTChatCompletionAPI, ChatGPTModel
 from chatlib.tool.converter import generate_type_converter
 from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompletionFewShotMapperParams
 
+from py_core.config import AACessTalkConfig
 from py_core.utils.lookup_translator import LookupTranslator
 from .common import ChildCardRecommendationAPIResult
+import spacy
 
 
 class ChildCardTranslationParams(ChatCompletionFewShotMapperParams):
@@ -28,6 +29,8 @@ class CardTranslator:
         api = GPTChatCompletionAPI()
         api.config().verbose = False
 
+        self.__nlp = spacy.load("en_core_web_sm")
+
         self.__mapper = ChatCompletionFewShotMapper[
             list[str], list[str], ChildCardTranslationParams](api,
                                                               _prompt,
@@ -36,13 +39,17 @@ class CardTranslator:
                                                               str_output_converter=str_output_converter
                                                               )
 
-        self.__dictionary = LookupTranslator(path.join(getcwd(), "../../data/card_translation_dictionary.csv"), verbose=True)
+        self.__dictionary = LookupTranslator(AACessTalkConfig.card_translation_dictionary_path, verbose=True)
         self.__dictionary.load_file()
 
+    def __transform_original_word(self, word: str) -> str:
+        doc = self.__nlp(word)
+        return ' '.join([token.text.lower() if token.pos_ != "PROPN" else token.text for token in doc])
+
     async def translate(self, card_set: ChildCardRecommendationAPIResult) -> list[str]:
-        word_list = ([(word, "topic") for word in card_set.topics] +
-                     [(word, "action") for word in card_set.actions] +
-                     [(word, "emotion") for word in card_set.emotions])
+        word_list = ([(self.__transform_original_word(word), "topic") for word in card_set.topics] +
+                     [(self.__transform_original_word(word), "action") for word in card_set.actions] +
+                     [(self.__transform_original_word(word), "emotion") for word in card_set.emotions])
 
         # Lookup dictionary
         localized_words: list[str|None] = [None] * len(word_list)

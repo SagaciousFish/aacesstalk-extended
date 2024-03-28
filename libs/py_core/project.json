@@ -67,6 +67,13 @@
         "command": "poetry run python test_cli.py",
         "cwd": "libs/py_core"
       }
+    },
+    "inspect_card_translation": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run python py_core/processing_tools/inspect_card_translation.py",
+        "cwd": "libs/py_core"
+      }
     }
   },
   "tags": []

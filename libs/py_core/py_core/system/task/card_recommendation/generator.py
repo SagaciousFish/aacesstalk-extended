@@ -88,6 +88,6 @@ emotions: [] // Adjective or adverb Emotions that the child might want to expres
                                                                                recommendation.emotions]
 
         return ChildCardRecommendationResult(id=rec_id, cards=[
-            CardInfo(text=topic, localized=translated_keywords[i], category=category,
-                     recommendation_id=rec_id) for i, (topic, category) in
+            CardInfo(text=word, localized=translated_keywords[i], category=category,
+                     recommendation_id=rec_id) for i, (word, category) in
             enumerate(keyword_category_list)])

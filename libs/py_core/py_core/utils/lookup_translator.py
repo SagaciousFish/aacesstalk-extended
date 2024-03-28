@@ -83,7 +83,13 @@ class LookupTranslator(AbstractContextManager):
 
                 writer.writerow(["category", "word", "localized"])
 
-                for (word, category), localized in self.__dictionary.items():
+                items = [(category, word, localized) for (word, category), localized in self.__dictionary.items()]
+
+                items.sort(key=lambda elm: elm[2])
+                items.sort(key=lambda elm: elm[1])
+                items.sort(key=lambda elm: elm[0])
+
+                for category, word, localized in items:
                     writer.writerow([category, word, localized])
 
     @property
