@@ -1,6 +1,10 @@
 category,word,localized
 action,avoid,피해요
+action,begin,시작해요
+action,built,지어요
+action,chat,잡담해요
 action,color,색칠해요
+action,consider,고려해요
 action,cooked,요리했어요
 action,create,만들어요
 action,created,만들었어요
@@ -16,6 +20,7 @@ action,eat,먹어요
 action,eating,먹어요
 action,enjoy,즐겨요
 action,enjoyed,즐겼어요
+action,explain,설명해요
 action,feel,느껴요
 action,finish,끝내요
 action,go,가요
@@ -35,15 +40,17 @@ action,like,좋아해요
 action,liked,좋았어요
 action,listen,들어요
 action,listened,들었어요
+action,look,보아요
 action,make,만들어요
 action,meet,만나요
 action,met,만났어요
+action,need,필요해요
 action,paint,그려요
 action,participate,참여해요
 action,participated,참여했어요
 action,play,놀아요
 action,played,놀았어요
-action,played with,놀았어요
+action,played with,같이 놀았어요
 action,playing,놀아요
 action,practice,연습해요
 action,read,읽어요
@@ -56,6 +63,7 @@ action,sang,노래했어요
 action,saw,봤어요
 action,see,보아요
 action,share,공유해요
+action,shared,나눴어요
 action,show,보여줘요
 action,sit,앉아요
 action,sleep,잠자요
@@ -63,6 +71,7 @@ action,slide,미끄러져요
 action,solve,해결해요
 action,speak,말해요
 action,spent,보냈어요
+action,start,시작해요
 action,struggle,고생해요
 action,struggled,고생했어요
 action,studied,공부했어요
@@ -72,6 +81,7 @@ action,talk,이야기해요
 action,talked,말했어요
 action,talked to,이야기했어요
 action,taste,맛봐요
+action,threw,던졌어요
 action,throw,던져요
 action,try,시도해요
 action,understand,이해해요
@@ -89,9 +99,11 @@ emotion,anticipatory,기대해요
 emotion,anxious,불안해요
 emotion,bored,지루해요
 emotion,boring,지루해요
+emotion,brave,용감해요
 emotion,busy,바빠요
 emotion,calm,차분해요
 emotion,challenging,도전적이에요
+emotion,comfortable,편해요
 emotion,confused,헷갈려요
 emotion,content,만족해요
 emotion,curious,궁금해요
@@ -104,9 +116,11 @@ emotion,enjoy,즐거워요
 emotion,enjoyed,즐거워요
 emotion,excited,흥분해요
 emotion,frustrated,좌절해요
+emotion,frustrating,짜증나요
 emotion,full,배불러요
 emotion,fun,재미있어요
 emotion,funny,재미있어요
+emotion,grateful,감사해요
 emotion,happy,행복해요
 emotion,hard,어려워요
 emotion,hungry,배고파요
@@ -116,9 +130,13 @@ emotion,joyful,기뻐요
 emotion,lonely,외로워요
 emotion,miss,그리워요
 emotion,nervous,긴장해요
+emotion,optimistic,낙천적이에요
 emotion,proud,자랑스러워요
 emotion,puzzled,헷갈려요
+emotion,ready,준비됐어요
 emotion,relaxed,편안해요
+emotion,relief,안심해요
+emotion,relieved,편해요
 emotion,sad,슬퍼요
 emotion,satisfied,만족해요
 emotion,scared,무서워요
@@ -137,6 +155,7 @@ topic,art class,미술 수업
 topic,arts,예술
 topic,ball,공
 topic,bike,자전거
+topic,blocks,블록
 topic,book,책
 topic,break,휴식
 topic,cartoon,만화
@@ -150,15 +169,21 @@ topic,colors,색깔
 topic,conversation,대화
 topic,cutting,잘라내기
 topic,day,낮
+topic,do,하기
+topic,doll,인형
 topic,draw,그림
 topic,drawing,그리기
 topic,eat,식사
+topic,error,오류
+topic,father,아빠
+topic,first, 첫 번째
 topic,football,축구
 topic,friend,친구
 topic,friends,친구
 topic,game,놀이
 topic,games,게임
 topic,gluing,붙이기
+topic,help,도움
 topic,hide and seek,숨바꼭질
 topic,homework,숙제
 topic,learn,배우기
@@ -168,7 +193,9 @@ topic,lessons,수업
 topic,lunch,점심
 topic,math,수학
 topic,meal,식사
+topic,mom,엄마
 topic,music,음악
+topic,need,필요
 topic,outside,밖
 topic,painting,그림 그리기
 topic,paper,종이
@@ -178,9 +205,12 @@ topic,picture,사진
 topic,play,놀이
 topic,playground,놀이터
 topic,playtime,놀이 시간
+topic,problem,문제
+topic,puzzles,퍼즐
 topic,read,읽기
 topic,reading,읽기
 topic,recess,외출
+topic,room,방
 topic,run,달리기
 topic,sandbox,모래사장
 topic,sandwich,샌드위치
@@ -193,6 +223,7 @@ topic,slide,미끄럼틀
 topic,snack,과자
 topic,snacks,과자
 topic,soccer,축구
+topic,solution,해결
 topic,song,노래
 topic,sports,스포츠
 topic,story,이야기
@@ -201,6 +232,7 @@ topic,subject,과목
 topic,swing,그네
 topic,talk,이야기
 topic,teacher,선생님
+topic,together,함께
 topic,toy,장난감
 topic,toys,장난감
 topic,writing,글쓰기
