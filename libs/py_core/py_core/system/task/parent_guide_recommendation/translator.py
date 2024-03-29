@@ -5,7 +5,6 @@ from random import shuffle
 
 import yaml
 
-import deepl
 from chatlib.llm.integration import GPTChatCompletionAPI, ChatGPTModel
 from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompletionFewShotMapperParams, \
     MapperInputOutputPair
@@ -14,6 +13,7 @@ from pydantic import BaseModel, TypeAdapter
 
 from py_core.system.model import ParentGuideElement
 from py_core.system.task.parent_guide_recommendation.common import ParentGuideRecommendationAPIResult
+from py_core.utils.deepl_translator import DeepLTranslator
 
 
 class ExampleTranslationSample(BaseModel):
@@ -81,7 +81,7 @@ Don't use honorific form of Korean.""",
         self.__example_translation_sample_factory = ExampleTranslationSampleFactory(path.join(getcwd(), "../../data/parent_example_translation_samples.yml"))
 
         # Initialize DeepL
-        self.__deepl_translator = deepl.Translator(get_env_variable('DEEPL_API_KEY'))
+        self.__deepl_translator = DeepLTranslator()
 
     async def __translate_examples(self, examples: list[str]) -> list[str]:
         samples = await self.__example_translation_sample_factory.retrieve_samples(examples, n=3)
@@ -94,7 +94,7 @@ Don't use honorific form of Korean.""",
 
         coroutine_translate_examples = self.__translate_examples(examples)
 
-        coroutine_translate_guides = asyncio.to_thread(self.__deepl_translator.translate_text,
+        coroutine_translate_guides = self.__deepl_translator.translate(
                                                        text=guides,
                                                        source_lang="EN",
                                                        target_lang="KO",
@@ -103,8 +103,6 @@ Don't use honorific form of Korean.""",
 
         translated_examples, translated_guides = await asyncio.gather(coroutine_translate_examples,
                                                                       coroutine_translate_guides)
-
-        translated_guides = [text_result.text for text_result in translated_guides]
 
         return [ParentGuideElement(example=example, guide=guide) for example, guide in
                 zip(translated_examples, translated_guides)]

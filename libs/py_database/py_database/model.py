@@ -67,6 +67,7 @@ class DialogueMessage(SQLModel, IdTimestampMixin, table=True):
     role: DialogueRole
     content_type: DialogueMessageContentType
     content_str: str
+    content_str_en: Optional[str] = Field(default=None)
     timestamp: int = Field(default_factory=get_timestamp, index=True)
     recommendation_id: Optional[str] = Field(default=None)
 
@@ -77,6 +78,7 @@ class DialogueMessage(SQLModel, IdTimestampMixin, table=True):
             role=self.role,
             content=self.content_str if self.content_type == DialogueMessageContentType.text else CardInfoListTypeAdapter.validate_json(
                 self.content_str),
+            content_en=self.content_str_en,
             recommendation_id=self.recommendation_id
         )
 
@@ -87,6 +89,7 @@ class DialogueMessage(SQLModel, IdTimestampMixin, table=True):
             session_id=session_id,
             content_str=message.content if isinstance(message.content, str) else CardInfoListTypeAdapter.dump_json(
                 message.content),
+            content_str_en=message.content_en,
             content_type=DialogueMessageContentType.text if isinstance(message.content, str) else DialogueMessageContentType.json
         )
 

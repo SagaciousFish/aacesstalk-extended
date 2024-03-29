@@ -5,9 +5,11 @@ from chatlib.llm.integration.openai_api import GPTChatCompletionAPI
 from py_core import ModeratorSession
 from py_core.cli import test_session_loop
 from py_core.system.storage.json import SessionJsonStorage
+from py_core.utils.deepl_translator import DeepLTranslator
 
 GlobalConfig.is_cli_mode = True
 GPTChatCompletionAPI.assert_authorize()
+DeepLTranslator.assert_authorize()
 
 session = ModeratorSession(SessionJsonStorage())
 

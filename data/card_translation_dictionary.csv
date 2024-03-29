@@ -1,9 +1,11 @@
 category,word,localized
 action,avoid,피해요
 action,color,색칠해요
+action,cooked,요리했어요
 action,create,만들어요
 action,created,만들었어요
 action,did,했어요
+action,discuss,이야기를 나누어요
 action,dislike,싫어요
 action,do,해요
 action,done,끝났어요
@@ -59,6 +61,7 @@ action,sit,앉아요
 action,sleep,잠자요
 action,slide,미끄러져요
 action,solve,해결해요
+action,speak,말해요
 action,spent,보냈어요
 action,struggle,고생해요
 action,struggled,고생했어요
@@ -68,7 +71,9 @@ action,swing,그네타요
 action,talk,이야기해요
 action,talked,말했어요
 action,talked to,이야기했어요
+action,taste,맛봐요
 action,throw,던져요
+action,try,시도해요
 action,understand,이해해요
 action,use,사용해요
 action,visit,방문해요
@@ -80,22 +85,26 @@ action,work,일해요
 action,write,써요
 emotion,afraid,무서워요
 emotion,angry,화나요
-emotion,anticipatory,예감이 들어요
+emotion,anticipatory,기대해요
 emotion,anxious,불안해요
 emotion,bored,지루해요
 emotion,boring,지루해요
 emotion,busy,바빠요
+emotion,calm,차분해요
 emotion,challenging,도전적이에요
 emotion,confused,헷갈려요
+emotion,content,만족해요
 emotion,curious,궁금해요
 emotion,difficult,어려워요
 emotion,dislike,싫어해요
 emotion,eager,갈망해요
 emotion,easy,쉬워요
 emotion,energetic,활발해요
+emotion,enjoy,즐거워요
 emotion,enjoyed,즐거워요
 emotion,excited,흥분해요
 emotion,frustrated,좌절해요
+emotion,full,배불러요
 emotion,fun,재미있어요
 emotion,funny,재미있어요
 emotion,happy,행복해요
@@ -105,6 +114,7 @@ emotion,interested,관심 있어요
 emotion,interesting,재미있어요
 emotion,joyful,기뻐요
 emotion,lonely,외로워요
+emotion,miss,그리워요
 emotion,nervous,긴장해요
 emotion,proud,자랑스러워요
 emotion,puzzled,헷갈려요
@@ -132,8 +142,9 @@ topic,break,휴식
 topic,cartoon,만화
 topic,class,교실
 topic,classes,수업
-topic,classmate,같은 반 친구
+topic,classmate,친구
 topic,classmates,동급생
+topic,classroom,교실
 topic,color,색깔
 topic,colors,색깔
 topic,conversation,대화
@@ -156,6 +167,7 @@ topic,lesson,수업
 topic,lessons,수업
 topic,lunch,점심
 topic,math,수학
+topic,meal,식사
 topic,music,음악
 topic,outside,밖
 topic,painting,그림 그리기
@@ -176,12 +188,14 @@ topic,school,학교
 topic,science,과학
 topic,sculpting,조각하기
 topic,share,나누기
+topic,sing,노래
 topic,slide,미끄럼틀
 topic,snack,과자
 topic,snacks,과자
 topic,soccer,축구
 topic,song,노래
 topic,sports,스포츠
+topic,story,이야기
 topic,study,공부
 topic,subject,과목
 topic,swing,그네

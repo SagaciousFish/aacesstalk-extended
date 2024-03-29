@@ -75,6 +75,7 @@ class DialogueMessage(ModelWithIdAndTimestamp):
 
     role: DialogueRole
     content: str | list[CardInfo]
+    content_en: str | None = None
     recommendation_id: str | None = None
 
 

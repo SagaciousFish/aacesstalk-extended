@@ -1,4 +1,9 @@
 import asyncio
+from asyncio import to_thread
+
+import deepl
+from deepl import TextResult
+from chatlib.utils.env_helper import get_env_variable
 
 from py_core.system.model import ChildCardRecommendationResult, Dialogue, DialogueMessage, DialogueRole, CardInfo, \
     CardIdentity, \
@@ -6,6 +11,7 @@ from py_core.system.model import ChildCardRecommendationResult, Dialogue, Dialog
 from py_core.system.storage import SessionStorage
 from py_core.system.task import ChildCardRecommendationGenerator
 from py_core.system.task.parent_guide_recommendation import ParentGuideRecommendationGenerator
+from py_core.utils.deepl_translator import DeepLTranslator
 
 
 def speaker(role: DialogueRole):
@@ -34,6 +40,8 @@ class ModeratorSession:
 
         self.__next_speaker: DialogueRole = DialogueRole.Parent
 
+        self.__deepl_translator = DeepLTranslator()
+
     @property
     def next_speaker(self) -> DialogueRole:
         return self.__next_speaker
@@ -43,8 +51,16 @@ class ModeratorSession:
                                     current_parent_guide: ParentGuideRecommendationResult | None = None) -> ChildCardRecommendationResult:
 
         try:
+            message_eng = await self.__deepl_translator.translate(
+                                          text=parent_message,
+                                          source_lang="KO", target_lang="EN-US",
+                                          context="The message is from a parent to their child."
+                                          )
+
+
             new_message = DialogueMessage(role=DialogueRole.Parent,
                                           content=parent_message,
+                                          content_en=message_eng,
                                           recommendation_id=current_parent_guide.id if current_parent_guide is not None else None)
 
             await self.__storage.add_dialogue_message(new_message)

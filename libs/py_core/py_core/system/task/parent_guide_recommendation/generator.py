@@ -39,7 +39,7 @@ Please provide up to three options.
 PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommendationAPIResult]] = [
     MapperInputOutputPair(
         input=[
-            DialogueMessage(role=DialogueRole.Parent, content="오늘 학교에서 뭐 했어?"),
+            DialogueMessage(role=DialogueRole.Parent, content="What did you do at school?"),
             DialogueMessage(role=DialogueRole.Child, content=[
                 CardInfo(text="Friend", localized="친구", category=CardCategory.Topic, recommendation_id=""),
                 CardInfo(text="Lunch", localized="점심", category=CardCategory.Topic, recommendation_id=""),

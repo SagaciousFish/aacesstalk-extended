@@ -1,5 +1,5 @@
 import questionary
-from chatlib.llm.chat_completion_api import make_non_empty_string_validator
+from chatlib.utils.validator import make_non_empty_string_validator
 
 from py_core import ModeratorSession
 from py_core.system.model import ChildCardRecommendationResult, ParentGuideRecommendationResult, CardInfo, DialogueRole

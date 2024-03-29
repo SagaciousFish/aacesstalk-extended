@@ -399,7 +399,7 @@ files = [
 
 [[package]]
 name = "chatlib"
-version = "0.7.9"
+version = "0.7.11"
 description = "A generalizable Python Chatbot Library"
 optional = false
 python-versions = "^3.10"
@@ -428,8 +428,8 @@ yaspin = "^2.3.0"
 [package.source]
 type = "git"
 url = "https://github.com/yghokim/chatlib.git"
-reference = "0.7.9"
-resolved_reference = "5614922da2faf6baddeb47a507105519272483e2"
+reference = "0.7.11"
+resolved_reference = "1f3a790c80d4b498ddf3ef2b6c2722919b38e949"
 
 [[package]]
 name = "click"
@@ -3453,4 +3453,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11.8,<3.12"
-content-hash = "7f81e4af907712dddff2e407fe479077b3a7a91e443a43be1e84bbd9d817b655"
+content-hash = "b00e0a0fb77ee6ae0869a650fc21615742851c990f01e21b28f216c5a19f95fa"
