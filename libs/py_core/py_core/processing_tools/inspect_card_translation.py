@@ -11,11 +11,7 @@ from chatlib.llm.integration import GPTChatCompletionAPI, ChatGPTModel
 from pydantic import BaseModel
 
 from py_core.config import AACessTalkConfig
-
-class TranslationRow(BaseModel):
-    category: str
-    word: str
-    localized: str
+from py_core.utils.translation_types import DictionaryRow
 
 
 class TranslationInspectionResult(BaseModel):
@@ -24,7 +20,7 @@ class TranslationInspectionResult(BaseModel):
     correction: str | None = None
 
 
-def convert_translation_rows_to_str(rows: list[TranslationRow], params) -> str:
+def convert_translation_rows_to_str(rows: list[DictionaryRow], params) -> str:
     return "\n".join([f"{row.category}, {row.word}, {row.localized}" for row in rows])
 
 
@@ -37,7 +33,7 @@ class CardTranslationFixer:
         self.__filepath = filepath
 
         self.__mapper = ChatCompletionFewShotMapper[
-            list[TranslationRow], list[TranslationInspectionResult], ChatCompletionFewShotMapperParams](
+            list[DictionaryRow], list[TranslationInspectionResult], ChatCompletionFewShotMapperParams](
             api,
             """
 You are a helpful assistant that helps with inspecting English-Korean translation of keywords.
@@ -82,45 +78,70 @@ Output:
             str_output_converter=convert_str_to_inspections
         )
 
-    def __load_translation_list(self) -> list[TranslationRow]:
+    def __load_translation_list(self) -> list[DictionaryRow]:
         with open(self.__filepath, mode='r', encoding='utf8') as csvfile:
             reader = csv.DictReader(csvfile)
 
             next(reader, None)
 
-            rows: list[TranslationRow] = []
+            rows: list[DictionaryRow] = []
             for row in reader:
-                rows.append(TranslationRow.model_validate(row))
+                rows.append(DictionaryRow.model_validate(row))
 
             return rows
 
     async def inspect_all(self, check_mode = False):
         translations = self.__load_translation_list()
 
-        inspections = await self.inspect(translations)
+        translations_already_inspected = [trans for trans in translations if trans.inspected is True]
+        translations_to_inspect = [trans for trans in translations if trans.inspected is False]
 
-        failed_inspections = [(i, inspection) for i, inspection in enumerate(inspections) if inspection.passed is False]
-        print(f"{len(failed_inspections)} translations failed to pass the inspection. Corrections suggested:")
+        if len(translations_to_inspect) > 0:
+            inspections = await self.inspect(translations_to_inspect)
 
-        correction_applied = False
-        for fi in failed_inspections:
-            print(
-                f"{translations[fi[0]].localized} ({translations[fi[0]].word}, {translations[fi[0]].category}) => {fi[1].correction} ({fi[1].reason})")
-            if check_mode:
-                confirmed = await questionary.confirm("Apply this suggestion?").ask_async()
-                if confirmed:
-                    translations[fi[0]].localized = fi[1].correction
-                    correction_applied = True
+            successful_inspections = [(i, inspection) for i, inspection in enumerate(inspections) if inspection.passed is True]
+            for i, ins in successful_inspections:
+                d = translations_to_inspect[i].model_dump()
+                d["inspected"] = True
+                translations_to_inspect[i] = DictionaryRow(**d)
 
-        if correction_applied:
+            failed_inspections = [(i, inspection) for i, inspection in enumerate(inspections) if inspection.passed is False]
+            print(f"{len(failed_inspections)} translations failed to pass the inspection. Corrections suggested:")
+
+            correction_applied = False
+            for fi in failed_inspections:
+                print(
+                    f"{translations_to_inspect[fi[0]].localized} ({translations_to_inspect[fi[0]].word}, {translations_to_inspect[fi[0]].category}) => {fi[1].correction} ({fi[1].reason})")
+                if check_mode:
+                    confirmed = await questionary.confirm("Apply this suggestion?").ask_async()
+                    if confirmed:
+                        d = translations_to_inspect[fi[0]].model_dump()
+                        d["localized"] = fi[1].correction
+                        d["inspected"] = True
+                        translations_to_inspect[fi[0]] = DictionaryRow(**d)
+                        correction_applied = True
+                    else:
+                        d = translations_to_inspect[fi[0]].model_dump()
+                        d["inspected"] = True
+                        translations_to_inspect[fi[0]] = DictionaryRow(**d)
+
             with open(self.__filepath, mode='w', encoding='utf8') as csvfile:
-                writer = csv.writer(csvfile)
-                writer.writerow(["category", "word", "localized"])
-                writer.writerows([
-                    [t.category, t.word, t.localized] for t in translations
-                ])
+                writer = csv.DictWriter(csvfile, fieldnames=DictionaryRow.field_names())
+                writer.writeheader()
+                translations = translations_already_inspected + translations_to_inspect
+
+                translations.sort(key=lambda t: t.localized)
+                translations.sort(key=lambda t: t.word)
+                translations.sort(key=lambda t: t.category)
+
+                for t in translations:
+                    writer.writerow(t.model_dump())
+
             print("Reflected inspection result to file.")
-    async def inspect(self, rows: list[TranslationRow], chunk_size=10) -> list[TranslationInspectionResult]:
+        else:
+            print("No translations to be inspected.")
+
+    async def inspect(self, rows: list[DictionaryRow], chunk_size=10) -> list[TranslationInspectionResult]:
         if len(rows) > chunk_size:
             print(f"Splitting {len(rows)} rows into {math.ceil(len(rows) / chunk_size)} chunks.")
             inspections = []
@@ -139,6 +160,7 @@ Output:
 
 
 if __name__ == "__main__":
+
     inspector = CardTranslationFixer(GPTChatCompletionAPI(), AACessTalkConfig.card_translation_dictionary_path)
 
     asyncio.run(inspector.inspect_all(check_mode=True))

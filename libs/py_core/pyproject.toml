@@ -31,6 +31,7 @@ aiofiles = "^23.2.1"
 deepl = "^1.17.0"
 spacy = "^3.6.1"
 en-core-web-sm = {url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.6.0/en_core_web_sm-3.6.0.tar.gz#egg=en_core_web_sm"}
+chromadb = "^0.4.24"
 
 
 [tool.poetry.group.dev.dependencies]
