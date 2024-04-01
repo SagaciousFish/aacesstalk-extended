@@ -1,7 +1,9 @@
 id,category,word,localized,inspected
 C981hmNoSM,action,ate,먹었어요,True
 QYBk1Wh9mw,action,built,지었어요,True
+Bir4yNufTz,action,buy,사요,True
 9ApkXNWhGk,action,chat,잡담해요,True
+Z6-RUtuXwp,action,choose,선택해요,True
 f7x6vYZGZH,action,color,색칠해요,True
 ZpDnU8cjbb,action,consider,고려해요,True
 RnOviC3z8h,action,cooked,요리했어요,True
@@ -156,6 +158,7 @@ hDt7NLgf2u,emotion,simple,간단해요,True
 kpnbdnPwqE,emotion,tired,피곤해요,True
 OCaMDYq79-,emotion,tiring,피곤해요,True
 iJwNCmPtYB,emotion,uncomfortable,불편해요,True
+wEV-vqC_EI,emotion,unsure,불확실해요,True
 gJHJnTTPNT,emotion,upset,상처받았어요,True
 dcPChAHMPb,emotion,worried,걱정해요,True
 ij7TQkFJ_B,topic,English,영어,True
@@ -172,6 +175,7 @@ tEDMBJYVR8,topic,blocks,블록,True
 rwvFdtPeH0,topic,book,책,True
 6dkvootrxa,topic,break,휴식,True
 abPVau7epK,topic,cartoon,만화,True
+QZg5_V3fHz,topic,cinema,영화관,True
 vN9zzjXskH,topic,class,교실,True
 lanXgQ4kc9,topic,classes,수업,True
 uK0UmLUNHi,topic,classmate,친구,True
@@ -180,6 +184,7 @@ L5n_Q6xRVF,topic,classroom,교실,True
 63BIuiTJAL,topic,color,색깔,True
 ZMzrVSxPQy,topic,colors,색깔,True
 ZqQmq0jgXj,topic,conversation,대화,True
+zqVEMisZNk,topic,cooking,요리,True
 JHO4VaHEpx,topic,cutting,잘라내기,True
 sNFn4U2eF5,topic,dance,춤,True
 -p7DQL_cJH,topic,day,하루,True
@@ -210,6 +215,7 @@ KqMbwnuQTE,topic,lessons,수업,True
 Vw7mR4BXYQ,topic,math,수학,True
 vMmv5GwdN7,topic,meal,식사,True
 92wk3FeCUg,topic,mom,엄마,True
+0IK-m4gxPa,topic,movie,영화,True
 AMFNW_Hop-,topic,music,음악,True
 ltFnoOCvzw,topic,need,필요,True
 rpOcgCG1CB,topic,outside,밖,True
@@ -223,6 +229,7 @@ KhOKsfuOAb,topic,play,놀이,True
 4o8ZrJyql0,topic,playground,놀이터,True
 SgrJ3-soFj,topic,playing,놀이,True
 aqa0CuQBT2,topic,playtime,놀이 시간,True
+QYYzlF7QT2,topic,popcorn,팝콘,True
 wDOPUCmm8o,topic,problem,문제,True
 SeRymPAZgl,topic,project,프로젝트,True
 J_fpsBQvUG,topic,puzzles,퍼즐,True
@@ -237,6 +244,7 @@ l6a_W_vdiO,topic,sandwich,샌드위치,True
 AIVv8SZhiV,topic,science,과학,True
 MKImtd3Ojq,topic,sculpting,조각하기,True
 JB4_-guove,topic,share,나누기,True
+q_hYE0lLKz,topic,shopping,쇼핑,True
 Msw_kz72pO,topic,sing,노래,True
 7Dv5wonLcC,topic,slide,미끄럼틀,True
 m1j5PkKgIo,topic,snack,과자,True
@@ -251,7 +259,10 @@ Oct0H6k8G7,topic,subject,과목,True
 3L58S0C71G,topic,swing,그네,True
 rjRieEWi9P,topic,talk,이야기,True
 53eLBLSTuk,topic,teacher,선생님,True
+8T9a-E4F7B,topic,theater,극장,True
+fwevuioC5m,topic,tickets,티켓,True
 UhU29qrEDh,topic,together,함께,True
 05joagL419,topic,toy,장난감,True
 pt-tfZEEK4,topic,toys,장난감,True
+JTDj3vAlSA,topic,watch,관람,True
 VekDlhcSYO,topic,writing,글쓰기,True
