@@ -1,16 +1,16 @@
 from itertools import groupby
 
-import jinja2
-from chatlib.utils.jinja_utils import convert_to_jinja_template
+import spacy
 from chatlib.llm.integration import GPTChatCompletionAPI, ChatGPTModel
 from chatlib.tool.converter import generate_type_converter
 from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompletionFewShotMapperParams
+from chatlib.utils.jinja_utils import convert_to_jinja_template
 
 from py_core.config import AACessTalkConfig
+from py_core.system.shared import vector_db
 from py_core.utils.lookup_translator import LookupTranslator
 from py_core.utils.translation_types import DictionaryRow
 from .common import ChildCardRecommendationAPIResult
-import spacy
 
 
 class ChildCardTranslationParams(ChatCompletionFewShotMapperParams):
@@ -36,7 +36,7 @@ template = convert_to_jinja_template("""
 {%-if similar_cards is not none and similar_cards | length > 0 %}
 <Examples>
 {%-for card in similar_cards %}
-{{stringify(card.word, card.category)}} => {{card.localized}}
+{{stringify(card.english, card.category)}} => {{card.localized}}
 {%-endfor-%}
 {%-endif-%}
 """)
@@ -65,7 +65,9 @@ class CardTranslator:
                                                               str_output_converter=str_output_converter
                                                               )
 
-        self.__dictionary = LookupTranslator("cards", AACessTalkConfig.card_translation_dictionary_path, verbose=True)
+        self.__dictionary = LookupTranslator("cards", AACessTalkConfig.card_translation_dictionary_path,
+                                             vector_db=vector_db,
+                                             verbose=True)
 
     def __transform_original_word(self, word: str) -> str:
         doc = self.__nlp(word)

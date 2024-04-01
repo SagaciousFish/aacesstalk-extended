@@ -154,6 +154,7 @@ a1ieA5cywS,emotion,relieved,편해요,True
 E3fWcTGiDH,emotion,sad,슬퍼요,True
 1j1HfU9C92,emotion,satisfied,만족해요,True
 2KTmoEDabw,emotion,scared,무서워요,True
+VNwYfr00ga,emotion,shy,부끄러워요,True
 hDt7NLgf2u,emotion,simple,간단해요,True
 2X0JOPBeuS,emotion,surprised,놀랐어요,True
 kpnbdnPwqE,emotion,tired,피곤해요,True
@@ -175,6 +176,7 @@ uiMaluvFvG,topic,bike,자전거,True
 tEDMBJYVR8,topic,blocks,블록,True
 rwvFdtPeH0,topic,book,책,True
 6dkvootrxa,topic,break,휴식,True
+SPH_0gDzXd,topic,break time,쉬는 시간,True
 abPVau7epK,topic,cartoon,만화,True
 QZg5_V3fHz,topic,cinema,영화관,True
 vN9zzjXskH,topic,class,교실,True
@@ -186,6 +188,7 @@ L5n_Q6xRVF,topic,classroom,교실,True
 ZMzrVSxPQy,topic,colors,색깔,True
 ZqQmq0jgXj,topic,conversation,대화,True
 zqVEMisZNk,topic,cooking,요리,True
+Nffft4shNo,topic,crafts,공예,True
 JHO4VaHEpx,topic,cutting,잘라내기,True
 sNFn4U2eF5,topic,dance,춤,True
 -p7DQL_cJH,topic,day,하루,True
@@ -199,7 +202,7 @@ P1ocXtrEhf,topic,error,오류,True
 OqptytpFU2,topic,experiment,실험,True
 7viZZuVxIr,topic,father,아빠,True
 ZKBCxMyeFz,topic,first, 첫 번째,True
-XYd7spA6_e,topic,food,음식, True
+XYd7spA6_e,topic,food,음식,True
 LOPwB6gP7U,topic,football,축구,True
 bXfu9JuvvL,topic,friend,친구,True
 FzmfcoAijg,topic,friends,친구,True
@@ -228,6 +231,7 @@ gZmQLvtFoU,topic,paper,종이,True
 yVzbsrSuDr,topic,park,공원,True
 -CvDkFa4-c,topic,pencil,연필,True
 EQCKKzF9qf,topic,picture,사진,True
+jDPzaN0FbQ,topic,pictures,사진,True
 KhOKsfuOAb,topic,play,놀이,True
 4o8ZrJyql0,topic,playground,놀이터,True
 SgrJ3-soFj,topic,playing,놀이,True

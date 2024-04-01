@@ -52,11 +52,10 @@ class ModeratorSession:
 
         try:
             message_eng = await self.__deepl_translator.translate(
-                                          text=parent_message,
-                                          source_lang="KO", target_lang="EN-US",
-                                          context="The message is from a parent to their child."
-                                          )
-
+                text=parent_message,
+                source_lang="KO", target_lang="EN-US",
+                context="The message is from a parent to their child."
+            )
 
             new_message = DialogueMessage(role=DialogueRole.Parent,
                                           content=parent_message,

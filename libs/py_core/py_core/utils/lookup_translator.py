@@ -13,13 +13,14 @@ LookupDictionary: TypeAlias = dict[tuple[str, str], DictionaryRow]
 
 class LookupTranslator(AbstractContextManager):
 
-    def __init__(self, name: str, dict_filepath: str | None = None, verbose: bool = False):
+    def __init__(self, name: str, dict_filepath: str | None = None,
+                 vector_db: VectorDB | None = None, verbose: bool = False):
         self.__name = name
         self.__dictionary: LookupDictionary = dict()
         self.verbose = verbose
         self.__dict_filepath: str | None = dict_filepath
 
-        self.__vector_db = VectorDB()
+        self.__vector_db = vector_db or VectorDB()
 
         self.load_file()
 
@@ -84,18 +85,18 @@ class LookupTranslator(AbstractContextManager):
     def size(self) -> int:
         return len(self.__dictionary)
 
-    def lookup(self, word: str, category: str) -> str | None:
-        key = (word, category)
+    def lookup(self, english: str, category: str) -> str | None:
+        key = (english, category)
         if key in self.dictionary:
             return self.dictionary[key].localized
 
-    def update(self, word: str, category: str, localized: str):
-        row = DictionaryRow(category=category, english=word, localized=localized)
-        self.dictionary[(word, category)] = row
+    def update(self, english: str, category: str, localized: str):
+        row = DictionaryRow(category=category, english=english, localized=localized)
+        self.dictionary[(english, category)] = row
         self.__vector_db.upsert(self.__name, row)
 
-    def query_similar_rows(self, word: str | list[str], category: str, k: int = 5) -> list[DictionaryRow]:
-        return self.__vector_db.query_similar_rows(self.__name, word, category, k)
+    def query_similar_rows(self, english: str | list[str], category: str | None, k: int = 5) -> list[DictionaryRow]:
+        return self.__vector_db.query_similar_rows(self.__name, english, category, k)
 
     def __aenter__(self):
         return self

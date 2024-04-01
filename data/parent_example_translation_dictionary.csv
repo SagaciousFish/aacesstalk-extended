@@ -1,19 +1,19 @@
-id,english,localized,inspected
-dec3e6becfc2,Did you play with the teacher? What type of game was it?,선생님이랑 놀았어? 어떤 놀이를 했니?,TRUE
-44f7c7c09398,Well done! Are you happy that you finished your game?,잘했네! 놀이를 끝까지 마쳐서 행복했니?,TRUE
-04bc7f175acc,So you played a game with your teacher?,선생님과 놀이를 했구나?,TRUE
-7ba11f1983c0,Did you enjoy your lunch? Can you tell me what you ate?,점심 맛있게 먹었어? 뭐 먹었는데?,TRUE
-606afb5b6020,You had lunch with your friend? That sounds really nice! Can you tell me more about your friend?,친구랑 점심 먹었어? 너무 좋았겠다! 그 친구에 대해 더 자세히 말해줄래?,TRUE
-94317f414428,You ate together with your friend? What did both of you have for lunch?,친구랑 밥을 같이 먹었구나? 점심으로 뭘 먹었니?,TRUE
-b0d8cf2bfda3,That's great! What did you talk about with your teacher?,잘했네! 선생님이랑 무슨 얘기했어?,TRUE
-fafd7d3ca747,Which teacher did you talk to? Did it make you happy?,어떤 선생님이랑 얘기했어? 그래서 기분 어땠니?,TRUE
-1cdb8b1bf2b1,Did you enjoy talking with your teacher?,선생님이랑 이야기해서 좋았어?,TRUE
-461553e4a1a5,What book did you read at school today?,오늘은 학교에서 어떤 책을 읽었어?,TRUE
-e830e95323a6,Did you make a new friend today? What's their name?,오늘 새로운 친구를 만들었어? 친구 이름은 뭐야?,TRUE
-891423c78dbc,Did you enjoy your music class? What song did you learn?,음악 시간이 재미있었구나? 어떤 노래를 배웠니?,TRUE
-f66cba3321e6,What was the most interesting thing you experienced at school?,학교에서 무엇이 가장 재미있었어?,TRUE
-0ddf5ca474ca,How do you feel about your homework? Is there a lot?,오늘은 어떤 숙제를 받았어? 많아?,TRUE
-ed2134bd84e1,You sound excited about playing outside! Let's get ready for the playground after the conversation.,밖에서 신나게 놀고 싶구나! 그럼 이따 대화 끝나고 놀이터 가자.,TRUE
-56f5bb21af8d,Do you want to take any of your favorite toys to the playground?,놀이터에 좋아하는 장난감을 가져가고 싶니?,TRUE
-ac6bcf0f6d50,"Which activities are you excited about at the playground? The swings, slides, or climbing?","놀이터에서 뭐하고 놀고 싶어? 그네, 미끄럼틀, 언덕 오르기?",TRUE
-8913bec79641,Sorry to hear that you felt bored. Did something specific make you feel that way?,"저런, 지루했구나. 어떤 게 너를 지루하게 했니?",TRUE
+id,category,english,localized,inspected
+dec3e6becfc2,parent_example,Did you play with the teacher? What type of game was it?,선생님이랑 놀았어? 어떤 놀이를 했니?,TRUE
+44f7c7c09398,parent_example,Well done! Are you happy that you finished your game?,잘했네! 놀이를 끝까지 마쳐서 행복했니?,TRUE
+04bc7f175acc,parent_example,So you played a game with your teacher?,선생님과 놀이를 했구나?,TRUE
+7ba11f1983c0,parent_example,Did you enjoy your lunch? Can you tell me what you ate?,점심 맛있게 먹었어? 뭐 먹었는데?,TRUE
+606afb5b6020,parent_example,You had lunch with your friend? That sounds really nice! Can you tell me more about your friend?,친구랑 점심 먹었어? 너무 좋았겠다! 그 친구에 대해 더 자세히 말해줄래?,TRUE
+94317f414428,parent_example,You ate together with your friend? What did both of you have for lunch?,친구랑 밥을 같이 먹었구나? 점심으로 뭘 먹었니?,TRUE
+b0d8cf2bfda3,parent_example,That's great! What did you talk about with your teacher?,잘했네! 선생님이랑 무슨 얘기했어?,TRUE
+fafd7d3ca747,parent_example,Which teacher did you talk to? Did it make you happy?,어떤 선생님이랑 얘기했어? 그래서 기분 어땠니?,TRUE
+1cdb8b1bf2b1,parent_example,Did you enjoy talking with your teacher?,선생님이랑 이야기해서 좋았어?,TRUE
+461553e4a1a5,parent_example,What book did you read at school today?,오늘은 학교에서 어떤 책을 읽었어?,TRUE
+e830e95323a6,parent_example,Did you make a new friend today? What's their name?,오늘 새로운 친구를 만들었어? 친구 이름은 뭐야?,TRUE
+891423c78dbc,parent_example,Did you enjoy your music class? What song did you learn?,음악 시간이 재미있었구나? 어떤 노래를 배웠니?,TRUE
+f66cba3321e6,parent_example,What was the most interesting thing you experienced at school?,학교에서 무엇이 가장 재미있었어?,TRUE
+0ddf5ca474ca,parent_example,How do you feel about your homework? Is there a lot?,오늘은 어떤 숙제를 받았어? 많아?,TRUE
+ed2134bd84e1,parent_example,You sound excited about playing outside! Let's get ready for the playground after the conversation.,밖에서 신나게 놀고 싶구나! 그럼 이따 대화 끝나고 놀이터 가자.,TRUE
+56f5bb21af8d,parent_example,Do you want to take any of your favorite toys to the playground?,놀이터에 좋아하는 장난감을 가져가고 싶니?,TRUE
+ac6bcf0f6d50,parent_example,"Which activities are you excited about at the playground? The swings, slides, or climbing?","놀이터에서 뭐하고 놀고 싶어? 그네, 미끄럼틀, 언덕 오르기?",TRUE
+8913bec79641,parent_example,Sorry to hear that you felt bored. Did something specific make you feel that way?,"저런, 지루했구나. 어떤 게 너를 지루하게 했니?",TRUE
