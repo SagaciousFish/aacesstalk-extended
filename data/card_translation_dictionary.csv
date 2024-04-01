@@ -1,5 +1,6 @@
-id,category,word,localized,inspected
+id,category,english,localized,inspected
 C981hmNoSM,action,ate,먹었어요,True
+J3qH5TLi_n,action,bring,가져가요,True
 QYBk1Wh9mw,action,built,지었어요,True
 Bir4yNufTz,action,buy,사요,True
 9ApkXNWhGk,action,chat,잡담해요,True
@@ -198,12 +199,14 @@ P1ocXtrEhf,topic,error,오류,True
 OqptytpFU2,topic,experiment,실험,True
 7viZZuVxIr,topic,father,아빠,True
 ZKBCxMyeFz,topic,first, 첫 번째,True
+XYd7spA6_e,topic,food,음식, True
 LOPwB6gP7U,topic,football,축구,True
 bXfu9JuvvL,topic,friend,친구,True
 FzmfcoAijg,topic,friends,친구,True
 kIjPY5r2mK,topic,game,놀이,True
 HXUW6Aqul2,topic,games,게임,True
 yzbNoUa1xE,topic,gluing,붙이기,True
+o155HdxDwa,topic,grandma,할머니,True
 9U1qtuAJy9,topic,help,도움,True
 HJe1_inAW7,topic,hide and seek,숨바꼭질,True
 Z9QfUYXuVg,topic,homework,숙제,True
@@ -232,6 +235,7 @@ aqa0CuQBT2,topic,playtime,놀이 시간,True
 QYYzlF7QT2,topic,popcorn,팝콘,True
 wDOPUCmm8o,topic,problem,문제,True
 SeRymPAZgl,topic,project,프로젝트,True
+29KrNnXxhw,topic,puzzle,퍼즐,True
 J_fpsBQvUG,topic,puzzles,퍼즐,True
 1z_fyn0F2U,topic,read,읽기,True
 xSUB5MbEYf,topic,reading,읽기,True
@@ -264,5 +268,6 @@ fwevuioC5m,topic,tickets,티켓,True
 UhU29qrEDh,topic,together,함께,True
 05joagL419,topic,toy,장난감,True
 pt-tfZEEK4,topic,toys,장난감,True
+joF5kheIoO,topic,visit,방문,True
 JTDj3vAlSA,topic,watch,관람,True
 VekDlhcSYO,topic,writing,글쓰기,True

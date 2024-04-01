@@ -21,7 +21,7 @@ class TranslationInspectionResult(BaseModel):
 
 
 def convert_translation_rows_to_str(rows: list[DictionaryRow], params) -> str:
-    return "\n".join([f"{row.category}, {row.word}, {row.localized}" for row in rows])
+    return "\n".join([f"{row.category}, {row.english}, {row.localized}" for row in rows])
 
 
 convert_str_to_inspections, convert_inspections_to_str = generate_type_converter(list[TranslationInspectionResult],
@@ -111,7 +111,7 @@ Output:
             correction_applied = False
             for fi in failed_inspections:
                 print(
-                    f"{translations_to_inspect[fi[0]].localized} ({translations_to_inspect[fi[0]].word}, {translations_to_inspect[fi[0]].category}) => {fi[1].correction} ({fi[1].reason})")
+                    f"{translations_to_inspect[fi[0]].localized} ({translations_to_inspect[fi[0]].english}, {translations_to_inspect[fi[0]].category}) => {fi[1].correction} ({fi[1].reason})")
                 if check_mode:
                     confirmed = await questionary.confirm("Apply this suggestion?").ask_async()
                     if confirmed:
@@ -131,7 +131,7 @@ Output:
                 translations = translations_already_inspected + translations_to_inspect
 
                 translations.sort(key=lambda t: t.localized)
-                translations.sort(key=lambda t: t.word)
+                translations.sort(key=lambda t: t.english)
                 translations.sort(key=lambda t: t.category)
 
                 for t in translations:

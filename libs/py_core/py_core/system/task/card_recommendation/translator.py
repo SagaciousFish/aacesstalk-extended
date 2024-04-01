@@ -65,7 +65,7 @@ class CardTranslator:
                                                               str_output_converter=str_output_converter
                                                               )
 
-        self.__dictionary = LookupTranslator(AACessTalkConfig.card_translation_dictionary_path, verbose=True)
+        self.__dictionary = LookupTranslator("cards", AACessTalkConfig.card_translation_dictionary_path, verbose=True)
 
     def __transform_original_word(self, word: str) -> str:
         doc = self.__nlp(word)
@@ -99,7 +99,7 @@ class CardTranslator:
             similar_card_set: set[DictionaryRow] = set()
             for category, group in groupby(words_to_translate, key=lambda elm: elm[1]):
                 l = list(group)
-                similar_cards = self.__dictionary.query_similar_cards([word for word, category in l], category, k=5)
+                similar_cards = self.__dictionary.query_similar_rows([word for word, category in l], category, k=5)
                 for c in similar_cards:
                     similar_card_set.add(c)
 

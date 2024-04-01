@@ -13,7 +13,8 @@ LookupDictionary: TypeAlias = dict[tuple[str, str], DictionaryRow]
 
 class LookupTranslator(AbstractContextManager):
 
-    def __init__(self, dict_filepath: str | None = None, verbose: bool = False):
+    def __init__(self, name: str, dict_filepath: str | None = None, verbose: bool = False):
+        self.__name = name
         self.__dictionary: LookupDictionary = dict()
         self.verbose = verbose
         self.__dict_filepath: str | None = dict_filepath
@@ -44,7 +45,7 @@ class LookupTranslator(AbstractContextManager):
                             self.__dictionary[row_model.lookup_key] = row_model
                         num_lines += 1
 
-                    self.__vector_db.upsert_cards([row for k, row in self.__dictionary.items()])
+                    self.__vector_db.upsert(self.__name, [row for k, row in self.__dictionary.items()])
 
                 t_end = perf_counter()
 
@@ -69,7 +70,7 @@ class LookupTranslator(AbstractContextManager):
                 items = [v for k, v in self.__dictionary.items()]
 
                 items.sort(key=lambda elm: elm.localized)
-                items.sort(key=lambda elm: elm.word)
+                items.sort(key=lambda elm: elm.english)
                 items.sort(key=lambda elm: elm.category)
 
                 for row_model in items:
@@ -89,12 +90,12 @@ class LookupTranslator(AbstractContextManager):
             return self.dictionary[key].localized
 
     def update(self, word: str, category: str, localized: str):
-        row = DictionaryRow(category=category, word=word, localized=localized)
+        row = DictionaryRow(category=category, english=word, localized=localized)
         self.dictionary[(word, category)] = row
-        self.__vector_db.upsert_cards(row)
+        self.__vector_db.upsert(self.__name, row)
 
-    def query_similar_cards(self, word: str | list[str], category: str, k: int = 5) -> list[DictionaryRow]:
-        return self.__vector_db.query_similar_cards(word, category, k)
+    def query_similar_rows(self, word: str | list[str], category: str, k: int = 5) -> list[DictionaryRow]:
+        return self.__vector_db.query_similar_rows(self.__name, word, category, k)
 
     def __aenter__(self):
         return self

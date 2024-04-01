@@ -27,27 +27,25 @@ class VectorDB:
             model_name=embedding_model
         )
 
-        self.__collection_cards = self.__client.get_or_create_collection("cards", embedding_function=self.__decode)
+    def get_collection(self, name: str) -> Collection:
+        return self.__client.get_or_create_collection(name, embedding_function=self.__decode)
 
-    @property
-    def collection_cards(self) -> Collection:
-        return self.__collection_cards
-
-    def upsert_cards(self, dictionary_row: DictionaryRow | list[DictionaryRow]) -> ndarray | list[ndarray]:
+    def upsert(self, collection: str | Collection, dictionary_row: DictionaryRow | list[DictionaryRow]) -> ndarray | list[ndarray]:
         rows = [dictionary_row] if isinstance(dictionary_row, DictionaryRow) else dictionary_row
 
-        self.collection_cards.upsert(
+        (collection if isinstance(collection, Collection) else self.get_collection(collection)).upsert(
             ids=[row.id for row in rows],
             metadatas=[row.model_dump(include={"category", "localized"}) for row in rows],
-            documents=[row.word for row in rows]
+            documents=[row.english for row in rows]
         )
 
-    def query_similar_cards(self, word: str | list[str], category: str, k: int = 5) -> list[DictionaryRow]:
+    def query_similar_rows(self, collection: str | Collection, word: str | list[str], category: str | None, k: int = 5) -> list[DictionaryRow]:
         print(f"Query similar cards: {word}, {category}")
-        query_result = self.collection_cards.query(query_texts=[word] if isinstance(word, str) else word,
-                                                     n_results=k, where={"category": category})
+        collection_instance = (collection if isinstance(collection, Collection) else self.get_collection(collection))
+        query_result = collection_instance.query(query_texts=[word] if isinstance(word, str) else word,
+                                                     n_results=k, where={"category": category} if category is not None else None)
         if len(query_result["ids"][0]) > 0:
-            return [DictionaryRow(id=id, word=doc, category=meta["category"], localized=meta["localized"]) for
+            return [DictionaryRow(id=id, english=doc, category=meta["category"], localized=meta["localized"]) for
                     id, doc, meta in zip(query_result["ids"][0], query_result["documents"][0], query_result["metadatas"][0])]
         else:
             return []

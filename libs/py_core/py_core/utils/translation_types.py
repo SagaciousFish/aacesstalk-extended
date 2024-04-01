@@ -9,7 +9,7 @@ class DictionaryRow(BaseModel):
 
     id: str = Field(default_factory=lambda: generate(size=10))
     category: str
-    word: str
+    english: str
     localized: str
     inspected: bool = False
 
@@ -19,4 +19,4 @@ class DictionaryRow(BaseModel):
 
     @cached_property
     def lookup_key(self) -> tuple[str, str]:
-        return self.word, self.category
+        return self.english, self.category

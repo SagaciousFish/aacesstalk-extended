@@ -14,9 +14,9 @@ GlobalConfig.is_cli_mode = True
 GPTChatCompletionAPI.assert_authorize()
 DeepLTranslator.assert_authorize()
 
-card_translator = LookupTranslator(AACessTalkConfig.card_translation_dictionary_path, verbose=True)
+card_translator = LookupTranslator("cards", AACessTalkConfig.card_translation_dictionary_path, verbose=True)
 
 print(card_translator.vector_db.collection_cards.count())
 
-cards = card_translator.query_similar_cards(["Climb"], "action", 4)
+cards = card_translator.query_similar_rows("cards", ["Climb"], "action", 4)
 print(cards)
