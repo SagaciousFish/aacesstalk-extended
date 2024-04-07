@@ -11,7 +11,7 @@ from chatlib.llm.integration import GPTChatCompletionAPI, ChatGPTModel
 from pydantic import BaseModel
 
 from py_core.config import AACessTalkConfig
-from py_core.utils.translation_types import DictionaryRow
+from py_core.utils.models import DictionaryRow
 
 
 class TranslationInspectionResult(BaseModel):

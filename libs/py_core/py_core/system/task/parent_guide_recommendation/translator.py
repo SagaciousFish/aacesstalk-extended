@@ -12,7 +12,7 @@ from py_core.system.shared import vector_db
 from py_core.system.task.parent_guide_recommendation.common import ParentGuideRecommendationAPIResult
 from py_core.utils.deepl_translator import DeepLTranslator
 from py_core.utils.lookup_translator import LookupTranslator
-from py_core.utils.translation_types import DictionaryRow
+from py_core.utils.models import DictionaryRow
 
 
 def convert_messages_to_xml(messages: list[str], params) -> str:
@@ -29,6 +29,7 @@ def convert_xml_to_messages(xml: str, params=None) -> list[str]:
     matches = msg_regex.findall(xml)
     return matches
 
+
 template = convert_to_jinja_template("""The following XML list contains a list of messages for a parent talking with their child with ASD.
 Translate the following messages into Korean.
 Note that the messages are intended to be spoken by parent to a kid.
@@ -44,13 +45,16 @@ Output:
 {%-endif-%}
 """)
 
+
 class ParentGuideExampleTranslationParams(ChatCompletionFewShotMapperParams):
     samples: list[DictionaryRow]
+
 
 def _generate_prompt(input, params: ParentGuideExampleTranslationParams) -> str:
     r = template.render(samples=params.samples, stringify=convert_messages_to_xml)
     print(r)
     return r
+
 
 class ParentGuideTranslator:
 

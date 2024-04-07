@@ -9,7 +9,7 @@ from chatlib.utils.jinja_utils import convert_to_jinja_template
 from py_core.config import AACessTalkConfig
 from py_core.system.shared import vector_db
 from py_core.utils.lookup_translator import LookupTranslator
-from py_core.utils.translation_types import DictionaryRow
+from py_core.utils.models import DictionaryRow
 from .common import ChildCardRecommendationAPIResult
 
 

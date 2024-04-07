@@ -75,6 +75,13 @@
         "cwd": "libs/py_core"
       }
     },
+    "gen_card_desc": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run python py_core/processing_tools/generate_image_description.py",
+        "cwd": "libs/py_core"
+      }
+    },
     "test_vector": {
       "executor": "@nxlv/python:run-commands",
       "options": {

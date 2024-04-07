@@ -1,5 +1,3 @@
-from os import path
-
 import chromadb
 import chromadb.utils.embedding_functions as ef
 
@@ -8,8 +6,7 @@ from chatlib.utils.integration import APIAuthorizationVariableSpec, APIAuthoriza
 from chromadb.api.models.Collection import Collection
 from numpy import ndarray
 
-from py_core.config import AACessTalkConfig
-from py_core.utils.translation_types import DictionaryRow
+from py_core.utils.models import DictionaryRow
 
 
 class VectorDB:

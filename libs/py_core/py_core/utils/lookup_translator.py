@@ -5,7 +5,7 @@ from time import perf_counter
 from typing import TypeAlias
 from os import path
 
-from py_core.utils.translation_types import DictionaryRow
+from py_core.utils.models import DictionaryRow
 from py_core.utils.vector_db import VectorDB
 
 LookupDictionary: TypeAlias = dict[tuple[str, str], DictionaryRow]
