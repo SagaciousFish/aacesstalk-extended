@@ -33,6 +33,9 @@ class CardImageInfo(BaseModel):
     height: int
     description: Optional[str] = None
     description_src: Optional[str] = None
+
+    description_brief: Optional[str] = None
+
     inspected: bool = False
     need_inspection: bool = False
 

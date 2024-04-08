@@ -1,5 +1,7 @@
+import asyncio
 import base64
 import csv
+import math
 from io import BytesIO
 from os import listdir, scandir, path
 from time import perf_counter
@@ -12,7 +14,8 @@ from PIL import ImageOps
 from py_core.utils.math import cosine_similarity
 from py_core.utils.models import CardImageInfo
 from chatlib.utils import env_helper
-from chatlib.llm.integration import GPTChatCompletionAPI, GeminiAPI
+from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompletionFewShotMapperParams, MapperInputOutputPair
+from chatlib.llm.integration import GPTChatCompletionAPI, GeminiAPI, ChatGPTModel
 from openai import OpenAI
 import google.generativeai as genai
 from PIL import Image
@@ -225,6 +228,49 @@ def fix_refused_requests(threshold: float, client: OpenAI):
                 print(e)
                 pass
 
+async def generate_short_descriptions_all():
+    mapper = ChatCompletionFewShotMapper.make_str_mapper(
+        GPTChatCompletionAPI(),
+        instruction_generator="""
+You are a helpful assistant that extracts a gist of image description that the user provided.
+[Input]
+The user will provide an image description, which may be clumsy and include unnecessary small talks.
+[Output]
+Condense the description by focusing only on the description of visual elements in the image.
+Drop assistant messages like "I'm sorry" and style descriptions such as "The design is simple and iconic, using minimal colors and flat design principles."
+        """
+    )
+
+    examples = [
+        MapperInputOutputPair(
+            input="The illustration shows a stylized stack of currency notes in green, with the number ""10000"" visible on the top note, indicating the value. Above the stack of notes is text in Korean, ""장애인연금,"" which translates to ""Disability Pension."" The overall image represents a financial support or pension provided to individuals with disabilities. The design is simple and iconic, using minimal colors and flat design principles.",
+            output="A stylized stack of currency notes in green, with the number ""10000"" visible on the top note, indicating the value. Above the stack of notes is text in Korean, ""장애인연금,"" which translates to ""Disability Pension."" The overall image represents a financial support or pension provided to individuals with disabilities."
+        ),
+        MapperInputOutputPair(
+            input="I'm sorry, but I cannot provide information on the identity of the individual in the image. However, I can describe the visual elements without identifying them. The image shows a person smiling broadly. The individual has short black hair and appears to be wearing a dark purple or blue suit with a tie. The background is blurry, making it difficult to discern details, suggesting the focus is entirely on the person in the foreground. The lighting in the photo highlights the person's face, emphasizing their joyful expression.",
+            output="A person smiling broadly, with joyful expression. The individual has short black hair and appears to be wearing a dark purple or blue suit with a tie."
+        )
+    ]
+
+    rows = _load_card_descriptions()
+    for i, row in enumerate(rows):
+        if row.description is not None and row.description_brief is None:
+            try:
+                print(f"Processing {i}/{len(rows)}...")
+                description = await mapper.run(examples, row.description, ChatCompletionFewShotMapperParams(model=ChatGPTModel.GPT_4_0613, api_params ={}))
+                #print("[Condensed]", description)
+                #print("[Original]", row.description)
+                row.description_brief = description
+                _save_card_descriptions(rows)
+            except Exception as e:
+                print(e)
+
+    for i, row in enumerate(rows):
+        if row.description is not None and row.description_brief is not None:
+            desc_words = row.description.split(" ")
+            desc_brief_words = row.description_brief.split(" ")
+
+            print(f"{i}/{len(rows)} description word count reduced from {len(desc_words)} to {len(desc_brief_words)} ({len(desc_brief_words)/len(desc_words) * 100}%)")
 
 
 if __name__ == "__main__":
@@ -241,10 +287,4 @@ if __name__ == "__main__":
 
     # generate_card_descriptions_all(openai_client)
     # fix_refused_requests(threshold=0.4, client=openai_client)
-
-    rows = _load_card_descriptions()
-    for row in rows:
-        if row.description is None or len(row.description) == 0:
-            row.need_inspection = True
-            print("Needs inspection", row.name, row.category)
-    _save_card_descriptions(rows)
+    asyncio.run(generate_short_descriptions_all())

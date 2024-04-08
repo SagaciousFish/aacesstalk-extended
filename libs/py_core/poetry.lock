@@ -476,7 +476,7 @@ files = [
 
 [[package]]
 name = "chatlib"
-version = "0.7.11"
+version = "0.7.12"
 description = "A generalizable Python Chatbot Library"
 optional = false
 python-versions = "^3.10"
@@ -505,8 +505,8 @@ yaspin = "^2.3.0"
 [package.source]
 type = "git"
 url = "https://github.com/yghokim/chatlib.git"
-reference = "0.7.11"
-resolved_reference = "1f3a790c80d4b498ddf3ef2b6c2722919b38e949"
+reference = "0.7.12"
+resolved_reference = "95884cae8ea9039e24a7a4e24c27ebf9ae28c254"
 
 [[package]]
 name = "chroma-hnswlib"
@@ -4738,4 +4738,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11.8,<3.12"
-content-hash = "02bf508e699ed79d49966c9ba748872be006c07d7527677c7a36b6f72f192a40"
+content-hash = "616586ddef35ad18a24c65470d668749956b4dd14dec806ded4ad0b678f18353"
