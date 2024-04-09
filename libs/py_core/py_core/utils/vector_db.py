@@ -11,7 +11,8 @@ from py_core.utils.models import DictionaryRow
 
 class VectorDB:
 
-    def __init__(self, dir_name: str = "embeddings", embedding_model: str = "text-embedding-3-small"):
+    def __init__(self, dir_name: str = "embeddings",
+                 embedding_model: str = "text-embedding-3-small"):
         #self.__client = chromadb.PersistentClient(path.join(AACessTalkConfig.dataset_dir_path, dir_name))
         self.__client = chromadb.Client()
 
