@@ -1,5 +1,7 @@
 import chromadb
+from chromadb import EmbeddingFunction, Documents
 import chromadb.utils.embedding_functions as ef
+from openai import OpenAI
 
 from chatlib.llm.integration import GPTChatCompletionAPI
 from chatlib.utils.integration import APIAuthorizationVariableSpec, APIAuthorizationVariableType
@@ -9,10 +11,26 @@ from numpy import ndarray
 from py_core.utils.models import DictionaryRow
 
 
+class OpenAIEmbeddingFunction(EmbeddingFunction[Documents]):
+
+    def __init__(self, api_key: str, model: str, dimensions: int):
+        self.__model = model
+        self.__dimensions = dimensions
+        self.__client = OpenAI(api_key=api_key)
+
+    def __call__(self, input: Documents):
+        result = self.__client.embeddings.create(input=input,
+                                 model=self.__model,
+                                 dimensions=self.__dimensions
+                                 )
+        return [datum.embedding for datum in result.data]
+
 class VectorDB:
 
     def __init__(self, dir_name: str = "embeddings",
-                 embedding_model: str = "text-embedding-3-small"):
+                 embedding_model: str = "text-embedding-3-large",
+                 embedding_dimensions: int = 256
+                 ):
         #self.__client = chromadb.PersistentClient(path.join(AACessTalkConfig.dataset_dir_path, dir_name))
         self.__client = chromadb.Client()
 
@@ -20,10 +38,7 @@ class VectorDB:
         api_key = GPTChatCompletionAPI.get_auth_variable_for_spec(
             APIAuthorizationVariableSpec(APIAuthorizationVariableType.ApiKey))
 
-        self.__decode = ef.OpenAIEmbeddingFunction(
-            api_key=api_key,
-            model_name=embedding_model
-        )
+        self.__decode = OpenAIEmbeddingFunction(api_key=api_key, model=embedding_model, dimensions=embedding_dimensions)
 
     def get_collection(self, name: str) -> Collection:
         return self.__client.get_or_create_collection(name, embedding_function=self.__decode)

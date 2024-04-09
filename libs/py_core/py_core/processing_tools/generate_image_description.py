@@ -63,8 +63,6 @@ def _load_card_descriptions() -> list[CardImageInfo]:
     with open(AACessTalkConfig.card_image_table_path, "r") as csvfile:
         reader = csv.DictReader(csvfile)
 
-        next(reader)
-
         for row_obj in reader:
             row = CardImageInfo(**row_obj)
             rows.append(row)
@@ -288,7 +286,8 @@ def cache_description_embeddings_all(client: OpenAI):
     chunk_size = 2048
     embeddings = []
     for chunk_i in range(0, len(rows), chunk_size):
-        result = client.embeddings.create(input=[row.description_brief.replace("\n", " ") for row in rows[chunk_i : chunk_i + chunk_size]],
+        chunked_rows = rows[chunk_i : chunk_i + chunk_size]
+        result = client.embeddings.create(input=[row.description_brief.replace("\n", " ") for row in chunked_rows],
                                             model=AACessTalkConfig.embedding_model,
                                             dimensions=256
                                         )
@@ -298,7 +297,7 @@ def cache_description_embeddings_all(client: OpenAI):
 
     embedding_array = array(embeddings)
     with open(AACessTalkConfig.card_image_embeddings_path, 'wb') as f:
-        numpy.savez_compressed(f, ids=[row.id for row in rows], descriptions=embedding_array)
+        numpy.savez_compressed(f, ids=[row.id for row in rows], embeddings=embedding_array)
         print("Serialized embeddings to file.")
 
 

@@ -16,7 +16,7 @@ DeepLTranslator.assert_authorize()
 
 card_translator = LookupTranslator("cards", AACessTalkConfig.card_translation_dictionary_path, verbose=True)
 
-print(card_translator.vector_db.collection_cards.count())
+print(card_translator.vector_db.get_collection("cards").count())
 
-cards = card_translator.query_similar_rows("cards", ["Climb"], "action", 4)
+cards = card_translator.query_similar_rows(["Climb"], "action", 4)
 print(cards)

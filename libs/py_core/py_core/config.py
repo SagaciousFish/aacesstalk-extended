@@ -10,3 +10,4 @@ class AACessTalkConfig:
     card_image_embeddings_path: str = path.join(dataset_dir_path, "cards_image_desc_embeddings.npz")
 
     embedding_model = 'text-embedding-3-large'
+    embedding_dimensions = 256

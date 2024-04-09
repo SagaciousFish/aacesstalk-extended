@@ -88,6 +88,13 @@
         "command": "poetry run python test_vector.py",
         "cwd": "libs/py_core"
       }
+    },
+    "test_card_image_retrieval": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run python test_card_image_retrieval.py",
+        "cwd": "libs/py_core"
+      }
     }
   },
   "tags": []
