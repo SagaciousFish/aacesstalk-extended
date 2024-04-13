@@ -4,6 +4,8 @@ import csv
 import math
 from io import BytesIO
 from os import listdir, scandir, path
+
+from pydantic import BaseModel
 from time import perf_counter
 
 import numpy
@@ -18,11 +20,37 @@ from py_core.utils.models import CardImageInfo
 from chatlib.utils import env_helper
 from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompletionFewShotMapperParams, \
     MapperInputOutputPair
+from chatlib.tool.converter import generate_pydantic_converter, str_to_str_noop
 from chatlib.llm.integration import GPTChatCompletionAPI, GeminiAPI, ChatGPTModel
 from openai import OpenAI
 import google.generativeai as genai
 from PIL import Image
 
+CATEGORY_HUMAN_READABLE_STRING_DICT = {
+    "health": "Health",
+    "marriage": "Marriage, childbirth, child-rearing",
+    "traffic": "Traffic and transportation",
+    "nation": "Nations",
+    "core": "Core phrases",
+    "hobby": "Enjoyment and hobby",
+    "university": "University life",
+    "animal": "Animals and plants",
+    "others": "Others",
+    "support": "Welfare, community, and social support",
+    "human": "Human",
+    "color": "Colors",
+    "time": "Time and schedules",
+    "sports": "Sports",
+    "food": "Food",
+    "people": "People, figures, and occupations",
+    "disability": "Harms and damages caused by disabilities",
+    "religion" :"Religions and spiritual activities",
+    "life": "Daily life and social activities",
+    "work": "Workplace and jobs",
+    "home": "Home, family, relatives",
+    "school": "School",
+    "service": "Car caring, cell phones, wheelchairs, customer services"
+}
 
 def scan_card_images():
     with open(AACessTalkConfig.card_image_table_path, "w") as csvfile:
@@ -30,7 +58,7 @@ def scan_card_images():
         writer.writeheader()
         for dir_name in listdir(AACessTalkConfig.card_image_directory_path):
             if dir_name.startswith("card_"):
-                category_name = dir_name[len("card_"):].replace(",", "_")
+                category_name = str(dir_name[len("card_"):])
                 rows = []
                 for file in scandir(path.join(AACessTalkConfig.card_image_directory_path, dir_name)):
                     if file.is_file() and file.name.lower().endswith(".png"):
@@ -45,16 +73,18 @@ def scan_card_images():
 
                             row = CardImageInfo(
                                 category=category_name,
-                                name=file.name[:-len(".png")],
-                                filename=file.name,
+                                name_ko=file.name[:-len(".png")],
+                                filename=path.join(dir_name, file.name),
                                 format=image.format,
                                 width=512,
                                 height=512
                             )
-
                             rows.append(row)
+                    else:
+                        print("Exclude", file.path)
 
-                print(f"{len(rows)} cards in {category_name}.")
+
+                print(f"{len(rows)} cards in {CATEGORY_HUMAN_READABLE_STRING_DICT[category_name]} ({category_name}).")
                 writer.writerows([row.model_dump() for row in rows])
 
 
@@ -76,17 +106,76 @@ def _save_card_descriptions(rows: list[CardImageInfo]):
         writer.writeheader()
         writer.writerows([row.model_dump() for row in rows])
 
+def inspect_card_info_data():
+    rows = _load_card_descriptions()
+    for row in rows:
+        if row.description is None:
+            print(f"{row.id} ({row.name_ko}) has no descriptions.")
+
+class CardNameTranslationInput(BaseModel):
+    label: str
+    category: str
+    description: str
+
+async def translate_card_names():
+
+    str_to_input, input_to_str  = generate_pydantic_converter(CardNameTranslationInput, 'json')
+
+    mapper = ChatCompletionFewShotMapper(
+        GPTChatCompletionAPI(),
+        instruction_generator="""
+You are a helpful assistant that translates Korean card labels into English.
+[Input]
+{
+    "label": // a Korean label of an illustration.
+    "category": // A category of the illustration. May be referred to for disambiguation.
+    "description": // A description for the illustration. May be referred to for disambiguation.
+}
+[Output]
+Return an English label. When translating, consider the description of the illustration for disambiguation.
+        """,
+        output_str_converter=str_to_str_noop,
+        str_output_converter=str_to_str_noop,
+        input_str_converter=input_to_str
+    )
+
+    examples = [
+        MapperInputOutputPair(
+            input= CardNameTranslationInput(
+                label="블록쌓기",
+                category=CATEGORY_HUMAN_READABLE_STRING_DICT["hobby"],
+                description="The image shows a human hand depicted as picking up or placing blocks in different colors."
+            ),
+            output="Stacking blocks"
+            ),
+        MapperInputOutputPair(
+            input= CardNameTranslationInput(
+                label="삼계탕",
+                category=CATEGORY_HUMAN_READABLE_STRING_DICT["food"],
+                description="The image shows a human hand depicted as picking up or placing blocks in different colors."
+            ),
+            output="Samgye-Tang (Ginseng Chicken Soup)"
+        ),
+    ]
+
+    rows = _load_card_descriptions()
+    for i, info in enumerate(rows):
+        if info.name_en is None and info.description is not None:
+            print(f"Translate {info.name_ko} of {info.category} with GPT-4...{i}/{len(rows)}")
+            try:
+                print(f"Processing {i}/{len(rows)}...")
+                label_translated = await mapper.run(examples, CardNameTranslationInput(label=info.name_ko, category=CATEGORY_HUMAN_READABLE_STRING_DICT[info.category], description=info.description),
+                                               ChatCompletionFewShotMapperParams(model=ChatGPTModel.GPT_4_0613,
+                                                                                 api_params={}))
+                # print("[Condensed]", description)
+                # print("[Original]", row.description)
+                info.name_en = label_translated
+                _save_card_descriptions(rows)
+            except Exception as e:
+                print(e)
 
 def generate_card_descriptions_all(openai_client: OpenAI):
     rows = _load_card_descriptions()
-
-    for i, row in enumerate(rows):
-        if row.description is not None and (row.description_src is None or row.description_src == ""):
-            row.description_src = "gpt4"
-    with open(AACessTalkConfig.card_image_table_path, "w") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=CardImageInfo.model_fields)
-        writer.writeheader()
-        writer.writerows([row.model_dump() for row in rows])
 
     for i, row in enumerate(rows):
         if row.description is not None and ("sorry") in row.description:
@@ -109,8 +198,7 @@ def generate_card_descriptions_all(openai_client: OpenAI):
 
 def _get_image(info: CardImageInfo) -> Image:
     print(info)
-    image_path = path.join(AACessTalkConfig.card_image_directory_path, f"card_{info.category.replace('_', ',')}",
-                           info.filename)
+    image_path = path.join(AACessTalkConfig.card_image_directory_path, info.filename)
 
     image = Image.open(image_path).convert("RGBA")
     new_image = Image.new("RGBA", (image.width, image.height), "WHITE")
@@ -120,13 +208,13 @@ def _get_image(info: CardImageInfo) -> Image:
 
 
 def generate_card_description_gemini(info: CardImageInfo) -> str | None:
-    print(f"Generate description for {info.name} of {info.category} with Gemini Pro Vision...")
+    print(f"Generate description for {info.name_ko} of {info.category} with Gemini Pro Vision...")
 
     t_start = perf_counter()
 
     model = genai.GenerativeModel('gemini-pro-vision')
 
-    prompt = f"This is an illustration of a visual aid symbolizing \"{info.name}\" in the \"{info.category}\" category. Please briefly describe the visual contents in this illustration so that we can use your description for visual search."
+    prompt = f"This is an illustration of a visual aid symbolizing \"{info.name_en or info.name_ko}\" in the \"{CATEGORY_HUMAN_READABLE_STRING_DICT[info.category]}\" category. Please briefly describe the visual contents in this illustration so that we can use your description for visual search."
 
     response = model.generate_content(
         safety_settings=[
@@ -153,7 +241,7 @@ def generate_card_description_gemini(info: CardImageInfo) -> str | None:
 
 
 def generate_card_description_gpt4(info: CardImageInfo, client: OpenAI) -> str:
-    print(f"Generate description for {info.name} of {info.category} with GPT-4V...")
+    print(f"Generate description for {info.name_ko} of {info.category} with GPT-4V...")
 
     t_start = perf_counter()
 
@@ -163,7 +251,7 @@ def generate_card_description_gpt4(info: CardImageInfo, client: OpenAI) -> str:
 
     image_base64 = base64.b64encode(buffered.getvalue()).decode('utf8')
 
-    prompt = f"This is an illustration of a visual aid symbolizing \"{info.name}\" in the \"{info.category}\" category. Please briefly describe the visual contents in this illustration so that we can use your description for visual search."
+    prompt = f"This is an illustration of a visual aid symbolizing \"{info.name_ko}\" in the \"{CATEGORY_HUMAN_READABLE_STRING_DICT[info.category]}\" category. Please briefly describe the visual contents in this illustration so that we can use your description for visual search."
 
     response = client.chat.completions.create(
         model="gpt-4-vision-preview",
@@ -280,24 +368,30 @@ Drop assistant messages like "I'm sorry" and style descriptions such as "The des
             print(
                 f"{i}/{len(rows)} description word count reduced from {len(desc_words)} to {len(desc_brief_words)} ({len(desc_brief_words) / len(desc_words) * 100}%)")
 
-
 def cache_description_embeddings_all(client: OpenAI):
     rows = _load_card_descriptions()
     chunk_size = 2048
-    embeddings = []
+    name_embeddings = []
+    description_brief_embeddings = []
     for chunk_i in range(0, len(rows), chunk_size):
         chunked_rows = rows[chunk_i : chunk_i + chunk_size]
-        result = client.embeddings.create(input=[row.description_brief.replace("\n", " ") for row in chunked_rows],
+        desc_brief_emb_result = client.embeddings.create(input=[row.description_brief.replace("\n", " ") for row in chunked_rows],
                                             model=AACessTalkConfig.embedding_model,
-                                            dimensions=256
+                                            dimensions=AACessTalkConfig.embedding_dimensions
                                         )
+        description_brief_embeddings.extend([datum.embedding for datum in desc_brief_emb_result.data])
 
-        print("Generated embeddings.")
-        embeddings.extend([datum.embedding for datum in result.data])
+        name_emb_result = client.embeddings.create(input=[row.name_en for row in chunked_rows],
+                                                         model=AACessTalkConfig.embedding_model,
+                                                         dimensions=AACessTalkConfig.embedding_dimensions
+                                                         )
 
-    embedding_array = array(embeddings)
+        name_embeddings.extend([datum.embedding for datum in name_emb_result.data])
+
     with open(AACessTalkConfig.card_image_embeddings_path, 'wb') as f:
-        numpy.savez_compressed(f, ids=[row.id for row in rows], embeddings=embedding_array)
+        numpy.savez_compressed(f, ids=[row.id for row in rows],
+                               emb_name=array(name_embeddings),
+                               emb_desc=array(description_brief_embeddings))
         print("Serialized embeddings to file.")
 
 
@@ -313,8 +407,10 @@ if __name__ == "__main__":
     openai_client = OpenAI(api_key=env_helper.get_env_variable("OPEN_A_I_API_KEY"))
     genai.configure(api_key=env_helper.get_env_variable("GOOGLE_API_KEY"))
 
-    # generate_card_descriptions_all(openai_client)
-    # fix_refused_requests(threshold=0.4, client=openai_client)
-    # asyncio.run(generate_short_descriptions_all())
+    # scan_card_images()
+    inspect_card_info_data()
+    #generate_card_descriptions_all(openai_client)
+    #fix_refused_requests(threshold=0.4, client=openai_client)
+    #asyncio.run(generate_short_descriptions_all())
+    # asyncio.run(translate_card_names())
     cache_description_embeddings_all(openai_client)
-

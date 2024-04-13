@@ -20,26 +20,59 @@ class CardImageRetriever:
 
         embedding_store = numpy.load(AACessTalkConfig.card_image_embeddings_path)
         ids = embedding_store["ids"]
-        embeddings = embedding_store["embeddings"]
+        desc_embeddings = embedding_store["emb_desc"]
+        name_embeddings = embedding_store["emb_name"]
 
         self.__vector_db = VectorDB(embedding_model=AACessTalkConfig.embedding_model,
                                     embedding_dimensions=AACessTalkConfig.embedding_dimensions)
 
-        self.__collection = self.__vector_db.get_collection("card_image_desc")
-        self.__collection.add(
+        self.__collection_desc = self.__vector_db.get_collection("card_image_desc")
+        self.__collection_desc.add(
             ids=[id for id in ids],
             documents=[info.description_brief for info in info_list],
             metadatas=[info.model_dump(include={"name", "category"}) for info in info_list],
-            embeddings=[emb.tolist() for emb in embeddings]
+            embeddings=[emb.tolist() for emb in desc_embeddings]
         )
 
-    def query_nearest_card_image_infos(self, keyword: str, k=3)->list[CardImageInfo]:
-        result = self.__collection.query(
-            query_texts=[keyword],
-            n_results=k
+        self.__collection_name = self.__vector_db.get_collection("names")
+        self.__collection_name.add(
+            ids=[id for id in ids],
+            documents=[info.name for info in info_list],
+            metadatas=[info.model_dump(include={"name", "category", "description_brief"}) for info in info_list],
+            embeddings=[emb.tolist() for emb in name_embeddings]
         )
 
-        if len(result["ids"][0]) > 0:
-            return [self.__card_info_dict[id] for id in result["ids"][0]]
+    def __query_result_to_info_list(self, query_result) -> list[tuple[CardImageInfo, float]]:
+        if len(query_result["ids"][0]) > 0:
+            objs = [self.__card_info_dict[id] for id in query_result["ids"][0]]
+            distances = [s for s in query_result["distances"][0]]
+            return [(o,d) for o,d in zip(objs, distances)]
+        else:
+            return []
+
+    def query_nearest_card_image_infos(self, name: str, k=3)->list[CardImageInfo]:
+
+        #First, find exact match.
+        result = self.__collection_name.get(where={"name": name})
+        if len(result["ids"]) > 0:
+            print("Found exact name match.")
+            return [self.__card_info_dict[id] for id in result["ids"]]
+        else:
+            # Find fuzzy name match.
+            print("Find fuzzy name match.")
+            result = self.__collection_name.query(
+                query_texts=[name],
+                n_results=k
+            )
+            result = self.__query_result_to_info_list(result)
+            print(result)
+
+            return [tup[0] for tup in result]
+
+            #result = self.__collection_desc.query(
+            #    query_texts=[name],
+            #    n_results=k
+            #)
+            #return [tup[0] for tup in self.__query_result_to_info_list(result)]
 
 

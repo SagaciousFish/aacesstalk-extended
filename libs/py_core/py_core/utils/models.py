@@ -2,7 +2,7 @@ from functools import cached_property
 from typing import Optional
 
 from nanoid import generate
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, computed_field
 
 
 class DictionaryRow(BaseModel):
@@ -26,7 +26,8 @@ class DictionaryRow(BaseModel):
 class CardImageInfo(BaseModel):
     id: str = Field(default_factory=lambda: generate(size=10))
     category: str
-    name: str
+    name_ko: str
+    name_en: Optional[str] = None
     filename: str
     format: Optional[str]
     width: int
@@ -38,6 +39,11 @@ class CardImageInfo(BaseModel):
 
     inspected: bool = False
     need_inspection: bool = False
+
+    @computed_field
+    @property
+    def name(self)->str:
+        return self.name_en or self.name_ko
 
     @field_validator('*')
     @classmethod
