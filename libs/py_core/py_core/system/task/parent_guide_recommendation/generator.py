@@ -21,17 +21,35 @@ class ParentGuideRecommendationParams(ChatCompletionFewShotMapperParams):
 
 def generate_parent_guideline_prompt(input: Dialogue, params: ParentGuideRecommendationParams) -> str:
     prompt = """
-You are a helpful assistant who help a communication between children and their parents.
-Suppose that you are helping a communication with a minimally verbal autistic child and parents.
-Given the last message of the children, suggest a list of sentences that can help the parents pick to respond or ask questions.
+Role: You are a helpful assistant who helps facilitate communication between minimally verbal autistic children and their parents.
+Task: Given a dialogue between a parent and a child, suggest a list of guides that can help the parents choose how to respond or ask questions in response to the child's last message.
+Note that the child always convey their message through keywords.
+Goal of the conversation: To help the child and parent elaborate on a topic together.
 
-Return an YAML list containing objects with the following attributes:
+[General instructions for parent's guide]
+- Provide simple and easy-to-understand sentences consisting of no more than 5-6 words.
+- Each guide should contain one purpose or intention.
+- Based on the child's last message, select up to three most appropriate directions from the guide directions provided below.
+- Each guide should be contextualized based on the child's response and not be too general.
 
-example: Provide response or question that parents can make to the child's message in English.
-guide: Provide guide for parents of autistic children to consider when responding to the child's answer. Keep the guide short and concise so parents can read it quickly and move on.
+[Parent guide categories]
+"intention": Check the intention behind the child’s response and ask back.
+"specification": Ask about "what" to specify the event.
+"clues": Give clues that can be answered based on previously known information.
+"wordplay": Follow the child’s favorite word play.
+"coping": Suggest coping strategies for specific situations to the child.
+"stimulate": Suggest presenting information that contradicts what is known to stimulate the child's interest.
+"share": Suggest sharing the parent's thoughts or feelings in simple language.
+"empathize": Suggest empathizing with the child's feelings.
+"encourage": Suggest encouraging the child's actions or emotions.
 
+[Response format]
+Return a json list with each element formatted as:
+{
+  "category": The category of "Parent guide category",
+  "guide": The guide message provided to the parent.
+}
 
-Please provide up to three options.
 """
     return prompt
 
@@ -39,22 +57,49 @@ Please provide up to three options.
 PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommendationAPIResult]] = [
     MapperInputOutputPair(
         input=[
-            DialogueMessage(role=DialogueRole.Parent, content="What did you do at school?"),
+            DialogueMessage(role=DialogueRole.Parent, content="Did you remember that we will visit granma today?"),
             DialogueMessage(role=DialogueRole.Child, content=[
-                CardInfo(text="Friend", localized="친구", category=CardCategory.Topic, recommendation_id=""),
-                CardInfo(text="Lunch", localized="점심", category=CardCategory.Topic, recommendation_id=""),
-                CardInfo(text="Delicious", localized="맛있어요", category=CardCategory.Emotion, recommendation_id=""),
+                CardInfo(text="Grandma", localized="할머니", category=CardCategory.Topic, recommendation_id=""),
+                CardInfo(text="Play", localized="놀아요", category=CardCategory.Emotion, recommendation_id=""),
             ]),
         ],
         output=[
             ParentGuideElement(
-                example="Glad to hear that you've had delicious lunch! Whom did you eat with?",
-                guide="Acknowledge what your child said and ask detailed information."
+                category="empathize",
+                guide="Repeat that your kid wants to play with grandma."
             ),
             ParentGuideElement(
-                example="What did you eat? Which food was delicious?",
-                guide="Ask follow-ups to know your kid better. Then you will be able to continue the conversation based on the food that the kid liked."
-            )
+                category="encourage",
+                guide="Suggest things that the kid can do with grandma playing."
+            ),
+            ParentGuideElement(
+                category="specification",
+                guide="Ask about what your kid wants to do playing."
+            ),
+        ]
+    ),
+    MapperInputOutputPair(
+        input=[
+            DialogueMessage(role=DialogueRole.Parent, content="How was your day at kinder?"),
+            DialogueMessage(role=DialogueRole.Child, content=[
+                CardInfo(text="Kinder", localized="유치원", category=CardCategory.Topic, recommendation_id=""),
+                CardInfo(text="Friend", localized="친구", category=CardCategory.Topic, recommendation_id=""),
+                CardInfo(text="Tough", localized="힘들어요", category=CardCategory.Emotion, recommendation_id=""),
+            ]),
+        ],
+        output=[
+            ParentGuideElement(
+                category="empathize",
+                guide="Empathize that the kid had tough time due to a friend."
+            ),
+            ParentGuideElement(
+                category="intention",
+                guide="Check whether the kid had tough time with the friend."
+            ),
+            ParentGuideElement(
+                category="specification",
+                guide="Ask what was tough with the friend."
+            ),
         ]
     )
 ]

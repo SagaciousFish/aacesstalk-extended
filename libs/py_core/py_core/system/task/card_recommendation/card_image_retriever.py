@@ -1,4 +1,5 @@
 from csv import DictReader
+from time import perf_counter
 
 import numpy
 
@@ -51,23 +52,23 @@ class CardImageRetriever:
             return []
 
     def query_nearest_card_image_infos(self, name: str, k=3)->list[CardImageInfo]:
-
+        t_start = perf_counter()
         #First, find exact match.
-        result = self.__collection_name.get(where={"name": name})
-        if len(result["ids"]) > 0:
+        name_match_result = self.__collection_name.get(where={"name": name})
+        if len(name_match_result["ids"]) > 0:
             print("Found exact name match.")
-            return [self.__card_info_dict[id] for id in result["ids"]]
+            result = [self.__card_info_dict[id] for id in name_match_result["ids"]]
         else:
             # Find fuzzy name match.
             print("Find fuzzy name match.")
-            result = self.__collection_name.query(
+            name_query_result = self.__collection_name.query(
                 query_texts=[name],
                 n_results=k
             )
-            result = self.__query_result_to_info_list(result)
-            print(result)
+            name_query_result = self.__query_result_to_info_list(name_query_result)
+            print(name_query_result)
 
-            return [tup[0] for tup in result]
+            result = [tup[0] for tup in name_query_result]
 
             #result = self.__collection_desc.query(
             #    query_texts=[name],
@@ -75,4 +76,7 @@ class CardImageRetriever:
             #)
             #return [tup[0] for tup in self.__query_result_to_info_list(result)]
 
+        t_end = perf_counter()
+        print(f"Card retrieval took {t_end - t_start} sec.")
 
+        return result

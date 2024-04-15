@@ -76,15 +76,19 @@ class ModeratorSession:
         except Exception as e:
             raise e
 
+
+    async def __get_card_info_from_identities(self, cards: list[CardIdentity] | list[CardInfo]) -> list[CardInfo]:
+        cards = [card_identity if isinstance(card_identity, CardInfo) else (
+            await self.__storage.get_card_recommendation_result(card_identity.recommendation_id)).find_card_by_id(
+            card_identity.id) for card_identity in cards]
+        return [c for c in cards if c is not None]
+
     @speaker(DialogueRole.Child)
     async def refresh_child_card_recommendation(self, interim_cards: list[CardIdentity] | list[CardInfo],
                                                 prev_recommendation: ChildCardRecommendationResult) -> ChildCardRecommendationResult:
         try:
             dialogue = await self.__storage.get_dialogue()
-            interim_cards = [card_identity if isinstance(card_identity, CardInfo) else (
-                await self.__storage.get_card_recommendation_result(card_identity.recommendation_id)).find_card_by_id(
-                card_identity.id) for card_identity in interim_cards]
-            interim_cards = [c for c in interim_cards if c is not None]
+            interim_cards = await self.__get_card_info_from_identities(interim_cards)
 
             recommendation = await self.__child_card_recommender.generate(dialogue, interim_cards, prev_recommendation)
 
@@ -95,8 +99,9 @@ class ModeratorSession:
             raise e
 
     @speaker(DialogueRole.Child)
-    async def submit_child_selected_card(self, selected_cards: list[CardInfo]) -> ParentGuideRecommendationResult:
+    async def submit_child_selected_card(self, selected_cards: list[CardIdentity] | list[CardInfo]) -> ParentGuideRecommendationResult:
         try:
+            selected_cards = await self.__get_card_info_from_identities(selected_cards)
             await self.__storage.add_dialogue_message(DialogueMessage(
                 role=DialogueRole.Child,
                 content=selected_cards

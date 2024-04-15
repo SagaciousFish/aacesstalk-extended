@@ -93,20 +93,28 @@ class ParentGuideTranslator:
         return result
 
     async def translate(self, api_result: ParentGuideRecommendationAPIResult) -> ParentGuideRecommendationAPIResult:
-        examples = [entry.example for entry in api_result]
+        #examples = [entry.example for entry in api_result]
         guides = [entry.guide for entry in api_result]
 
-        coroutine_translate_examples = self.__translate_examples(examples)
+        #coroutine_translate_examples = self.__translate_examples(examples)
 
-        coroutine_translate_guides = self.__deepl_translator.translate(
+        #coroutine_translate_guides = self.__deepl_translator.translate(
+        #    text=guides,
+        #    source_lang="EN",
+        #    target_lang="KO",
+        #    context="The phrases are guides for parents' communication with children with Autism Spectrum Disorder."
+        #)
+
+
+        ##translated_examples, translated_guides = await asyncio.gather(coroutine_translate_examples, coroutine_translate_guides)
+        translated_guides = await self.__deepl_translator.translate(
             text=guides,
             source_lang="EN",
             target_lang="KO",
             context="The phrases are guides for parents' communication with children with Autism Spectrum Disorder."
         )
 
-        translated_examples, translated_guides = await asyncio.gather(coroutine_translate_examples,
-                                                                      coroutine_translate_guides)
+        return [ParentGuideElement(category=entry.category, guide=guide) for guide, entry in zip(translated_guides, api_result)]
 
-        return [ParentGuideElement(example=example, guide=guide) for example, guide in
-                zip(translated_examples, translated_guides)]
+        #return [ParentGuideElement(example=example, guide=guide) for example, guide in
+        #        zip(translated_examples, translated_guides)]

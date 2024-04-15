@@ -55,14 +55,14 @@ class ChildCardRecommendationResult(ModelWithIdAndTimestamp):
 class ParentGuideElement(BaseModel):
     model_config = ConfigDict(frozen=True)
 
-    example: str
+    category: str
     guide: str
 
 
 class ParentGuideRecommendationResult(ModelWithIdAndTimestamp):
     model_config = ConfigDict(frozen=True)
 
-    recommendations: frozenset[ParentGuideElement]
+    recommendations: list[ParentGuideElement]
 
 
 class DialogueRole(StrEnum):
@@ -74,7 +74,7 @@ class DialogueMessage(ModelWithIdAndTimestamp):
     model_config = ConfigDict(frozen=True)
 
     role: DialogueRole
-    content: str | frozenset[CardInfo]
+    content: str | list[CardInfo]
     content_en: str | None = None
     recommendation_id: str | None = None
 

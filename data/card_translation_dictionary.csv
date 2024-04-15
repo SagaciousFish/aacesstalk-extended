@@ -24,6 +24,7 @@ H67n9i7nOg,action,eating,먹어요,True
 voBXCU3PyM,action,enjoy,즐겨요,True
 bFnGzqF9Yj,action,enjoyed,즐겼어요,True
 eM3DY40FFi,action,explain,설명해요,True
+lnHBypcdND,action,explore,탐험해요,False
 a3KelxlGJh,action,feel,느껴요,True
 fOu7qH7shJ,action,finish,끝내요,True
 Jugth0n2i7,action,finished,끝났어요,True
@@ -33,6 +34,7 @@ IIfEakpYmR,action,have,가져요,True
 SQOjY1hhrK,action,help,도와줘요,True
 LHl8HjriW6,action,helped,도와주었어요,True
 ccmJoEsu9M,action,interact,소통해요,True
+SQAIWdfuqX,action,join,참여해요,False
 RpUFh12BxU,action,jump,뛰어요,True
 JZ-fBJMqBr,action,kick,발로 차요,True
 tCFWbFOWDd,action,laugh,웃어요,True
@@ -71,6 +73,7 @@ WKb3RbrCmU,action,see,보아요,True
 1N_POFEXle,action,share,함께 나누어요,True
 Uz9Quu0uS2,action,shared,나눴어요,True
 MTOgG4RLt0,action,show,보여줘요,True
+WtGf9nb3O6,action,showed,보여주었어요,True
 jHtmbQ023Z,action,sing,노래해요,True
 cpSMHN0aEN,action,sit,앉아요,True
 LKT2henEz4,action,sleep,잠자요,True
@@ -80,6 +83,7 @@ YuOIGXfzvq,action,solved,해결했어요,True
 LafJITqEu9,action,speak,말해요,True
 f-mhbNXEPR,action,spent,보냈어요,True
 sMhKvP82v6,action,start,시작해요,True
+8VwnqW47oT,action,stay,머무르다,False
 cqlJuud-RW,action,struggle,고생해요,True
 R6t6WVbYyu,action,struggled,고생했어요,True
 pr0AVEr8-U,action,studied,공부했어요,True
@@ -113,7 +117,8 @@ TNb4VjP5HK,emotion,bored,지루해요,True
 yh-Pfj5gjL,emotion,brave,용감해요,True
 KlvSMgSZ_C,emotion,busy,바빠요,True
 G5RM9CNlaq,emotion,calm,차분해요,True
-0VED3F1HWF,emotion,challenging,도전적이에요,True
+0VED3F1HWF,emotion,challenging,어려워요,True
+q0Ip1wTkNl,emotion,cheerful,응원해요,False
 5wib6XtmEK,emotion,comfortable,편해요,True
 yvtJ2-R-Dd,emotion,concentrated,집중해요,True
 -bzqC3QcIw,emotion,confused,헷갈려요,True
@@ -126,8 +131,10 @@ olTgInYBuW,emotion,easy,쉬워요,True
 D5noWTy5_k,emotion,energetic,활발해요,True
 YW1X3ijSGA,emotion,enjoy,즐거워요,True
 DEGWOdzawz,emotion,enjoyed,즐거워요,True
-XY8EDakVX6,emotion,excited,흥분해요,True
+aoDwRQb9es,emotion,enthusiastic,열정적이에요,True
+XY8EDakVX6,emotion,excited,신나요,True
 EST70GpYrr,emotion,exhausted,지쳤어요,True
+LI8dDtCqOW,emotion,focused,집중해요,True
 O0T9Yfl1AZ,emotion,frustrated,좌절해요,True
 G8tvHjHyUR,emotion,frustrating,짜증나요,True
 N3u9oPuIY6,emotion,full,배불러요,True
@@ -141,6 +148,7 @@ jFmFbn_v97,emotion,interested,관심 있어요,True
 ssS8jmAp68,emotion,interesting,재미있어요,True
 uqLUnydAq3,emotion,intrigued,궁금해요,True
 7QRF-rMtkR,emotion,joyful,기뻐요,True
+VbWST2bEFl,emotion,joyous,기쁜해요,False
 3uenAkbfvb,emotion,lonely,외로워요,True
 blC5IzTpXr,emotion,miss,그리워요,True
 a3ywtaRuhV,emotion,nervous,긴장해요,True
@@ -163,6 +171,7 @@ iJwNCmPtYB,emotion,uncomfortable,불편해요,True
 wEV-vqC_EI,emotion,unsure,불확실해요,True
 gJHJnTTPNT,emotion,upset,상처받았어요,True
 dcPChAHMPb,emotion,worried,걱정해요,True
+00MW5LFvvC,emotion,worry,걱정해요,True
 ij7TQkFJ_B,topic,English,영어,True
 LJ0ZN-IZwE,topic,Korean,한국어,True
 Bbg2hwrILA,topic,PE class,체육 수업,True
@@ -177,7 +186,9 @@ tEDMBJYVR8,topic,blocks,블록,True
 rwvFdtPeH0,topic,book,책,True
 6dkvootrxa,topic,break,휴식,True
 SPH_0gDzXd,topic,break time,쉬는 시간,True
+2DNqirPt0_,topic,car,자동차,False
 abPVau7epK,topic,cartoon,만화,True
+ucBETq0Hhp,topic,cartoons,만화,True
 QZg5_V3fHz,topic,cinema,영화관,True
 vN9zzjXskH,topic,class,교실,True
 lanXgQ4kc9,topic,classes,수업,True
@@ -213,6 +224,8 @@ o155HdxDwa,topic,grandma,할머니,True
 9U1qtuAJy9,topic,help,도움,True
 HJe1_inAW7,topic,hide and seek,숨바꼭질,True
 Z9QfUYXuVg,topic,homework,숙제,True
+RPyf30i9Eg,topic,house,집,False
+NsHYZ_m4dN,topic,ice cream,아이스크림,True
 cyTl48Juxm,topic,learn,배우기,True
 d1vLFZB4dR,topic,learning,배우기,True
 yHMiG8vVr7,topic,lesson,수업,True
@@ -237,6 +250,7 @@ KhOKsfuOAb,topic,play,놀이,True
 SgrJ3-soFj,topic,playing,놀이,True
 aqa0CuQBT2,topic,playtime,놀이 시간,True
 QYYzlF7QT2,topic,popcorn,팝콘,True
+krpVH4nyGR,topic,practice,연습,True
 wDOPUCmm8o,topic,problem,문제,True
 SeRymPAZgl,topic,project,프로젝트,True
 29KrNnXxhw,topic,puzzle,퍼즐,True
@@ -251,6 +265,7 @@ l6a_W_vdiO,topic,sandwich,샌드위치,True
 2bqHLaFEOK,topic,school,학교,True
 AIVv8SZhiV,topic,science,과학,True
 MKImtd3Ojq,topic,sculpting,조각하기,True
+volZ4dnema,topic,see,보기,False
 JB4_-guove,topic,share,나누기,True
 q_hYE0lLKz,topic,shopping,쇼핑,True
 Msw_kz72pO,topic,sing,노래,True
@@ -272,6 +287,7 @@ fwevuioC5m,topic,tickets,티켓,True
 UhU29qrEDh,topic,together,함께,True
 05joagL419,topic,toy,장난감,True
 pt-tfZEEK4,topic,toys,장난감,True
+TxjIz_Ta9s,topic,tv,TV,True
 joF5kheIoO,topic,visit,방문,True
 JTDj3vAlSA,topic,watch,관람,True
 VekDlhcSYO,topic,writing,글쓰기,True
