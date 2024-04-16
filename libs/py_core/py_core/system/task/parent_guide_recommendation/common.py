@@ -9,10 +9,9 @@ ParentGuideRecommendationAPIResult: TypeAlias = list[ParentGuideElement]
 
 
 class DialogueInspectionWarningType(StrEnum):
-    KeepAsking="keep_asking"
     Aggressive="aggressive_reaction"
     Reprimanding="reprimanding"
-    DoubleBarrelled="double_barrelled"
+
 
 class DialogueInspectionElement:
     type: DialogueInspectionWarningType

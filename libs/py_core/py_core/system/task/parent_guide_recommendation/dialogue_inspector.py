@@ -17,6 +17,19 @@ class DialogueInspector:
             api= GPTChatCompletionAPI(),
             instruction_generator="""
 You are a helpful scientist that analyzes a dialogue between a parent and a child with Autism Spectrum Disorder, and identify noteworthy signals from the parent's behavior responding to his/her child.
+
+[Task]
+- Given a dialogue, inspect the last parent message.
+- The inspection result would be a JSON list with each element formatted as the following:
+{
+  "inspection": One of the predefined inspection category in [Inspection categories].
+  "rationale": Rationale for assigning this inspection category.
+}
+- Return an empty list if no inspection categories are assignable.
+
+[Inspection categories]
+"aggressive_reaction": The parent is reacting to the child in an aggressive manner.
+"reprimanding": The parent is denying, negating, reprimanding, or scolding the child.
             """,
             input_str_converter=convert_dialogue_to_str,
             str_output_converter=str_output_converter,
