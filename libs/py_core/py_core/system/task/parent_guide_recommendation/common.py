@@ -9,12 +9,12 @@ ParentGuideRecommendationAPIResult: TypeAlias = list[ParentGuideElement]
 
 
 class DialogueInspectionWarningType(StrEnum):
-    Aggressive="aggressive_reaction"
-    Reprimanding="reprimanding"
+    Aggressive="aggressive"
+    Schooling="schooling"
 
 
-class DialogueInspectionElement:
-    type: DialogueInspectionWarningType
+class DialogueInspectionElement(BaseModel):
+    category: DialogueInspectionWarningType
     rationale: str
 
 DialogueInspectionResult: TypeAlias = list[DialogueInspectionElement]

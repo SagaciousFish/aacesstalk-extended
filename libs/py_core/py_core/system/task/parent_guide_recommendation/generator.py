@@ -6,11 +6,10 @@ from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompl
     MapperInputOutputPair
 
 from py_core.system.model import ParentGuideRecommendationResult, Dialogue, ParentGuideElement, DialogueMessage, \
-    DialogueRole, CardInfo, CardCategory
+    CardCategory
 from py_core.system.task.parent_guide_recommendation.common import ParentGuideRecommendationAPIResult
 from py_core.system.task.parent_guide_recommendation.translator import ParentGuideTranslator
-from py_core.system.task.stringify import convert_dialogue_to_str
-
+from py_core.system.task.stringify import DialogueToStrConversionFunction
 
 
 class ParentGuideRecommendationParams(ChatCompletionFewShotMapperParams):
@@ -57,11 +56,8 @@ Return a json list with each element formatted as:
 PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommendationAPIResult]] = [
     MapperInputOutputPair(
         input=[
-            DialogueMessage(role=DialogueRole.Parent, content="Did you remember that we will visit granma today?"),
-            DialogueMessage(role=DialogueRole.Child, content=[
-                CardInfo(text="Grandma", localized="할머니", category=CardCategory.Topic, recommendation_id=""),
-                CardInfo(text="Play", localized="놀아요", category=CardCategory.Emotion, recommendation_id=""),
-            ]),
+            DialogueMessage.example_parent_message("Did you remember that we will visit granma today?"),
+            DialogueMessage.example_child_message(("Grandma", CardCategory.Topic), ("Play", CardCategory.Action))
         ],
         output=[
             ParentGuideElement(
@@ -80,12 +76,11 @@ PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommend
     ),
     MapperInputOutputPair(
         input=[
-            DialogueMessage(role=DialogueRole.Parent, content="How was your day at kinder?"),
-            DialogueMessage(role=DialogueRole.Child, content=[
-                CardInfo(text="Kinder", localized="유치원", category=CardCategory.Topic, recommendation_id=""),
-                CardInfo(text="Friend", localized="친구", category=CardCategory.Topic, recommendation_id=""),
-                CardInfo(text="Tough", localized="힘들어요", category=CardCategory.Emotion, recommendation_id=""),
-            ]),
+            DialogueMessage.example_parent_message("How was your day at kinder?"),
+            DialogueMessage.example_child_message(
+                ("Kinder", CardCategory.Topic),
+                ("Friend", CardCategory.Topic),
+                ("Tough", CardCategory.Emotion)),
         ],
         output=[
             ParentGuideElement(
@@ -104,6 +99,7 @@ PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommend
     )
 ]
 
+
 # Generator ==========================================
 class ParentGuideRecommendationGenerator:
     __MAPPER_PARAMS__ = ParentGuideRecommendationParams(
@@ -117,12 +113,13 @@ class ParentGuideRecommendationGenerator:
         api.config().verbose = False
 
         self.__mapper: ChatCompletionFewShotMapper[
-            Dialogue, ParentGuideRecommendationAPIResult, ParentGuideRecommendationParams] = ChatCompletionFewShotMapper(api,
-                                        instruction_generator=generate_parent_guideline_prompt,
-                                        input_str_converter=convert_dialogue_to_str,
-                                        output_str_converter=output_str_converter,
-                                        str_output_converter=str_output_converter
-                                        )
+            Dialogue, ParentGuideRecommendationAPIResult, ParentGuideRecommendationParams] = ChatCompletionFewShotMapper(
+            api,
+            instruction_generator=generate_parent_guideline_prompt,
+            input_str_converter=DialogueToStrConversionFunction(),
+            output_str_converter=output_str_converter,
+            str_output_converter=str_output_converter
+            )
 
         self.__translator = ParentGuideTranslator()
 
@@ -138,4 +135,3 @@ class ParentGuideRecommendationGenerator:
         print(f"Translation took {t_end - t_trans} sec.")
         print(f"Total latency: {t_end - t_start} sec.")
         return ParentGuideRecommendationResult(recommendations=translated_guide_list)
-

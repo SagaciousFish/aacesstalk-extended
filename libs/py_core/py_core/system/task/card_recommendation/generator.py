@@ -8,7 +8,7 @@ from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompl
 from py_core.system.model import Dialogue, CardInfo, ChildCardRecommendationResult, id_generator, CardCategory
 from py_core.system.task.card_recommendation.common import ChildCardRecommendationAPIResult
 from py_core.system.task.card_recommendation.translator import CardTranslator
-from py_core.system.task.stringify import convert_dialogue_to_str
+from py_core.system.task.stringify import DialogueToStrConversionFunction
 
 str_output_converter, output_str_converter = generate_pydantic_converter(ChildCardRecommendationAPIResult, 'yaml')
 
@@ -30,7 +30,7 @@ class ChildCardRecommendationGenerator:
             Dialogue, ChildCardRecommendationAPIResult, ChildCardRecommendationParams] = (
             ChatCompletionFewShotMapper(api,
                                         instruction_generator=self.__prompt_generator,
-                                        input_str_converter=convert_dialogue_to_str,
+                                        input_str_converter=DialogueToStrConversionFunction(),
                                         output_str_converter=output_str_converter,
                                         str_output_converter=str_output_converter
                                         ))

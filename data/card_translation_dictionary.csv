@@ -1,10 +1,13 @@
 id,category,english,localized,inspected
+Z7PKuepeFz,action,apologize,사과해요,False
+rFP_f6kugO,action,ask,물어봐요,False
 C981hmNoSM,action,ate,먹었어요,True
 J3qH5TLi_n,action,bring,가져가요,True
 QYBk1Wh9mw,action,built,지었어요,True
 Bir4yNufTz,action,buy,사요,True
 9ApkXNWhGk,action,chat,잡담해요,True
 Z6-RUtuXwp,action,choose,선택해요,True
+r35xvR3VnP,action,climbed,올라갔어요,True
 f7x6vYZGZH,action,color,색칠해요,True
 ZpDnU8cjbb,action,consider,고려해요,True
 RnOviC3z8h,action,cooked,요리했어요,True
@@ -28,14 +31,20 @@ lnHBypcdND,action,explore,탐험해요,False
 a3KelxlGJh,action,feel,느껴요,True
 fOu7qH7shJ,action,finish,끝내요,True
 Jugth0n2i7,action,finished,끝났어요,True
+TOMgwksER3,action,focus,집중해요,True
+ayJyQE-ie5,action,follow,따라해요,True
+RobMQHBl0E,action,forget,잊어버려요,True
+dcBKqBvDJT,action,forgive,용서해요,True
 -urVCbaa_L,action,go,가요,True
 O6u0XAv7Vm,action,had,했어요,True
 IIfEakpYmR,action,have,가져요,True
 SQOjY1hhrK,action,help,도와줘요,True
 LHl8HjriW6,action,helped,도와주었어요,True
+daLY5CMk-2,action,hug,안아줘요, True
 ccmJoEsu9M,action,interact,소통해요,True
 SQAIWdfuqX,action,join,참여해요,False
 RpUFh12BxU,action,jump,뛰어요,True
+dBUmvA3gou,action,jumped, 점프했어요,True
 JZ-fBJMqBr,action,kick,발로 차요,True
 tCFWbFOWDd,action,laugh,웃어요,True
 7UkuOuo77G,action,laughed,웃었어요,True
@@ -48,10 +57,12 @@ F3nPejvVfa,action,liked,좋았어요,True
 W36kb3y-0g,action,listen,들어요,True
 FKx7TtcCcr,action,listened,들었어요,True
 siwWKm9BV8,action,look,보아요,True
+6aCL61BwoT,action,love,사랑해요,True
 eFapnHTSZ-,action,make,만들어요,True
 CehJbDpG_e,action,meet,만나요,True
 D5Pq-2-sTX,action,met,만났어요,True
 JsSK3Mng_u,action,need,필요해요,True
+r0zmjR4QK7,action,obey,복종해요,True
 cTZJXQvr1c,action,paint,그려요,True
 uqW7Td0INw,action,participate,참여해요,True
 H5p_T5dcgq,action,participated,참여했어요,True
@@ -69,6 +80,7 @@ Y2hnmAeTh5,action,ride,타요,True
 BO8CFiXNOV,action,run,달려요,True
 RkGMYue-3T,action,sang,노래했어요,True
 SvdWDngshX,action,saw,봤어요,True
+CmuDetIOQk,action,say,말해요,False
 WKb3RbrCmU,action,see,보아요,True
 1N_POFEXle,action,share,함께 나누어요,True
 Uz9Quu0uS2,action,shared,나눴어요,True
@@ -83,6 +95,7 @@ YuOIGXfzvq,action,solved,해결했어요,True
 LafJITqEu9,action,speak,말해요,True
 f-mhbNXEPR,action,spent,보냈어요,True
 sMhKvP82v6,action,start,시작해요,True
+JvDzduIcWT,action,started,시작했어요, True
 8VwnqW47oT,action,stay,머무르다,False
 cqlJuud-RW,action,struggle,고생해요,True
 R6t6WVbYyu,action,struggled,고생했어요,True
@@ -112,6 +125,7 @@ rcTU_pxaWV,emotion,afraid,무서워요,True
 ZidEwQWCSz,emotion,angry,화나요,True
 5i3qBtw776,emotion,anticipatory,기대해요,True
 OKCKi5MEJj,emotion,anxious,불안해요,True
+dy5VPrxAEZ,emotion,apologetic,사과해요,False
 TNb4VjP5HK,emotion,bored,지루해요,True
 -pX1Cwbq2f,emotion,boring,지루해요,True
 yh-Pfj5gjL,emotion,brave,용감해요,True
@@ -125,9 +139,11 @@ yvtJ2-R-Dd,emotion,concentrated,집중해요,True
 XNDF0_wSwd,emotion,content,만족해요,True
 mh-UBb8kM7,emotion,curious,궁금해요,True
 91Ex6R4Ws0,emotion,difficult,어려워요,True
+A3qnncaY1q,emotion,disappointed,실망했어요,True
 shSNzAio8H,emotion,dislike,싫어해요,True
 4m-0MnA7m_,emotion,eager,갈망해요,True
 olTgInYBuW,emotion,easy,쉬워요,True
+ilE0msjoSy,emotion,embarrassed,부끄러워요,True
 D5noWTy5_k,emotion,energetic,활발해요,True
 YW1X3ijSGA,emotion,enjoy,즐거워요,True
 DEGWOdzawz,emotion,enjoyed,즐거워요,True
@@ -156,6 +172,7 @@ h4RAE-FkbK,emotion,optimistic,낙천적이에요,True
 Ks2iMvnxDD,emotion,proud,자랑스러워요,True
 cT5Mt9Drjc,emotion,puzzled,헷갈려요,True
 aeZx31BQXD,emotion,ready,준비됐어요,True
+3CDRUMR1Co,emotion,regretful,후회돼요,True
 LXATJCOI8p,emotion,relaxed,편안해요,True
 KJA9WlfnQH,emotion,relief,안심해요,True
 a1ieA5cywS,emotion,relieved,편해요,True
@@ -164,10 +181,12 @@ E3fWcTGiDH,emotion,sad,슬퍼요,True
 2KTmoEDabw,emotion,scared,무서워요,True
 VNwYfr00ga,emotion,shy,부끄러워요,True
 hDt7NLgf2u,emotion,simple,간단해요,True
+86201LBWef,emotion,sorry,미안해요,True
 2X0JOPBeuS,emotion,surprised,놀랐어요,True
 kpnbdnPwqE,emotion,tired,피곤해요,True
 OCaMDYq79-,emotion,tiring,피곤해요,True
 iJwNCmPtYB,emotion,uncomfortable,불편해요,True
+MP_efkL26U,emotion,understood,이해했어요,True
 wEV-vqC_EI,emotion,unsure,불확실해요,True
 gJHJnTTPNT,emotion,upset,상처받았어요,True
 dcPChAHMPb,emotion,worried,걱정해요,True
@@ -181,6 +200,7 @@ zpoAMjrPm_,topic,art,미술,True
 AXww_Z6iiJ,topic,art class,미술 수업,True
 ywQE0a80n_,topic,arts,예술,True
 IMftroKV4S,topic,ball,공,True
+1qt1uoBHbO,topic,behavior,행동,False
 uiMaluvFvG,topic,bike,자전거,True
 tEDMBJYVR8,topic,blocks,블록,True
 rwvFdtPeH0,topic,book,책,True
@@ -230,6 +250,7 @@ cyTl48Juxm,topic,learn,배우기,True
 d1vLFZB4dR,topic,learning,배우기,True
 yHMiG8vVr7,topic,lesson,수업,True
 KqMbwnuQTE,topic,lessons,수업,True
+7HjNTrqSKY,topic,listen,듣기,True
 4PgUQB51Ht,topic,lunch,점심,True
 Vw7mR4BXYQ,topic,math,수학,True
 vMmv5GwdN7,topic,meal,식사,True
@@ -259,6 +280,8 @@ J_fpsBQvUG,topic,puzzles,퍼즐,True
 xSUB5MbEYf,topic,reading,읽기,True
 bbuEkm70HA,topic,recess,외출,True
 Jw5KqXbGgq,topic,room,방,True
+sq4xJoaI5a,topic,rule,규칙,True
+qLY8rRApZW,topic,rules,규칙,True
 UeI__XeQNE,topic,run,달리기,True
 v87vwbFyNz,topic,sandbox,모래사장,True
 l6a_W_vdiO,topic,sandwich,샌드위치,True

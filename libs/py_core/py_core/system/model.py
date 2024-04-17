@@ -78,6 +78,13 @@ class DialogueMessage(ModelWithIdAndTimestamp):
     content_en: str | None = None
     recommendation_id: str | None = None
 
+    @classmethod
+    def example_parent_message(cls, content_en: str) -> 'DialogueMessage':
+        return DialogueMessage(content="_", content_en=content_en, role=DialogueRole.Parent)
+
+    @classmethod
+    def example_child_message(cls, *card_labels_eng: tuple[str, CardCategory]) -> 'DialogueMessage':
+        return DialogueMessage(role=DialogueRole.Child, content=[CardInfo(text=label, localized="", category=category, recommendation_id="") for label, category in card_labels_eng])
 
 Dialogue: TypeAlias = list[DialogueMessage]
 
