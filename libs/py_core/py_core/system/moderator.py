@@ -1,16 +1,13 @@
 import asyncio
-from asyncio import to_thread
+from nanoid import generate
 
-import deepl
-from deepl import TextResult
-from chatlib.utils.env_helper import get_env_variable
-
-from py_core.system.model import ChildCardRecommendationResult, Dialogue, DialogueMessage, DialogueRole, CardInfo, \
+from py_core.system.model import ChildCardRecommendationResult, DialogueMessage, DialogueRole, CardInfo, \
     CardIdentity, \
     ParentGuideRecommendationResult
 from py_core.system.storage import SessionStorage
 from py_core.system.task import ChildCardRecommendationGenerator
 from py_core.system.task.parent_guide_recommendation import ParentGuideRecommendationGenerator
+from py_core.system.task.parent_guide_recommendation.dialogue_inspector import DialogueInspector
 from py_core.utils.deepl_translator import DeepLTranslator
 
 
@@ -42,6 +39,10 @@ class ModeratorSession:
 
         self.__deepl_translator = DeepLTranslator()
 
+        self.__dialogue_inspector = DialogueInspector()
+        self.__dialogue_inspection_task: asyncio.Task | None = None
+        self.__dialogue_inspection_task_id: str | None = None
+
     @property
     def next_speaker(self) -> DialogueRole:
         return self.__next_speaker
@@ -65,6 +66,14 @@ class ModeratorSession:
             await self.__storage.add_dialogue_message(new_message)
 
             dialogue = await self.__storage.get_dialogue()
+
+            # Start a background task for inspection.
+            if self.__dialogue_inspection_task is not None:
+                self.__dialogue_inspection_task.cancel()
+
+            self.__dialogue_inspection_task_id = generate(size=5)
+
+            self.__dialogue_inspection_task = asyncio.create_task(self.__dialogue_inspector.inspect(dialogue, self.__dialogue_inspection_task_id))
 
             recommendation = await self.__child_card_recommender.generate(dialogue, None, None)
 
@@ -109,7 +118,18 @@ class ModeratorSession:
 
             dialogue = await self.__storage.get_dialogue()
 
-            recommendation = await self.__parent_guide_recommender.generate(dialogue)
+            # Join a dialogue inspection task
+            dialogue_inspection_result = None
+            if self.__dialogue_inspection_task_id is not None and self.__dialogue_inspection_task is not None:
+                dialogue_inspection_result, task_id = await self.__dialogue_inspection_task
+                if task_id != self.__dialogue_inspection_task_id:
+                    dialogue_inspection_result = None
+
+            # Clear
+            self.__dialogue_inspection_task_id = None
+            self.__dialogue_inspection_task = None
+
+            recommendation = await self.__parent_guide_recommender.generate(dialogue, dialogue_inspection_result)
 
             await self.__storage.add_parent_guide_recommendation_result(recommendation)
 

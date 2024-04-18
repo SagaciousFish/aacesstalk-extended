@@ -1,3 +1,5 @@
+from time import perf_counter
+
 from chatlib.tool.converter import generate_type_converter
 from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompletionFewShotMapperParams, \
     MapperInputOutputPair
@@ -62,10 +64,15 @@ Array<{
         else:
             return DialogueToStrConversionFunction.message_row_formatter_default(formatted, message, dialogue)
 
-    async def inspect(self, dialogue: Dialogue)->DialogueInspectionResult | None:
+    async def inspect(self, dialogue: Dialogue, task_id: str)->tuple[DialogueInspectionResult | None, str]:
+        t_start = perf_counter()
         if len(dialogue) == 0:
-            return None
+            result = None, task_id
         elif dialogue[len(dialogue) - 1].role != DialogueRole.Parent:
-            return None
+            result = None, task_id
         else:
-            return await self.__mapper.run(_EXAMPLES, dialogue, ChatCompletionFewShotMapperParams(model=ChatGPTModel.GPT_3_5_0613, api_params={}))
+            result = (await self.__mapper.run(_EXAMPLES, dialogue, ChatCompletionFewShotMapperParams(model=ChatGPTModel.GPT_3_5_0613, api_params={}))), task_id
+        t_end = perf_counter()
+        print(f"Dialogue inspection took {t_end - t_start} sec. result: ", result[0], f"task_id: {result[1]}")
+
+        return result

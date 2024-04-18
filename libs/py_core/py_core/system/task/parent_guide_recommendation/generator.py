@@ -7,13 +7,19 @@ from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompl
 
 from py_core.system.model import ParentGuideRecommendationResult, Dialogue, ParentGuideElement, DialogueMessage, \
     CardCategory
-from py_core.system.task.parent_guide_recommendation.common import ParentGuideRecommendationAPIResult
+from py_core.system.task.parent_guide_recommendation.common import ParentGuideRecommendationAPIResult, \
+    DialogueInspectionResult
 from py_core.system.task.parent_guide_recommendation.translator import ParentGuideTranslator
 from py_core.system.task.stringify import DialogueToStrConversionFunction
 
 
 class ParentGuideRecommendationParams(ChatCompletionFewShotMapperParams):
-    pass
+    dialogue_inspection_result: DialogueInspectionResult | None = None
+
+    @classmethod
+    def instance(cls, dialogue_inspection_result: DialogueInspectionResult | None = None) -> 'ParentGuideRecommendationParams':
+        return cls(model=ChatGPTModel.GPT_4_0613, api_params={}, dialogue_inspection_result=dialogue_inspection_result)
+
 
 
 # Variables for mapper ================================================================================================================
@@ -102,9 +108,6 @@ PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommend
 
 # Generator ==========================================
 class ParentGuideRecommendationGenerator:
-    __MAPPER_PARAMS__ = ParentGuideRecommendationParams(
-        model=ChatGPTModel.GPT_4_0613,
-        api_params={})
 
     def __init__(self):
         str_output_converter, output_str_converter = generate_type_converter(ParentGuideRecommendationAPIResult, 'yaml')
@@ -123,10 +126,10 @@ class ParentGuideRecommendationGenerator:
 
         self.__translator = ParentGuideTranslator()
 
-    async def generate(self, dialogue: Dialogue) -> ParentGuideRecommendationResult:
+    async def generate(self, dialogue: Dialogue, inspection_result: DialogueInspectionResult | None) -> ParentGuideRecommendationResult:
         t_start = perf_counter()
         guide_list: ParentGuideRecommendationAPIResult = await self.__mapper.run(PARENT_GUIDE_EXAMPLES, dialogue,
-                                                                                 self.__MAPPER_PARAMS__)
+                                                                                 ParentGuideRecommendationParams.instance(inspection_result))
         print(guide_list)
         t_trans = perf_counter()
         print(f"Mapping took {t_trans - t_start} sec. Start translation...")
