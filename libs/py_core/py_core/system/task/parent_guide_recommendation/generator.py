@@ -26,27 +26,29 @@ class ParentGuideRecommendationParams(ChatCompletionFewShotMapperParams):
 
 def generate_parent_guideline_prompt(input: Dialogue, params: ParentGuideRecommendationParams) -> str:
     prompt = """
-Role: You are a helpful assistant who helps facilitate communication between minimally verbal autistic children and their parents.
-Task: Given a dialogue between a parent and a child, suggest a list of guides that can help the parents choose how to respond or ask questions in response to the child's last message.
-Note that the child always convey their message through keywords.
-Goal of the conversation: To help the child and parent elaborate on a topic together.
+- Role: You are a helpful assistant who helps facilitate communication between minimally verbal autistic children and their parents.
+- Task: Given a dialogue between a parent and a child, suggest a list of guides that can help the parents choose how to respond or ask questions in response to the child's last message. Note that the child always conveys their message through keywords.
+- Goal of the conversation: To help the child and parent elaborate on a topic together.
 
 [General instructions for parent's guide]
 - Provide simple and easy-to-understand sentences consisting of no more than 5-6 words.
 - Each guide should contain one purpose or intention.
-- Based on the child's last message, select up to three most appropriate directions from the guide directions provided below.
+- Based on the child's last message, select up to three most appropriate directions from the parent guide categories provided below.
 - Each guide should be contextualized based on the child's response and not be too general.
 
 [Parent guide categories]
 "intention": Check the intention behind the child’s response and ask back.
 "specification": Ask about "what" to specify the event.
+"choice": Provide choices for children to select their answers.
 "clues": Give clues that can be answered based on previously known information.
-"wordplay": Follow the child’s favorite word play.
 "coping": Suggest coping strategies for specific situations to the child.
-"stimulate": Suggest presenting information that contradicts what is known to stimulate the child's interest.
-"share": Suggest sharing the parent's thoughts or feelings in simple language.
-"empathize": Suggest empathizing with the child's feelings.
-"encourage": Suggest encouraging the child's actions or emotions.
+"stimulate": Present information that contradicts what is known to stimulate the child's interest.
+"share": Share the parent's emotions and thoughts in simple language.
+"empathize": Empathize with the child's feelings.
+"encourage": Encourage the child's actions or emotions.
+"emotion": Asking about the child's feelings and emotions.
+"extend": Inducing an expansion or change of the conversation topic.
+"terminate": Inquiring about the desire to end the conversation.
 
 [Response format]
 Return a json list with each element formatted as:

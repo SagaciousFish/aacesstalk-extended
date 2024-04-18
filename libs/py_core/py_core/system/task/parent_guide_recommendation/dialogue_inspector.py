@@ -17,7 +17,7 @@ _EXAMPLES = [
             DialogueMessage.example_child_message(("School", CardCategory.Topic), ("Play", CardCategory.Action)),
             DialogueMessage.example_parent_message("I asked you not to play games at school. Didn't I?")
         ],
-        output=[DialogueInspectionElement(category=DialogueInspectionWarningType.Schooling, rationale="The parent is about to scold the child not to play games.")]
+        output=[DialogueInspectionElement(category=DialogueInspectionWarningType.Correction, rationale="The parent is about to scold the child not to play games.")]
     )
 ]
 
@@ -31,10 +31,9 @@ class DialogueInspector:
             Dialogue, DialogueInspectionResult, ChatCompletionFewShotMapperParams] = ChatCompletionFewShotMapper(
             api=GPTChatCompletionAPI(),
             instruction_generator="""
-You are a helpful scientist that analyzes a dialogue between a parent and a child with Autism Spectrum Disorder, and identify noteworthy signals from the parent's behavior responding to his/her child.
 
-[Task]
-- Given a dialogue, inspect the last parent message.
+- Role: You are a helpful communication expert that analyzes a conversation pattern between a parent and a autistic child, and identify noteworthy signals from the parent's behavior responding to his/her child.
+- Task: Given a dialogue, inspect the last parent message.
 
 [Input format]
 The dialogue will be formatted as an XML.
@@ -45,12 +44,17 @@ The last message of the parent to be inspected is marked with an attribute 'insp
 Array<{
   "category": string // One of the predefined inspection category in [Inspection categories].
   "rationale": string // Rationale for assigning this inspection category.
+  "feedback": string // Provide a message to parents to let them know the current conversation status
 }>
-- Return an empty list if no inspection categories are assignable.
 
 [Inspection categories]
-- "aggressive": Use this category when the parent is reacting to the child in an aggressive manner, like reprimanding or scolding.
-- "schooling": Use this category when the parent is compulsively correcting the child's messages or pointing out that the child is wrong.
+"blame": When the parent criticizes or negatively evaluates the child's respons, like reprimanding or scolding
+"correction": When the parent is compulsively correcting the child's response or pointing out that the child is wrong.
+"complex": When a parent's dialogue contains more than one goal or intent.
+"deviation": When both parent and child stray from the main topic of the conversation.
+"neutral": General conversation that does not fit into the other status categories.
+
+
             """,
             input_str_converter=DialogueToStrConversionFunction(message_row_formatter=self.__format_dialogue_row),
             str_output_converter=str_output_converter,

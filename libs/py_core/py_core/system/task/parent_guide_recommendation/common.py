@@ -9,9 +9,11 @@ ParentGuideRecommendationAPIResult: TypeAlias = list[ParentGuideElement]
 
 
 class DialogueInspectionWarningType(StrEnum):
-    Aggressive="aggressive"
-    Schooling="schooling"
-
+    Blame="blame"
+    Correction="correction"
+    Complex="complex"
+    Deviation="deviation"
+    Neutral="neutral"
 
 class DialogueInspectionElement(BaseModel):
     category: DialogueInspectionWarningType
