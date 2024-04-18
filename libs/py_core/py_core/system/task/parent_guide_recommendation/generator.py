@@ -1,15 +1,15 @@
-from time import perf_counter
-
 from chatlib.llm.integration.openai_api import GPTChatCompletionAPI, ChatGPTModel
-from chatlib.tool.converter import generate_type_converter
+from chatlib.tool.converter import generate_pydantic_list_converter
 from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompletionFewShotMapperParams, \
     MapperInputOutputPair
+from chatlib.utils.jinja_utils import convert_to_jinja_template
+from time import perf_counter
 
 from py_core.system.model import ParentGuideRecommendationResult, Dialogue, ParentGuideElement, DialogueMessage, \
     CardCategory
 from py_core.system.task.parent_guide_recommendation.common import ParentGuideRecommendationAPIResult, \
     DialogueInspectionResult, DialogueInspectionCategory
-from py_core.system.task.parent_guide_recommendation.translator import ParentGuideTranslator
+from py_core.system.task.parent_guide_recommendation.guide_translator import GuideTranslator
 from py_core.system.task.stringify import DialogueToStrConversionFunction
 
 
@@ -24,8 +24,7 @@ class ParentGuideRecommendationParams(ChatCompletionFewShotMapperParams):
 
 # Variables for mapper ================================================================================================================
 
-def generate_parent_guideline_prompt(input: Dialogue, params: ParentGuideRecommendationParams) -> str:
-    prompt = """
+_prompt_template = convert_to_jinja_template("""
 - Role: You are a helpful assistant who helps facilitate communication between minimally verbal autistic children and their parents.
 - Task: Given a dialogue between a parent and a child, suggest a list of guides that can help the parents choose how to respond or ask questions in response to the child's last message. Note that the child always conveys their message through keywords.
 - Goal of the conversation: To help the child and parent elaborate on a topic together.
@@ -33,7 +32,7 @@ def generate_parent_guideline_prompt(input: Dialogue, params: ParentGuideRecomme
 [General instructions for parent's guide]
 - Provide simple and easy-to-understand sentences consisting of no more than 5-6 words.
 - Each guide should contain one purpose or intention.
-- Based on the child's last message, select up to three most appropriate directions from the parent guide categories provided below.
+- Based on the child's last message, select up to {%-if dialogue_inspection_result is not none and dialogue_inspection_result.feedback is not none -%}two{%-else-%}three{%-endif-%} most appropriate directions from the parent guide categories provided below.
 - Each guide should be contextualized based on the child's response and not be too general.
 
 [Parent guide categories]
@@ -57,7 +56,10 @@ Return a json list with each element formatted as:
   "guide": The guide message provided to the parent.
 }
 
-"""
+""")
+
+def generate_parent_guideline_prompt(input: Dialogue, params: ParentGuideRecommendationParams) -> str:
+    prompt = _prompt_template.render(dialogue_inspection_result=params.dialogue_inspection_result, dialogue=input)
     return prompt
 
 
@@ -94,7 +96,7 @@ PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommend
 class ParentGuideRecommendationGenerator:
 
     def __init__(self):
-        str_output_converter, output_str_converter = generate_type_converter(ParentGuideRecommendationAPIResult, 'yaml')
+        str_output_converter, output_str_converter = generate_pydantic_list_converter(ParentGuideRecommendationAPIResult, ParentGuideElement, 'yaml', dict(include={"category","guide"}))
 
         api = GPTChatCompletionAPI()
         api.config().verbose = False
@@ -108,7 +110,7 @@ class ParentGuideRecommendationGenerator:
             str_output_converter=str_output_converter
             )
 
-        self.__translator = ParentGuideTranslator()
+        self.__translator = GuideTranslator()
 
     async def generate(self, dialogue: Dialogue, inspection_result: DialogueInspectionResult | None) -> ParentGuideRecommendationResult:
         t_start = perf_counter()

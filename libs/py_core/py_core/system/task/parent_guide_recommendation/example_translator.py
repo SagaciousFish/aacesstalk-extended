@@ -56,7 +56,7 @@ def _generate_prompt(input, params: ParentGuideExampleTranslationParams) -> str:
     return r
 
 
-class ParentGuideTranslator:
+class ParentExampleMessageTranslator:
 
     def __init__(self):
         api = GPTChatCompletionAPI()
@@ -75,9 +75,6 @@ class ParentGuideTranslator:
                                                                                                      str_output_converter=convert_xml_to_messages
                                                                                                      )
 
-        # Initialize DeepL
-        self.__deepl_translator = DeepLTranslator()
-
     async def __translate_examples(self, examples: list[str]) -> list[str]:
         t_start = perf_counter()
 
@@ -93,28 +90,7 @@ class ParentGuideTranslator:
         return result
 
     async def translate(self, api_result: ParentGuideRecommendationAPIResult) -> ParentGuideRecommendationAPIResult:
-        #examples = [entry.example for entry in api_result]
-        guides = [entry.guide for entry in api_result]
+        examples = [entry.example for entry in api_result]
 
-        #coroutine_translate_examples = self.__translate_examples(examples)
-
-        #coroutine_translate_guides = self.__deepl_translator.translate(
-        #    text=guides,
-        #    source_lang="EN",
-        #    target_lang="KO",
-        #    context="The phrases are guides for parents' communication with children with Autism Spectrum Disorder."
-        #)
-
-
-        ##translated_examples, translated_guides = await asyncio.gather(coroutine_translate_examples, coroutine_translate_guides)
-        translated_guides = await self.__deepl_translator.translate(
-            text=guides,
-            source_lang="EN",
-            target_lang="KO",
-            context="The phrases are guides for parents' communication with children with Autism Spectrum Disorder."
-        )
-
-        return [ParentGuideElement(category=entry.category, guide=guide, type=guide.type) for guide, entry in zip(translated_guides, api_result)]
-
-        #return [ParentGuideElement(example=example, guide=guide) for example, guide in
-        #        zip(translated_examples, translated_guides)]
+        translated_examples = await  self.__translate_examples(examples)
+        pass

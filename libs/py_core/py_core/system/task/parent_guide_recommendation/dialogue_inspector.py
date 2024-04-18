@@ -8,6 +8,7 @@ from chatlib.llm.integration import GPTChatCompletionAPI, ChatGPTModel
 from py_core.system.model import Dialogue, DialogueMessage, DialogueRole, CardCategory
 from py_core.system.task.parent_guide_recommendation.common import DialogueInspectionResult, \
     DialogueInspectionCategory
+from py_core.system.task.parent_guide_recommendation.guide_translator import GuideTranslator
 from py_core.system.task.stringify import DialogueToStrConversionFunction
 
 _EXAMPLES = [

@@ -62,9 +62,11 @@ class ParentGuideElement(BaseModel):
 
     category: str | None
     guide: str
+    guide_localized: Optional[str] =None
     type: ParentGuideType = ParentGuideType.Messaging
 
-
+    def with_guide_localized(self, localized: str) -> 'ParentGuideElement':
+        return self.model_copy(update=dict(guide_localized=localized))
 
     @classmethod
     def messaging_guide(cls, category: str, guide: str) -> 'ParentGuideElement':
