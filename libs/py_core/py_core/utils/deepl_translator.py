@@ -38,7 +38,7 @@ class DeepLTranslator(IntegrationService):
                                                                       source_lang=source_lang,
                                                                       target_lang=target_lang,
                                                                       context=context,
-                                                                      split_sentences=split_sentences
+                                                                      split_sentences=split_sentences,
                                                                       )
         t_end = perf_counter()
 

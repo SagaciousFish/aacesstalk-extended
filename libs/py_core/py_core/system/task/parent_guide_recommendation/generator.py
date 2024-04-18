@@ -8,7 +8,7 @@ from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompl
 from py_core.system.model import ParentGuideRecommendationResult, Dialogue, ParentGuideElement, DialogueMessage, \
     CardCategory
 from py_core.system.task.parent_guide_recommendation.common import ParentGuideRecommendationAPIResult, \
-    DialogueInspectionResult
+    DialogueInspectionResult, DialogueInspectionCategory
 from py_core.system.task.parent_guide_recommendation.translator import ParentGuideTranslator
 from py_core.system.task.stringify import DialogueToStrConversionFunction
 
@@ -68,18 +68,9 @@ PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommend
             DialogueMessage.example_child_message(("Grandma", CardCategory.Topic), ("Play", CardCategory.Action))
         ],
         output=[
-            ParentGuideElement(
-                category="empathize",
-                guide="Repeat that your kid wants to play with grandma."
-            ),
-            ParentGuideElement(
-                category="encourage",
-                guide="Suggest things that the kid can do with grandma playing."
-            ),
-            ParentGuideElement(
-                category="specification",
-                guide="Ask about what your kid wants to do playing."
-            ),
+            ParentGuideElement.messaging_guide("empathize", "Repeat that your kid wants to play with grandma."),
+            ParentGuideElement.messaging_guide("encourage", "Suggest things that the kid can do with grandma playing."),
+            ParentGuideElement.messaging_guide("specification", "Ask about what your kid wants to do playing."),
         ]
     ),
     MapperInputOutputPair(
@@ -91,18 +82,9 @@ PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommend
                 ("Tough", CardCategory.Emotion)),
         ],
         output=[
-            ParentGuideElement(
-                category="empathize",
-                guide="Empathize that the kid had tough time due to a friend."
-            ),
-            ParentGuideElement(
-                category="intention",
-                guide="Check whether the kid had tough time with the friend."
-            ),
-            ParentGuideElement(
-                category="specification",
-                guide="Ask what was tough with the friend."
-            ),
+            ParentGuideElement.messaging_guide("empathize", "Empathize that the kid had tough time due to a friend."),
+            ParentGuideElement.messaging_guide("intention", "Check whether the kid had tough time with the friend."),
+            ParentGuideElement.messaging_guide("specification", "Ask what was tough with the friend."),
         ]
     )
 ]
@@ -132,6 +114,10 @@ class ParentGuideRecommendationGenerator:
         t_start = perf_counter()
         guide_list: ParentGuideRecommendationAPIResult = await self.__mapper.run(PARENT_GUIDE_EXAMPLES, dialogue,
                                                                                  ParentGuideRecommendationParams.instance(inspection_result))
+
+        if inspection_result is not None and DialogueInspectionCategory.Neutral not in inspection_result.categories:
+            guide_list.insert(0, ParentGuideElement.feedback(",".join(inspection_result.categories), inspection_result.feedback))
+
         print(guide_list)
         t_trans = perf_counter()
         print(f"Mapping took {t_trans - t_start} sec. Start translation...")

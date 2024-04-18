@@ -1,5 +1,5 @@
 from enum import StrEnum
-from typing import TypeAlias
+from typing import TypeAlias, Optional
 
 from chatlib.utils.time import get_timestamp
 from nanoid import generate
@@ -52,11 +52,27 @@ class ChildCardRecommendationResult(ModelWithIdAndTimestamp):
             return None
 
 
+class ParentGuideType(StrEnum):
+    Messaging = "messaging"
+    Feedback = "feedback"
+
+
 class ParentGuideElement(BaseModel):
     model_config = ConfigDict(frozen=True)
 
-    category: str
+    category: str | None
     guide: str
+    type: ParentGuideType = ParentGuideType.Messaging
+
+
+
+    @classmethod
+    def messaging_guide(cls, category: str, guide: str) -> 'ParentGuideElement':
+        return ParentGuideElement(category=category, guide=guide, type=ParentGuideType.Messaging)
+
+    @classmethod
+    def feedback(cls, category: str | None, guide: str) -> 'ParentGuideElement':
+        return ParentGuideElement(category=category, guide=guide, type=ParentGuideType.Feedback)
 
 
 class ParentGuideRecommendationResult(ModelWithIdAndTimestamp):
@@ -84,7 +100,10 @@ class DialogueMessage(ModelWithIdAndTimestamp):
 
     @classmethod
     def example_child_message(cls, *card_labels_eng: tuple[str, CardCategory]) -> 'DialogueMessage':
-        return DialogueMessage(role=DialogueRole.Child, content=[CardInfo(text=label, localized="", category=category, recommendation_id="") for label, category in card_labels_eng])
+        return DialogueMessage(role=DialogueRole.Child,
+                               content=[CardInfo(text=label, localized="", category=category, recommendation_id="") for
+                                        label, category in card_labels_eng])
+
 
 Dialogue: TypeAlias = list[DialogueMessage]
 

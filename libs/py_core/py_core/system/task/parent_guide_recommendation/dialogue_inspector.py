@@ -1,13 +1,13 @@
 from time import perf_counter
 
-from chatlib.tool.converter import generate_type_converter
+from chatlib.tool.converter import generate_pydantic_converter
 from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompletionFewShotMapperParams, \
     MapperInputOutputPair
 from chatlib.llm.integration import GPTChatCompletionAPI, ChatGPTModel
 
 from py_core.system.model import Dialogue, DialogueMessage, DialogueRole, CardCategory
-from py_core.system.task.parent_guide_recommendation.common import DialogueInspectionResult, DialogueInspectionElement, \
-    DialogueInspectionWarningType
+from py_core.system.task.parent_guide_recommendation.common import DialogueInspectionResult, \
+    DialogueInspectionCategory
 from py_core.system.task.stringify import DialogueToStrConversionFunction
 
 _EXAMPLES = [
@@ -17,7 +17,7 @@ _EXAMPLES = [
             DialogueMessage.example_child_message(("School", CardCategory.Topic), ("Play", CardCategory.Action)),
             DialogueMessage.example_parent_message("I asked you not to play games at school. Didn't I?")
         ],
-        output=[DialogueInspectionElement(category=DialogueInspectionWarningType.Correction, rationale="The parent is about to scold the child not to play games.")]
+        output=DialogueInspectionResult(categories=[DialogueInspectionCategory.Correction], rationale="The parent is about to scold the child not to play games.", feedback="You seem to be scolding him before obtaining to more concrete information. Please gather more information before judgment.")
     )
 ]
 
@@ -25,7 +25,7 @@ class DialogueInspector:
 
     def __init__(self):
 
-        str_output_converter, output_str_converter = generate_type_converter(DialogueInspectionResult, 'json')
+        str_output_converter, output_str_converter = generate_pydantic_converter(DialogueInspectionResult, 'json')
 
         self.__mapper: ChatCompletionFewShotMapper[
             Dialogue, DialogueInspectionResult, ChatCompletionFewShotMapperParams] = ChatCompletionFewShotMapper(
@@ -40,12 +40,12 @@ The dialogue will be formatted as an XML.
 The last message of the parent to be inspected is marked with an attribute 'inspect="true"'.
 
 [Output format]
-- The inspection result would be a JSON array formatted as the following:
-Array<{
-  "category": string // One of the predefined inspection category in [Inspection categories].
-  "rationale": string // Rationale for assigning this inspection category.
+- The inspection result would be a JSON object formatted as the following:
+{
+  "categories": string[] // Inspected categories as part of the predefined inspection categories in [Inspection categories].
+  "rationale": string // Rationale for assigning these inspection categories.
   "feedback": string // Provide a message to parents to let them know the current conversation status
-}>
+}
 
 [Inspection categories]
 "blame": When the parent criticizes or negatively evaluates the child's respons, like reprimanding or scolding
@@ -76,6 +76,8 @@ Array<{
             result = None, task_id
         else:
             result = (await self.__mapper.run(_EXAMPLES, dialogue, ChatCompletionFewShotMapperParams(model=ChatGPTModel.GPT_3_5_0613, api_params={}))), task_id
+            if "neutral" in result[0].categories:
+                result = None, task_id
         t_end = perf_counter()
         print(f"Dialogue inspection took {t_end - t_start} sec. result: ", result[0], f"task_id: {result[1]}")
 

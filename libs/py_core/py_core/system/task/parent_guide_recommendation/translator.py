@@ -114,7 +114,7 @@ class ParentGuideTranslator:
             context="The phrases are guides for parents' communication with children with Autism Spectrum Disorder."
         )
 
-        return [ParentGuideElement(category=entry.category, guide=guide) for guide, entry in zip(translated_guides, api_result)]
+        return [ParentGuideElement(category=entry.category, guide=guide, type=guide.type) for guide, entry in zip(translated_guides, api_result)]
 
         #return [ParentGuideElement(example=example, guide=guide) for example, guide in
         #        zip(translated_examples, translated_guides)]

@@ -1,7 +1,10 @@
 id,category,english,localized,inspected
+AtpX8pHl4M,action,after school,학교 끝나고,False
 Z7PKuepeFz,action,apologize,사과해요,False
 9xqfhNC0iY,action,argue,논해요,False
 rFP_f6kugO,action,ask,물어봐요,False
+5pdoQaqQEb,action,at library,도서관에서,False
+S5ybpAoUkJ,action,at lunch,점심 때,False
 C981hmNoSM,action,ate,먹었어요,True
 PcgcuBvG2g,action,attacked,공격했어요,False
 J3qH5TLi_n,action,bring,가져가요,True
@@ -48,6 +51,7 @@ LHl8HjriW6,action,helped,도와주었어요,True
 daLY5CMk-2,action,hug,안아줘요,True
 VLo71idqvn,action,ignore,무시해요,False
 fQvoeG4dUc,action,ignored,무시했어요,False
+FWsrExL8lN,action,in class,수업 중,False
 ccmJoEsu9M,action,interact,소통해요,True
 SQAIWdfuqX,action,join,참여해요,False
 RpUFh12BxU,action,jump,뛰어요,True
@@ -133,6 +137,7 @@ EWpMoIaJI9,action,want,원해요,True
 4R3TQSorWy,action,watch,봐요,True
 sxXCvD51x6,action,watched,봤어요,True
 wIA4U1wsM-,action,went,갔어요,True
+KxQZ-vrJLN,action,with friend,친구와,False
 Ga2ulwzo8C,action,work,일해요,True
 c9aGllE8jS,action,write,써요,True
 qY0plBcYn8,action,wrote,썼어요,True
@@ -154,6 +159,7 @@ yvtJ2-R-Dd,emotion,concentrated,집중해요,True
 -bzqC3QcIw,emotion,confused,헷갈려요,True
 XNDF0_wSwd,emotion,content,만족해요,True
 mh-UBb8kM7,emotion,curious,궁금해요,True
+wrcjq2faU1,emotion,defiant,저항해요,False
 91Ex6R4Ws0,emotion,difficult,어려워요,True
 A3qnncaY1q,emotion,disappointed,실망했어요,True
 shSNzAio8H,emotion,dislike,싫어해요,True
@@ -174,6 +180,7 @@ N3u9oPuIY6,emotion,full,배불러요,True
 X2KFYqEAAg,emotion,fun,재미있어요,True
 Ci2PKA_26H,emotion,funny,재미있어요,True
 784VWWRAHE,emotion,grateful,감사해요,True
+vbTDJrgs71,emotion,guilty,죄책감이에요,False
 2y9eyE8Xvn,emotion,happy,행복해요,True
 6_Wn5Ma7nk,emotion,hard,어려워요,True
 vokSzpUNx9,emotion,hungry,배고파요,True
@@ -207,6 +214,7 @@ hDt7NLgf2u,emotion,simple,간단해요,True
 kpnbdnPwqE,emotion,tired,피곤해요,True
 OCaMDYq79-,emotion,tiring,피곤해요,True
 iJwNCmPtYB,emotion,uncomfortable,불편해요,True
+aWuN7M0vth,emotion,understand,이해해요,False
 MP_efkL26U,emotion,understood,이해했어요,True
 wEV-vqC_EI,emotion,unsure,불확실해요,True
 gJHJnTTPNT,emotion,upset,상처받았어요,True
@@ -337,4 +345,5 @@ pt-tfZEEK4,topic,toys,장난감,True
 TxjIz_Ta9s,topic,tv,TV,True
 joF5kheIoO,topic,visit,방문,True
 JTDj3vAlSA,topic,watch,관람,True
+kYzgM-b-Vv,topic,work,일,False
 VekDlhcSYO,topic,writing,글쓰기,True

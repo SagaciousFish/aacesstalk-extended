@@ -52,11 +52,14 @@ class ModeratorSession:
                                     current_parent_guide: ParentGuideRecommendationResult | None = None) -> ChildCardRecommendationResult:
 
         try:
+            print("Translate parent message..")
             message_eng = await self.__deepl_translator.translate(
                 text=parent_message,
                 source_lang="KO", target_lang="EN-US",
                 context="The message is from a parent to their child."
             )
+
+            print("Translated parent message.")
 
             new_message = DialogueMessage(role=DialogueRole.Parent,
                                           content=parent_message,
