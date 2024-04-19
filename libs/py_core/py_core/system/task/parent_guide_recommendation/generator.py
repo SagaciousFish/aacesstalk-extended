@@ -8,7 +8,7 @@ from time import perf_counter
 from py_core.system.model import ParentGuideRecommendationResult, Dialogue, ParentGuideElement, DialogueMessage, \
     CardCategory
 from py_core.system.task.parent_guide_recommendation.common import ParentGuideRecommendationAPIResult, \
-    DialogueInspectionResult, DialogueInspectionCategory
+    DialogueInspectionResult, DialogueInspectionCategory, ParentGuideCategory
 from py_core.system.task.parent_guide_recommendation.guide_translator import GuideTranslator
 from py_core.system.task.stringify import DialogueToStrConversionFunction
 
@@ -36,18 +36,11 @@ _prompt_template = convert_to_jinja_template("""
 - Each guide should be contextualized based on the child's response and not be too general.
 
 [Parent guide categories]
-"intention": Check the intention behind the child’s response and ask back.
-"specification": Ask about "what" to specify the event.
-"choice": Provide choices for children to select their answers.
-"clues": Give clues that can be answered based on previously known information.
-"coping": Suggest coping strategies for specific situations to the child.
-"stimulate": Present information that contradicts what is known to stimulate the child's interest.
-"share": Share the parent's emotions and thoughts in simple language.
-"empathize": Empathize with the child's feelings.
-"encourage": Encourage the child's actions or emotions.
-"emotion": Asking about the child's feelings and emotions.
-"extend": Inducing an expansion or change of the conversation topic.
-"terminate": Inquiring about the desire to end the conversation.
+{%- for category in categories -%}
+{%- if (category.min_turns is none) or (category.min_turns <= (dialogue | length)) %}
+- "{{category.label}}": {{category.description}}.
+{%- endif -%}
+{%- endfor %}
 
 [Response format]
 Return a json list with each element formatted as:
@@ -59,7 +52,7 @@ Return a json list with each element formatted as:
 """)
 
 def generate_parent_guideline_prompt(input: Dialogue, params: ParentGuideRecommendationParams) -> str:
-    prompt = _prompt_template.render(dialogue_inspection_result=params.dialogue_inspection_result, dialogue=input)
+    prompt = _prompt_template.render(dialogue_inspection_result=params.dialogue_inspection_result, dialogue=input, categories=ParentGuideCategory.values_with_desc())
     return prompt
 
 
@@ -70,9 +63,9 @@ PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommend
             DialogueMessage.example_child_message(("Grandma", CardCategory.Topic), ("Play", CardCategory.Action))
         ],
         output=[
-            ParentGuideElement.messaging_guide("empathize", "Repeat that your kid wants to play with grandma."),
-            ParentGuideElement.messaging_guide("encourage", "Suggest things that the kid can do with grandma playing."),
-            ParentGuideElement.messaging_guide("specification", "Ask about what your kid wants to do playing."),
+            ParentGuideElement.messaging_guide(ParentGuideCategory.Empathize, "Repeat that your kid wants to play with grandma."),
+            ParentGuideElement.messaging_guide(ParentGuideCategory.Encourage, "Suggest things that the kid can do with grandma playing."),
+            ParentGuideElement.messaging_guide(ParentGuideCategory.Specification, "Ask about what your kid wants to do playing."),
         ]
     ),
     MapperInputOutputPair(
@@ -84,9 +77,9 @@ PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommend
                 ("Tough", CardCategory.Emotion)),
         ],
         output=[
-            ParentGuideElement.messaging_guide("empathize", "Empathize that the kid had tough time due to a friend."),
-            ParentGuideElement.messaging_guide("intention", "Check whether the kid had tough time with the friend."),
-            ParentGuideElement.messaging_guide("specification", "Ask what was tough with the friend."),
+            ParentGuideElement.messaging_guide(ParentGuideCategory.Empathize, "Empathize that the kid had tough time due to a friend."),
+            ParentGuideElement.messaging_guide(ParentGuideCategory.Intention, "Check whether the kid had tough time with the friend."),
+            ParentGuideElement.messaging_guide(ParentGuideCategory.Specification, "Ask what was tough with the friend."),
         ]
     )
 ]
@@ -117,7 +110,7 @@ class ParentGuideRecommendationGenerator:
         guide_list: ParentGuideRecommendationAPIResult = await self.__mapper.run(PARENT_GUIDE_EXAMPLES, dialogue,
                                                                                  ParentGuideRecommendationParams.instance(inspection_result))
 
-        if inspection_result is not None and DialogueInspectionCategory.Neutral not in inspection_result.categories:
+        if inspection_result is not None and inspection_result.feedback is not None:
             guide_list.insert(0, ParentGuideElement.feedback(",".join(inspection_result.categories), inspection_result.feedback))
 
         print(guide_list)
