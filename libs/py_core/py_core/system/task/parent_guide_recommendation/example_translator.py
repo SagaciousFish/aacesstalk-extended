@@ -24,7 +24,6 @@ def _generate_prompt(input, params) -> str:
     r = template.render()
     return r
 
-
 class ParentExampleMessageTranslator:
 
     def __init__(self):
