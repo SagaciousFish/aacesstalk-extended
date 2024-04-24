@@ -1,3 +1,5 @@
+import asyncio
+from dataclasses import dataclass
 from functools import cached_property
 from typing import Optional
 
@@ -56,3 +58,8 @@ class CardImageInfo(BaseModel):
         else:
             return v
 
+
+@dataclass
+class AsyncTaskInfo:
+    task: asyncio.Task
+    task_id: str

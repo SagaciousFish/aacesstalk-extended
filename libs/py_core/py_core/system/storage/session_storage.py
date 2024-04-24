@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from py_core.system.model import ChildCardRecommendationResult, Dialogue, DialogueMessage, \
-    ParentGuideRecommendationResult, id_generator
+    ParentGuideRecommendationResult, id_generator, ParentExampleMessage
 
 
 class SessionStorage(ABC):
@@ -30,6 +30,10 @@ class SessionStorage(ABC):
         pass
 
     @abstractmethod
+    async def add_parent_example_message(self, message: ParentExampleMessage):
+        pass
+
+    @abstractmethod
     async def get_card_recommendation_result(self, recommendation_id: str)->ChildCardRecommendationResult | None:
         pass
 
@@ -37,5 +41,7 @@ class SessionStorage(ABC):
     async def get_parent_guide_recommendation_result(self, recommendation_id: str)->ParentGuideRecommendationResult | None:
         pass
 
-
+    @abstractmethod
+    async def get_parent_example_message(self, recommendation_id: str, guide_id: str) -> ParentExampleMessage | None:
+        pass
 

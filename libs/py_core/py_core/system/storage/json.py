@@ -6,7 +6,7 @@ from tinydb.middlewares import CachingMiddleware
 from os import path, getcwd, makedirs
 
 from py_core.system.model import ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
-    DialogueMessage, DialogueTypeAdapter
+    DialogueMessage, DialogueTypeAdapter, ParentExampleMessage
 from py_core.system.storage import SessionStorage
 
 
@@ -14,6 +14,7 @@ class SessionJsonStorage(SessionStorage):
     TABLE_MESSAGES = "messages"
     TABLE_CARD_RECOMMENDATIONS = "card_recommendations"
     TABLE_PARENT_RECOMMENDATIONS = "parent_recommendations"
+    TABLE_PARENT_EXAMPLE_MESSAGES = "parent_example_messages"
 
     def __init__(self, session_id: str | None = None):
         super().__init__(session_id)
@@ -65,5 +66,18 @@ class SessionJsonStorage(SessionStorage):
         result = table.search(q.id == recommendation_id)
         if len(result) > 0:
             return ParentGuideRecommendationResult(**result[0])
+        else:
+            return None
+
+    async def add_parent_example_message(self, message: ParentExampleMessage):
+        table = self.db.table(self.TABLE_PARENT_EXAMPLE_MESSAGES)
+        table.insert(message.model_dump())
+
+    async def get_parent_example_message(self, recommendation_id: str, guide_id: str) -> ParentExampleMessage | None:
+        table = self.db.table(self.TABLE_PARENT_EXAMPLE_MESSAGES)
+        q = Query()
+        result = table.search((q.recommendation_id == recommendation_id) & (q.guide_id == guide_id))
+        if len(result) > 0:
+            return ParentExampleMessage(**result[0])
         else:
             return None

@@ -5,10 +5,11 @@ from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompl
 from chatlib.utils.jinja_utils import convert_to_jinja_template
 from time import perf_counter
 
+from py_core.system.guide_categories import ParentGuideCategory
 from py_core.system.model import ParentGuideRecommendationResult, Dialogue, ParentGuideElement, DialogueMessage, \
     CardCategory
 from py_core.system.task.parent_guide_recommendation.common import ParentGuideRecommendationAPIResult, \
-    DialogueInspectionResult, DialogueInspectionCategory, ParentGuideCategory
+    DialogueInspectionResult
 from py_core.system.task.parent_guide_recommendation.guide_translator import GuideTranslator
 from py_core.system.task.stringify import DialogueToStrConversionFunction
 
@@ -120,4 +121,4 @@ class ParentGuideRecommendationGenerator:
         t_end = perf_counter()
         print(f"Translation took {t_end - t_trans} sec.")
         print(f"Total latency: {t_end - t_start} sec.")
-        return ParentGuideRecommendationResult(recommendations=translated_guide_list)
+        return ParentGuideRecommendationResult(guides=translated_guide_list)

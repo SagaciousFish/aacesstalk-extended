@@ -53,7 +53,7 @@ class VectorDB:
         )
 
     def query_similar_rows(self, collection: str | Collection, word: str | list[str], category: str | None, k: int = 5) -> list[DictionaryRow]:
-        print(f"Query similar cards: {word}, {category}")
+        #print(f"Query similar cards: {word}, {category}")
         collection_instance = (collection if isinstance(collection, Collection) else self.get_collection(collection))
         query_result = collection_instance.query(query_texts=[word] if isinstance(word, str) else word,
                                                      n_results=k, where={"category": category} if category is not None else None)

@@ -1,9 +1,12 @@
 from enum import StrEnum
+from functools import cached_property
 from typing import TypeAlias, Optional
 
 from chatlib.utils.time import get_timestamp
 from nanoid import generate
 from pydantic import BaseModel, ConfigDict, TypeAdapter, Field
+
+from py_core.system.guide_categories import ParentGuideCategory
 
 
 def id_generator() -> str:
@@ -29,7 +32,7 @@ class CardCategory(StrEnum):
 
 
 class CardInfo(CardIdentity):
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, use_enum_values=True)
 
     text: str = Field()
     localized: str
@@ -58,29 +61,49 @@ class ParentGuideType(StrEnum):
 
 
 class ParentGuideElement(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, use_enum_values=True)
 
-    category: str | None
+    id: str = Field(default_factory=lambda: generate(size=5))
+
+    category: ParentGuideCategory | None
     guide: str
-    guide_localized: Optional[str] =None
+    guide_localized: Optional[str] = None
     type: ParentGuideType = ParentGuideType.Messaging
 
     def with_guide_localized(self, localized: str) -> 'ParentGuideElement':
         return self.model_copy(update=dict(guide_localized=localized))
 
     @classmethod
-    def messaging_guide(cls, category: str, guide: str) -> 'ParentGuideElement':
+    def messaging_guide(cls, category: ParentGuideCategory, guide: str) -> 'ParentGuideElement':
         return ParentGuideElement(category=category, guide=guide, type=ParentGuideType.Messaging)
 
     @classmethod
-    def feedback(cls, category: str | None, guide: str) -> 'ParentGuideElement':
+    def feedback(cls, category: ParentGuideCategory | None, guide: str) -> 'ParentGuideElement':
         return ParentGuideElement(category=category, guide=guide, type=ParentGuideType.Feedback)
 
 
 class ParentGuideRecommendationResult(ModelWithIdAndTimestamp):
     model_config = ConfigDict(frozen=True)
 
-    recommendations: list[ParentGuideElement]
+    guides: list[ParentGuideElement]
+
+    @cached_property
+    def messaging_guides(self) -> list[ParentGuideElement]:
+        return [guide for guide in self.guides if guide.type == ParentGuideType.Messaging]
+
+    @cached_property
+    def feedback_guides(self) -> list[ParentGuideElement]:
+        return [guide for guide in self.guides if guide.type == ParentGuideType.Feedback]
+
+
+class ParentExampleMessage(ModelWithIdAndTimestamp):
+    model_config = ConfigDict(frozen=True)
+
+    recommendation_id: str | None = None
+    guide_id: str | None = None
+
+    message: str
+    message_localized: str | None = None
 
 
 class DialogueRole(StrEnum):
