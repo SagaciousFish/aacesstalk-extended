@@ -130,7 +130,7 @@ Output:
                 writer.writeheader()
                 translations = translations_already_inspected + translations_to_inspect
 
-                translations.sort(key=lambda t: t.localized)
+                translations.sort(key=lambda t: t.label_localized)
                 translations.sort(key=lambda t: t.english)
                 translations.sort(key=lambda t: t.category)
 

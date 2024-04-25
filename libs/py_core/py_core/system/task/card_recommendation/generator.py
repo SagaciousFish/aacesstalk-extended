@@ -51,7 +51,7 @@ emotions: [] // Adjective or adverb Emotions that the child might want to expres
 """f"""
 
 {"" if params.prev_recommendation is None else "- The child had previous recommendation: " + params.prev_recommendation.json(exclude={"id", "timestamp"}) + ". Try to generate phrases that are distinct to this previous recommendation."}
-{"" if params.interim_cards is None else "- The child had selected the following cards: " + ', '.join([card.text for card in params.interim_cards]) + ". The generated recommendation should be relevant to these selections."}
+{"" if params.interim_cards is None else "- The child had selected the following cards: " + ', '.join([card.label for card in params.interim_cards]) + ". The generated recommendation should be relevant to these selections."}
 - Provide up to five options for each category.
 """
         return prompt
@@ -88,6 +88,6 @@ emotions: [] // Adjective or adverb Emotions that the child might want to expres
                                                                                recommendation.emotions]
 
         return ChildCardRecommendationResult(id=rec_id, cards=[
-            CardInfo(text=word, localized=translated_keywords[i], category=category,
+            CardInfo(label=word, label_localized=translated_keywords[i], category=category,
                      recommendation_id=rec_id) for i, (word, category) in
             enumerate(keyword_category_list)])

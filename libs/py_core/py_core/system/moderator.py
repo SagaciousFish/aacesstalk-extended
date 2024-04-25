@@ -99,8 +99,8 @@ class ModeratorSession:
             print("Translated parent message.")
 
             new_message = DialogueMessage(role=DialogueRole.Parent,
-                                          content=parent_message,
-                                          content_en=message_eng,
+                                          content_localized=parent_message,
+                                          content=message_eng,
                                           recommendation_id=current_parent_guide.id if current_parent_guide is not None else None)
 
             await self.__storage.add_dialogue_message(new_message)

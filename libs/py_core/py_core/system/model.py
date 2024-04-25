@@ -34,12 +34,12 @@ class CardCategory(StrEnum):
 class CardInfo(CardIdentity):
     model_config = ConfigDict(frozen=True, use_enum_values=True)
 
-    text: str = Field()
-    localized: str
+    label: str = Field()
+    label_localized: str
     category: CardCategory
 
     def simple_str(self) -> str:
-        return f"{self.localized} ({self.text}) | {self.category}"
+        return f"{self.label_localized} ({self.label}) | {self.category}"
 
 
 class ChildCardRecommendationResult(ModelWithIdAndTimestamp):
@@ -115,18 +115,18 @@ class DialogueMessage(ModelWithIdAndTimestamp):
     model_config = ConfigDict(frozen=True)
 
     role: DialogueRole
-    content: str | list[CardInfo]
-    content_en: str | None = None
+    content_localized: str | None = None
+    content: str | list[CardInfo] | None = None
     recommendation_id: str | None = None
 
     @classmethod
-    def example_parent_message(cls, content_en: str) -> 'DialogueMessage':
-        return DialogueMessage(content="_", content_en=content_en, role=DialogueRole.Parent)
+    def example_parent_message(cls, content: str) -> 'DialogueMessage':
+        return DialogueMessage(content_localized="_", content=content, role=DialogueRole.Parent)
 
     @classmethod
     def example_child_message(cls, *card_labels_eng: tuple[str, CardCategory]) -> 'DialogueMessage':
         return DialogueMessage(role=DialogueRole.Child,
-                               content=[CardInfo(text=label, localized="", category=category, recommendation_id="") for
+                               content=[CardInfo(label=label, label_localized="", category=category, recommendation_id="") for
                                         label, category in card_labels_eng])
 
 

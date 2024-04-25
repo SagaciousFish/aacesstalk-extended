@@ -36,6 +36,7 @@ o5KmEGtJjx,action,do,해요,True
 gDBX_FfZB6,action,done,끝났어요,True
 TEOhxZmjK6,action,draw,그려요,True
 v3di8t0pWz,action,drawing,그려요,True
+A69xsnZPHn,action,drawn,그린,False
 ZON1ssMHKK,action,drew,그렸어요,True
 qFMNNFSCX5,action,eat,먹어요,True
 H67n9i7nOg,action,eating,먹어요,True
@@ -348,6 +349,7 @@ UeI__XeQNE,topic,run,달리기,True
 v87vwbFyNz,topic,sandbox,모래사장,True
 l6a_W_vdiO,topic,sandwich,샌드위치,True
 2bqHLaFEOK,topic,school,학교,True
+HSqQ6LpTen,topic,school lunch,학교 점심,False
 AIVv8SZhiV,topic,science,과학,True
 MKImtd3Ojq,topic,sculpting,조각하기,True
 volZ4dnema,topic,see,보기,False

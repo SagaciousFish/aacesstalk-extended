@@ -14,7 +14,7 @@ class DialogueToStrConversionFunction:
 
     @staticmethod
     def message_content_formatter_default(message: DialogueMessage, dialogue: Dialogue) -> str:
-        return f"{'Parent' if message.role == DialogueRole.Parent else 'Child'}: {message.content_en if isinstance(message.content, str) else ', '.join([card.text for card in message.content])}"
+        return f"{'Parent' if message.role == DialogueRole.Parent else 'Child'}: {message.content if isinstance(message.content, str) else ', '.join([card.label for card in message.content])}"
 
     @staticmethod
     def message_row_formatter_default(formatted: str, message: DialogueMessage, dialogue: Dialogue) -> str:
