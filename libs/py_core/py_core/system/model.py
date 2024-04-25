@@ -6,7 +6,7 @@ from chatlib.utils.time import get_timestamp
 from nanoid import generate
 from pydantic import BaseModel, ConfigDict, TypeAdapter, Field
 
-from py_core.system.guide_categories import ParentGuideCategory
+from py_core.system.guide_categories import ParentGuideCategory, DialogueInspectionCategory
 
 
 def id_generator() -> str:
@@ -65,7 +65,7 @@ class ParentGuideElement(BaseModel):
 
     id: str = Field(default_factory=lambda: generate(size=5))
 
-    category: ParentGuideCategory | None
+    category: ParentGuideCategory | list[DialogueInspectionCategory]
     guide: str
     guide_localized: Optional[str] = None
     type: ParentGuideType = ParentGuideType.Messaging
@@ -78,7 +78,7 @@ class ParentGuideElement(BaseModel):
         return ParentGuideElement(category=category, guide=guide, type=ParentGuideType.Messaging)
 
     @classmethod
-    def feedback(cls, category: ParentGuideCategory | None, guide: str) -> 'ParentGuideElement':
+    def feedback(cls, category: list[DialogueInspectionCategory], guide: str) -> 'ParentGuideElement':
         return ParentGuideElement(category=category, guide=guide, type=ParentGuideType.Feedback)
 
 

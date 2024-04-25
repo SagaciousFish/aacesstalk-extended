@@ -90,7 +90,7 @@ PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommend
 class ParentGuideRecommendationGenerator:
 
     def __init__(self):
-        str_output_converter, output_str_converter = generate_pydantic_list_converter(ParentGuideRecommendationAPIResult, ParentGuideElement, 'yaml', dict(include={"category","guide"}))
+        str_output_converter, output_str_converter = generate_pydantic_list_converter(ParentGuideRecommendationAPIResult, ParentGuideElement, 'yaml', dict(include={"category", "guide"}))
 
         api = GPTChatCompletionAPI()
         api.config().verbose = False
@@ -112,7 +112,7 @@ class ParentGuideRecommendationGenerator:
                                                                                  ParentGuideRecommendationParams.instance(inspection_result))
 
         if inspection_result is not None and inspection_result.feedback is not None:
-            guide_list.insert(0, ParentGuideElement.feedback(",".join(inspection_result.categories), inspection_result.feedback))
+            guide_list.insert(0, ParentGuideElement.feedback(inspection_result.categories, inspection_result.feedback))
 
         print(guide_list)
         t_trans = perf_counter()
