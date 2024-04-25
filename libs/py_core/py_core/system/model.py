@@ -116,7 +116,7 @@ class DialogueMessage(ModelWithIdAndTimestamp):
 
     role: DialogueRole
     content_localized: str | None = None
-    content: str | list[CardInfo] | None = None
+    content: str | list[CardInfo]
     recommendation_id: str | None = None
 
     @classmethod

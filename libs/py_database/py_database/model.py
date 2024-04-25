@@ -71,7 +71,7 @@ class DialogueMessage(SQLModel, IdTimestampMixin, SessionIdMixin, table=True):
     role: DialogueRole
     content_type: DialogueMessageContentType
     content_str_localized: Optional[str] = Field(default=None)
-    content_str: Optional[str] = Field(default=None)
+    content_str: str = Field(nullable=False, min_length=1)
     timestamp: int = Field(default_factory=get_timestamp, index=True)
     recommendation_id: Optional[str] = Field(default=None)
 
