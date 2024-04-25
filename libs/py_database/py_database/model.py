@@ -9,7 +9,9 @@ from py_core.system.model import (id_generator, DialogueRole, DialogueMessage as
                                   CardInfoListTypeAdapter, CardInfo,
                                   ChildCardRecommendationResult as _ChildCardRecommendationResult,
                                   ParentGuideRecommendationResult as _ParentGuideRecommendationResult,
-                                  ParentGuideElement)
+                                  ParentGuideElement,
+                                  ParentExampleMessage as _ParentExampleMessage
+                                  )
 from chatlib.utils.time import get_timestamp
 
 
@@ -17,18 +19,17 @@ class IdTimestampMixin(BaseModel):
     id: str = Field(primary_key=True, default_factory=id_generator)
     created_at: Optional[datetime] = Field(
         default=None,
-        sa_type= DateTime(timezone=True),
+        sa_type=DateTime(timezone=True),
         sa_column_kwargs=dict(server_default=func.now(), nullable=True)
     )
     updated_at: Optional[datetime] = Field(
         default=None,
-        sa_type= DateTime(timezone=True),
+        sa_type=DateTime(timezone=True),
         sa_column_kwargs=dict(server_default=func.now(), onupdate=func.now(), nullable=True)
     )
 
 
 class Parent(SQLModel, IdTimestampMixin, table=True):
-
     name: str = Field(index=True)
 
     children: list['Child'] = Relationship(back_populates='parent')
@@ -37,7 +38,6 @@ class Parent(SQLModel, IdTimestampMixin, table=True):
 
 
 class Child(SQLModel, IdTimestampMixin, table=True):
-
     name: str = Field(index=True)
 
     parent_id: Optional[str] = Field(default=None, foreign_key='parent.id')
@@ -58,12 +58,16 @@ class Session(SQLModel, IdTimestampMixin, table=True):
     ended_timestamp: int | None = Field(default=None, index=True)
 
 
-class DialogueMessageContentType(StrEnum):
-    text="text"
-    json="json"
+class SessionIdMixin(BaseModel):
+    session_id: str = Field(foreign_key=f"{Session.__tablename__}.id")
 
-class DialogueMessage(SQLModel, IdTimestampMixin, table=True):
-    session_id:str = Field(foreign_key="session.id")
+
+class DialogueMessageContentType(StrEnum):
+    text = "text"
+    json = "json"
+
+
+class DialogueMessage(SQLModel, IdTimestampMixin, SessionIdMixin, table=True):
     role: DialogueRole
     content_type: DialogueMessageContentType
     content_str: str
@@ -90,12 +94,12 @@ class DialogueMessage(SQLModel, IdTimestampMixin, table=True):
             content_str=message.content if isinstance(message.content, str) else CardInfoListTypeAdapter.dump_json(
                 message.content),
             content_str_en=message.content_en,
-            content_type=DialogueMessageContentType.text if isinstance(message.content, str) else DialogueMessageContentType.json
+            content_type=DialogueMessageContentType.text if isinstance(message.content,
+                                                                       str) else DialogueMessageContentType.json
         )
 
 
-class ChildCardRecommendationResult(SQLModel, IdTimestampMixin, table=True):
-    session_id:str = Field(foreign_key="session.id")
+class ChildCardRecommendationResult(SQLModel, IdTimestampMixin, SessionIdMixin, table=True):
     timestamp: int = Field(default_factory=get_timestamp, index=True)
     cards: list[CardInfo] = Field(sa_column=Column(JSON), default=[])
 
@@ -103,18 +107,35 @@ class ChildCardRecommendationResult(SQLModel, IdTimestampMixin, table=True):
         return _ChildCardRecommendationResult(**self.model_dump())
 
     @classmethod
-    def from_data_model(cls, session_id: str, data_model: _ChildCardRecommendationResult) -> 'ChildCardRecommendationResult':
+    def from_data_model(cls, session_id: str,
+                        data_model: _ChildCardRecommendationResult) -> 'ChildCardRecommendationResult':
         return ChildCardRecommendationResult(**data_model.model_dump(), session_id=session_id)
 
 
-class ParentGuideRecommendationResult(SQLModel, IdTimestampMixin, table=True):
-    session_id:str = Field(foreign_key="session.id")
+class ParentGuideRecommendationResult(SQLModel, IdTimestampMixin, SessionIdMixin, table=True):
     timestamp: int = Field(default_factory=get_timestamp, index=True)
-    recommendations: list[ParentGuideElement] = Field(sa_column=Column(JSON), default=[])
+    guides: list[ParentGuideElement] = Field(sa_column=Column(JSON), default=[])
 
     def to_data_model(self) -> _ParentGuideRecommendationResult:
         return _ParentGuideRecommendationResult(**self.model_dump())
 
     @classmethod
-    def from_data_model(cls, session_id: str, data_model: _ParentGuideRecommendationResult) -> 'ParentGuideRecommendationResult':
+    def from_data_model(cls, session_id: str,
+                        data_model: _ParentGuideRecommendationResult) -> 'ParentGuideRecommendationResult':
         return ParentGuideRecommendationResult(**data_model.model_dump(), session_id=session_id)
+
+
+class ParentExampleMessage(SQLModel, IdTimestampMixin, SessionIdMixin, table=True):
+    recommendation_id: str = Field(foreign_key=f"{ParentGuideRecommendationResult.__tablename__}.id")
+    guide_id: str = Field(nullable=False, index=True)
+
+    message: str = Field(nullable=False)
+    message_localized: Optional[str] = Field(default=None)
+
+    def to_data_model(self) -> _ParentExampleMessage:
+        return _ParentExampleMessage(**self.model_dump())
+
+    @classmethod
+    def from_data_model(cls, session_id: str, data_model: _ParentExampleMessage) -> 'ParentExampleMessage':
+        return ParentExampleMessage(**data_model.model_dump(), session_id=session_id)
+
