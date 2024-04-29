@@ -9,6 +9,7 @@ from py_core.system.model import Dialogue, CardInfo, ChildCardRecommendationResu
 from py_core.system.task.card_recommendation.common import ChildCardRecommendationAPIResult
 from py_core.system.task.card_recommendation.translator import CardTranslator
 from py_core.system.task.stringify import DialogueToStrConversionFunction
+from py_core.utils.vector_db import VectorDB
 
 str_output_converter, output_str_converter = generate_pydantic_converter(ChildCardRecommendationAPIResult, 'yaml')
 
@@ -22,7 +23,7 @@ class ChildCardRecommendationParams(ChatCompletionFewShotMapperParams):
 
 class ChildCardRecommendationGenerator:
 
-    def __init__(self):
+    def __init__(self, vector_db: VectorDB | None):
         api = GPTChatCompletionAPI()
         api.config().verbose = False
 
@@ -35,7 +36,7 @@ class ChildCardRecommendationGenerator:
                                         str_output_converter=str_output_converter
                                         ))
 
-        self.__translator = CardTranslator()
+        self.__translator = CardTranslator(vector_db)
 
     @staticmethod
     def __prompt_generator(input: Dialogue, params: ChildCardRecommendationParams) -> str:

@@ -1,9 +1,9 @@
 from enum import StrEnum
-from typing import Optional, Literal, Union
+from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Column, Field, Relationship, JSON
-from sqlalchemy import DateTime, func, DATETIME
+from sqlalchemy import DateTime, func
 
 from py_core.system.model import (id_generator, DialogueRole, DialogueMessage as _DialogueMessage,
                                   CardInfoListTypeAdapter, CardInfo,
@@ -29,29 +29,29 @@ class IdTimestampMixin(BaseModel):
     )
 
 
-class Parent(SQLModel, IdTimestampMixin, table=True):
-    name: str = Field(index=True)
-
-    children: list['Child'] = Relationship(back_populates='parent')
-
-    sessions: list['Session'] = Relationship(back_populates='parent')
+#class Parent(SQLModel, IdTimestampMixin, table=True):
+#    name: str = Field(index=True)
+#    children: list['Child'] = Relationship(back_populates='parent')
+#    sessions: list['Session'] = Relationship(back_populates='parent')
 
 
-class Child(SQLModel, IdTimestampMixin, table=True):
-    name: str = Field(index=True)
+#class Child(SQLModel, IdTimestampMixin, table=True):
+#    name: str = Field(index=True)
+#    parent_id: Optional[str] = Field(default=None, foreign_key='parent.id')
+#    parent: Optional[Parent] = Relationship(back_populates="children")
+#    sessions: list['Session'] = Relationship(back_populates='child')
 
-    parent_id: Optional[str] = Field(default=None, foreign_key='parent.id')
-    parent: Optional[Parent] = Relationship(back_populates="children")
+class Dyad(SQLModel, IdTimestampMixin, table=True):
+    alias: str = Field(min_length=1, unique=True)
+    child_name: str = Field(min_length=1)
 
-    sessions: list['Session'] = Relationship(back_populates='child')
+    sessions: list['Session'] = Relationship(back_populates='dyad')
 
 
 class Session(SQLModel, IdTimestampMixin, table=True):
-    parent_id: str = Field(foreign_key='parent.id')
-    child_id: str = Field(foreign_key='child.id')
+    dyad_id: str = Field(foreign_key=f"dyad.id")
 
-    parent: Optional[Parent] = Relationship(back_populates="sessions")
-    child: Optional[Child] = Relationship(back_populates="sessions")
+    dyad: Dyad = Relationship(back_populates="sessions")
 
     local_timezone: str = Field(nullable=False)
     started_timestamp: int = Field(default_factory=get_timestamp, index=True)

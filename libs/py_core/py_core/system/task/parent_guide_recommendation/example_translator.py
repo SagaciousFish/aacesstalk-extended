@@ -7,10 +7,10 @@ from chatlib.utils.jinja_utils import convert_to_jinja_template
 from time import perf_counter
 
 from py_core.config import AACessTalkConfig
-from py_core.system.shared import vector_db
 from py_core.system.task.parent_guide_recommendation.common import ParentGuideRecommendationAPIResult
 from py_core.utils.lookup_translator import LookupTranslator
 from py_core.utils.models import DictionaryRow
+from py_core.utils.vector_db import VectorDB
 
 template = convert_to_jinja_template("""You are a helpful translator who translates an utterance of a parent talking with their child with ASD.
 [Task]
@@ -26,13 +26,13 @@ def _generate_prompt(input, params) -> str:
 
 class ParentExampleMessageTranslator:
 
-    def __init__(self):
+    def __init__(self, vector_db: VectorDB | None):
         api = GPTChatCompletionAPI()
         api.config().verbose = False
 
         self.__dictionary = LookupTranslator("parent_examples",
                                              AACessTalkConfig.parent_example_translation_dictionary_path,
-                                             vector_db=vector_db,
+                                             vector_db=vector_db or VectorDB(),
                                              verbose=True)
 
         self.__example_translator: ChatCompletionFewShotMapper[str, str, ChatCompletionFewShotMapperParams] = ChatCompletionFewShotMapper.make_str_mapper(api,

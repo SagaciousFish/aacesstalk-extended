@@ -11,6 +11,7 @@ from py_core.system.guide_categories import ParentGuideCategory
 from py_core.system.model import ParentGuideElement, ParentExampleMessage, Dialogue, DialogueMessage, CardCategory
 from py_core.system.task.parent_guide_recommendation.example_translator import ParentExampleMessageTranslator
 from py_core.system.task.stringify import DialogueToStrConversionFunction
+from py_core.utils.vector_db import VectorDB
 
 
 class ParentExampleMessageGenerationInput(BaseModel):
@@ -67,7 +68,7 @@ _EXAMPLES = [
 
 
 class ParentExampleMessageGenerator:
-    def __init__(self):
+    def __init__(self, vector_db: VectorDB | None):
         api = GPTChatCompletionAPI()
         api.config().verbose = False
 
@@ -82,7 +83,7 @@ class ParentExampleMessageGenerator:
             str_output_converter=str_to_str_noop
         )
 
-        self.__translator = ParentExampleMessageTranslator()
+        self.__translator = ParentExampleMessageTranslator(vector_db)
 
     async def generate(self, dialogue: Dialogue, guide: ParentGuideElement,
                        recommendation_id: str) -> ParentExampleMessage:

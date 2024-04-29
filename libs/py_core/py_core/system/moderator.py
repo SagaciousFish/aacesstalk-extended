@@ -13,6 +13,9 @@ from py_core.system.task.parent_guide_recommendation import ParentGuideRecommend
 from py_core.system.task.parent_guide_recommendation.dialogue_inspector import DialogueInspector
 from py_core.utils.deepl_translator import DeepLTranslator
 from py_core.utils.models import AsyncTaskInfo
+from chatlib.llm.integration import GPTChatCompletionAPI
+
+from py_core.utils.vector_db import VectorDB
 
 
 def speaker(role: DialogueRole):
@@ -42,7 +45,9 @@ class ModeratorSession:
     def __init__(self, storage: SessionStorage):
         self.__storage = storage
 
-        self.__child_card_recommender = ChildCardRecommendationGenerator()
+        vector_db = VectorDB()
+
+        self.__child_card_recommender = ChildCardRecommendationGenerator(vector_db)
         self.__parent_guide_recommender = ParentGuideRecommendationGenerator()
 
         self.__next_speaker: DialogueRole = DialogueRole.Parent
@@ -54,7 +59,13 @@ class ModeratorSession:
 
         self.__parent_example_generation_tasks: ParentExampleGenerationTaskSet | None = None
 
-        self.__parent_example_generator = ParentExampleMessageGenerator()
+        self.__parent_example_generator = ParentExampleMessageGenerator(vector_db)
+
+    @classmethod
+    def assert_authorize(cls):
+        GPTChatCompletionAPI.assert_authorize()
+        DeepLTranslator.assert_authorize()
+
 
     @property
     def next_speaker(self) -> DialogueRole:

@@ -60,6 +60,27 @@
         "command": "poetry run pytest tests/",
         "cwd": "apps/backend"
       }
+    },
+    "setup": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run python backend/setup.py",
+        "cwd": "apps/backend"
+      }
+    },
+    "admin_console": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run python admin_console.py",
+        "cwd": "apps/backend"
+      }
+    },
+    "run_dev": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run python backend/main.py",
+        "cwd": "apps/backend"
+      }
     }
   },
   "tags": []

@@ -7,9 +7,9 @@ from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompl
 from chatlib.utils.jinja_utils import convert_to_jinja_template
 
 from py_core.config import AACessTalkConfig
-from py_core.system.shared import vector_db
 from py_core.utils.lookup_translator import LookupTranslator
 from py_core.utils.models import DictionaryRow
+from py_core.utils.vector_db import VectorDB
 from .common import ChildCardRecommendationAPIResult
 
 
@@ -51,7 +51,7 @@ str_output_converter, output_str_converter = generate_type_converter(list[str], 
 
 class CardTranslator:
 
-    def __init__(self):
+    def __init__(self, vector_db: VectorDB | None):
         api = GPTChatCompletionAPI()
         api.config().verbose = False
 
@@ -66,7 +66,7 @@ class CardTranslator:
                                                               )
 
         self.__dictionary = LookupTranslator("cards", AACessTalkConfig.card_translation_dictionary_path,
-                                             vector_db=vector_db,
+                                             vector_db=vector_db or VectorDB(),
                                              verbose=True)
 
     def __transform_original_word(self, word: str) -> str:
