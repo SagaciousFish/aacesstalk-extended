@@ -5,7 +5,8 @@ from nanoid import generate
 
 from py_core.system.model import ChildCardRecommendationResult, DialogueMessage, DialogueRole, CardInfo, \
     CardIdentity, \
-    ParentGuideRecommendationResult, Dialogue, ParentGuideType, ParentExampleMessage, ParentGuideElement
+    ParentGuideRecommendationResult, Dialogue, ParentGuideType, ParentExampleMessage, ParentGuideElement, \
+    InterimCardSelection
 from py_core.system.storage import SessionStorage
 from py_core.system.task import ChildCardRecommendationGenerator
 from py_core.system.task.parent_guide_recommendation import ParentGuideRecommendationGenerator, \
@@ -42,24 +43,42 @@ class ParentExampleGenerationTaskSet:
 
 class ModeratorSession:
 
+    class_variables_initialized = False
+
+    @classmethod
+    def __init_class_vars(cls):
+        if cls.class_variables_initialized is False:
+            print("Initialize Moderator session class variables..")
+            vector_db = VectorDB()
+            cls.__child_card_recommender = ChildCardRecommendationGenerator(vector_db)
+            cls.__parent_guide_recommender = ParentGuideRecommendationGenerator()
+
+            cls.__deepl_translator = DeepLTranslator()
+
+            cls.__dialogue_inspector = DialogueInspector()
+            cls.__parent_example_generator = ParentExampleMessageGenerator(vector_db)
+            cls.class_variables_initialized = True
+
     def __init__(self, storage: SessionStorage):
+
+        self.__init_class_vars()
+
         self.__storage = storage
-
-        vector_db = VectorDB()
-
-        self.__child_card_recommender = ChildCardRecommendationGenerator(vector_db)
-        self.__parent_guide_recommender = ParentGuideRecommendationGenerator()
 
         self.__next_speaker: DialogueRole = DialogueRole.Parent
 
-        self.__deepl_translator = DeepLTranslator()
-
-        self.__dialogue_inspector = DialogueInspector()
         self.__dialogue_inspection_task_info: AsyncTaskInfo | None = None
 
         self.__parent_example_generation_tasks: ParentExampleGenerationTaskSet | None = None
 
-        self.__parent_example_generator = ParentExampleMessageGenerator(vector_db)
+
+    @property
+    def storage(self) -> SessionStorage:
+        return self.__storage
+
+    @storage.setter
+    def storage(self, storage: SessionStorage):
+        self.__storage = storage
 
     @classmethod
     def assert_authorize(cls):
@@ -93,8 +112,7 @@ class ModeratorSession:
         )
 
     @speaker(DialogueRole.Parent)
-    async def submit_parent_message(self, parent_message: str,
-                                    current_parent_guide: ParentGuideRecommendationResult | None = None) -> ChildCardRecommendationResult:
+    async def submit_parent_message(self, parent_message: str) -> ChildCardRecommendationResult:
 
         try:
             # Clear if there is a pending example generation task.
@@ -109,10 +127,12 @@ class ModeratorSession:
 
             print("Translated parent message.")
 
+            current_guide = await self.storage.get_latest_parent_guide_recommendation()
+
             new_message = DialogueMessage(role=DialogueRole.Parent,
                                           content_localized=parent_message,
                                           content=message_eng,
-                                          recommendation_id=current_parent_guide.id if current_parent_guide is not None else None)
+                                          recommendation_id=current_guide.id if current_guide is not None else None)
 
             await self.__storage.add_dialogue_message(new_message)
 
@@ -139,18 +159,21 @@ class ModeratorSession:
         except Exception as e:
             raise e
 
-    async def __get_card_info_from_identities(self, cards: list[CardIdentity] | list[CardInfo]) -> list[CardInfo]:
+    async def get_card_info_from_identities(self, cards: list[CardIdentity] | list[CardInfo]) -> list[CardInfo]:
         cards = [card_identity if isinstance(card_identity, CardInfo) else (
             await self.__storage.get_card_recommendation_result(card_identity.recommendation_id)).find_card_by_id(
             card_identity.id) for card_identity in cards]
         return [c for c in cards if c is not None]
 
     @speaker(DialogueRole.Child)
-    async def refresh_child_card_recommendation(self, interim_cards: list[CardIdentity] | list[CardInfo],
-                                                prev_recommendation: ChildCardRecommendationResult) -> ChildCardRecommendationResult:
+    async def refresh_child_card_recommendation(self) -> ChildCardRecommendationResult:
         try:
             dialogue = await self.__storage.get_dialogue()
-            interim_cards = await self.__get_card_info_from_identities(interim_cards)
+
+            interim_card_selection = await self.storage.get_latest_card_selection()
+            prev_recommendation = await self.storage.get_latest_child_card_recommendation()
+
+            interim_cards = await self.get_card_info_from_identities(interim_card_selection.cards)
 
             recommendation = await self.__child_card_recommender.generate(dialogue, interim_cards, prev_recommendation)
 
@@ -161,37 +184,51 @@ class ModeratorSession:
             raise e
 
     @speaker(DialogueRole.Child)
-    async def submit_child_selected_card(self, selected_cards: list[CardIdentity] | list[CardInfo]) -> ParentGuideRecommendationResult:
+    async def select_child_card(self, card_identity: CardIdentity) -> InterimCardSelection:
         try:
-            selected_cards = await self.__get_card_info_from_identities(selected_cards)
-            await self.__storage.add_dialogue_message(DialogueMessage(
-                role=DialogueRole.Child,
-                content=selected_cards
-            ))
+            current_card_selection = await self.storage.get_latest_card_selection()
+            new_card_selection = InterimCardSelection(cards=[*current_card_selection.cards, card_identity] if current_card_selection is not None else [card_identity])
+            await self.storage.add_card_selection(new_card_selection)
+            return new_card_selection
+        except Exception as e:
+            raise e
 
-            dialogue = await self.__storage.get_dialogue()
+    @speaker(DialogueRole.Child)
+    async def confirm_child_card_selection(self) -> ParentGuideRecommendationResult:
+        try:
+            interim_card_selection = await self.storage.get_latest_card_selection()
+            if interim_card_selection is not None:
+                selected_cards = await self.get_card_info_from_identities(interim_card_selection.cards)
+                await self.__storage.add_dialogue_message(DialogueMessage(
+                    role=DialogueRole.Child,
+                    content=selected_cards
+                ))
 
-            # Join a dialogue inspection task
-            dialogue_inspection_result = None
-            if self.__dialogue_inspection_task_info is not None:
-                dialogue_inspection_result, task_id = await self.__dialogue_inspection_task_info.task
-                if task_id != self.__dialogue_inspection_task_info.task_id:
-                    dialogue_inspection_result = None
+                dialogue = await self.__storage.get_dialogue()
 
-            # Clear
-            self.__dialogue_inspection_task_info = None
+                # Join a dialogue inspection task
+                dialogue_inspection_result = None
+                if self.__dialogue_inspection_task_info is not None:
+                    dialogue_inspection_result, task_id = await self.__dialogue_inspection_task_info.task
+                    if task_id != self.__dialogue_inspection_task_info.task_id:
+                        dialogue_inspection_result = None
 
-            recommendation = await self.__parent_guide_recommender.generate(dialogue, dialogue_inspection_result)
+                # Clear
+                self.__dialogue_inspection_task_info = None
 
-            await self.__storage.add_parent_guide_recommendation_result(recommendation)
+                recommendation = await self.__parent_guide_recommender.generate(dialogue, dialogue_inspection_result)
 
-            # Invoke an example generation task in advance.
-            self.__clear_parent_example_generation_tasks()
-            self.__place_parent_example_generation_tasks(dialogue, recommendation)
+                await self.__storage.add_parent_guide_recommendation_result(recommendation)
 
-            self.__next_speaker = DialogueRole.Parent
+                # Invoke an example generation task in advance.
+                self.__clear_parent_example_generation_tasks()
+                self.__place_parent_example_generation_tasks(dialogue, recommendation)
 
-            return recommendation
+                self.__next_speaker = DialogueRole.Parent
+
+                return recommendation
+            else:
+                raise ValueError("No interim card selection.")
 
         except Exception as e:
             raise e

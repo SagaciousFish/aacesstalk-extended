@@ -43,6 +43,7 @@ H67n9i7nOg,action,eating,먹어요,True
 voBXCU3PyM,action,enjoy,즐겨요,True
 bFnGzqF9Yj,action,enjoyed,즐겼어요,True
 eABl8ClFz9,action,excited,신나요,False
+L2J28bARnu,action,exercise,운동해요,False
 eM3DY40FFi,action,explain,설명해요,True
 lnHBypcdND,action,explore,탐험해요,False
 a3KelxlGJh,action,feel,느껴요,True
@@ -140,6 +141,7 @@ SPDAUYUd3i,action,talk to,이야기해요,False
 PIDHl-oz_C,action,talked,말했어요,True
 w2ivOOthr0,action,talked to,이야기했어요,True
 AgIMhqbCC2,action,taste,맛봐요,True
+CEj5APFHRY,action,teach,가르쳐요,False
 ssoybtBkSf,action,tease,놀려요,False
 SVk91PDyct,action,tell,이야기해요,True
 eQZL7MHvE9,action,threw,던졌어요,True
@@ -273,6 +275,7 @@ uK0UmLUNHi,topic,classmate,친구,True
 IKFZpU4ECQ,topic,classmates,동급생,True
 L5n_Q6xRVF,topic,classroom,교실,True
 uG4JKN6TSL,topic,classroom activity,교실 활동,False
+i-fS2HeQPG,topic,clay,점토,False
 63BIuiTJAL,topic,color,색깔,True
 ZMzrVSxPQy,topic,colors,색깔,True
 ZqQmq0jgXj,topic,conversation,대화,True
@@ -328,6 +331,7 @@ avHz0ZRm75,topic,painting,그림 그리기,True
 gZmQLvtFoU,topic,paper,종이,True
 yVzbsrSuDr,topic,park,공원,True
 -CvDkFa4-c,topic,pencil,연필,True
+jjY6UuexSu,topic,physical education,체육 수업,False
 EQCKKzF9qf,topic,picture,사진,True
 jDPzaN0FbQ,topic,pictures,사진,True
 KhOKsfuOAb,topic,play,놀이,True

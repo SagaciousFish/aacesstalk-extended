@@ -6,8 +6,11 @@ from backend.routers.dyad.common import depends_auth_dyad
 from backend.crud.dyad.session import create_moderator_session, end_session
 from py_database.model import Dyad
 
+from . import message
+
 router = APIRouter()
 
+router.include_router(message.router, prefix="/{session_id}/message")
 
 @router.post("/new")
 async def initiate_session(timezone: Annotated[str, Header()], dyad: Annotated[Dyad, depends_auth_dyad],

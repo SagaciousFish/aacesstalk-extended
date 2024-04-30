@@ -42,6 +42,12 @@ class CardInfo(CardIdentity):
         return f"{self.label_localized} ({self.label}) | {self.category}"
 
 
+class InterimCardSelection(ModelWithIdAndTimestamp):
+    model_config = ConfigDict(frozen=True)
+
+    cards: list[CardIdentity]
+
+
 class ChildCardRecommendationResult(ModelWithIdAndTimestamp):
     model_config = ConfigDict(frozen=True)
 
@@ -105,11 +111,9 @@ class ParentExampleMessage(ModelWithIdAndTimestamp):
     message: str
     message_localized: str | None = None
 
-
 class DialogueRole(StrEnum):
     Parent = "parent"
     Child = "child"
-
 
 class DialogueMessage(ModelWithIdAndTimestamp):
     model_config = ConfigDict(frozen=True)
@@ -126,8 +130,10 @@ class DialogueMessage(ModelWithIdAndTimestamp):
     @classmethod
     def example_child_message(cls, *card_labels_eng: tuple[str, CardCategory]) -> 'DialogueMessage':
         return DialogueMessage(role=DialogueRole.Child,
-                               content=[CardInfo(label=label, label_localized="", category=category, recommendation_id="") for
-                                        label, category in card_labels_eng])
+                               content=[
+                                   CardInfo(label=label, label_localized="", category=category, recommendation_id="")
+                                   for
+                                   label, category in card_labels_eng])
 
 
 Dialogue: TypeAlias = list[DialogueMessage]

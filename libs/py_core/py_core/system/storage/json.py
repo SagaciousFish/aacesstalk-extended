@@ -6,7 +6,7 @@ from tinydb.middlewares import CachingMiddleware
 from os import path, getcwd, makedirs
 
 from py_core.system.model import ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
-    DialogueMessage, DialogueTypeAdapter, ParentExampleMessage
+    DialogueMessage, DialogueTypeAdapter, ParentExampleMessage, InterimCardSelection, DialogueRole
 from py_core.system.storage import SessionStorage
 
 
@@ -15,6 +15,7 @@ class SessionJsonStorage(SessionStorage):
     TABLE_CARD_RECOMMENDATIONS = "card_recommendations"
     TABLE_PARENT_RECOMMENDATIONS = "parent_recommendations"
     TABLE_PARENT_EXAMPLE_MESSAGES = "parent_example_messages"
+    TABLE_CARD_SELECTIONS = "card_selections"
 
     def __init__(self, session_id: str | None = None):
         super().__init__(session_id)
@@ -79,5 +80,43 @@ class SessionJsonStorage(SessionStorage):
         result = table.search((q.recommendation_id == recommendation_id) & (q.guide_id == guide_id))
         if len(result) > 0:
             return ParentExampleMessage(**result[0])
+        else:
+            return None
+
+    async def __get_latest_model(self, table_name: str, latest_role: DialogueRole) -> dict | None:
+        latest_message = await self.get_latest_dialogue_message()
+        if latest_message is not None and latest_message.role == latest_role:
+            table = self.db.table(table_name)
+            sorted_selections = sorted(
+                [row for row in table.all() if row["timestamp"] > latest_message.timestamp],
+                key=lambda s: s["timestamp"], reverse=True)
+            if len(sorted_selections) > 0:
+                return sorted_selections[0]
+            else:
+                return None
+        else:
+            return None
+
+    async def get_latest_card_selection(self) -> InterimCardSelection | None:
+        d = await self.__get_latest_model(self.TABLE_CARD_SELECTIONS, latest_role=DialogueRole.Parent)
+        return InterimCardSelection(**d) if d is not None else None
+
+    async def add_card_selection(self, selection: InterimCardSelection):
+        table = self.db.table(self.TABLE_CARD_SELECTIONS)
+        table.insert(selection.model_dump())
+
+    async def get_latest_parent_guide_recommendation(self) -> ParentGuideRecommendationResult | None:
+        d = await self.__get_latest_model(self.TABLE_PARENT_RECOMMENDATIONS, latest_role=DialogueRole.Child)
+        return ParentGuideRecommendationResult(**d) if d is not None else None
+
+    async def get_latest_child_card_recommendation(self) -> ChildCardRecommendationResult | None:
+        d = await self.__get_latest_model(self.TABLE_CARD_RECOMMENDATIONS, latest_role=DialogueRole.Parent)
+        return ChildCardRecommendationResult(**d) if d is not None else None
+
+    async def get_latest_dialogue_message(self) -> DialogueMessage | None:
+        table = self.db.table(self.TABLE_MESSAGES)
+        result = sorted(table.all(), key=lambda m: m["timestamp"], reverse=True)
+        if len(result) > 0:
+            return DialogueMessage(**result[0])
         else:
             return None

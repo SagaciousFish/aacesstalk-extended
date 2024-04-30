@@ -1,14 +1,15 @@
 from typing import Type
 
-from sqlmodel import select, col
+from sqlmodel import select, col, SQLModel
 
 from py_core.system.model import ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
-    DialogueMessage, ParentExampleMessage
+    DialogueMessage, ParentExampleMessage, InterimCardSelection, DialogueRole
 from py_core.system.storage import SessionStorage
 from py_database.model import (DialogueMessage as DialogueMessageORM,
                                ChildCardRecommendationResult as ChildCardRecommendationResultORM,
+                               InterimCardSelection as InterimCardSelectionORM,
                                ParentGuideRecommendationResult as ParentGuideRecommendationResultORM,
-                               ParentExampleMessage as ParentExampleMessageORM)
+                               ParentExampleMessage as ParentExampleMessageORM, IdTimestampMixin, TimestampColumnMixin)
 from py_database.database import AsyncSession
 
 
@@ -27,6 +28,17 @@ class SQLSessionStorage(SessionStorage):
             col(DialogueMessageORM.timestamp).desc())
         results = await self.__sql_session.exec(statement)
         return [msg.to_data_model() for msg in results]
+
+    async def get_latest_dialogue_message(self) -> DialogueMessage | None:
+        statement = select(DialogueMessageORM).where(DialogueMessageORM.session_id == self.session_id).order_by(
+            col(DialogueMessageORM.timestamp).desc()).limit(1)
+        results = await self.__sql_session.exec(statement)
+
+        f = results.first()
+        if f is not None:
+            return f.to_data_model()
+        else:
+            return None
 
     async def add_card_recommendation_result(self, result: ChildCardRecommendationResult):
         self.__sql_session.add(ChildCardRecommendationResultORM.from_data_model(self.session_id, result))
@@ -62,3 +74,44 @@ class SQLSessionStorage(SessionStorage):
         result = await self.__sql_session.exec(statement)
         orm: ParentExampleMessageORM | None = result.first()
         return orm.to_data_model() if orm is not None else None
+
+    async def add_card_selection(self, selection: InterimCardSelection):
+        self.__sql_session.add(InterimCardSelectionORM.from_data_model(self.session_id, selection))
+        await self.__sql_session.commit()
+
+    async def __get_latest_model(self, model: type[TimestampColumnMixin],
+                                 latest_role: DialogueRole) -> TimestampColumnMixin | None:
+        latest_message = await self.get_latest_dialogue_message()
+        if latest_message is not None and latest_message.role == latest_role:
+            statement = (select(model)
+                         .where(model.timestamp > latest_message.timestamp)
+                         .order_by(col(model.timestamp).desc()).limit(1))
+            results = await self.__sql_session.exec(statement)
+            first = results.first()
+            if first is not None:
+                return first
+            else:
+                return None
+        else:
+            return None
+
+    async def get_latest_card_selection(self) -> InterimCardSelection | None:
+        d = await self.__get_latest_model(InterimCardSelectionORM, latest_role=DialogueRole.Parent)
+        if d is not None and isinstance(d, InterimCardSelectionORM):
+            return d.to_data_model()
+        else:
+            return None
+
+    async def get_latest_parent_guide_recommendation(self) -> ParentGuideRecommendationResult | None:
+        d = await self.__get_latest_model(ParentGuideRecommendationResultORM, latest_role=DialogueRole.Child)
+        if d is not None and isinstance(d, ParentGuideRecommendationResultORM):
+            return d.to_data_model()
+        else:
+            return None
+
+    async def get_latest_child_card_recommendation(self) -> ChildCardRecommendationResult | None:
+        d = await self.__get_latest_model(ChildCardRecommendationResultORM, latest_role=DialogueRole.Parent)
+        if d is not None and isinstance(d, ChildCardRecommendationResultORM):
+            return d.to_data_model()
+        else:
+            return None

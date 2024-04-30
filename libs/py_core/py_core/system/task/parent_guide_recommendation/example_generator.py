@@ -54,13 +54,14 @@ _EXAMPLES = [
     MapperInputOutputPair(
         input=ParentExampleMessageGenerationInput(
             dialogue=[
-            DialogueMessage.example_parent_message("How was your day at kinder?"),
-            DialogueMessage.example_child_message(
-                ("Kinder", CardCategory.Topic),
-                ("Friend", CardCategory.Topic),
-                ("Tough", CardCategory.Emotion)),
-        ],
-            guide=ParentGuideElement.messaging_guide(ParentGuideCategory.Empathize, "Empathize that the kid had tough time due to a friend.")
+                DialogueMessage.example_parent_message("How was your day at kinder?"),
+                DialogueMessage.example_child_message(
+                    ("Kinder", CardCategory.Topic),
+                    ("Friend", CardCategory.Topic),
+                    ("Tough", CardCategory.Emotion)),
+            ],
+            guide=ParentGuideElement.messaging_guide(ParentGuideCategory.Empathize,
+                                                     "Empathize that the kid had tough time due to a friend.")
         ),
         output="That must be tough due to a friend! I'm so sorry to hear that."
     )
@@ -88,7 +89,8 @@ class ParentExampleMessageGenerator:
     async def generate(self, dialogue: Dialogue, guide: ParentGuideElement,
                        recommendation_id: str) -> ParentExampleMessage:
         t_start = perf_counter()
-        utterance = await self.__mapper.run(_EXAMPLES, ParentExampleMessageGenerationInput(dialogue=dialogue, guide=guide),
+        utterance = await self.__mapper.run(_EXAMPLES,
+                                            ParentExampleMessageGenerationInput(dialogue=dialogue, guide=guide),
                                             ChatCompletionFewShotMapperParams(model=ChatGPTModel.GPT_4_0613,
                                                                               api_params={}))
         translated_utterance = await self.__translator.translate_example(utterance)

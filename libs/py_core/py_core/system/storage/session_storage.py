@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from py_core.system.model import ChildCardRecommendationResult, Dialogue, DialogueMessage, \
-    ParentGuideRecommendationResult, id_generator, ParentExampleMessage
+    ParentGuideRecommendationResult, id_generator, ParentExampleMessage, InterimCardSelection
 
 
 class SessionStorage(ABC):
@@ -10,7 +10,7 @@ class SessionStorage(ABC):
         self.__session_id = session_id or id_generator()
 
     @property
-    def session_id(self)->str:
+    def session_id(self) -> str:
         return self.__session_id
 
     @abstractmethod
@@ -34,14 +34,34 @@ class SessionStorage(ABC):
         pass
 
     @abstractmethod
-    async def get_card_recommendation_result(self, recommendation_id: str)->ChildCardRecommendationResult | None:
+    async def get_card_recommendation_result(self, recommendation_id: str) -> ChildCardRecommendationResult | None:
         pass
 
     @abstractmethod
-    async def get_parent_guide_recommendation_result(self, recommendation_id: str)->ParentGuideRecommendationResult | None:
+    async def get_parent_guide_recommendation_result(self,
+                                                     recommendation_id: str) -> ParentGuideRecommendationResult | None:
         pass
 
     @abstractmethod
     async def get_parent_example_message(self, recommendation_id: str, guide_id: str) -> ParentExampleMessage | None:
         pass
 
+    @abstractmethod
+    async def get_latest_card_selection(self) -> InterimCardSelection | None:
+        pass
+
+    @abstractmethod
+    async def add_card_selection(self, selection: InterimCardSelection):
+        pass
+
+    @abstractmethod
+    async def get_latest_parent_guide_recommendation(self) -> ParentGuideRecommendationResult | None:
+        pass
+
+    @abstractmethod
+    async def get_latest_child_card_recommendation(self) -> ChildCardRecommendationResult | None:
+        pass
+
+    @abstractmethod
+    async def get_latest_dialogue_message(self) -> DialogueMessage | None:
+        pass
