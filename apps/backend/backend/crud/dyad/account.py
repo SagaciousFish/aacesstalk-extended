@@ -52,6 +52,7 @@ async def login_with_code(login_code: str, session: AsyncSession) -> str:
         issued_at = get_timestamp()
         to_encode = {
             "sub": dyad.id,
+            "alias": dyad.alias,
             "child_name": dyad.child_name,
             "iat": issued_at,
             "exp": issued_at + (365 * 24 * 3600 * 1000)  # 1 year

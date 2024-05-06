@@ -83,3 +83,9 @@ export interface DialogueMessage{
 }
 
 type Dialogue = Array<DialogueMessage>
+
+export interface Dyad{
+  id: string
+  alias: string
+  child_name: string
+}
