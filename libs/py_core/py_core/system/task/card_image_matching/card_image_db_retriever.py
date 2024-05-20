@@ -8,7 +8,7 @@ from py_core.utils.models import CardImageInfo
 from py_core.utils.vector_db import VectorDB
 
 
-class CardImageRetriever:
+class CardImageDBRetriever:
     def __init__(self):
         info_list: list[CardImageInfo] = []
         with open(AACessTalkConfig.card_image_table_path, 'r') as f:

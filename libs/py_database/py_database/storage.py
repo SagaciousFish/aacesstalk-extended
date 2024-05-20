@@ -1,6 +1,4 @@
-from typing import Type
-
-from sqlmodel import select, col, SQLModel
+from sqlmodel import select, col
 
 from py_core.system.model import ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
     DialogueMessage, ParentExampleMessage, InterimCardSelection, DialogueRole
@@ -9,7 +7,7 @@ from py_database.model import (DialogueMessage as DialogueMessageORM,
                                ChildCardRecommendationResult as ChildCardRecommendationResultORM,
                                InterimCardSelection as InterimCardSelectionORM,
                                ParentGuideRecommendationResult as ParentGuideRecommendationResultORM,
-                               ParentExampleMessage as ParentExampleMessageORM, IdTimestampMixin, TimestampColumnMixin)
+                               ParentExampleMessage as ParentExampleMessageORM, TimestampColumnMixin)
 from py_database.database import AsyncSession
 
 

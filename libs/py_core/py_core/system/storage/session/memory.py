@@ -1,9 +1,9 @@
 from py_core.system.model import Dialogue, ParentGuideRecommendationResult, ChildCardRecommendationResult, \
     DialogueMessage, ParentExampleMessage, InterimCardSelection, DialogueRole, ModelWithIdAndTimestamp
-from py_core.system.storage.session_storage import SessionStorage
+from py_core.system.storage.session.session_storage import SessionStorage
 
 
-class SessionMemoryStorage(SessionStorage):
+class OnMemorySessionStorage(SessionStorage):
 
     def __init__(self, session_id: str | None = None):
         super().__init__(session_id)

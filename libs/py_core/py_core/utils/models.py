@@ -7,10 +7,13 @@ from nanoid import generate
 from pydantic import BaseModel, ConfigDict, Field, field_validator, computed_field
 
 
-class DictionaryRow(BaseModel):
+class BaseModelWithId(BaseModel):
+    id: str = Field(default_factory=lambda: generate(size=10))
+
+
+class DictionaryRow(BaseModelWithId):
     model_config = ConfigDict(frozen=True)
 
-    id: str = Field(default_factory=lambda: generate(size=10))
     category: str
     english: str
     localized: str
@@ -25,8 +28,7 @@ class DictionaryRow(BaseModel):
         return self.english, self.category
 
 
-class CardImageInfo(BaseModel):
-    id: str = Field(default_factory=lambda: generate(size=10))
+class CardImageInfo(BaseModelWithId):
     category: str
     name_ko: str
     name_en: Optional[str] = None
@@ -44,7 +46,7 @@ class CardImageInfo(BaseModel):
 
     @computed_field
     @property
-    def name(self)->str:
+    def name(self) -> str:
         return self.name_en or self.name_ko
 
     @field_validator('*')

@@ -1,21 +1,26 @@
 from functools import cached_property
 
+from pydantic import BaseModel
 from tinydb import TinyDB, Query
 from tinydb.storages import JSONStorage
 from tinydb.middlewares import CachingMiddleware
 from os import path, getcwd, makedirs
 
 from py_core.system.model import ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
-    DialogueMessage, DialogueTypeAdapter, ParentExampleMessage, InterimCardSelection, DialogueRole
+    DialogueMessage, DialogueTypeAdapter, ParentExampleMessage, InterimCardSelection, DialogueRole, CardCategory, \
+    UserCustomCardImageInfo
 from py_core.system.storage import SessionStorage
 
 
-class SessionJsonStorage(SessionStorage):
+class JsonSessionStorage(SessionStorage):
+
+
     TABLE_MESSAGES = "messages"
     TABLE_CARD_RECOMMENDATIONS = "card_recommendations"
     TABLE_PARENT_RECOMMENDATIONS = "parent_recommendations"
     TABLE_PARENT_EXAMPLE_MESSAGES = "parent_example_messages"
     TABLE_CARD_SELECTIONS = "card_selections"
+    TABLE_CUSTOM_CARD_IMAGES = "custom_care_images"
 
     def __init__(self, session_id: str | None = None):
         super().__init__(session_id)
@@ -32,9 +37,12 @@ class SessionJsonStorage(SessionStorage):
     def db(self) -> TinyDB:
         return TinyDB(self.session_db_path, CachingMiddleware(JSONStorage))
 
+    def __insert_one(self, table_name: str, model: BaseModel):
+        table = self.db.table(table_name)
+        table.insert(model.model_dump())
+
     async def add_dialogue_message(self, message: DialogueMessage):
-        table = self.db.table(self.TABLE_MESSAGES)
-        table.insert(message.model_dump())
+        self.__insert_one(self.TABLE_MESSAGES, message)
 
     async def get_dialogue(self) -> Dialogue:
         table = self.db.table(self.TABLE_MESSAGES)
@@ -44,12 +52,10 @@ class SessionJsonStorage(SessionStorage):
         return converted
 
     async def add_card_recommendation_result(self, result: ChildCardRecommendationResult):
-        table = self.db.table(self.TABLE_CARD_RECOMMENDATIONS)
-        table.insert(result.model_dump())
+        self.__insert_one(self.TABLE_CARD_RECOMMENDATIONS, result)
 
     async def add_parent_guide_recommendation_result(self, result: ParentGuideRecommendationResult):
-        table = self.db.table(self.TABLE_PARENT_RECOMMENDATIONS)
-        table.insert(result.model_dump())
+        self.__insert_one(self.TABLE_PARENT_RECOMMENDATIONS, result)
 
     async def get_card_recommendation_result(self, recommendation_id: str) -> ChildCardRecommendationResult | None:
         table = self.db.table(self.TABLE_CARD_RECOMMENDATIONS)
@@ -71,8 +77,7 @@ class SessionJsonStorage(SessionStorage):
             return None
 
     async def add_parent_example_message(self, message: ParentExampleMessage):
-        table = self.db.table(self.TABLE_PARENT_EXAMPLE_MESSAGES)
-        table.insert(message.model_dump())
+        self.__insert_one(self.TABLE_PARENT_EXAMPLE_MESSAGES, message)
 
     async def get_parent_example_message(self, recommendation_id: str, guide_id: str) -> ParentExampleMessage | None:
         table = self.db.table(self.TABLE_PARENT_EXAMPLE_MESSAGES)
@@ -102,8 +107,7 @@ class SessionJsonStorage(SessionStorage):
         return InterimCardSelection(**d) if d is not None else None
 
     async def add_card_selection(self, selection: InterimCardSelection):
-        table = self.db.table(self.TABLE_CARD_SELECTIONS)
-        table.insert(selection.model_dump())
+        self.__insert_one(self.TABLE_CARD_SELECTIONS, selection)
 
     async def get_latest_parent_guide_recommendation(self) -> ParentGuideRecommendationResult | None:
         d = await self.__get_latest_model(self.TABLE_PARENT_RECOMMENDATIONS, latest_role=DialogueRole.Child)
@@ -120,3 +124,9 @@ class SessionJsonStorage(SessionStorage):
             return DialogueMessage(**result[0])
         else:
             return None
+
+    async def add_custom_card(self, info: UserCustomCardImageInfo):
+        self.__insert_one(self.TABLE_CUSTOM_CARD_IMAGES, info)
+
+    async def query_custom_card(self, category: CardCategory, label_localized: str) -> UserCustomCardImageInfo | None:
+        pass
