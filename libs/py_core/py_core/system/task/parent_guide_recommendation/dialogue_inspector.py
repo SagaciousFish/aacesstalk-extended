@@ -12,14 +12,34 @@ from py_core.system.task.parent_guide_recommendation.common import DialogueInspe
 from py_core.system.task.stringify import DialogueToStrConversionFunction
 
 _EXAMPLES = [
-    MapperInputOutputPair(
-        input=[
-            DialogueMessage.example_parent_message("What did you do at school?"),
-            DialogueMessage.example_child_message(("School", CardCategory.Topic), ("Play", CardCategory.Action)),
-            DialogueMessage.example_parent_message("I asked you not to play games at school. Didn't I?")
-        ],
-        output=DialogueInspectionResult(categories=[DialogueInspectionCategory.Correction], rationale="The parent is about to scold the child not to play games.", feedback="You seem to be scolding him before obtaining to more concrete information. Please gather more information before judgment.")
-    )
+   MapperInputOutputPair(
+         input=[
+             DialogueMessage.example_parent_message("What did you do at school?"),
+             DialogueMessage.example_child_message(("School", CardCategory.Topic), ("Play", CardCategory.Action)),
+             DialogueMessage.example_parent_message("I asked you not to play games at school. Didn't I?")
+         ],
+         output=DialogueInspectionResult(categories=[DialogueInspectionCategory.Blame], rationale="The parent is about to scold the child not to play games.", feedback="You seem to be scolding him before obtaining to more concrete information. Please gather more information before judgment.")
+     ),
+
+
+   MapperInputOutputPair(
+         input=[
+             DialogueMessage.example_parent_message("What did you do at school?"),
+             DialogueMessage.example_child_message(("Play", CardCategory.Action)),
+             DialogueMessage.example_parent_message("I should say, 'I played with my friends at school.'")
+         ],
+         output=DialogueInspectionResult(categories=[DialogueInspectionCategory.Correction], rationale="The parent is trying to improve the child's response with better sentences or phrases.", feedback="You seem to be correcting the child's response. Please focus more on the topic and context of the conversation.")
+       ),
+
+
+   MapperInputOutputPair(
+         input=[
+             DialogueMessage.example_parent_message("How are you feeling right now?"),
+             DialogueMessage.example_child_message(("Happy", CardCategory.Emotion)),
+             DialogueMessage.example_parent_message("What are your plans for today and where are you going to be?")
+         ],
+         output=DialogueInspectionResult(categories=[DialogueInspectionCategory.Complex], rationale="The parent is confusing the child by asking about both plans and location at once.", feedback="You seem to be asking the child about both plans and location in one go. Please ask about only one thing to make it easier for the child to answer.")
+     )
 ]
 
 _prompt_template = convert_to_jinja_template("""
