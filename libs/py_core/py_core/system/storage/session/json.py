@@ -7,8 +7,7 @@ from tinydb.middlewares import CachingMiddleware
 from os import path, getcwd, makedirs
 
 from py_core.system.model import ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
-    DialogueMessage, DialogueTypeAdapter, ParentExampleMessage, InterimCardSelection, DialogueRole, CardCategory, \
-    UserCustomCardImageInfo
+    DialogueMessage, DialogueTypeAdapter, ParentExampleMessage, InterimCardSelection, DialogueRole
 from py_core.system.storage import SessionStorage
 
 
@@ -124,9 +123,3 @@ class JsonSessionStorage(SessionStorage):
             return DialogueMessage(**result[0])
         else:
             return None
-
-    async def add_custom_card(self, info: UserCustomCardImageInfo):
-        self.__insert_one(self.TABLE_CUSTOM_CARD_IMAGES, info)
-
-    async def query_custom_card(self, category: CardCategory, label_localized: str) -> UserCustomCardImageInfo | None:
-        pass

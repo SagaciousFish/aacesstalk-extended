@@ -10,6 +10,7 @@ from py_core.utils.vector_db import VectorDB
 
 class CardImageDBRetriever:
     def __init__(self):
+        print("Initialize card image DB retriever.")
         info_list: list[CardImageInfo] = []
         with open(AACessTalkConfig.card_image_table_path, 'r') as f:
             reader = DictReader(f, fieldnames=CardImageInfo.model_fields)
@@ -43,15 +44,22 @@ class CardImageDBRetriever:
             embeddings=[emb.tolist() for emb in name_embeddings]
         )
 
-    def __query_result_to_info_list(self, query_result) -> list[tuple[CardImageInfo, float]]:
-        if len(query_result["ids"][0]) > 0:
-            objs = [self.__card_info_dict[id] for id in query_result["ids"][0]]
-            distances = [s for s in query_result["distances"][0]]
-            return [(o,d) for o,d in zip(objs, distances)]
-        else:
-            return []
+    def __query_result_to_info_list(self, query_result) -> list[list[tuple[CardImageInfo, float]]]:
+        list_length = len(query_result["ids"])
 
-    def query_nearest_card_image_infos(self, name: str, k=3)->list[CardImageInfo]:
+        result = []
+        for i in range(list_length):
+            print(i)        
+            if len(query_result["ids"][i]) > 0:
+                objs = [self.__card_info_dict[id] for id in query_result["ids"][i]]
+                distances = [s for s in query_result["distances"][i]]
+                result.append([(o,d) for o,d in zip(objs, distances)])
+            else:
+                result.append([])
+        
+        return result
+
+    def __query_nearest_card_image_info_single(self, name: str, k=3)->list[list[CardImageInfo]]:
         t_start = perf_counter()
         #First, find exact match.
         name_match_result = self.__collection_name.get(where={"name": name})
@@ -65,7 +73,7 @@ class CardImageDBRetriever:
                 query_texts=[name],
                 n_results=k
             )
-            name_query_result = self.__query_result_to_info_list(name_query_result)
+            name_query_result = self.__query_result_to_info_list(name_query_result)[0]
             print(name_query_result)
 
             result = [tup[0] for tup in name_query_result]
@@ -75,6 +83,47 @@ class CardImageDBRetriever:
             #    n_results=k
             #)
             #return [tup[0] for tup in self.__query_result_to_info_list(result)]
+
+        t_end = perf_counter()
+        print(f"Card retrieval took {t_end - t_start} sec.")
+
+        return result
+
+    def query_nearest_card_image_infos(self, names: list[str], k=3)->list[list[CardImageInfo]]:
+        t_start = perf_counter()
+        #First, find exact match.
+        name_result_dict: dict[str, list[CardImageInfo]|None] = {name:None for name in names}
+        
+        name_match_results = self.__collection_name.get(where={"name": {"$in": names}})
+
+        for id in name_match_results["ids"]:
+            card_image_info = self.__card_info_dict[id]
+            name_result_dict[card_image_info.name_en] = [card_image_info]
+
+        no_name_matched_card_names = [name for name in names if (name not in name_result_dict or name_result_dict[name] is None or len(name_result_dict[name]) == 0)]
+        
+        if len(no_name_matched_card_names) > 0:
+            # Find fuzzy name match.
+            print("Find fuzzy name match.")
+            name_query_results = self.__collection_name.query(
+                query_texts=no_name_matched_card_names,
+                n_results=k
+            )
+            name_query_results = self.__query_result_to_info_list(name_query_results)
+            print(name_query_results)
+
+            for i, name in enumerate(no_name_matched_card_names):
+                name_result_dict[name] = [tup[0] for tup in name_query_results[i]]
+
+                      
+
+            #result = self.__collection_desc.query(
+            #    query_texts=[name],
+            #    n_results=k
+            #)
+            #return [tup[0] for tup in self.__query_result_to_info_list(result)]
+        
+        result = [name_result_dict[name] for name in names]  
 
         t_end = perf_counter()
         print(f"Card retrieval took {t_end - t_start} sec.")
