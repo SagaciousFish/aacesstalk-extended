@@ -1,23 +1,29 @@
+from contextlib import asynccontextmanager
 from time import perf_counter
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from py_database.database import create_db_and_tables
 from database import engine
-from routers import dyad
+from .routers import dyad
 
-app = FastAPI()
+
+@asynccontextmanager
+async def server_lifespan(app: FastAPI):
+    print("Server launched.")
+    await create_db_and_tables(engine)
+
+    yield
+
+    # Cleanup logic will come below.
+
+app = FastAPI(lifespan=server_lifespan)
 
 # Setup routers
 app.include_router(
     dyad.router,
     prefix="/api/v1/dyad"
 )
-
-@app.on_event("startup")
-async def on_startup():
-    print("Server launched.")
-    await create_db_and_tables(engine)
 
 
 

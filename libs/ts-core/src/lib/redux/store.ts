@@ -13,3 +13,6 @@ export type CoreThunk<ReturnType = void, State = CoreState> = ThunkAction<
   unknown,
   Action<string>
 >;
+
+
+export function createStore<>(additionalReducers?: {[key:string]: })
