@@ -1,6 +1,7 @@
 // Replace "com.clientrn" here and below with your app's package name from the top of MainActivity.java
 package com.clientrn;
 
+import com.naver.ai.aacesstalk.client.MainActivity;
 import com.wix.detox.Detox;
 import com.wix.detox.config.DetoxConfig;
 

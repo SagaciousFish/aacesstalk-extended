@@ -1,4 +1,4 @@
-package com.clientrn
+package com.naver.ai.aacesstalk.client
 
 import android.app.Application
 import com.facebook.react.PackageList

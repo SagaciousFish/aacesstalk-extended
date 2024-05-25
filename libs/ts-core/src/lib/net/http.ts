@@ -18,6 +18,8 @@ export class Http{
   static ENDPOINT_DYAD_SESSION_ID = `${Http.ENDPOINT_DYAD_SESSION}/{session_id}`
 
   static ENDPOINT_DYAD_SESSION_END = `${Http.ENDPOINT_DYAD_SESSION_ID}/end`
+
+  static ENDPOINT_DYAD_SESSION_ABORT = `${Http.ENDPOINT_DYAD_SESSION_ID}/abort`
   static ENDPOINT_DYAD_MESSAGE = `${Http.ENDPOINT_DYAD_SESSION_ID}/message`
 
   static getTemplateEndpoint(template: string, values: {[key:string]: string}): string {

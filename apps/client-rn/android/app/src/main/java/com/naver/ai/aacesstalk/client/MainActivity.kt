@@ -1,4 +1,4 @@
-package com.clientrn
+package com.naver.ai.aacesstalk.client
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

@@ -8,29 +8,13 @@ from fastapi import APIRouter, Depends
 from backend.database import get_db_session
 from py_core import ModeratorSession
 from py_core.system.model import Dialogue, ParentGuideRecommendationResult, CardIdentity, ChildCardRecommendationResult, \
-    InterimCardSelection, CardInfo, ParentExampleMessage
-from py_database import SQLSessionStorage
+    CardInfo, ParentExampleMessage
 
-from py_database.database import AsyncSession
+from backend.moderator import depends_on_moderator_session
+
 
 router = APIRouter()
 
-sessions: dict[str, ModeratorSession] = {}
-
-
-def get_moderator_session(session_id: str, db: AsyncSession) -> ModeratorSession:
-    if session_id in sessions:
-        session = sessions[session_id]
-        session.storage = db
-        return session
-    else:
-        session = ModeratorSession(SQLSessionStorage(db, session_id))
-        sessions[session_id] = session
-        return session
-
-
-def depends_on_moderator_session(session_id: str, db: Annotated[AsyncSession, Depends(get_db_session)]):
-    return Depends(lambda: get_moderator_session(session_id, db))
 
 
 @router.get("/all", response_class=Dialogue)

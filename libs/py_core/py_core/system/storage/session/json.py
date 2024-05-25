@@ -1,4 +1,5 @@
 from functools import cached_property
+import os
 
 from pydantic import BaseModel
 from tinydb import TinyDB, Query
@@ -123,3 +124,7 @@ class JsonSessionStorage(SessionStorage):
             return DialogueMessage(**result[0])
         else:
             return None
+
+    async def delete_entities(self):
+        os.unlink(self.session_db_path)
+

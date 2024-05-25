@@ -5,8 +5,8 @@ import {
   ParentExampleMessage,
   ParentGuideRecommendationResult
 } from '../../model-types';
-import { createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit';
-import { CoreThunk } from '../store';
+import { Action, createSlice, PayloadAction, ThunkDispatch } from '@reduxjs/toolkit';
+import { CoreState, CoreThunk } from '../store';
 import { Http } from '../../net/http';
 
 export interface SessionState{
@@ -53,24 +53,89 @@ const sessionSlice = createSlice({
   }
 })
 
-export function startNewSession(): CoreThunk {
+function makeSignedInThunk(
+  handlers: {
+    runIfSignedIn?: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: ()=>CoreState, signedInHeader: any) => Promise<void>,
+    runIfNotSignedIn?: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: ()=>CoreState) => Promise<void>,
+    onError?: (ex: any, dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: ()=>CoreState) => Promise<void>,
+    onFinally?: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: ()=>CoreState) => Promise<void>
+  },
+  checkSessionId: boolean = false
+): CoreThunk {
   return async (dispatch, getState) => {
     const state = getState()
-    if(state.auth.jwt){
+    if(state.auth.jwt && handlers.runIfSignedIn && (checkSessionId == false || state.session.id != null)){
       dispatch(sessionSlice.actions._setProcessingFlag(true))
       try {
+        const header = await Http.getSignedInHeaders(state.auth.jwt)
+        await handlers.runIfSignedIn(dispatch, getState, header)
+      }catch(ex: any){
+        if(handlers.onError){
+          await handlers.onError(ex, dispatch, getState)
+        }
+      }finally {
+        if(handlers.onFinally){
+          await handlers.onFinally(dispatch, getState)
+        }
+        dispatch(sessionSlice.actions._setProcessingFlag(false))
+      }
+    }else if(handlers.runIfNotSignedIn){
+      await handlers.runIfNotSignedIn(dispatch, getState)
+    }
+  }
+}
+
+export function startNewSession(): CoreThunk {
+  return makeSignedInThunk(
+    {
+      runIfSignedIn: async (dispatch, getState, header) => {
         const resp = await Http.axios.post(Http.ENDPOINT_DYAD_SESSION_NEW, null, {
-          headers: await Http.getSignedInHeaders(state.auth.jwt)
+          headers: header
         })
         const sessionId = resp.data
         dispatch(sessionSlice.actions._mountNewSession(sessionId))
-      }catch(ex){
+      },
+      onError: async (ex, dispatch, getState) => {
         dispatch(sessionSlice.actions._setError("Session initialization error."))
-      }finally {
-        dispatch(sessionSlice.actions._setProcessingFlag(false))
       }
-    }
-  }
+    })
+}
+
+
+export function endSession(): CoreThunk {
+  return makeSignedInThunk(
+    {
+      runIfSignedIn: async (dispatch, getState, header) => {
+        const state = getState()
+        await Http.axios.put(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_SESSION_END, {session_id: state.session.id!!}), {
+          headers: header
+        })
+        dispatch(sessionSlice.actions.initialize())
+      },
+      onError: async (ex, dispatch) => {
+        console.log("Session ending error")
+        dispatch(sessionSlice.actions._setError("Session ending error."))
+      }
+    },
+    true
+  )
+}
+
+export function cancelSession(): CoreThunk {
+  return makeSignedInThunk(
+    {
+      runIfSignedIn: async (dispatch, getState, header) => {
+        const state = getState()
+        const resp = await Http.axios.delete(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_SESSION_ABORT, {session_id: state.session.id!!}), {
+          headers: header
+        })
+      },
+      onFinally: async (dispatch) => {
+        dispatch(sessionSlice.actions.initialize())
+      }
+    }, 
+    true
+  )
 }
 
 export default sessionSlice.reducer

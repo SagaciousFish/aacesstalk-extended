@@ -65,3 +65,7 @@ class SessionStorage(ABC):
     @abstractmethod
     async def get_latest_dialogue_message(self) -> DialogueMessage | None:
         pass
+
+    @abstractmethod
+    async def delete_entities(self):
+        pass

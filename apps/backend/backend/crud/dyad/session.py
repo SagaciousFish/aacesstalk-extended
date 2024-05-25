@@ -4,6 +4,8 @@ from chatlib.utils.time import get_timestamp
 from sqlmodel import select
 from fastapi import HTTPException, status
 
+from backend.moderator import get_moderator_session
+
 
 async def create_moderator_session(dyad: Dyad, timezone: str, db: AsyncSession) -> Session:
     s = Session(dyad_id=dyad.id, local_timezone=timezone)
@@ -26,5 +28,14 @@ async def end_session(session_id: str, dyad_id: str, db: AsyncSession):
        s.ended_timestamp = get_timestamp()
        db.add(s)
        await db.commit()
+   else:
+       ValueError("No such session with the id and dyad id.")
+
+
+async def abort_session(session_id: str, dyad_id: str, db: AsyncSession):
+   s = await find_session(session_id, dyad_id, db)
+   if s is not None:
+       await get_moderator_session(session_id, db).storage.delete_entities()
+       await db.delete(s)
    else:
        ValueError("No such session with the id and dyad id.")

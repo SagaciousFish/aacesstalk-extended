@@ -50,7 +50,7 @@ class OnMemorySessionStorage(SessionStorage):
         else:
             return None
 
-    async def __get_latest_model(self, model_dict: [str, ModelWithIdAndTimestamp], latest_role: DialogueRole) -> ModelWithIdAndTimestamp | None:
+    async def __get_latest_model(self, model_dict: dict[str, ModelWithIdAndTimestamp], latest_role: DialogueRole) -> ModelWithIdAndTimestamp | None:
         latest_message = await self.get_latest_dialogue_message()
         if latest_message is not None and latest_message.role == latest_role:
             sorted_selections = sorted(
@@ -80,3 +80,11 @@ class OnMemorySessionStorage(SessionStorage):
             return None
         else:
             return self.__dialogue[len(self.__dialogue) - 1]
+
+    async def delete_entities(self):
+        self.__dialogue = []
+        self.__parent_guide_recommendations = {}
+        self.__card_recommendations = {}
+        self.__parent_example_messages = {}
+        self.__interim_card_selections = {}
+

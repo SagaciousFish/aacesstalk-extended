@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from backend.database import get_db_session, AsyncSession
 from backend.routers.dyad.common import depends_auth_dyad
-from backend.crud.dyad.session import create_moderator_session, end_session, find_session
+from backend.crud.dyad.session import abort_session, create_moderator_session, end_session, find_session
 from py_database.model import Dyad, Session
 
 from . import message
@@ -28,9 +28,17 @@ async def initiate_session(timezone: Annotated[str, Header()], dyad: Annotated[D
     new_session = await create_moderator_session(dyad, timezone, db)
     return new_session.id
 
+@router.delete("/{session_id}/abort")
+async def _abort_session(session_id: str, dyad: Annotated[Dyad, depends_auth_dyad],
+                      db: Annotated[AsyncSession, Depends(get_db_session)]):
+    try:
+        await abort_session(session_id, dyad.id, db)
+    except ValueError:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "No session with the id and the corresponding dyad.")
+
 
 @router.put("/{session_id}/end")
-async def end_session(session_id: str, dyad: Annotated[Dyad, depends_auth_dyad],
+async def _end_session(session_id: str, dyad: Annotated[Dyad, depends_auth_dyad],
                       db: Annotated[AsyncSession, Depends(get_db_session)]):
     try:
         await end_session(session_id, dyad.id, db)
