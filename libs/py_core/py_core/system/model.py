@@ -13,15 +13,17 @@ def id_generator() -> str:
     return generate(size=20)
 
 
-class ModelWithIdAndTimestamp(BaseModel):
+class ModelWithId(BaseModel):
     id: str = Field(default_factory=id_generator)
+
+
+class ModelWithIdAndTimestamp(ModelWithId):
     timestamp: int = Field(default_factory=get_timestamp)
 
 
-class CardIdentity(BaseModel):
+class CardIdentity(ModelWithId):
     model_config = ConfigDict(frozen=True)
 
-    id: str = Field(default_factory=id_generator)
     recommendation_id: str
 
 
@@ -40,6 +42,18 @@ class CardInfo(CardIdentity):
 
     def simple_str(self) -> str:
         return f"{self.label_localized} ({self.label}) | {self.category}"
+
+
+class UserDefinedCardInfo(ModelWithIdAndTimestamp):
+    model_config = ConfigDict(frozen=True, use_enum_values=True)
+
+    label: Optional[str] = None
+    label_localized: str
+    category: CardCategory
+
+    image_filename: Optional[str]
+    image_width: Optional[int]
+    image_height: Optional[int]
 
 
 class InterimCardSelection(ModelWithIdAndTimestamp):
@@ -111,9 +125,11 @@ class ParentExampleMessage(ModelWithIdAndTimestamp):
     message: str
     message_localized: str | None = None
 
+
 class DialogueRole(StrEnum):
     Parent = "parent"
     Child = "child"
+
 
 class DialogueMessage(ModelWithIdAndTimestamp):
     model_config = ConfigDict(frozen=True)

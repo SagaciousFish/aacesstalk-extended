@@ -1,6 +1,4 @@
-from typing import Type
-
-from sqlmodel import select, col, SQLModel
+from sqlmodel import select, col, delete
 
 from py_core.system.model import ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
     DialogueMessage, ParentExampleMessage, InterimCardSelection, DialogueRole
@@ -9,7 +7,7 @@ from py_database.model import (DialogueMessage as DialogueMessageORM,
                                ChildCardRecommendationResult as ChildCardRecommendationResultORM,
                                InterimCardSelection as InterimCardSelectionORM,
                                ParentGuideRecommendationResult as ParentGuideRecommendationResultORM,
-                               ParentExampleMessage as ParentExampleMessageORM, IdTimestampMixin, TimestampColumnMixin)
+                               ParentExampleMessage as ParentExampleMessageORM, TimestampColumnMixin)
 from py_database.database import AsyncSession
 
 
@@ -115,3 +113,9 @@ class SQLSessionStorage(SessionStorage):
             return d.to_data_model()
         else:
             return None
+
+    async def delete_entities(self):
+        with self.__sql_session.begin():
+            for model in [DialogueMessageORM, ChildCardRecommendationResultORM, InterimCardSelectionORM, ParentGuideRecommendationResultORM, ParentExampleMessageORM]:
+                await self.__sql_session.exec(delete(model).where(DialogueMessageORM.session_id == self.session_id))
+            

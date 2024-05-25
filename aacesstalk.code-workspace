@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "libs/py_core"
+		},
+		{
+			"path": "libs/py_database"
+		},
+		{
+			"path": "apps/backend"
+		}
+	],
+	"settings": {
+	}
+}
