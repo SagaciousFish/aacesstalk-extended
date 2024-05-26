@@ -13,7 +13,17 @@
     "react-native-svg-transformer": "*",
     "react-dom": "*",
     "@nx/webpack": "*",
-    "@nx/react": "*"
+    "@nx/react": "*",
+    "react-redux": "*",
+    "axios": "*",
+    "tslib": "*",
+    "string-template": "*",
+    "@reduxjs/toolkit": "*",
+    "jwt-decode": "*",
+    "@react-navigation/native": "*",
+    "@react-navigation/native-stack": "*",
+    "react-native-safe-area-context": "*",
+    "react-native-screens": "*"
   },
   "devDependencies": {}
 }
