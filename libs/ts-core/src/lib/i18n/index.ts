@@ -1,3 +1,4 @@
+import 'intl-pluralrules';
 import i18next, { i18n } from "i18next";
 
 export function initializeI18n(defaultLanguage: string = "kr", middlewares?: Array<any>) {
