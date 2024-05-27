@@ -10,6 +10,7 @@ import { useSelector } from '../redux/hooks';
 import { HomeNavigator } from '../navigation';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+
 const Stack = createNativeStackNavigator()
 
 const screenOptions: NativeStackNavigationOptions = {
