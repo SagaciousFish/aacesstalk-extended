@@ -3,6 +3,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CoreState, CoreThunk } from '../store';
 import { Http } from '../../net/http';
 import { jwtDecode } from "jwt-decode";
+import { Axios, AxiosError } from 'axios';
+import { AACessTalkErrors } from '../../errors';
 
 export interface AuthState {
   isAuthorizing: boolean;
@@ -27,6 +29,10 @@ const authSlice = createSlice({
       state.isAuthorizing = true;
       state.dyadInfo = undefined;
       state.jwt = undefined;
+    },
+
+    _authorizingFlagOff: (state) => {
+      state.isAuthorizing = false;
     },
 
     _setError: (state, action: PayloadAction<string>) => {
@@ -74,8 +80,17 @@ export function loginDyadThunk(code: string): CoreThunk {
       }));
 
     } catch (ex) {
-      console.log(ex);
-      dispatch(authSlice.actions._setError("Login error"))
+      let error = AACessTalkErrors.UnknownError 
+      if(ex instanceof AxiosError){
+        if(ex.code == AxiosError.ERR_NETWORK){
+          error = AACessTalkErrors.ServerNotResponding
+        }else if (ex.status == 400){
+          error = AACessTalkErrors.WrongCredential
+        }
+      }
+      dispatch(authSlice.actions._setError(error))
+    } finally {
+      dispatch(authSlice.actions._authorizingFlagOff())
     }
   };
 }
