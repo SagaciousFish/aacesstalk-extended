@@ -23,7 +23,7 @@ export const rneuiTheme = createTheme({
     Button: {
       titleStyle: {
         ...styleTemplates.withBoldFont
-      },
+      }
     }
   }
 })

@@ -8,24 +8,25 @@ import { useEffect } from "react"
 
 const styles = StyleSheet.create({
     hill: {
+        zIndex: -1,
         position: 'absolute',
         bottom: 0
     },
     cloud1: {
         position: 'absolute',
-        zIndex: -1,
+        zIndex: -2,
         right:50,
         top: '40%'
     },
     cloud2: {
         position: 'absolute',
-        zIndex: -1,
+        zIndex: -3,
         left: 40,
         top: '20%'
     },
     cloud3: {
         position: 'absolute',
-        zIndex: -1,
+        zIndex: -4,
         opacity: 0.7,
         left: '45%',
         top: '-50%',
