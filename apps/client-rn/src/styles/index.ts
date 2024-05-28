@@ -1,4 +1,6 @@
 import { StyleSheet } from "react-native";
+import { createTheme } from '@rneui/themed';
+import nw from 'nativewind';
 
 export const fontFamilyByWeight = {
     light: "NanumSquareNeo-Light",
@@ -14,4 +16,14 @@ export const styleTemplates = StyleSheet.create({
     withSemiboldFont: {"fontFamily": fontFamilyByWeight.semibold},
     withBoldFont: {"fontFamily": fontFamilyByWeight.bold},
     withExtraboldFont: {"fontFamily": fontFamilyByWeight.extrabold},   
+})
+
+export const rneuiTheme = createTheme({
+  components: {
+    Button: {
+      titleStyle: {
+        ...styleTemplates.withBoldFont
+      },
+    }
+  }
 })

@@ -25,6 +25,9 @@
     "react-native-safe-area-context": "*",
     "react-native-reanimated": "*",
     "react-native-screens": "*",
+    "react-native-vector-icons": "*",
+    "@rneui/base": "*",
+    "@rneui/themed": "*",
     "react-i18next": "*",
     "intl-pluralrules": "*",
     "i18next": "*"

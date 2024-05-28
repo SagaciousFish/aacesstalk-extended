@@ -15,13 +15,20 @@ const styles = StyleSheet.create({
         position: 'absolute',
         zIndex: -1,
         right:50,
-        top: '35%'
+        top: '40%'
     },
     cloud2: {
         position: 'absolute',
         zIndex: -1,
         left: 40,
         top: '20%'
+    },
+    cloud3: {
+        position: 'absolute',
+        zIndex: -1,
+        opacity: 0.7,
+        left: '45%',
+        top: '-50%',
     }
 })
 
@@ -33,6 +40,8 @@ export const HillBackgroundView = (props: {containerClassName?: string, children
 
     const cloud1PositionCycle = useSharedValue(0);
     const cloud2PositionCycle = useSharedValue(0);
+
+    const cloud3PositionCycle = useSharedValue(0);
     
    
     const cloud1Style = useAnimatedStyle(() => {
@@ -64,10 +73,32 @@ export const HillBackgroundView = (props: {containerClassName?: string, children
         }
     }, [width])
 
-    useEffect(()=>{
-        cloud1PositionCycle.value = withRepeat(withTiming(1, {duration: 15000, easing: Easing.linear}), -1, false)
 
-        cloud2PositionCycle.value = withRepeat(withTiming(1, {duration: 12000, easing: Easing.linear}), -1, false)
+
+    const cloud3Style = useAnimatedStyle(() => {
+        return {
+            ...styles.cloud3,
+            transform: [
+                {translateX: interpolate(cloud3PositionCycle.value, [0, 1], [0, width])},
+            ]
+        }
+    }, [width])
+
+    const cloud3_1Style = useAnimatedStyle(() => {
+        return {
+            ...styles.cloud3,
+            transform: [
+                {translateX: interpolate(cloud3PositionCycle.value, [0, 1], [-width, 0])},
+            ]
+        }
+    }, [width])
+
+    useEffect(()=>{
+        cloud1PositionCycle.value = withRepeat(withTiming(1, {duration: 16000, easing: Easing.linear}), -1, false)
+
+        cloud2PositionCycle.value = withRepeat(withTiming(1, {duration: 14000, easing: Easing.linear}), -1, false)
+
+        cloud3PositionCycle.value = withRepeat(withTiming(1, {duration: 30000, easing: Easing.linear}), -1, false)
     }, [])
 
 
@@ -86,6 +117,14 @@ export const HillBackgroundView = (props: {containerClassName?: string, children
 
         <Reanimated.View style={cloud2_1Style} pointerEvents={"none"}>
             <Cloud2Image width={213} height={146} />
+        </Reanimated.View>
+
+        <Reanimated.View style={cloud3Style} pointerEvents={"none"}>
+            <Cloud1Image width={600} height={500} />
+        </Reanimated.View>
+
+        <Reanimated.View style={cloud3_1Style} pointerEvents={"none"}>
+            <Cloud1Image width={600} height={500} />
         </Reanimated.View>
     </View>
 }

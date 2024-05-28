@@ -9,7 +9,8 @@ import { SignInScreen } from '../features/auth/screens/SignInScreen';
 import { useSelector } from '../redux/hooks';
 import { HomeNavigator } from '../navigation';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-
+import { ThemeProvider } from '@rneui/themed';
+import { rneuiTheme } from '../styles';
 
 const Stack = createNativeStackNavigator()
 
@@ -37,7 +38,9 @@ export const App = () => {
   return <Provider store={store}>
     <SafeAreaProvider>
       <NavigationContainer>
-        <GlobalNavigator/>
+        <ThemeProvider theme={rneuiTheme}>
+          <GlobalNavigator/>
+        </ThemeProvider>
       </NavigationContainer>
     </SafeAreaProvider>
   </Provider>
