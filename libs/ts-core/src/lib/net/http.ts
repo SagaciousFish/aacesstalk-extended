@@ -5,8 +5,6 @@ const DEFAULTS: CreateAxiosDefaults<any> = {
   baseURL: (process.env["NODE_ENV"] == "development" ? "http://10.0.2.2:3000" : "") + "/api/v1"
 }
 
-console.log(DEFAULTS)
-
 export class Http{
 
   static ENDPOINT_DYAD = "/dyad"

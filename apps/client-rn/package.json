@@ -26,8 +26,6 @@
     "react-native-reanimated": "*",
     "react-native-screens": "*",
     "react-native-vector-icons": "*",
-    "@rneui/base": "*",
-    "@rneui/themed": "*",
     "react-i18next": "*",
     "intl-pluralrules": "*",
     "i18next": "*",
@@ -35,7 +33,9 @@
     "react-hook-form": "*",
     "@hookform/resolvers": "*",
     "yup": "*",
-    "nativewind": "*"
+    "nativewind": "*",
+    "redux-persist": "*",
+    "react-native-mmkv-storage": "*"
   },
   "devDependencies": {}
 }

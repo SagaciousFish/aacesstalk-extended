@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import React, { useRef, useState } from 'react';
 import { Provider } from 'react-redux';
-import { store } from '../redux/store';
+import { store, persistor } from '../redux/store';
 import { Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { NativeStackNavigationOptions, createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -9,8 +9,7 @@ import { SignInScreen } from '../features/auth/screens/SignInScreen';
 import { useSelector } from '../redux/hooks';
 import { HomeNavigator } from '../navigation';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ThemeProvider } from '@rneui/themed';
-import { rneuiTheme } from '../styles';
+import { PersistGate } from 'redux-persist/integration/react';
 
 const Stack = createNativeStackNavigator()
 
@@ -36,13 +35,13 @@ export const App = () => {
 
 
   return <Provider store={store}>
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <ThemeProvider theme={rneuiTheme}>
-          <GlobalNavigator/>
-        </ThemeProvider>
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <PersistGate persistor={persistor}>
+      <SafeAreaProvider>
+        <NavigationContainer>
+            <GlobalNavigator/>
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </PersistGate>
   </Provider>
 };
 

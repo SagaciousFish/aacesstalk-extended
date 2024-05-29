@@ -1,6 +1,7 @@
 import authReducer from './reducers/auth'
 import sessionReducer from './reducers/session'
-import { Action, Reducer, Store, ThunkAction, ThunkDispatch, combineReducers, configureStore } from '@reduxjs/toolkit';
+import { Action, EnhancedStore, Reducer, Store, ThunkAction, ThunkDispatch, combineReducers, configureStore } from '@reduxjs/toolkit';
+import {FLUSH, PAUSE, PERSIST, PURGE, Persistor, REGISTER, REHYDRATE, persistReducer, persistStore} from 'redux-persist'
 
 export type CoreState = {
   auth: ReturnType<typeof authReducer>,
@@ -25,14 +26,30 @@ export type RootState<Additional extends AdditionalReducers = {}> = CoreState & 
   [K in keyof Additional]: ReturnType<Additional[K]>
 }
 
-export function createStore<Additional extends AdditionalReducers, A extends Action = CoreAction>(additionalReducers?: Additional): Store<RootState<Additional>, A> & {dispatch: ThunkDispatch<RootState<Additional>, unknown, A>} {
+export function createStore<Additional extends AdditionalReducers, A extends Action = CoreAction>(
+    persistStorage: any,
+    additionalReducers?: Additional,
+  ): {store: Store<RootState<Additional>, A> & {dispatch: ThunkDispatch<RootState<Additional>, unknown, A>}, persistor: Persistor} {
   const rootReducer = combineReducers({
-    auth: authReducer,
+    auth: persistReducer({
+      key: 'root',
+      storage: persistStorage,
+      whitelist: ['jwt', 'dyadInfo']
+    }, authReducer),
     session: sessionReducer,
     ...additionalReducers
   } as any) as any
   
-  return configureStore({
-    reducer: rootReducer
-  })
+  const store = configureStore({
+    reducer: rootReducer,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+      serializableCheck: {
+          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    })
+  }) as any
+
+  const persistor = persistStore(store)
+
+  return {store, persistor}
 }
