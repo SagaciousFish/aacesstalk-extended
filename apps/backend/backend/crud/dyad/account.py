@@ -6,7 +6,7 @@ from sqlmodel import select
 
 from backend import env_variables
 from backend.database import DyadLoginCode, AsyncSession
-from py_database.model import Dyad
+from py_database.model import Dyad, ParentType
 
 
 async def get_dyad_list(session: AsyncSession) -> list[tuple[Dyad, DyadLoginCode]]:
@@ -16,8 +16,8 @@ async def get_dyad_list(session: AsyncSession) -> list[tuple[Dyad, DyadLoginCode
     return [row for row in results]
 
 
-async def create_dyad(alias: str, child_name: str, session: AsyncSession) -> tuple[Dyad, DyadLoginCode]:
-    dyad = Dyad(alias=alias, child_name=child_name)
+async def create_dyad(alias: str, child_name: str, parent_type: ParentType, session: AsyncSession) -> tuple[Dyad, DyadLoginCode]:
+    dyad = Dyad(alias=alias, child_name=child_name, parent_type=parent_type)
 
     print(dyad)
 
@@ -56,6 +56,7 @@ async def login_with_code(login_code: str, session: AsyncSession) -> str:
             "sub": dyad.id,
             "alias": dyad.alias,
             "child_name": dyad.child_name,
+            "parent_type": dyad.parent_type,
             "iat": issued_at,
             "exp": issued_at + (365 * 24 * 3600 * 1000)  # 1 year
         }

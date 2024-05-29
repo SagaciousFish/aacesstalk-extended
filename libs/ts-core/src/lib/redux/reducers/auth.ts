@@ -1,4 +1,4 @@
-import { Dyad } from '../../model-types';
+import { Dyad, ParentType } from '../../model-types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CoreState, CoreThunk } from '../store';
 import { Http } from '../../net/http';
@@ -67,6 +67,7 @@ export function loginDyadThunk(code: string): CoreThunk {
         sub: string,
         alias: string,
         child_name: string,
+        parent_type: ParentType,
         iat: number,
         exp: number}>(jwt)
 
@@ -75,6 +76,7 @@ export function loginDyadThunk(code: string): CoreThunk {
         dyad: {
           id: decoded.sub,
           child_name: decoded.child_name,
+          parent_type: decoded.parent_type,
           alias: decoded.alias
         },
         token: jwt

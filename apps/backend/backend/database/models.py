@@ -7,7 +7,7 @@ from sqlalchemy import DateTime, func
 
 class DyadLoginCode(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    code: str = Field(unique=True, default_factory=lambda: generate("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 5))
+    code: str = Field(unique=True, default_factory=lambda: generate("0123456789", 6))
     issued_at: Optional[datetime] = Field(
         default=None,
         sa_type=DateTime(timezone=True),

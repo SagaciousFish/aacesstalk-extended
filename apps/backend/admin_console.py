@@ -21,12 +21,14 @@ async def _create_dyad():
         child_name = await questionary.text(
             message="Enter child name:",
             validate=make_non_empty_string_validator("Child name cannot be empty.")).ask_async()
-
-        confirm = await questionary.confirm(f"Create a dyad with alias \"{alias}\" and a child name \"{child_name}\"?").ask_async()
+        
+        parent_type = await questionary.select("Select parent type.", ["Mother", "Father"], "Mother").ask_async()
+        
+        confirm = await questionary.confirm(f"Create a dyad with alias \"{alias}\" and a child name \"{child_name}\" and {parent_type}?").ask_async()
 
         if confirm:
-            dyad, dyad_code = await create_dyad(alias, child_name, session)
-            print(f"Created a dyad {dyad.alias} (Child: {dyad.child_name}). Code: {dyad_code.code}")
+            dyad, dyad_code = await create_dyad(alias, child_name, parent_type, session)
+            print(f"Created a dyad {dyad.alias} (Child: {dyad.child_name}, Parent type: {dyad.parent_type}). Code: {dyad_code.code}")
 
 async def _list_dyad():
     async with AsyncSession(engine) as session:

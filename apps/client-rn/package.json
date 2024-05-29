@@ -35,7 +35,8 @@
     "yup": "*",
     "nativewind": "*",
     "redux-persist": "*",
-    "react-native-mmkv-storage": "*"
+    "react-native-mmkv-storage": "*",
+    "react-native-gesture-handler": "*"
   },
   "devDependencies": {}
 }

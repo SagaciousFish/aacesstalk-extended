@@ -84,8 +84,14 @@ export interface DialogueMessage{
 
 type Dialogue = Array<DialogueMessage>
 
+export enum ParentType{
+    Mother="mother",
+    Father="father"
+}
+
 export interface Dyad{
   id: string
   alias: string
   child_name: string
+  parent_type: ParentType
 }

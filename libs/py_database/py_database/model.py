@@ -42,9 +42,14 @@ class IdTimestampMixin(BaseModel):
 #    parent: Optional[Parent] = Relationship(back_populates="children")
 #    sessions: list['Session'] = Relationship(back_populates='child')
 
+class ParentType(StrEnum):
+    Mother="mother"
+    Father="father"
+
 class Dyad(SQLModel, IdTimestampMixin, table=True):
     alias: str = Field(min_length=1, unique=True)
     child_name: str = Field(min_length=1)
+    parent_type: ParentType = Field(nullable=False)
 
     sessions: list['Session'] = Relationship(back_populates='dyad')
 

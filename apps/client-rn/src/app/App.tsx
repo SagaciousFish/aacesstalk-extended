@@ -10,6 +10,7 @@ import { useSelector } from '../redux/hooks';
 import { HomeNavigator } from '../navigation';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PersistGate } from 'redux-persist/integration/react';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const Stack = createNativeStackNavigator()
 
@@ -37,9 +38,11 @@ export const App = () => {
   return <Provider store={store}>
     <PersistGate persistor={persistor}>
       <SafeAreaProvider>
+        <GestureHandlerRootView className="flex-1">
         <NavigationContainer>
             <GlobalNavigator/>
         </NavigationContainer>
+        </GestureHandlerRootView>
       </SafeAreaProvider>
     </PersistGate>
   </Provider>
