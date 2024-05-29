@@ -13,6 +13,7 @@ module.exports = {
         Title: "오늘은 무슨 이야기를 할까요?",
         Plan: "오늘 뭐하지?",
         Recall: "오늘 무슨 일이 있었지?",
-        Free: "{child_name}가 좋아하는 것", 
+        Free: "{child_name}가 좋아하는 것",
+        StarCount: "별 확인하기" 
     },
 }
