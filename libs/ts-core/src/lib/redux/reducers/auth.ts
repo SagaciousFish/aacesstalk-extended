@@ -53,14 +53,15 @@ export function loginDyadThunk(code: string): CoreThunk {
     dispatch(authSlice.actions._authorizingFlagOn());
 
     try {
+      console.log(Http.ENDPOINT_DYAD_ACCOUNT_LOGIN)
       const tokenResponse = await Http.axios.post(Http.ENDPOINT_DYAD_ACCOUNT_LOGIN,
         { code }, {
           headers: {
-            'Content-Type': 'text/plain'
+            'Content-Type': 'application/json'
           }
         });
 
-      const jwt = tokenResponse.data
+      const { jwt } = tokenResponse.data
 
       const decoded = jwtDecode<{
         sub: string,
@@ -84,7 +85,7 @@ export function loginDyadThunk(code: string): CoreThunk {
       if(ex instanceof AxiosError){
         if(ex.code == AxiosError.ERR_NETWORK){
           error = AACessTalkErrors.ServerNotResponding
-        }else if (ex.status == 400){
+        }else if (ex.response?.status == 400){
           error = AACessTalkErrors.WrongCredential
         }
       }

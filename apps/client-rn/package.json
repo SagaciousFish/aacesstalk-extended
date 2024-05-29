@@ -30,7 +30,12 @@
     "@rneui/themed": "*",
     "react-i18next": "*",
     "intl-pluralrules": "*",
-    "i18next": "*"
+    "i18next": "*",
+    "tailwindcss": "*",
+    "react-hook-form": "*",
+    "@hookform/resolvers": "*",
+    "yup": "*",
+    "nativewind": "*"
   },
   "devDependencies": {}
 }

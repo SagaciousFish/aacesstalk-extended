@@ -65,3 +65,7 @@ async def pass_request_ids_header(request: Request, call_next):
         response.headers["X-context-id"] = request.headers["x-context-id"]
 
     return response
+
+@app.get("/ping")
+def ping()->str:
+    return "Server is working."

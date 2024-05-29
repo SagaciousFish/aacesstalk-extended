@@ -68,14 +68,14 @@
         "cwd": "apps/backend"
       }
     },
-    "admin_console": {
+    "admin-console": {
       "executor": "@nxlv/python:run-commands",
       "options": {
         "command": "poetry run python admin_console.py",
         "cwd": "apps/backend"
       }
     },
-    "run_dev": {
+    "run-dev": {
       "executor": "@nxlv/python:run-commands",
       "options": {
         "command": "poetry run python backend/main.py",

@@ -21,5 +21,5 @@ def get_moderator_session(session_id: str, db: AsyncSession) -> ModeratorSession
         return session
 
 
-def depends_on_moderator_session(session_id: str, db: Annotated[AsyncSession, Depends(get_db_session)]):
-    return Depends(lambda: get_moderator_session(session_id, db))
+def retrieve_moderator_session(session_id: str, db: Annotated[AsyncSession, Depends(get_db_session)]):
+    return get_moderator_session(session_id, db)

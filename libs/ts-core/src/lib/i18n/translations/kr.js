@@ -5,7 +5,7 @@ module.exports = {
         Authorizing: "로그인 중입니다...",
         Errors: {
             ServerNotResponding: "서버가 응답하지 않습니다. 잠시 후에 다시 시도해 주세요.",
-            WrongCredential: "사용자 번호를 확인해 주세요.", 
+            WrongCredential: "사용자 번호가 올바른지 확인해 주세요.", 
             UnknownError: "로그인이 실패하였습니다. 연구자에게 문의해 주세요."
         }
     },

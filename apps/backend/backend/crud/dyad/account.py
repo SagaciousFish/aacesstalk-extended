@@ -44,8 +44,10 @@ async def login_with_code(login_code: str, session: AsyncSession) -> str:
                  .where(DyadLoginCode.dyad_id == Dyad.id)
                  .limit(1))
     results = await session.exec(statement)
-    if results.first() is not None:
-        _, dyad = results.first()
+    print(results.closed)
+    first_row = results.first()
+    if first_row is not None:
+        _, dyad = first_row
         print(f"Found a match dyad - {dyad.id} / child: {dyad.child_name}")
 
         # Make JWT
@@ -57,6 +59,7 @@ async def login_with_code(login_code: str, session: AsyncSession) -> str:
             "iat": issued_at,
             "exp": issued_at + (365 * 24 * 3600 * 1000)  # 1 year
         }
+        print(env_helper.get_env_variable(env_variables.AUTH_SECRET))
         access_token = jwt.encode(to_encode, env_helper.get_env_variable(env_variables.AUTH_SECRET))
         return access_token
     else:
