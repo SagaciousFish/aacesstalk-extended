@@ -17,7 +17,7 @@ router = APIRouter()
 
 
 
-@router.get("/all", response_class=Dialogue)
+@router.get("/all", response_model=Dialogue)
 async def get_dialogue(session: Annotated[ModeratorSession, depends_on_moderator_session]) -> Dialogue:
     return await session.storage.get_dialogue()
 

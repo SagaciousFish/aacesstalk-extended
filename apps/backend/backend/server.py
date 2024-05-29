@@ -4,8 +4,8 @@ from time import perf_counter
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from py_database.database import create_db_and_tables
-from database import engine
-from .routers import dyad
+from backend.database import engine
+from backend.routers import dyad
 
 
 @asynccontextmanager

@@ -2,7 +2,7 @@ import axios, { Axios, CreateAxiosDefaults } from 'axios';
 import format = require('string-template');
 
 const DEFAULTS: CreateAxiosDefaults<any> = {
-  baseURL: "/api/v1"
+  baseURL: (process.env["NODE_ENV"] == "development" ? "http://localhost:3000" : "") + "/api/v1"
 }
 
 export class Http{

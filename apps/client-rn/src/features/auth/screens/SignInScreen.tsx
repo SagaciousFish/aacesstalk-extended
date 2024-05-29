@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import { View, Text, Pressable, TextInput } from "react-native"
+import { View, Text, TextInput } from "react-native"
 import LogoImage from '../../../assets/images/logo-extended.svg'
 import { styleTemplates } from "apps/client-rn/src/styles"
 import { HillBackgroundView } from "apps/client-rn/src/components/HillBackgroundView"
@@ -8,9 +8,9 @@ import { TailwindButton } from "apps/client-rn/src/components/tailwind-component
 import { Control, useController, useForm } from "react-hook-form"
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useCallback, useMemo } from "react"
+import { useMemo } from "react"
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
-import { AACessTalkErrors, loginDyadThunk } from "@aacesstalk/libs/ts-core"
+import { loginDyadThunk } from "@aacesstalk/libs/ts-core"
 
 const PasscodeInput = (props: {
     control: Control,
@@ -73,7 +73,7 @@ export const SignInScreen = () => {
             {
                 isAuthorizing === true ? <Text className="text-center text-lg text-slate-500" style={styleTemplates.withBoldFont}>{t("SignIn.Authorizing")}</Text> : <>
                     {
-                        authorizationError ? <Text className="text-center text-lg text-red-400" style={styleTemplates.withBoldFont}>{t(`SignIn.Errors.${authorizationError}`)}</Text> : null
+                        authorizationError ? <Text className="text-center text-lg text-red-400 mt-4" style={styleTemplates.withBoldFont}>{t(`SignIn.Errors.${authorizationError}`)}</Text> : null
                     }
                     <PasscodeInput control={control} name="passcode" onSubmit={onSubmit}/>
                     <TailwindButton title={t("SignIn.SignIn")} containerClassName="mt-5" roundedClassName={"rounded-full"} 

@@ -5,7 +5,6 @@ from sqlmodel import SQLModel, Field
 from nanoid import generate
 from sqlalchemy import DateTime, func
 
-
 class DyadLoginCode(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     code: str = Field(unique=True, default_factory=lambda: generate("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 5))
