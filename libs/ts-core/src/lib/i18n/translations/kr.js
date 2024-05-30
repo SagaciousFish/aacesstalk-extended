@@ -13,7 +13,7 @@ module.exports = {
         Cancel: "취소"
     },
     TopicSelection: {
-        Title: "오늘은 무슨 이야기를 할까요?",
+        Title: "오늘은 어떤 이야기를 할까요?",
         Plan: "오늘 뭐하지?",
         Recall: "오늘 무슨 일이 있었지?",
         FreeTemplate: "{child_name}가 좋아하는 것",

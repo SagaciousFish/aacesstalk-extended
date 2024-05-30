@@ -3,36 +3,29 @@ import { HillBackgroundView } from "apps/client-rn/src/components/HillBackground
 import { TailwindButton } from "apps/client-rn/src/components/tailwind-components"
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { styleTemplates } from "apps/client-rn/src/styles"
-import { useCallback, useEffect, useMemo, useRef } from "react"
+import { forwardRef, useCallback, useEffect, useMemo, useRef } from "react"
 import { useTranslation } from "react-i18next"
 import { Alert, Text, View } from "react-native"
 import { Gesture, GestureDetector, TapGesture } from "react-native-gesture-handler"
 import { SafeAreaView } from "react-native-safe-area-context"
 import format from 'string-template';
+import { TopicButton } from "../components/TopicButton"
+import CalendarImage from "../../../assets/images/calendar.svg"
+import HomeImage from "../../../assets/images/home.svg"
+import StarImage from "../../../assets/images/star.svg"
+import { ProfileButton } from "../components/ProfileButton"
 
-const ProfileButton = () => {
-    const {child_name, parent_type} = useSelector(state => state.auth.dyadInfo)
+const FreeTopicButton = (props: {style?: any}) => {
 
     const {t} = useTranslation()
 
-    const dispatch = useDispatch()
-
-    const label = useMemo(()=>{
-        return format(t("DyadInfo.FamilyLabelTemplate"), {child_name, parent_type: t(`DyadInfo.ParentType.${parent_type}`)})
-    }, [t])
-
-    const onTripplePress = useCallback(()=>{
-        Alert.alert(t("SignIn.ConfirmSignOut"), null, [{text: t("SignIn.Cancel"), style: 'cancel'}, {text: t("SignIn.SignOut"), onPress: () => {
-            dispatch(signOutDyadThunk())
-        }, style: 'destructive'}], {cancelable: true})
-    }, [t, dispatch])
-
-    const tripleTap = Gesture.Tap().maxDuration(600).numberOfTaps(3)
-    .onStart(onTripplePress) 
+    const child_name = useSelector(state => state.auth.dyadInfo?.child_name)
     
-    return <GestureDetector gesture={tripleTap}><View className="absolute right-5 top-5">
-            <Text className={`text-lg text-center text-slate-400`} style={styleTemplates.withSemiboldFont}>{label}</Text>
-        </View></GestureDetector>
+    const label = useMemo(()=>{
+        return format(t("TopicSelection.FreeTemplate"), {child_name})
+    }, [child_name])
+
+    return <TopicButton style={props.style} title={label} dialogueCount={0} buttonClassName="bg-topicfree" imageComponent={<StarImage/>}/>
 }
 
 export const HomeScreen = () => {
@@ -42,6 +35,11 @@ export const HomeScreen = () => {
     return <HillBackgroundView containerClassName="items-center justify-center">
         <SafeAreaView className="flex-1 self-stretch items-center justify-center">
             <Text className="text-3xl text-slate-800 text-center" style={styleTemplates.withBoldFont}>{t("TopicSelection.Title")}</Text>
+            <View className="flex-row space-x-12 mt-24 mb-10">
+                <TopicButton title={t("TopicSelection.Plan")} dialogueCount={0} buttonClassName="bg-topicplan" imageComponent={<CalendarImage/>}/>
+                <TopicButton title={t("TopicSelection.Recall")} dialogueCount={0} buttonClassName="bg-topicrecall" imageComponent={<HomeImage/>}/>
+                <FreeTopicButton/>
+            </View>
             <ProfileButton/>
             <TailwindButton containerClassName="absolute right-5 bottom-5" buttonStyleClassName="py-5 px-12" roundedClassName="rounded-full" title={t("TopicSelection.StarCount")}></TailwindButton>
         </SafeAreaView>

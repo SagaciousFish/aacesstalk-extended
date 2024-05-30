@@ -3,9 +3,7 @@ module.exports = {
   content: ["./**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
-      fontFamily: {
-        formal: ["nanumsquareround"]
-      }
+      colors: require("./src/styles/colors") 
     },
   },
   plugins: [],
