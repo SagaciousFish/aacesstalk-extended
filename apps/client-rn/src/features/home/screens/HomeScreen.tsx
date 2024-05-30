@@ -4,7 +4,7 @@ import { useSelector } from "apps/client-rn/src/redux/hooks"
 import { styleTemplates } from "apps/client-rn/src/styles"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
-import { Text, View } from "react-native"
+import { StyleSheet, Text, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import format from 'string-template';
 import { TopicButton } from "../components/TopicButton"
@@ -13,6 +13,12 @@ import LogoImage from "../../../assets/images/logo-extended.svg"
 import HomeImage from "../../../assets/images/home.svg"
 import StarImage from "../../../assets/images/star.svg"
 import { ProfileButton } from "../components/ProfileButton"
+
+const styles = StyleSheet.create({
+    topicFreeDimensions: {right: '5%', bottom: '10%', width: '70%', height: '70%'},
+    topicPlanDimensions: {left:20},
+    topicRecallDimensions: {right: '16%', bottom: '18%', width: '70%', height: '70%'}
+})
 
 const FreeTopicButton = (props: {style?: any}) => {
 
@@ -26,7 +32,7 @@ const FreeTopicButton = (props: {style?: any}) => {
 
     return <TopicButton style={props.style} title={label} dialogueCount={0} buttonClassName="bg-topicfree" 
                 imageComponent={<StarImage/>}
-                imageContainerStyleDimensions={{right: '5%', bottom: '10%', width: '70%', height: '70%'}}
+                imageContainerStyleDimensions={styles.topicFreeDimensions}
                 imageNormalDegree={-8}
                 imagePressedDegree={20}
                 />
@@ -42,9 +48,9 @@ export const HomeScreen = () => {
             <Text className="text-3xl text-slate-800 text-center" style={styleTemplates.withBoldFont}>{t("TopicSelection.Title")}</Text>
             <View className="flex-row space-x-12 mt-24 mb-20">
                 <TopicButton title={t("TopicSelection.Plan")} dialogueCount={0} buttonClassName="bg-topicplan" imageComponent={<CalendarImage/>} 
-                    imageContainerStyleDimensions={{left:20}} imageNormalDegree={10} imagePressedDegree={-20}/>
+                    imageContainerStyleDimensions={styles.topicPlanDimensions} imageNormalDegree={10} imagePressedDegree={-20}/>
                 <TopicButton title={t("TopicSelection.Recall")} dialogueCount={0} buttonClassName="bg-topicrecall" imageComponent={<HomeImage/>} 
-                    imageContainerStyleDimensions={{right: '16%', bottom: '18%', width: '70%', height: '70%'}} 
+                    imageContainerStyleDimensions={styles.topicRecallDimensions} 
                     imageNormalDegree={-8} imagePressedDegree={20}/>
                 <FreeTopicButton/>
             </View>
