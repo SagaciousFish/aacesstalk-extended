@@ -16,7 +16,7 @@ export const ProfileButton = () => {
 
     const label = useMemo(()=>{
         return format(t("DyadInfo.FamilyLabelTemplate"), {child_name, parent_type: t(`DyadInfo.ParentType.${parent_type}`)})
-    }, [t])
+    }, [t, child_name, parent_type])
 
     const onTripplePress = useCallback(()=>{
         Alert.alert(t("SignIn.ConfirmSignOut"), null, [{text: t("SignIn.Cancel"), style: 'cancel'}, {text: t("SignIn.SignOut"), onPress: () => {
