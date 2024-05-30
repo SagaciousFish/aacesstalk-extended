@@ -6,7 +6,7 @@ from nanoid import generate
 from py_core.system.model import ChildCardRecommendationResult, DialogueMessage, DialogueRole, CardInfo, \
     CardIdentity, \
     ParentGuideRecommendationResult, Dialogue, ParentGuideType, ParentExampleMessage, ParentGuideElement, \
-    InterimCardSelection
+    InterimCardSelection, Dyad
 from py_core.system.session_topic import SessionTopicInfo
 from py_core.system.storage import SessionStorage
 from py_core.system.task import ChildCardRecommendationGenerator
@@ -60,11 +60,13 @@ class ModeratorSession:
             cls.__parent_example_generator = ParentExampleMessageGenerator(vector_db)
             cls.class_variables_initialized = True
 
-    def __init__(self, storage: SessionStorage):
+    def __init__(self, dyad: Dyad, storage: SessionStorage):
 
         self.__init_class_vars()
 
         self.__storage = storage
+
+        self.__dyad = dyad
 
         self.__next_speaker: DialogueRole = DialogueRole.Parent
 
@@ -153,7 +155,7 @@ class ModeratorSession:
                                                                      self.__dialogue_inspector.inspect(dialogue,
                                                                                                        inspection_task_id)))
 
-            recommendation = await self.__child_card_recommender.generate(dialogue, None, None)
+            recommendation = await self.__child_card_recommender.generate(self.__dyad.parent_type, dialogue, None, None)
 
             await self.__storage.add_card_recommendation_result(recommendation)
 
@@ -179,7 +181,7 @@ class ModeratorSession:
 
             interim_cards = await self.get_card_info_from_identities(interim_card_selection.cards)
 
-            recommendation = await self.__child_card_recommender.generate(dialogue, interim_cards, prev_recommendation)
+            recommendation = await self.__child_card_recommender.generate(self.__dyad.parent_type, dialogue, interim_cards, prev_recommendation)
 
             await self.__storage.add_card_recommendation_result(recommendation)
 

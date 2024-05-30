@@ -20,8 +20,6 @@ class ChildCardTranslationParams(ChatCompletionFewShotMapperParams):
 def _stringify_english_word(word: str, category: str) -> str:
     if category == "topic":
         return f"{word} (topic, noun)"
-    elif category == "emotion":
-        return f"{word} (emotion, adjective/adverb)"
     elif category == "action":
         return f"{word} (action, verb)"
 
@@ -76,8 +74,7 @@ class CardTranslator:
     async def translate(self, card_set: ChildCardRecommendationAPIResult) -> list[str]:
 
         word_list = ([(self.__transform_original_word(word), "topic") for word in card_set.topics] +
-                     [(self.__transform_original_word(word), "action") for word in card_set.actions] +
-                     [(self.__transform_original_word(word), "emotion") for word in card_set.emotions])
+                     [(self.__transform_original_word(word), "action") for word in card_set.actions])
 
         # Lookup dictionary
         localized_words: list[str | None] = [None] * len(word_list)

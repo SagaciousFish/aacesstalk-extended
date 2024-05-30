@@ -3,10 +3,18 @@ from chatlib.utils.validator import make_non_empty_string_validator
 
 from py_core import ModeratorSession
 from py_core.system.model import DialogueRole, \
-    ParentExampleMessage, Session
+    ParentExampleMessage, Session, ParentType, Dyad
 from py_core.system.session_topic import SessionTopicCategory, SessionTopicInfo
 import pendulum
 
+async def cli_get_dyad_info()->Dyad:
+
+    parent_type: str = await questionary.select("Select parent type:", [ParentType.Mother, ParentType.Father], ParentType.Mother).ask_async()
+    child_name: str = await questionary.text("Child name: ", "다솜이").ask_async()    
+
+    return Dyad(alias="Test", child_name=child_name, parent_type=parent_type)
+
+    
 async def cli_get_session_info()->Session:
 
     # Topic selection
@@ -15,7 +23,7 @@ async def cli_get_session_info()->Session:
         SessionTopicCategory.Plan
     ).ask_async()
 
-    topic_category = SessionTopicCategory[topic_category]
+    topic_category = SessionTopicCategory(topic_category)
 
     print(topic_category, topic_category.description)
 

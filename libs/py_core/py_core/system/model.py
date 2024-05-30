@@ -24,7 +24,6 @@ class ModelWithIdAndTimestamp(ModelWithId):
 
 class ParentType(StrEnum):
     Mother="mother"
-
     Father="father"
 
 class Dyad(ModelWithId):
@@ -52,6 +51,7 @@ class CardCategory(StrEnum):
     Topic = "topic"
     Emotion = "emotion"
     Action = "action"
+    Core="core"
 
 
 class CardInfo(CardIdentity):

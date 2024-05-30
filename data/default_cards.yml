@@ -1,0 +1,28 @@
+- label: Happy
+  label_localized: 행복해요
+  category: emotion
+- label: Good
+  label_localized: 좋아요
+  category: emotion
+- label: Hard
+  label_localized: 힘들어요
+  category: emotion
+- label: Sad
+  label_localized: 슬퍼요
+  category: emotion
+- label: 'Yes'
+  label_localized: 네
+  category: core
+- label: 'No'
+  label_localized: 아니오
+  category: core
+- label: I don't know
+  label_localized: 모르겠어요
+  category: core
+- label:
+    father: How about you, dad?
+    mother: How about you, mom?
+  label_localized: 
+    father: 아빠는요?
+    mother: 엄마는요?
+  category: core
