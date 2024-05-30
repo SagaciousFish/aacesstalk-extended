@@ -2,6 +2,7 @@ from enum import StrEnum
 from functools import cached_property
 from typing import TypeAlias, Optional
 
+from py_core.system.session_topic import SessionTopicInfo
 from chatlib.utils.time import get_timestamp
 from nanoid import generate
 from pydantic import BaseModel, ConfigDict, TypeAdapter, Field
@@ -20,6 +21,26 @@ class ModelWithId(BaseModel):
 class ModelWithIdAndTimestamp(ModelWithId):
     timestamp: int = Field(default_factory=get_timestamp)
 
+
+class ParentType(StrEnum):
+    Mother="mother"
+
+    Father="father"
+
+class Dyad(ModelWithId):
+    alias: str = Field(min_length=1, unique=True)
+    child_name: str = Field(min_length=1)
+    parent_type: ParentType = Field(nullable=False)
+
+
+class Session(ModelWithId):
+
+    topic: SessionTopicInfo
+
+    local_timezone: str
+    started_timestamp: int = Field(default_factory=get_timestamp, index=True)
+    ended_timestamp: int | None = Field(default=None, index=True)
+    
 
 class CardIdentity(ModelWithId):
     model_config = ConfigDict(frozen=True)

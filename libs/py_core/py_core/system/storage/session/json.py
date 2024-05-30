@@ -1,6 +1,7 @@
 from functools import cached_property
 import os
 
+import json
 from pydantic import BaseModel
 from tinydb import TinyDB, Query
 from tinydb.storages import JSONStorage
@@ -8,7 +9,7 @@ from tinydb.middlewares import CachingMiddleware
 from os import path, getcwd, makedirs
 
 from py_core.system.model import ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
-    DialogueMessage, DialogueTypeAdapter, ParentExampleMessage, InterimCardSelection, DialogueRole
+    DialogueMessage, DialogueTypeAdapter, ParentExampleMessage, InterimCardSelection, DialogueRole, Session
 from py_core.system.storage import SessionStorage
 
 
@@ -22,30 +23,49 @@ class JsonSessionStorage(SessionStorage):
     TABLE_CARD_SELECTIONS = "card_selections"
     TABLE_CUSTOM_CARD_IMAGES = "custom_care_images"
 
-    def __init__(self, session_id: str | None = None):
-        super().__init__(session_id)
+    def __init__(self, session):
+        super().__init__(session)
 
-    @property
-    def session_db_path(self) -> str:
-        dir_path = path.join(getcwd(), "../../database/json/sessions", self.session_id)
+    
+
+    @classmethod
+    async def restore_instance(cls, id: str) -> SessionStorage | None:
+        session_info_path = session_info_path(id)
+        if path.exists(session_info_path):
+            with open(session_info_path) as f:
+                return JsonSessionStorage(Session(**json.load(f)))
+        else:
+            return None
+
+    @classmethod
+    def session_db_dir_path(cls, id: str) -> str:
+        dir_path = path.join(getcwd(), "../../database/json/sessions", id)
         if not path.exists(dir_path):
             makedirs(dir_path)
 
-        return path.join(dir_path, "db.json")
+        return dir_path
 
-    @cached_property
-    def db(self) -> TinyDB:
-        return TinyDB(self.session_db_path, CachingMiddleware(JSONStorage))
+    @classmethod
+    def session_db_path(cls, id: str) -> str:
+        return path.join(cls.session_db_dir_path(id), "db.json")
+    
+    @classmethod
+    def session_info_path(cls, id: str) -> str:
+        return path.join(cls.session_db_dir_path, "info.json")
+
+    @classmethod
+    def db(cls, id: str) -> TinyDB:
+        return TinyDB(cls.session_db_path(id), CachingMiddleware(JSONStorage))
 
     def __insert_one(self, table_name: str, model: BaseModel):
-        table = self.db.table(table_name)
+        table = self.db(self.session_id).table(table_name)
         table.insert(model.model_dump())
 
     async def add_dialogue_message(self, message: DialogueMessage):
         self.__insert_one(self.TABLE_MESSAGES, message)
 
     async def get_dialogue(self) -> Dialogue:
-        table = self.db.table(self.TABLE_MESSAGES)
+        table = self.db(self.session_id).table(self.TABLE_MESSAGES)
         data = table.all()
         converted = DialogueTypeAdapter.validate_python(data)
         converted.sort(key=lambda m: m.timestamp)
@@ -58,7 +78,7 @@ class JsonSessionStorage(SessionStorage):
         self.__insert_one(self.TABLE_PARENT_RECOMMENDATIONS, result)
 
     async def get_card_recommendation_result(self, recommendation_id: str) -> ChildCardRecommendationResult | None:
-        table = self.db.table(self.TABLE_CARD_RECOMMENDATIONS)
+        table = self.db(self.session_id).table(self.TABLE_CARD_RECOMMENDATIONS)
         q = Query()
         result = table.search(q.id == recommendation_id)
         if len(result) > 0:
@@ -68,7 +88,7 @@ class JsonSessionStorage(SessionStorage):
 
     async def get_parent_guide_recommendation_result(self,
                                                      recommendation_id: str) -> ParentGuideRecommendationResult | None:
-        table = self.db.table(self.TABLE_PARENT_RECOMMENDATIONS)
+        table = self.db(self.session_id).table(self.TABLE_PARENT_RECOMMENDATIONS)
         q = Query()
         result = table.search(q.id == recommendation_id)
         if len(result) > 0:
@@ -80,7 +100,7 @@ class JsonSessionStorage(SessionStorage):
         self.__insert_one(self.TABLE_PARENT_EXAMPLE_MESSAGES, message)
 
     async def get_parent_example_message(self, recommendation_id: str, guide_id: str) -> ParentExampleMessage | None:
-        table = self.db.table(self.TABLE_PARENT_EXAMPLE_MESSAGES)
+        table = self.db(self.session_id).table(self.TABLE_PARENT_EXAMPLE_MESSAGES)
         q = Query()
         result = table.search((q.recommendation_id == recommendation_id) & (q.guide_id == guide_id))
         if len(result) > 0:
@@ -91,7 +111,7 @@ class JsonSessionStorage(SessionStorage):
     async def __get_latest_model(self, table_name: str, latest_role: DialogueRole) -> dict | None:
         latest_message = await self.get_latest_dialogue_message()
         if latest_message is not None and latest_message.role == latest_role:
-            table = self.db.table(table_name)
+            table = self.db(self.session_id).table(table_name)
             sorted_selections = sorted(
                 [row for row in table.all() if row["timestamp"] > latest_message.timestamp],
                 key=lambda s: s["timestamp"], reverse=True)
@@ -118,7 +138,7 @@ class JsonSessionStorage(SessionStorage):
         return ChildCardRecommendationResult(**d) if d is not None else None
 
     async def get_latest_dialogue_message(self) -> DialogueMessage | None:
-        table = self.db.table(self.TABLE_MESSAGES)
+        table = self.db(self.session_id).table(self.TABLE_MESSAGES)
         result = sorted(table.all(), key=lambda m: m["timestamp"], reverse=True)
         if len(result) > 0:
             return DialogueMessage(**result[0])
@@ -126,5 +146,4 @@ class JsonSessionStorage(SessionStorage):
             return None
 
     async def delete_entities(self):
-        os.unlink(self.session_db_path)
-
+        os.unlink(self.session_db_dir_path(self.session_id))

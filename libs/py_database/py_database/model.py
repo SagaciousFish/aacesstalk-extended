@@ -11,8 +11,12 @@ from py_core.system.model import (id_generator, DialogueRole, DialogueMessage as
                                   InterimCardSelection as _InterimCardSelection,
                                   ParentGuideRecommendationResult as _ParentGuideRecommendationResult,
                                   ParentGuideElement,
-                                  ParentExampleMessage as _ParentExampleMessage, CardIdentity
+                                  ParentType,
+                                  ParentExampleMessage as _ParentExampleMessage, CardIdentity,
+                                  Session as _Session,
+                                  Dyad as _Dyad
                                   )
+from py_core.system.session_topic import SessionTopicInfo
 from chatlib.utils.time import get_timestamp
 
 
@@ -30,22 +34,6 @@ class IdTimestampMixin(BaseModel):
     )
 
 
-# class Parent(SQLModel, IdTimestampMixin, table=True):
-#    name: str = Field(index=True)
-#    children: list['Child'] = Relationship(back_populates='parent')
-#    sessions: list['Session'] = Relationship(back_populates='parent')
-
-
-# class Child(SQLModel, IdTimestampMixin, table=True):
-#    name: str = Field(index=True)
-#    parent_id: Optional[str] = Field(default=None, foreign_key='parent.id')
-#    parent: Optional[Parent] = Relationship(back_populates="children")
-#    sessions: list['Session'] = Relationship(back_populates='child')
-
-class ParentType(StrEnum):
-    Mother="mother"
-    Father="father"
-
 class Dyad(SQLModel, IdTimestampMixin, table=True):
     alias: str = Field(min_length=1, unique=True)
     child_name: str = Field(min_length=1)
@@ -53,15 +41,29 @@ class Dyad(SQLModel, IdTimestampMixin, table=True):
 
     sessions: list['Session'] = Relationship(back_populates='dyad')
 
+    def to_data_model(self) -> _Dyad:
+        return _Dyad(id=self.id, alias=self.alias, parent_type=self.parent_type)
+
 
 class Session(SQLModel, IdTimestampMixin, table=True):
     dyad_id: str = Field(foreign_key=f"dyad.id")
 
     dyad: Dyad = Relationship(back_populates="sessions")
+    
+    topic: SessionTopicInfo = Field(sa_column=Column(JSON, nullable=False))
 
     local_timezone: str = Field(nullable=False)
     started_timestamp: int = Field(default_factory=get_timestamp, index=True)
     ended_timestamp: int | None = Field(default=None, index=True)
+
+    def to_data_model(self) -> _Session:
+        return _Session(
+            id=self.id,
+            topic=self.topic,
+            local_timezone=self.local_timezone,
+            started_timestamp=self.started_timestamp,
+            ended=self.ended_timestamp
+        )
 
 
 class SessionIdMixin(BaseModel):

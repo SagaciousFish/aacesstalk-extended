@@ -1,17 +1,28 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from py_core.system.model import ChildCardRecommendationResult, Dialogue, DialogueMessage, \
-    ParentGuideRecommendationResult, id_generator, ParentExampleMessage, InterimCardSelection
+    ParentGuideRecommendationResult, id_generator, ParentExampleMessage, InterimCardSelection, Session
+from py_core.system.session_topic import SessionTopicInfo
 
 
 class SessionStorage(ABC):
 
-    def __init__(self, session_id: str | None = None):
-        self.__session_id = session_id or id_generator()
+    def __init__(self, info: Session):
+        self.__session = info
+
+    @classmethod
+    @abstractmethod
+    async def restore_instance(cls, id: str, params: Optional[any] = None)->Optional['SessionStorage']:
+        pass
 
     @property
     def session_id(self) -> str:
-        return self.__session_id
+        return self.__session.id
+    
+    @property
+    def session_topic(self) -> SessionTopicInfo:
+        return self.__session.topic
 
     @abstractmethod
     async def add_dialogue_message(self, message: DialogueMessage):

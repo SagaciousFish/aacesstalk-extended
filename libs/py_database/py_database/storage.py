@@ -1,9 +1,10 @@
 from sqlmodel import select, col, delete
 
 from py_core.system.model import ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
-    DialogueMessage, ParentExampleMessage, InterimCardSelection, DialogueRole
+    DialogueMessage, ParentExampleMessage, InterimCardSelection, DialogueRole, Session
 from py_core.system.storage import SessionStorage
 from py_database.model import (DialogueMessage as DialogueMessageORM,
+                               Session as SessionORM,
                                ChildCardRecommendationResult as ChildCardRecommendationResultORM,
                                InterimCardSelection as InterimCardSelectionORM,
                                ParentGuideRecommendationResult as ParentGuideRecommendationResultORM,
@@ -13,9 +14,19 @@ from py_database.database import AsyncSession
 
 class SQLSessionStorage(SessionStorage):
 
-    def __init__(self, sql_session: AsyncSession, session_id: str | None = None):
-        super().__init__(session_id)
+    def __init__(self, sql_session: AsyncSession, session: Session):
+        super().__init__(session)
         self.__sql_session = sql_session
+
+    
+    @classmethod
+    async def restore_instance(cls, id: str, params: AsyncSession) -> SessionStorage | None:
+        session_orm = await params.get(SessionORM, id)
+        if session_orm is not None:
+            return SQLSessionStorage(params, session_orm.to_data_model())
+        else:
+            return None
+
 
     async def add_dialogue_message(self, message: DialogueMessage):
         self.__sql_session.add(DialogueMessageORM.from_data_model(self.session_id, message))
@@ -118,4 +129,6 @@ class SQLSessionStorage(SessionStorage):
         with self.__sql_session.begin():
             for model in [DialogueMessageORM, ChildCardRecommendationResultORM, InterimCardSelectionORM, ParentGuideRecommendationResultORM, ParentExampleMessageORM]:
                 await self.__sql_session.exec(delete(model).where(DialogueMessageORM.session_id == self.session_id))
+
+
             

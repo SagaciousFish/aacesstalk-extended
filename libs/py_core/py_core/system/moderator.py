@@ -7,6 +7,7 @@ from py_core.system.model import ChildCardRecommendationResult, DialogueMessage,
     CardIdentity, \
     ParentGuideRecommendationResult, Dialogue, ParentGuideType, ParentExampleMessage, ParentGuideElement, \
     InterimCardSelection
+from py_core.system.session_topic import SessionTopicInfo
 from py_core.system.storage import SessionStorage
 from py_core.system.task import ChildCardRecommendationGenerator
 from py_core.system.task.parent_guide_recommendation import ParentGuideRecommendationGenerator, \
@@ -128,6 +129,9 @@ class ModeratorSession:
             print("Translated parent message.")
 
             current_guide = await self.storage.get_latest_parent_guide_recommendation()
+            if current_guide is None:
+                # Load Initial guide
+                pass
 
             new_message = DialogueMessage(role=DialogueRole.Parent,
                                           content_localized=parent_message,

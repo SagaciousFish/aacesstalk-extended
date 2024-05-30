@@ -1,12 +1,12 @@
 from py_core.system.model import Dialogue, ParentGuideRecommendationResult, ChildCardRecommendationResult, \
-    DialogueMessage, ParentExampleMessage, InterimCardSelection, DialogueRole, ModelWithIdAndTimestamp
+    DialogueMessage, ParentExampleMessage, InterimCardSelection, DialogueRole, ModelWithIdAndTimestamp, Session
 from py_core.system.storage.session.session_storage import SessionStorage
 
 
 class OnMemorySessionStorage(SessionStorage):
 
-    def __init__(self, session_id: str | None = None):
-        super().__init__(session_id)
+    def __init__(self, info: Session):
+        super().__init__(info)
 
         self.__dialogue: Dialogue = []
         self.__parent_guide_recommendations: dict[str, ParentGuideRecommendationResult] = {}
@@ -15,6 +15,10 @@ class OnMemorySessionStorage(SessionStorage):
         self.__parent_example_messages: dict[tuple[str, str], ParentExampleMessage] = {}
 
         self.__interim_card_selections: dict[str, InterimCardSelection] = {}
+
+    @classmethod
+    async def restore_instance(cls, id: str) -> SessionStorage | None:
+        return None
 
     async def add_dialogue_message(self, message: DialogueMessage):
         self.__dialogue.append(message)

@@ -2,11 +2,40 @@ import questionary
 from chatlib.utils.validator import make_non_empty_string_validator
 
 from py_core import ModeratorSession
-from py_core.system.model import ChildCardRecommendationResult, ParentGuideRecommendationResult, CardInfo, DialogueRole, \
-    ParentGuideType, ParentExampleMessage, InterimCardSelection
+from py_core.system.model import DialogueRole, \
+    ParentExampleMessage, Session
+from py_core.system.session_topic import SessionTopicCategory, SessionTopicInfo
+import pendulum
 
+async def cli_get_session_info()->Session:
+
+    # Topic selection
+    topic_category: str = await questionary.select("Select conversation topic category:", [
+        SessionTopicCategory.Plan , SessionTopicCategory.Recall, SessionTopicCategory.Free],
+        SessionTopicCategory.Plan
+    ).ask_async()
+
+    topic_category = SessionTopicCategory[topic_category]
+
+    print(topic_category, topic_category.description)
+
+    if topic_category is SessionTopicCategory.Free:
+        subtopic = await questionary.text("What is a specific topic? (e.g., Cartoon character)", validate=make_non_empty_string_validator(
+                                                        "A topic should not be empty."))
+        subtopic_description = await questionary.text(f"Describe your subtopic '{subtopic}':", validate=make_non_empty_string_validator(
+                                                        "The description should not be empty."))
+    else:
+        subtopic = None
+        subtopic_description = None
+
+    topic_info = SessionTopicInfo(category=topic_category, subtopic=subtopic, subtopic_description=subtopic_description)
+    session_info = Session(topic=topic_info, local_timezone=pendulum.local_timezone().name)
+
+    return session_info
 
 async def test_session_loop(session: ModeratorSession):
+    
+    # Conversation loop
     while True:
         if session.next_speaker == DialogueRole.Parent:
             current_parent_guide_recommendation_result = await session.storage.get_latest_parent_guide_recommendation()
