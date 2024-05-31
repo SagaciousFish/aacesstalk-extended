@@ -1,6 +1,8 @@
+from pydantic import BaseModel
 from typing import Callable
 
-from py_core.system.model import Dialogue, DialogueRole, DialogueMessage
+from py_core.system.model import Dialogue, DialogueRole, DialogueMessage, ParentType
+from py_core.system.session_topic import SessionTopicInfo
 
 
 class DialogueToStrConversionFunction:
@@ -30,3 +32,33 @@ class DialogueToStrConversionFunction:
 {script}
 </dialogue>"""
         return result
+    
+
+
+
+_dialogue_to_str = DialogueToStrConversionFunction()
+
+class DialogueInput(BaseModel):
+    parent_type: ParentType
+    topic: SessionTopicInfo
+    dialogue: Dialogue
+
+class DialogueInputToStrConversionFunction:
+    def __init__(self, include_topic: bool=False, include_parent_type: bool=False):
+        self.include_topic = include_topic
+        self.include_parent_type = include_parent_type
+    
+    def __call__(self, input: DialogueInput, params) -> str:
+        rows: list[str] = []
+        
+        if self.include_topic is True:
+            subtopic_str = f"<subtopic>{input.topic.subtopic} ({input.topic.subdescription})</subtopic>" if input.topic.subtopic is not None else ""
+            rows.append(f"<topic><desc>{input.topic.category.description}</desc>{subtopic_str}</topic>")
+
+        rows.append(_dialogue_to_str(input.dialogue, params))
+
+        if self.include_parent_type:
+            rows.append(f"<parent>{input.parent_type}</parent>")
+
+
+        return "\n".join(rows)

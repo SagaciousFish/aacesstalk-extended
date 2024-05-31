@@ -6,13 +6,12 @@ from chatlib.utils.jinja_utils import convert_to_jinja_template
 from time import perf_counter
 
 from py_core.system.guide_categories import ParentGuideCategory
-from py_core.system.model import ParentGuideRecommendationResult, Dialogue, ParentGuideElement, DialogueMessage, \
-    CardCategory
+from py_core.system.model import CardCategory, DialogueMessage, ParentGuideRecommendationResult, Dialogue, ParentGuideElement, ParentType
 from py_core.system.task.parent_guide_recommendation.common import ParentGuideRecommendationAPIResult, \
     DialogueInspectionResult
 from py_core.system.task.parent_guide_recommendation.guide_translator import GuideTranslator
-from py_core.system.task.stringify import DialogueToStrConversionFunction
-
+from py_core.system.task.common import DialogueInput, DialogueInputToStrConversionFunction
+from py_core.system.session_topic import SessionTopicCategory, SessionTopicInfo
 
 class ParentGuideRecommendationParams(ChatCompletionFewShotMapperParams):
     dialogue_inspection_result: DialogueInspectionResult | None = None
@@ -21,14 +20,15 @@ class ParentGuideRecommendationParams(ChatCompletionFewShotMapperParams):
     def instance(cls, dialogue_inspection_result: DialogueInspectionResult | None = None) -> 'ParentGuideRecommendationParams':
         return cls(model=ChatGPTModel.GPT_4_0613, api_params={}, dialogue_inspection_result=dialogue_inspection_result)
 
+_convert_input_to_str = DialogueInputToStrConversionFunction(include_topic=True, include_parent_type=True)
 
 
 # Variables for mapper ================================================================================================================
 
 _prompt_template = convert_to_jinja_template("""
 - Role: You are a helpful assistant who helps facilitate communication between minimally verbal autistic children and their parents.
-- Task: Given a dialogue between a parent and a child, suggest a list of guides that can help the parents choose how to respond or ask questions in response to the child's last message. Note that the child always conveys their message through keywords.
-- Goal of the conversation: To help the child and parent elaborate on a topic together.
+- Task: Given a dialogue between a {{parent_type}} and a child, suggest a list of guides that can help the parents choose how to respond or ask questions in response to the child's last message. Note that the child always conveys their message through keywords.
+- Goal of the conversation: {{topic_description}} Help the child and the {{parent_type}} elaborate on that topic together.
 
 [General instructions for parent's guide]
 - Provide simple and easy-to-understand sentences consisting of no more than 5-6 words.
@@ -47,22 +47,29 @@ _prompt_template = convert_to_jinja_template("""
 Return a json list with each element formatted as:
 {
   "category": The category of "Parent guide category",
-  "guide": The guide message provided to the parent.
+  "guide": The guide message provided to the {{parent_type}}.
 }
 
 """)
 
-def generate_parent_guideline_prompt(input: Dialogue, params: ParentGuideRecommendationParams) -> str:
-    prompt = _prompt_template.render(dialogue_inspection_result=params.dialogue_inspection_result, dialogue=input, categories=ParentGuideCategory.values_with_desc())
+def generate_parent_guideline_prompt(input: DialogueInput, params: ParentGuideRecommendationParams) -> str:
+    
+    prompt = _prompt_template.render(
+        dialogue_inspection_result=params.dialogue_inspection_result, 
+        dialogue=input.dialogue, 
+        categories=ParentGuideCategory.values_with_desc(),
+        topic_description=input.topic.to_readable_description(),
+        parent_type=input.parent_type
+    )
     return prompt
 
 
-PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommendationAPIResult]] = [
+PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[DialogueInput, ParentGuideRecommendationAPIResult]] = [
     MapperInputOutputPair(
-        input=[
+        input=DialogueInput(topic=SessionTopicInfo(category=SessionTopicCategory.Plan), parent_type=ParentType.Mother, dialogue=[
             DialogueMessage.example_parent_message("Did you remember that we will visit granma today?"),
             DialogueMessage.example_child_message(("Grandma", CardCategory.Topic), ("Play", CardCategory.Action))
-        ],
+        ]),
         output=[
             ParentGuideElement.messaging_guide(ParentGuideCategory.Empathize, "Repeat that your kid wants to play with grandma."),
             ParentGuideElement.messaging_guide(ParentGuideCategory.Encourage, "Suggest things that the kid can do with grandma playing."),
@@ -70,13 +77,13 @@ PARENT_GUIDE_EXAMPLES: list[MapperInputOutputPair[Dialogue, ParentGuideRecommend
         ]
     ),
     MapperInputOutputPair(
-        input=[
+        input=DialogueInput(topic=SessionTopicInfo(category=SessionTopicCategory.Recall), parent_type=ParentType.Father, dialogue=[
             DialogueMessage.example_parent_message("How was your day at kinder?"),
             DialogueMessage.example_child_message(
                 ("Kinder", CardCategory.Topic),
                 ("Friend", CardCategory.Topic),
                 ("Tough", CardCategory.Emotion)),
-        ],
+        ]),
         output=[
             ParentGuideElement.messaging_guide(ParentGuideCategory.Empathize, "Empathize that the kid had tough time due to a friend."),
             ParentGuideElement.messaging_guide(ParentGuideCategory.Intention, "Check whether the kid had tough time with the friend."),
@@ -96,19 +103,19 @@ class ParentGuideRecommendationGenerator:
         api.config().verbose = False
 
         self.__mapper: ChatCompletionFewShotMapper[
-            Dialogue, ParentGuideRecommendationAPIResult, ParentGuideRecommendationParams] = ChatCompletionFewShotMapper(
+            DialogueInput, ParentGuideRecommendationAPIResult, ParentGuideRecommendationParams] = ChatCompletionFewShotMapper(
             api,
             instruction_generator=generate_parent_guideline_prompt,
-            input_str_converter=DialogueToStrConversionFunction(),
+            input_str_converter=_convert_input_to_str,
             output_str_converter=output_str_converter,
             str_output_converter=str_output_converter
             )
 
         self.__translator = GuideTranslator()
 
-    async def generate(self, dialogue: Dialogue, inspection_result: DialogueInspectionResult | None) -> ParentGuideRecommendationResult:
+    async def generate(self, parent_type: ParentType, topic: SessionTopicInfo, dialogue: Dialogue, inspection_result: DialogueInspectionResult | None) -> ParentGuideRecommendationResult:
         t_start = perf_counter()
-        guide_list: ParentGuideRecommendationAPIResult = await self.__mapper.run(PARENT_GUIDE_EXAMPLES, dialogue,
+        guide_list: ParentGuideRecommendationAPIResult = await self.__mapper.run(PARENT_GUIDE_EXAMPLES, DialogueInput(parent_type=parent_type, topic=topic, dialogue=dialogue),
                                                                                  ParentGuideRecommendationParams.instance(inspection_result))
 
         if inspection_result is not None and inspection_result.feedback is not None:

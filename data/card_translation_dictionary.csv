@@ -126,6 +126,7 @@ IUOlmc_znM,action,slide,미끄러져요,True
 d_gFHi0Rn9,action,solve,해결해요,True
 YuOIGXfzvq,action,solved,해결했어요,True
 LafJITqEu9,action,speak,말해요,True
+6Gy0djLU2E,action,spend,쓰다,False
 f-mhbNXEPR,action,spent,보냈어요,True
 sMhKvP82v6,action,start,시작해요,True
 JvDzduIcWT,action,started,시작했어요,True
@@ -293,8 +294,10 @@ UxogNdDpFf,topic,drawings,그림,False
 gry1dm2ab7,topic,eat,식사,True
 x2EAtHB2Rj,topic,eating,식사,True
 P1ocXtrEhf,topic,error,오류,True
+-d9rICnFrM,topic,exercise,운동,False
 OqptytpFU2,topic,experiment,실험,True
 7viZZuVxIr,topic,father,아빠,True
+sUYuN93nsf,topic,feeling,기분,False
 ZKBCxMyeFz,topic,first,첫 번째,True
 XYd7spA6_e,topic,food,음식,True
 LOPwB6gP7U,topic,football,축구,True
@@ -316,6 +319,7 @@ d1vLFZB4dR,topic,learning,배우기,True
 yHMiG8vVr7,topic,lesson,수업,True
 KqMbwnuQTE,topic,lessons,수업,True
 7HjNTrqSKY,topic,listen,듣기,True
+Ro7zGl_2ZO,topic,long time,오랜 시간,False
 4PgUQB51Ht,topic,lunch,점심,True
 _0hjBhSJwK,topic,lunchtime,점심 시간,False
 Vw7mR4BXYQ,topic,math,수학,True
@@ -379,6 +383,7 @@ rzQIL0Zu5b,topic,subjects,과목,False
 rjRieEWi9P,topic,talk,이야기,True
 53eLBLSTuk,topic,teacher,선생님,True
 8T9a-E4F7B,topic,theater,극장,True
+9EyQPO_OO5,topic,therapeutic,치료적,False
 fwevuioC5m,topic,tickets,티켓,True
 Cvu5PkRqny,topic,time,시간,False
 UhU29qrEDh,topic,together,함께,True

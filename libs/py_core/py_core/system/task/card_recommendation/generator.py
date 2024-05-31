@@ -8,9 +8,10 @@ from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompl
 
 from py_core.config import AACessTalkConfig
 from py_core.system.model import Dialogue, CardInfo, ChildCardRecommendationResult, ParentType, id_generator, CardCategory
+from py_core.system.session_topic import SessionTopicInfo
 from py_core.system.task.card_recommendation.common import ChildCardRecommendationAPIResult, DefaultCardInfo
 from py_core.system.task.card_recommendation.translator import CardTranslator
-from py_core.system.task.stringify import DialogueToStrConversionFunction
+from py_core.system.task.common import DialogueInput, DialogueInputToStrConversionFunction
 from py_core.utils.vector_db import VectorDB
 
 str_output_converter, output_str_converter = generate_pydantic_converter(ChildCardRecommendationAPIResult, 'yaml')
@@ -19,17 +20,7 @@ def load_default_cards()->list[DefaultCardInfo]:
     with open(AACessTalkConfig.default_card_table_path) as f:
        l = yaml.load(f, yaml.SafeLoader)
        print(l)
-       return [DefaultCardInfo(**e) for e in l]
-
-class ChildCardRecommendationInput(BaseModel):
-    parent_type: ParentType
-    dialogue: Dialogue
-
-_dialogue_to_str = DialogueToStrConversionFunction()
-
-def _convert_input_to_str(input: ChildCardRecommendationInput, params) -> str:
-    return _dialogue_to_str(input.dialogue, params)
-    
+       return [DefaultCardInfo(**e) for e in l]    
 
 class ChildCardRecommendationParams(ChatCompletionFewShotMapperParams):
     model_config = ConfigDict(frozen=True)
@@ -37,6 +28,7 @@ class ChildCardRecommendationParams(ChatCompletionFewShotMapperParams):
     prev_recommendation: ChildCardRecommendationResult | None = None
     interim_cards: list[CardInfo] | None = None
 
+_convert_input_to_str = DialogueInputToStrConversionFunction(include_topic=True)
 
 class ChildCardRecommendationGenerator:
 
@@ -49,10 +41,11 @@ class ChildCardRecommendationGenerator:
         default_cards = load_default_cards()
         self.__default_cards = default_cards
 
-        def __prompt_generator(input: ChildCardRecommendationInput, params: ChildCardRecommendationParams) -> str:
+        def __prompt_generator(input: DialogueInput, params: ChildCardRecommendationParams) -> str:
             prompt = f"""
 - You are a helpful assistant that serves as an Alternative Augmented Communication tool.
 - Suppose that you are helping a communication with a child and a {input.parent_type.lower()} in Korean. The autistic child has the language proficiency of a 5 to 7-year-old, so recommendations should consider their cognitive level.
+- For the conversation, {input.topic.to_readable_description()}
 - Given the last message of the {input.parent_type.lower()}, suggest a list of English keywords that can help the child pick to create a sentence as an answer.
 - Note that 'emotions' and 'core' cards are static and provided by default. So do NOT recommend the following cards: {", ".join([f"{c.get_label_for_parent(input.parent_type)} ({c.category})" for c in default_cards])}
 """"""
@@ -66,11 +59,10 @@ class ChildCardRecommendationGenerator:
 {"" if params.interim_cards is None else "- The child had selected the following cards: " + ', '.join([card.label for card in params.interim_cards]) + ". The generated recommendation should be relevant to these selections."}
 - Provide up to 4 options for each category.
 """
-            print(prompt)
             return prompt
 
         self.__mapper: ChatCompletionFewShotMapper[
-            ChildCardRecommendationInput, ChildCardRecommendationAPIResult, ChildCardRecommendationParams] = (
+            DialogueInput, ChildCardRecommendationAPIResult, ChildCardRecommendationParams] = (
             ChatCompletionFewShotMapper(api,
                                         instruction_generator=__prompt_generator,
                                         input_str_converter=_convert_input_to_str,
@@ -80,13 +72,14 @@ class ChildCardRecommendationGenerator:
 
     async def generate(self,
                        parent_type: ParentType,
+                       topic_info: SessionTopicInfo,
                        dialogue: Dialogue,
                        interim_cards: list[CardInfo] | None = None,
                        previous_recommendation: ChildCardRecommendationResult | None = None) -> ChildCardRecommendationResult:
         t_start = perf_counter()
 
         recommendation = await self.__mapper.run(None,
-                                                 input=ChildCardRecommendationInput(dialogue=dialogue, parent_type=parent_type),
+                                                 input=DialogueInput(dialogue=dialogue, topic=topic_info, parent_type=parent_type),
                                                  params=ChildCardRecommendationParams(
                                                      prev_recommendation=previous_recommendation,
                                                      interim_cards=interim_cards,

@@ -155,7 +155,9 @@ class ModeratorSession:
                                                                      self.__dialogue_inspector.inspect(dialogue,
                                                                                                        inspection_task_id)))
 
-            recommendation = await self.__child_card_recommender.generate(self.__dyad.parent_type, dialogue, None, None)
+            recommendation = await self.__child_card_recommender.generate(topic_info=self.storage.session_topic, 
+                                                                          parent_type=self.__dyad.parent_type,
+                                                                          dialogue=dialogue, interim_cards=None, previous_recommendation=None)
 
             await self.__storage.add_card_recommendation_result(recommendation)
 
@@ -181,7 +183,7 @@ class ModeratorSession:
 
             interim_cards = await self.get_card_info_from_identities(interim_card_selection.cards)
 
-            recommendation = await self.__child_card_recommender.generate(self.__dyad.parent_type, dialogue, interim_cards, prev_recommendation)
+            recommendation = await self.__child_card_recommender.generate(self.__dyad.parent_type, self.storage.session_topic, dialogue, interim_cards, prev_recommendation)
 
             await self.__storage.add_card_recommendation_result(recommendation)
 
@@ -222,7 +224,7 @@ class ModeratorSession:
                 # Clear
                 self.__dialogue_inspection_task_info = None
 
-                recommendation = await self.__parent_guide_recommender.generate(dialogue, dialogue_inspection_result)
+                recommendation = await self.__parent_guide_recommender.generate(self.__dyad.parent_type, self.storage.session_topic, dialogue, dialogue_inspection_result)
 
                 await self.__storage.add_parent_guide_recommendation_result(recommendation)
 
