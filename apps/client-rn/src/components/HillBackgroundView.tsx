@@ -33,11 +33,16 @@ const styles = StyleSheet.create({
     }
 })
 
-export const HillBackgroundView = (props: {containerClassName?: string, children?: any}) => {
+export const HillBackgroundView = (props: {
+    containerClassName?: string, 
+    hillComponentClass?: any, hillImageWidth?: number, hillImageHeight?: number, 
+    children?: any}) => {
 
     const {width, height} = useWindowDimensions()
 
-    const hillHeight = 255/1194 * width
+    const hillHeight = (props.hillImageHeight || 255)/(props.hillImageWidth || 1194) * width
+
+    console.log(props.hillImageWidth, props.hillImageHeight, hillHeight, height, width)
 
     const cloud1PositionCycle = useSharedValue(0);
     const cloud2PositionCycle = useSharedValue(0);
@@ -101,11 +106,12 @@ export const HillBackgroundView = (props: {containerClassName?: string, children
 
         cloud3PositionCycle.value = withRepeat(withTiming(1, {duration: 30000, easing: Easing.linear}), -1, false)
     }, [])
+    
+    const HillComponent = props.hillComponentClass || HillImage
 
-
-    return <View className={`flex-1 ${props.containerClassName} bg-[#EDFAFF]`}>
+    return <View className={`flex-1 bg-[#EDFAFF] ${props.containerClassName}`}>
         {props.children}
-        <HillImage width={width} height={hillHeight} pointerEvents={"none"} style={styles.hill}/>
+        <HillComponent width={width} height={hillHeight} pointerEvents={"none"} style={styles.hill}/>
         <Reanimated.View style={cloud1Style} pointerEvents={"none"}>
             <Cloud1Image width={344} height={230} />
         </Reanimated.View>

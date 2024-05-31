@@ -34,7 +34,7 @@ const FreeTopicButton = (props: {style?: any}) => {
         return format(t("TopicSelection.FreeTemplate"), {child_name})
     }, [child_name])
 
-    return <TopicButton style={props.style} title={label} dialogueCount={0} buttonClassName="bg-topicfree" 
+    return <TopicButton style={props.style} title={label} dialogueCount={0} buttonClassName="bg-topicfree-fg" 
                 imageComponent={<StarImage/>}
                 imageContainerStyleDimensions={styles.topicFreeDimensions}
                 imageNormalDegree={-8}
@@ -65,9 +65,9 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
             <LogoImage width={200} height={80}/>
             <Text className="text-3xl text-slate-800 text-center" style={styleTemplates.withBoldFont}>{t("TopicSelection.Title")}</Text>
             <View className="flex-row space-x-12 mt-24 mb-20">
-                <TopicButton title={t("TopicSelection.Plan")} dialogueCount={0} buttonClassName="bg-topicplan" imageComponent={<CalendarImage/>} 
+                <TopicButton title={t("TopicSelection.Plan")} dialogueCount={0} buttonClassName="bg-topicplan-fg" imageComponent={<CalendarImage/>} 
                     imageContainerStyleDimensions={styles.topicPlanDimensions} imageNormalDegree={10} imagePressedDegree={-20} onPress={onPressPlanButton}/>
-                <TopicButton title={t("TopicSelection.Recall")} dialogueCount={0} buttonClassName="bg-topicrecall" imageComponent={<HomeImage/>} 
+                <TopicButton title={t("TopicSelection.Recall")} dialogueCount={0} buttonClassName="bg-topicrecall-fg" imageComponent={<HomeImage/>} 
                     imageContainerStyleDimensions={styles.topicRecallDimensions} 
                     imageNormalDegree={-8} imagePressedDegree={20} onPress={onPressRecallButton}/>
                 <FreeTopicButton/>
