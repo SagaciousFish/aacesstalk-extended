@@ -1,10 +1,12 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
+from pydantic import BaseModel
 from backend.database import get_db_session, AsyncSession
 from backend.routers.dyad.common import depends_auth_dyad
-from backend.crud.dyad.session import abort_session, create_moderator_session, end_session, find_session
+from backend.crud.dyad.session import abort_session, create_moderator_session, end_session, find_session_orm
 from py_database.model import Dyad, Session
+from py_core.system.session_topic import SessionTopicInfo
 
 from . import message
 
@@ -13,19 +15,21 @@ router = APIRouter()
 router.include_router(message.router, prefix="/{session_id}/message")
 
 @router.get("{session_id}/info", response_model=Session)
-async def get_session_info(session_id: str, dyad: Annotated[Dyad, depends_auth_dyad], db: Annotated[AsyncSession, Depends(get_db_session)]) -> Session | None:
+async def _get_session_info(session_id: str, dyad: Annotated[Dyad, depends_auth_dyad], db: Annotated[AsyncSession, Depends(get_db_session)]) -> Session | None:
 
-    s = await find_session(session_id, dyad.id, db)
+    s = await find_session_orm(session_id, dyad.id, db)
     if s is not None:
         return s
     else:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "No session with the id and the corresponding dyad.")
 
+class SessionInitiationArgs(BaseModel):
+    topic: SessionTopicInfo
 
 @router.post("/new")
-async def initiate_session(timezone: Annotated[str, Header()], dyad: Annotated[Dyad, depends_auth_dyad],
+async def _initiate_session(args: SessionInitiationArgs, timezone: Annotated[str, Header()], dyad: Annotated[Dyad, depends_auth_dyad],
                                db: Annotated[AsyncSession, Depends(get_db_session)]) -> str:
-    new_session = await create_moderator_session(dyad, timezone, db)
+    new_session = await create_moderator_session(dyad, args.topic, timezone, db)
     return new_session.id
 
 @router.delete("/{session_id}/abort")

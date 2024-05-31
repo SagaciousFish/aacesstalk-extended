@@ -13,7 +13,8 @@ sessions: dict[str, ModeratorSession] = {}
 def get_moderator_session(session_id: str, db: AsyncSession) -> ModeratorSession:
     if session_id in sessions:
         session = sessions[session_id]
-        session.storage = SQLSessionStorage(db, session_id)
+        if isinstance(session.storage, SQLSessionStorage):
+            session.storage.sql_session = db
         return session
     else:
         session = ModeratorSession(SQLSessionStorage(db, session_id))

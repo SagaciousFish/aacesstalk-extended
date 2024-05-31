@@ -1,29 +1,29 @@
 from backend.database import AsyncSession
-from py_database.model import Session, Dyad
+from py_database.model import Session as SessionORM, Dyad
 from chatlib.utils.time import get_timestamp
 from sqlmodel import select
-from fastapi import HTTPException, status
+from py_core.system.session_topic import SessionTopicInfo
 
-from backend.moderator import get_moderator_session
+from backend.routers.dyad.session.moderator import get_moderator_session
 
 
-async def create_moderator_session(dyad: Dyad, timezone: str, db: AsyncSession) -> Session:
-    s = Session(dyad_id=dyad.id, local_timezone=timezone)
+async def create_moderator_session(dyad: Dyad, topic: SessionTopicInfo, timezone: str, db: AsyncSession) -> SessionORM:
+    s = SessionORM(dyad_id=dyad.id, topic=topic, local_timezone=timezone)
     db.add(s)
     await db.commit()
     await db.refresh(s)
     return s
 
-async def find_session(session_id: str, dyad_id: str, db: AsyncSession)-> Session | None:
-    statement = (select(Session)
-                 .where(Session.id == session_id)
-                 .where(Session.dyad.id == dyad_id)
+async def find_session_orm(session_id: str, dyad_id: str, db: AsyncSession)-> SessionORM | None:
+    statement = (select(SessionORM)
+                 .where(SessionORM.id == session_id)
+                 .where(SessionORM.dyad.id == dyad_id)
                  .limit(1))
     results = await db.exec(statement)
     return results.first()
 
 async def end_session(session_id: str, dyad_id: str, db: AsyncSession):
-   s = await find_session(session_id, dyad_id, db)
+   s = await find_session_orm(session_id, dyad_id, db)
    if s is not None:
        s.ended_timestamp = get_timestamp()
        db.add(s)
@@ -33,7 +33,7 @@ async def end_session(session_id: str, dyad_id: str, db: AsyncSession):
 
 
 async def abort_session(session_id: str, dyad_id: str, db: AsyncSession):
-   s = await find_session(session_id, dyad_id, db)
+   s = await find_session_orm(session_id, dyad_id, db)
    if s is not None:
        await get_moderator_session(session_id, db).storage.delete_entities()
        await db.delete(s)

@@ -9,8 +9,7 @@ from py_core.system.model import Dialogue, ParentGuideRecommendationResult, Card
 
 from py_database.model import Dyad
 
-from backend.moderator import retrieve_moderator_session
-from backend.routers.dyad.common import depends_auth_dyad
+from backend.routers.dyad.common import depends_auth_dyad, retrieve_moderator_session
 
 
 router = APIRouter()
@@ -29,6 +28,10 @@ class SendParentMessageArgs(BaseModel):
     message: str
     recommendation_id: str
 
+@router.post("/parent/guide", response_model=ParentGuideRecommendationResult)
+async def generate_parent_guides(
+    session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]):
+    return await session.generate_parent_guide_recommendation()
 
 @router.post("/parent/message", response_model=ChildCardRecommendationResult)
 async def send_parent_message(args: SendParentMessageArgs,
