@@ -8,9 +8,11 @@ from py_database.model import (DialogueMessage as DialogueMessageORM,
                                ChildCardRecommendationResult as ChildCardRecommendationResultORM,
                                InterimCardSelection as InterimCardSelectionORM,
                                ParentGuideRecommendationResult as ParentGuideRecommendationResultORM,
-                               ParentExampleMessage as ParentExampleMessageORM, TimestampColumnMixin)
+                               ParentExampleMessage as ParentExampleMessageORM, SessionIdMixin, TimestampColumnMixin)
 from py_database.database import AsyncSession
 
+class TimeStampAndSessionChildModel(SessionIdMixin, TimestampColumnMixin):
+    pass
 
 class SQLSessionStorage(SessionStorage):
 
@@ -88,19 +90,14 @@ class SQLSessionStorage(SessionStorage):
         self.__sql_session.add(InterimCardSelectionORM.from_data_model(self.session_id, selection))
         await self.__sql_session.commit()
 
-    async def __get_latest_model(self, model: type[TimestampColumnMixin],
-                                 latest_role: DialogueRole) -> TimestampColumnMixin | None:
-        latest_message = await self.get_latest_dialogue_message()
-        if latest_message is not None and latest_message.role == latest_role:
-            statement = (select(model)
-                         .where(model.timestamp > latest_message.timestamp)
+    async def __get_latest_model(self, model: type[TimeStampAndSessionChildModel]) -> TimeStampAndSessionChildModel | None:
+        statement = (select(model)
+                         .where(model.session_id == self.session_id)
                          .order_by(col(model.timestamp).desc()).limit(1))
-            results = await self.__sql_session.exec(statement)
-            first = results.first()
-            if first is not None:
-                return first
-            else:
-                return None
+        results = await self.__sql_session.exec(statement)
+        first = results.first()
+        if first is not None:
+            return first
         else:
             return None
 

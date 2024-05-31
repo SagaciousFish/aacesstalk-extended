@@ -42,6 +42,9 @@ async def cli_get_session_info()->Session:
     return session_info
 
 async def test_session_loop(session: ModeratorSession):
+
+    # get initial parent guide recommendation
+    await session.generate_parent_guide_recommendation()
     
     # Conversation loop
     while True:

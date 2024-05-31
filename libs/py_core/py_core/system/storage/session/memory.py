@@ -54,30 +54,26 @@ class OnMemorySessionStorage(SessionStorage):
         else:
             return None
 
-    async def __get_latest_model(self, model_dict: dict[str, ModelWithIdAndTimestamp], latest_role: DialogueRole) -> ModelWithIdAndTimestamp | None:
-        latest_message = await self.get_latest_dialogue_message()
-        if latest_message is not None and latest_message.role == latest_role:
-            sorted_selections = sorted(
-                [v for k, v in model_dict.items() if v.timestamp > latest_message.timestamp],
-                key=lambda s: s.timestamp, reverse=True)
-            if len(sorted_selections) > 0:
-                return sorted_selections[0]
-            else:
-                return None
+    async def __get_latest_model(self, model_dict: dict[str, ModelWithIdAndTimestamp]) -> ModelWithIdAndTimestamp | None:
+        sorted_selections = sorted(
+            [v for k, v in model_dict.items()],
+            key=lambda s: s.timestamp, reverse=True)
+        if len(sorted_selections) > 0:
+            return sorted_selections[0]
         else:
             return None
 
     async def get_latest_card_selection(self) -> InterimCardSelection | None:
-        return await self.__get_latest_model(self.__interim_card_selections, latest_role=DialogueRole.Parent)
+        return await self.__get_latest_model(self.__interim_card_selections)
 
     async def add_card_selection(self, selection: InterimCardSelection):
         self.__interim_card_selections[selection.id] = selection
 
     async def get_latest_parent_guide_recommendation(self) -> ParentGuideRecommendationResult | None:
-        return await self.__get_latest_model(self.__parent_guide_recommendations, latest_role=DialogueRole.Child)
+        return await self.__get_latest_model(self.__parent_guide_recommendations)
 
     async def get_latest_child_card_recommendation(self) -> ChildCardRecommendationResult | None:
-        return await self.__get_latest_model(self.__card_recommendations, latest_role=DialogueRole.Parent)
+        return await self.__get_latest_model(self.__card_recommendations)
 
     async def get_latest_dialogue_message(self) -> DialogueMessage | None:
         if len(self.__dialogue) == 0:

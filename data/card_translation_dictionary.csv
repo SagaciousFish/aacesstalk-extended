@@ -44,6 +44,7 @@ voBXCU3PyM,action,enjoy,즐겨요,True
 bFnGzqF9Yj,action,enjoyed,즐겼어요,True
 eABl8ClFz9,action,excited,신나요,False
 L2J28bARnu,action,exercise,운동해요,False
+G3Wswt5Vb0,action,experiment,실험해요,False
 eM3DY40FFi,action,explain,설명해요,True
 lnHBypcdND,action,explore,탐험해요,False
 a3KelxlGJh,action,feel,느껴요,True
@@ -56,6 +57,7 @@ RobMQHBl0E,action,forget,잊어버려요,True
 dcBKqBvDJT,action,forgive,용서해요,True
 FG6t-MIGTa,action,forgot,잊어버렸어요,False
 -urVCbaa_L,action,go,가요,True
+l2G93VaoeV,action,go to,가요,False
 O6u0XAv7Vm,action,had,했어요,True
 5y7kANN0Oi,action,happy,행복해요,False
 IIfEakpYmR,action,have,가져요,True
@@ -66,6 +68,7 @@ VLo71idqvn,action,ignore,무시해요,False
 fQvoeG4dUc,action,ignored,무시했어요,False
 FWsrExL8lN,action,in class,수업 중,False
 ccmJoEsu9M,action,interact,소통해요,True
+7xSOw1DPQg,action,invite,초대해요,False
 SQAIWdfuqX,action,join,참여해요,False
 RpUFh12BxU,action,jump,뛰어요,True
 dBUmvA3gou,action,jumped,점프했어요,True
@@ -97,6 +100,8 @@ cTZJXQvr1c,action,paint,그려요,True
 uqW7Td0INw,action,participate,참여해요,True
 H5p_T5dcgq,action,participated,참여했어요,True
 QtVvZagZaj,action,play,놀아요,True
+VkXbEqS_Wu,action,play at,놀아요,False
+EHJU05TX5k,action,play with,같이 놀아요,False
 CbqgYoqILA,action,played,놀았어요,True
 t0zELtkhGT,action,played with,같이 놀았어요,True
 qD4-z3UnHP,action,playing,놀아요,True
@@ -252,6 +257,8 @@ ij7TQkFJ_B,topic,English,영어,True
 9WJuOOAUPP,topic,Homework,숙제,False
 LJ0ZN-IZwE,topic,Korean,한국어,True
 Bbg2hwrILA,topic,PE class,체육 수업,True
+PShoeM7f-D,topic,Park,공원,False
+y4Z4dPffFA,topic,Zoo,동물원,False
 xvU29NPrLj,topic,activities,활동,True
 0swTtsJpkt,topic,activity,활동,True
 JICmL-pLJO,topic,argue,논의,False
@@ -327,6 +334,8 @@ Vw7mR4BXYQ,topic,math,수학,True
 vMmv5GwdN7,topic,meal,식사,True
 92wk3FeCUg,topic,mom,엄마,True
 0IK-m4gxPa,topic,movie,영화,True
+IHe9jsRFYr,topic,movies,영화,False
+vP_-1EBC-y,topic,museums,박물관,False
 AMFNW_Hop-,topic,music,음악,True
 E8ycSIDikj,topic,nap,숙면,False
 ltFnoOCvzw,topic,need,필요,True

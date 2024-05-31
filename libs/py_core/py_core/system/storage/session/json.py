@@ -108,33 +108,29 @@ class JsonSessionStorage(SessionStorage):
         else:
             return None
 
-    async def __get_latest_model(self, table_name: str, latest_role: DialogueRole) -> dict | None:
-        latest_message = await self.get_latest_dialogue_message()
-        if latest_message is not None and latest_message.role == latest_role:
-            table = self.db(self.session_id).table(table_name)
-            sorted_selections = sorted(
-                [row for row in table.all() if row["timestamp"] > latest_message.timestamp],
+    async def __get_latest_model(self, table_name: str) -> dict | None:
+        table = self.db(self.session_id).table(table_name)
+        sorted_selections = sorted(
+                [row for row in table.all()],
                 key=lambda s: s["timestamp"], reverse=True)
-            if len(sorted_selections) > 0:
-                return sorted_selections[0]
-            else:
-                return None
+        if len(sorted_selections) > 0:
+            return sorted_selections[0]
         else:
             return None
 
     async def get_latest_card_selection(self) -> InterimCardSelection | None:
-        d = await self.__get_latest_model(self.TABLE_CARD_SELECTIONS, latest_role=DialogueRole.Parent)
+        d = await self.__get_latest_model(self.TABLE_CARD_SELECTIONS)
         return InterimCardSelection(**d) if d is not None else None
 
     async def add_card_selection(self, selection: InterimCardSelection):
         self.__insert_one(self.TABLE_CARD_SELECTIONS, selection)
 
     async def get_latest_parent_guide_recommendation(self) -> ParentGuideRecommendationResult | None:
-        d = await self.__get_latest_model(self.TABLE_PARENT_RECOMMENDATIONS, latest_role=DialogueRole.Child)
+        d = await self.__get_latest_model(self.TABLE_PARENT_RECOMMENDATIONS)
         return ParentGuideRecommendationResult(**d) if d is not None else None
 
     async def get_latest_child_card_recommendation(self) -> ChildCardRecommendationResult | None:
-        d = await self.__get_latest_model(self.TABLE_CARD_RECOMMENDATIONS, latest_role=DialogueRole.Parent)
+        d = await self.__get_latest_model(self.TABLE_CARD_RECOMMENDATIONS)
         return ChildCardRecommendationResult(**d) if d is not None else None
 
     async def get_latest_dialogue_message(self) -> DialogueMessage | None:

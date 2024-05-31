@@ -27,14 +27,19 @@ _convert_input_to_str = DialogueInputToStrConversionFunction(include_topic=True,
 
 _prompt_template = convert_to_jinja_template("""
 - Role: You are a helpful assistant who helps facilitate communication between minimally verbal autistic children and their parents.
-- Task: Given a dialogue between a {{parent_type}} and a child, suggest a list of guides that can help the parents choose how to respond or ask questions in response to the child's last message. Note that the child always conveys their message through keywords.
 - Goal of the conversation: {{topic_description}} Help the child and the {{parent_type}} elaborate on that topic together.
+{%- if dialogue | length > 0 %}
+- Task: Given a dialogue between a {{parent_type}} and a child, suggest a list of guides that can help the {{parent_type}} choose how to respond or ask questions in response to the child's last message. Note that the child always conveys their message through keywords.
+{%else%}
+- Task: With regards to the goal of conversation, suggest a list of guides that can help the {{parent_type}} as starting points of conversation.                                           
+{%endif%}
+                
 
 [General instructions for parent's guide]
 - Provide simple and easy-to-understand sentences consisting of no more than 5-6 words.
 - Each guide should contain one purpose or intention.
-- Based on the child's last message, select up to {%-if dialogue_inspection_result is not none and dialogue_inspection_result.feedback is not none -%}two{%-else-%}three{%-endif-%} most appropriate directions from the parent guide categories provided below.
-- Each guide should be contextualized based on the child's response and not be too general.
+- {%if dialogue | length > 0 -%}Based on the child's last message, s{%else%}S{%endif%}elect up to {% if dialogue_inspection_result is not none and dialogue_inspection_result.feedback is not none %}two{% else %}three{% endif %} most appropriate directions from the parent guide categories provided below.
+{% if dialogue | length > 0 %}- Each guide should be contextualized based on the child's response and not be too general.{%endif%}
 
 [Parent guide categories]
 {%- for category in categories -%}
