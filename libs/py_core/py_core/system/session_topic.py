@@ -1,7 +1,7 @@
 from enum import StrEnum
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class SessionTopicCategory(StrEnum):
@@ -17,11 +17,13 @@ class SessionTopicCategory(StrEnum):
         }[value]
 
 class SessionTopicInfo(BaseModel):
+    model_config = ConfigDict(frozen=True, use_enum_values=True)
+
     category: SessionTopicCategory
     subtopic: Optional[str] = None
-    subdescription: Optional[str] = None
+    subtopic_description: Optional[str] = None
 
     def to_readable_description(self):
         if self.subtopic is not None:
-            return f"""{self.category.description} Specifically, the conversation is about {self.subtopic} ({self.subdescription})."""
+            return f"""{self.category.description} Specifically, the conversation is about {self.subtopic} ({self.subtopic_description})."""
         return f"{self.category.description}"

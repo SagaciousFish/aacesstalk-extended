@@ -11,7 +11,8 @@ export const TopicButton = (props: {
     style?: any,
     imageContainerStyleDimensions: Pick<ViewStyle, "width"|"height"|"left"|"top"|"right"|"bottom">
     imageNormalDegree: number,
-    imagePressedDegree: number
+    imagePressedDegree: number,
+    onPress?: () => void
 }) => {
 
     const pressAnimProgress = useSharedValue(0)
@@ -25,10 +26,6 @@ export const TopicButton = (props: {
     const onPressOut = useCallback(()=>{
         pressAnimProgress.value = withSpring(0, {duration: 500})
         pressAnimImageProgress.value = withSpring(0, {duration: 300})
-    }, [])
-
-    const onPress = useCallback(()=>{
-        console.log("onPress")
     }, [])
 
     const containerAnimStyle = useAnimatedStyle(() => {
@@ -55,7 +52,7 @@ export const TopicButton = (props: {
         }
     }, [props.imageContainerStyleDimensions, props.imageNormalDegree, props.imagePressedDegree])
 
-    return <Pressable style={props.style} onPressIn={onPressIn} onPressOut={onPressOut} onPress={onPress}>
+    return <Pressable style={props.style} onPressIn={onPressIn} onPressOut={onPressOut} onPress={props.onPress}>
             <Animated.View className={`w-[32vh] h-[32vh] rounded-[28px] border-[5px] border-white shadow-2xl shadow-slate-600 bg-teal-400 block ${props.buttonClassName} relative px-5 py-6 pb-4 overflow-hidden`} style={containerAnimStyle}>
             <Text style={styleTemplates.withExtraboldFont} className="text-white text-2xl">{props.title}</Text>
             <Animated.View style={imageContainerStyle} className="bottom-[25%]">

@@ -43,7 +43,8 @@ export class Http{
     }
 
     return {
-      "Timezone": await this.getTimezone()
+      "Timezone": await this.getTimezone(),
+      "Timestamp": Date.now()
     }
   }
 

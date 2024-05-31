@@ -1,12 +1,11 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { HomeScreen } from "../features/home/screens/HomeScreen";
+import { SessionTopicInfo } from "@aacesstalk/libs/ts-core"
 
-const screenOptions = {headerShown: false}
+export namespace MainRoutes{
+    export const ROUTE_HOME = "home"
+    export const ROUTE_SESSION = "session"
 
-const Stack = createNativeStackNavigator()
-
-export const HomeNavigator = () => {
-    return <Stack.Navigator screenOptions={screenOptions}>
-        <Stack.Screen name="home" component={HomeScreen}/>
-    </Stack.Navigator>
+    export type MainNavigatorParamList = {
+        [ROUTE_HOME]: undefined,
+        [ROUTE_SESSION]: {topic: SessionTopicInfo}
+    }
 }

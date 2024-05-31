@@ -7,10 +7,15 @@ import { NavigationContainer } from '@react-navigation/native';
 import { NativeStackNavigationOptions, createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SignInScreen } from '../features/auth/screens/SignInScreen';
 import { useSelector } from '../redux/hooks';
-import { HomeNavigator } from '../navigation';
+import { MainNavigator } from '../navigation/main';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PersistGate } from 'redux-persist/integration/react';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Http } from '@aacesstalk/libs/ts-core';
+import { getTimeZone } from 'react-native-localize';
+
+
+Http.initialize(async () => {return getTimeZone()})
 
 const Stack = createNativeStackNavigator()
 
@@ -26,7 +31,7 @@ const GlobalNavigator = () => {
 
   return <Stack.Navigator screenOptions={screenOptions}>
   {
-    isSignedIn ? (<Stack.Screen name="Home" component={HomeNavigator}/>) : 
+    isSignedIn ? (<Stack.Screen name="Home" component={MainNavigator}/>) : 
     (<Stack.Screen name="Auth" component={SignInScreen}/>)
   }
 </Stack.Navigator>

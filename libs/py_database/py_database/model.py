@@ -16,7 +16,7 @@ from py_core.system.model import (id_generator, DialogueRole, DialogueMessage as
                                   Session as _Session,
                                   Dyad as _Dyad
                                   )
-from py_core.system.session_topic import SessionTopicInfo
+from py_core.system.session_topic import SessionTopicCategory, SessionTopicInfo
 from chatlib.utils.time import get_timestamp
 
 
@@ -50,7 +50,9 @@ class Session(SQLModel, IdTimestampMixin, table=True):
 
     dyad: Dyad = Relationship(back_populates="sessions")
     
-    topic: SessionTopicInfo = Field(sa_column=Column(JSON, nullable=False))
+    topic_category: SessionTopicCategory
+    subtopic: Optional[str] = None
+    subtopic_description: Optional[str] = None
 
     local_timezone: str = Field(nullable=False)
     started_timestamp: int = Field(default_factory=get_timestamp, index=True)
@@ -59,11 +61,20 @@ class Session(SQLModel, IdTimestampMixin, table=True):
     def to_data_model(self) -> _Session:
         return _Session(
             id=self.id,
-            topic=self.topic,
+            topic=SessionTopicInfo(category=self.topic_category, subtopic=self.subtopic, subtopic_description=self.subtopic_description),
             local_timezone=self.local_timezone,
             started_timestamp=self.started_timestamp,
             ended=self.ended_timestamp
         )
+    
+    @classmethod
+    def from_data_model(cls, session_info: _Session, dyad_id: str) -> 'Session':
+        return Session(**session_info.model_dump(exclude={'topic'}),
+                    dyad_id=dyad_id,
+                    topic_category=session_info.topic.category,
+                    subtopic=session_info.topic.subtopic,
+                    subtopic_description=session_info.topic.subtopic_description
+                    )
 
 
 class SessionIdMixin(BaseModel):

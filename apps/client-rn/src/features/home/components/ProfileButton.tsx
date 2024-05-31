@@ -8,7 +8,8 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import format from "string-template"
 
 export const ProfileButton = () => {
-    const {child_name, parent_type} = useSelector(state => state.auth.dyadInfo)
+    const child_name = useSelector(state => state.auth.dyadInfo?.child_name)
+    const parent_type = useSelector(state => state.auth.dyadInfo?.parent_type)
 
     const {t} = useTranslation()
 

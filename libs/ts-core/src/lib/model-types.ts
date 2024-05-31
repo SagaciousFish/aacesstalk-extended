@@ -95,3 +95,15 @@ export interface Dyad{
   child_name: string
   parent_type: ParentType
 }
+
+export enum TopicCategory{
+    Plan="plan",
+    Recall="recall",
+    Free="free"
+}
+
+export interface SessionTopicInfo{
+    category: TopicCategory
+    subtopic?: string
+    subdescription?: string 
+}

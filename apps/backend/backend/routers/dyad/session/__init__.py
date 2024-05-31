@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
 from pydantic import BaseModel
 from backend.database import get_db_session, AsyncSession
 from backend.routers.dyad.common import depends_auth_dyad
@@ -25,11 +25,13 @@ async def _get_session_info(session_id: str, dyad: Annotated[Dyad, depends_auth_
 
 class SessionInitiationArgs(BaseModel):
     topic: SessionTopicInfo
+    timezone: str
 
 @router.post("/new")
-async def _initiate_session(args: SessionInitiationArgs, timezone: Annotated[str, Header()], dyad: Annotated[Dyad, depends_auth_dyad],
+async def _initiate_session(req: Request, dyad: Annotated[Dyad, depends_auth_dyad],
                                db: Annotated[AsyncSession, Depends(get_db_session)]) -> str:
-    new_session = await create_moderator_session(dyad, args.topic, timezone, db)
+    args = SessionInitiationArgs(**(await req.json()))
+    new_session = await create_moderator_session(dyad, args.topic, args.timezone, db)
     return new_session.id
 
 @router.delete("/{session_id}/abort")

@@ -1,8 +1,8 @@
 import { HillBackgroundView } from "apps/client-rn/src/components/HillBackgroundView"
 import { TailwindButton } from "apps/client-rn/src/components/tailwind-components"
-import { useSelector } from "apps/client-rn/src/redux/hooks"
+import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { styleTemplates } from "apps/client-rn/src/styles"
-import { useMemo } from "react"
+import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { StyleSheet, Text, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
@@ -13,6 +13,10 @@ import LogoImage from "../../../assets/images/logo-extended.svg"
 import HomeImage from "../../../assets/images/home.svg"
 import StarImage from "../../../assets/images/star.svg"
 import { ProfileButton } from "../components/ProfileButton"
+import { TopicCategory, startNewSession } from "@aacesstalk/libs/ts-core"
+import { NativeStackScreenProps } from "@react-navigation/native-stack"
+import { MainRoutes } from "../../../navigation"
+import { getTimeZone } from "react-native-localize"
 
 const styles = StyleSheet.create({
     topicFreeDimensions: {right: '5%', bottom: '10%', width: '70%', height: '70%'},
@@ -38,9 +42,23 @@ const FreeTopicButton = (props: {style?: any}) => {
                 />
 }
 
-export const HomeScreen = () => {
+export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigatorParamList>) => {
 
     const {t} = useTranslation()
+
+    const dispatch = useDispatch()
+
+    const onPressPlanButton = useCallback(()=>{
+        const topic = { category: TopicCategory.Plan }
+        dispatch(startNewSession(topic, getTimeZone()))
+        props.navigation.navigate(MainRoutes.ROUTE_SESSION, { topic })
+    }, [])
+
+    const onPressRecallButton = useCallback(()=>{
+        const topic = { category: TopicCategory.Recall }
+        dispatch(startNewSession({ category: TopicCategory.Plan }, getTimeZone()))
+        props.navigation.navigate(MainRoutes.ROUTE_SESSION, { topic })
+    }, [])
 
     return <HillBackgroundView containerClassName="items-center justify-center">
         <SafeAreaView className="flex-1 self-stretch items-center justify-center">
@@ -48,10 +66,10 @@ export const HomeScreen = () => {
             <Text className="text-3xl text-slate-800 text-center" style={styleTemplates.withBoldFont}>{t("TopicSelection.Title")}</Text>
             <View className="flex-row space-x-12 mt-24 mb-20">
                 <TopicButton title={t("TopicSelection.Plan")} dialogueCount={0} buttonClassName="bg-topicplan" imageComponent={<CalendarImage/>} 
-                    imageContainerStyleDimensions={styles.topicPlanDimensions} imageNormalDegree={10} imagePressedDegree={-20}/>
+                    imageContainerStyleDimensions={styles.topicPlanDimensions} imageNormalDegree={10} imagePressedDegree={-20} onPress={onPressPlanButton}/>
                 <TopicButton title={t("TopicSelection.Recall")} dialogueCount={0} buttonClassName="bg-topicrecall" imageComponent={<HomeImage/>} 
                     imageContainerStyleDimensions={styles.topicRecallDimensions} 
-                    imageNormalDegree={-8} imagePressedDegree={20}/>
+                    imageNormalDegree={-8} imagePressedDegree={20} onPress={onPressRecallButton}/>
                 <FreeTopicButton/>
             </View>
             <ProfileButton/>

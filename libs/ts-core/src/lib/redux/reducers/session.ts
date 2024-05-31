@@ -3,7 +3,8 @@ import {
   ChildCardRecommendationResult,
   DialogueRole,
   ParentExampleMessage,
-  ParentGuideRecommendationResult
+  ParentGuideRecommendationResult,
+  SessionTopicInfo
 } from '../../model-types';
 import { Action, createSlice, PayloadAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { CoreState, CoreThunk } from '../store';
@@ -11,6 +12,7 @@ import { Http } from '../../net/http';
 
 export interface SessionState{
   id: string | undefined
+  topic?: SessionTopicInfo
   currentTurn?: DialogueRole
   interimCards?: Array<CardInfo>
   parentGuideRecommendation?: ParentGuideRecommendationResult
@@ -24,6 +26,7 @@ export interface SessionState{
 
 export const INITIAL_SESSION_STATE: SessionState = {
   id: undefined,
+  topic: undefined,
   parentExampleMessages: {},
   isProcessing: false,
   error: undefined
@@ -34,8 +37,9 @@ const sessionSlice = createSlice({
   initialState: INITIAL_SESSION_STATE,
   reducers: {
     initialize: () => {return {...INITIAL_SESSION_STATE}},
-    _mountNewSession: (state, action: PayloadAction<string>) => {
-      state.id = action.payload
+    _mountNewSession: (state, action: PayloadAction<{id: string, topic: SessionTopicInfo}>) => {
+      state.id = action.payload.id
+      state.topic = action.payload.topic
       state.currentTurn = DialogueRole.Parent
       state.interimCards = undefined
       state.parentExampleMessages = {}
@@ -85,17 +89,19 @@ function makeSignedInThunk(
   }
 }
 
-export function startNewSession(): CoreThunk {
+export function startNewSession(topic: SessionTopicInfo, timezone: string): CoreThunk {
   return makeSignedInThunk(
     {
       runIfSignedIn: async (dispatch, getState, header) => {
-        const resp = await Http.axios.post(Http.ENDPOINT_DYAD_SESSION_NEW, null, {
+        console.log("Init session...")
+        const resp = await Http.axios.post(Http.ENDPOINT_DYAD_SESSION_NEW, { topic, timezone }, {
           headers: header
         })
         const sessionId = resp.data
-        dispatch(sessionSlice.actions._mountNewSession(sessionId))
+        dispatch(sessionSlice.actions._mountNewSession({ id: sessionId, topic }))
       },
       onError: async (ex, dispatch, getState) => {
+        console.error(ex)
         dispatch(sessionSlice.actions._setError("Session initialization error."))
       }
     })
