@@ -3,33 +3,44 @@ import {
   ChildCardRecommendationResult,
   DialogueRole,
   ParentExampleMessage,
+  ParentGuideElement,
   ParentGuideRecommendationResult,
   SessionTopicInfo
 } from '../../model-types';
-import { Action, createSlice, PayloadAction, ThunkDispatch } from '@reduxjs/toolkit';
+import { Action, createEntityAdapter, createSlice, PayloadAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { CoreState, CoreThunk } from '../store';
 import { Http } from '../../net/http';
+
+const parentGuideAdapter = createEntityAdapter<ParentGuideElement>()
+const INITIAL_PARENT_GUIDE_STATE = parentGuideAdapter.getInitialState()
 
 export interface SessionState{
   id: string | undefined
   topic?: SessionTopicInfo
   currentTurn?: DialogueRole
   interimCards?: Array<CardInfo>
-  parentGuideRecommendation?: ParentGuideRecommendationResult
+  parentGuideRecommendationId?: string
+  parentGuideEntityState: typeof INITIAL_PARENT_GUIDE_STATE
   childCardRecommendation?: ChildCardRecommendationResult
 
   parentExampleMessages: {[key:string]: ParentExampleMessage}
 
-  isProcessing: boolean,
+  isInitializing: boolean,
+  isProcessingRecommendation: boolean,
+  isGeneratingParentExample: boolean,
   error? : string
 }
 
 export const INITIAL_SESSION_STATE: SessionState = {
   id: undefined,
   topic: undefined,
-  parentExampleMessages: {},
-  isProcessing: false,
-  error: undefined
+  parentGuideEntityState: INITIAL_PARENT_GUIDE_STATE,
+  parentGuideRecommendationId: undefined,
+  isInitializing: false,
+  isProcessingRecommendation: false,
+  isGeneratingParentExample: false,
+  error: undefined,
+  parentExampleMessages: {}
 }
 
 const sessionSlice = createSlice({
@@ -44,21 +55,39 @@ const sessionSlice = createSlice({
       state.interimCards = undefined
       state.parentExampleMessages = {}
       state.childCardRecommendation= undefined
-      state.parentGuideRecommendation = undefined
+      state.parentGuideRecommendationId = undefined
+      state.isGeneratingParentExample = false
+      state.isProcessingRecommendation =false
+      parentGuideAdapter.removeAll(state.parentGuideEntityState)
     },
 
-    _setProcessingFlag: (state, action: PayloadAction<boolean>) => {
-      state.isProcessing = action.payload
+    _setInitializingFlag: (state, action: PayloadAction<boolean>) => {
+      state.isInitializing = action.payload
+    },
+
+    _setLoadingFlag: (state, action: PayloadAction<{key: keyof SessionState, flag: boolean}>) => {
+      (state as any)[action.payload.key] = action.payload.flag
     },
 
     _setError: (state, action: PayloadAction<string|undefined>) => {
       state.error = action.payload
+    },
+
+    _setNextTurn: (state, action: PayloadAction<DialogueRole>) => {
+      state.currentTurn = action.payload
+    },
+
+    _storeNewParentGuideRecommendation: (state, action: PayloadAction<ParentGuideRecommendationResult>) => {
+      parentGuideAdapter.removeAll(state.parentGuideEntityState)
+      parentGuideAdapter.addMany(state.parentGuideEntityState, action.payload.guides)
+      state.parentGuideRecommendationId = action.payload.id
     }
   }
 })
 
 function makeSignedInThunk(
-  handlers: {
+  options: {
+    loadingFlagKey?: keyof SessionState,
     runIfSignedIn?: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: ()=>CoreState, signedInHeader: any) => Promise<void>,
     runIfNotSignedIn?: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: ()=>CoreState) => Promise<void>,
     onError?: (ex: any, dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: ()=>CoreState) => Promise<void>,
@@ -68,32 +97,39 @@ function makeSignedInThunk(
 ): CoreThunk {
   return async (dispatch, getState) => {
     const state = getState()
-    if(state.auth.jwt && handlers.runIfSignedIn && (checkSessionId == false || state.session.id != null)){
-      dispatch(sessionSlice.actions._setProcessingFlag(true))
+    if(state.auth.jwt && options.runIfSignedIn && (checkSessionId == false || state.session.id != null)){
+      if(options.loadingFlagKey){
+        dispatch(sessionSlice.actions._setLoadingFlag({key: options.loadingFlagKey, flag: true}))
+      }
       try {
         const header = await Http.getSignedInHeaders(state.auth.jwt)
-        await handlers.runIfSignedIn(dispatch, getState, header)
+        await options.runIfSignedIn(dispatch, getState, header)
       }catch(ex: any){
-        if(handlers.onError){
-          await handlers.onError(ex, dispatch, getState)
+        if(options.onError){
+          await options.onError(ex, dispatch, getState)
         }
       }finally {
-        if(handlers.onFinally){
-          await handlers.onFinally(dispatch, getState)
+        if(options.onFinally){
+          await options.onFinally(dispatch, getState)
         }
-        dispatch(sessionSlice.actions._setProcessingFlag(false))
+        if(options.loadingFlagKey){
+          dispatch(sessionSlice.actions._setLoadingFlag({key: options.loadingFlagKey, flag: false}))
+        }
       }
-    }else if(handlers.runIfNotSignedIn){
-      await handlers.runIfNotSignedIn(dispatch, getState)
+    }else if(options.runIfNotSignedIn){
+      await options.runIfNotSignedIn(dispatch, getState)
     }
   }
 }
+
+// Session methods //////////////////////////
 
 export function startNewSession(topic: SessionTopicInfo, timezone: string): CoreThunk {
   return makeSignedInThunk(
     {
       runIfSignedIn: async (dispatch, getState, header) => {
         console.log("Init session...")
+        dispatch(sessionSlice.actions._setInitializingFlag(true))
         const resp = await Http.axios.post(Http.ENDPOINT_DYAD_SESSION_NEW, { topic, timezone }, {
           headers: header
         })
@@ -103,6 +139,9 @@ export function startNewSession(topic: SessionTopicInfo, timezone: string): Core
       onError: async (ex, dispatch, getState) => {
         console.error(ex)
         dispatch(sessionSlice.actions._setError("Session initialization error."))
+      },
+      onFinally: async (dispatch, getState) => {
+        dispatch(sessionSlice.actions._setInitializingFlag(false))
       }
     })
 }
@@ -143,6 +182,30 @@ export function cancelSession(): CoreThunk {
     true
   )
 }
+
+/////////////////////////////////////////////////////////////////
+
+
+// Parent messaging /////////////////////////////////////////////
+
+export function requestParentGuides(): CoreThunk {
+  return makeSignedInThunk(
+    {
+      loadingFlagKey: 'isProcessingRecommendation',
+      runIfSignedIn: async (dispatch, getState, header) => {
+        console.log("Request parent guides...")
+        const state = getState()
+        const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_GUIDE, { session_id: state.session.id!! }), null, {
+          headers: header
+        })
+        console.log("Retrieved parent guides.")
+        const result: ParentGuideRecommendationResult = resp.data
+        dispatch(sessionSlice.actions._storeNewParentGuideRecommendation(result))
+      }
+    }, true
+  )
+}
+
 
 export default sessionSlice.reducer
 

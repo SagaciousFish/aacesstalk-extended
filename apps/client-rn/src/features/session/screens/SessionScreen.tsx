@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { TopicCategory } from '@aacesstalk/libs/ts-core'
+import { DialogueRole, TopicCategory, requestParentGuides } from '@aacesstalk/libs/ts-core'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { MainRoutes } from 'apps/client-rn/src/navigation'
 import { View, Text } from 'react-native'
@@ -9,10 +9,11 @@ import HillFreeImage from '../../../assets/images/hill_free.svg'
 import { HillBackgroundView } from 'apps/client-rn/src/components/HillBackgroundView'
 import { SessionTitleRibbon } from '../components/SessionTitleRibbon'
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'apps/client-rn/src/redux/hooks'
-import { Fragment, useMemo } from 'react'
+import { useDispatch, useSelector } from 'apps/client-rn/src/redux/hooks'
+import { Fragment, useEffect, useMemo } from 'react'
 import format from 'string-template'
 import { SessionStartingMessage } from '../components/SessionStartingMessage'
+import { SessionParentView } from '../components/parent/SessionParentView'
 
 const BG_COLOR_BY_TOPIC_CATEGORY = {
     [TopicCategory.Plan]: 'bg-topicplan-bg',
@@ -31,6 +32,20 @@ const styles = StyleSheet.create({
 export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigatorParamList, "session">) => {
 
     const {t} = useTranslation()
+
+    const dispatch = useDispatch()
+
+    const isInitializing = useSelector(state => state.session.isInitializing)
+    const sessionId = useSelector(state => state.session.id)
+
+    const currentTurn = useSelector(state => state.session.currentTurn)
+
+    useEffect(()=>{
+        console.log(isInitializing)
+        if(isInitializing == false && sessionId != null){
+            dispatch(requestParentGuides())
+        }
+    }, [isInitializing, sessionId])
 
     let HillView
     switch(props.route.params.topic.category){
@@ -51,6 +66,9 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
         <SessionTitleRibbon containerClassName="mt-12" topic={props.route.params.topic}/>
         <Fragment key={"session-content"}>
             <SessionStartingMessage topic={props.route.params.topic} containerClassName='mt-14'/>
+            {
+                currentTurn === DialogueRole.Parent? <SessionParentView/> : null
+            }
         </Fragment>
     </HillBackgroundView>
 }

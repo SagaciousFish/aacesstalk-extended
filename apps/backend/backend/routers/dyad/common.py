@@ -26,13 +26,16 @@ async def get_signed_in_dyad(token: Annotated[str, Depends(oauth2_scheme)], db: 
         headers={"WWW-Authenticate": "Bearer"},
     )
 
+    print("Try get signed_in dyad.")
+
     try:
         payload = jwt.decode(token, get_env_variable(env_variables.AUTH_SECRET))
         dyad_id: str = payload.get("sub")
         if dyad_id is None:
             raise credentials_exception
 
-    except JWTError:
+    except JWTError as ex:
+        print(ex)
         raise credentials_exception
 
     dyad = await get_dyad_by_id(dyad_id, db)
@@ -40,17 +43,15 @@ async def get_signed_in_dyad(token: Annotated[str, Depends(oauth2_scheme)], db: 
     if dyad is None:
         raise credentials_exception
     else:
+        print("Successfully found a signed-in dyad.")
         return dyad
-
-
-def depends_auth_dyad() -> Dyad:
-    return Depends(get_signed_in_dyad)
 
 
 sessions: dict[str, ModeratorSession] = {}
 
 
-async def retrieve_moderator_session(session_id: str, dyad: Annotated[Dyad, depends_auth_dyad], db: Annotated[AsyncSession, Depends(get_db_session)]):
+async def retrieve_moderator_session(session_id: str, dyad: Annotated[Dyad, Depends(get_signed_in_dyad)], db: Annotated[AsyncSession, Depends(get_db_session)]):
+    print("Retrieve moderator session...")
     if session_id in sessions:
         session = sessions[session_id]
         session.storage = SQLSessionStorage.restore_instance(session_id, db)

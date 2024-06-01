@@ -16,6 +16,12 @@ class SessionTopicCategory(StrEnum):
             "free": "The dyad converses about a free topic that the child is interested in.",
         }[value]
 
+SESSION_TOPIC_CATEGORY_DESC_DICT: dict[SessionTopicCategory, str] = {
+    SessionTopicCategory.Plan: "The dyad shares today's todos or plans.",
+    SessionTopicCategory.Recall: "The dyad gets to know what the child did on that day.",
+    SessionTopicCategory.Free: "The dyad converses about a free topic that the child is interested in."
+}
+
 class SessionTopicInfo(BaseModel):
     model_config = ConfigDict(frozen=True, use_enum_values=True)
 
@@ -25,5 +31,5 @@ class SessionTopicInfo(BaseModel):
 
     def to_readable_description(self):
         if self.subtopic is not None:
-            return f"""{self.category.description} Specifically, the conversation is about {self.subtopic} ({self.subtopic_description})."""
-        return f"{self.category.description}"
+            return f"""{SESSION_TOPIC_CATEGORY_DESC_DICT[self.category]} Specifically, the conversation is about {self.subtopic} ({self.subtopic_description})."""
+        return f"{SESSION_TOPIC_CATEGORY_DESC_DICT[self.category]}"

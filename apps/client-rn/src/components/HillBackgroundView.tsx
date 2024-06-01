@@ -42,8 +42,6 @@ export const HillBackgroundView = (props: {
 
     const hillHeight = (props.hillImageHeight || 255)/(props.hillImageWidth || 1194) * width
 
-    console.log(props.hillImageWidth, props.hillImageHeight, hillHeight, height, width)
-
     const cloud1PositionCycle = useSharedValue(0);
     const cloud2PositionCycle = useSharedValue(0);
 

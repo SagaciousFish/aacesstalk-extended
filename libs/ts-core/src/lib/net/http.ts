@@ -22,6 +22,14 @@ export class Http{
   static ENDPOINT_DYAD_SESSION_ABORT = `${Http.ENDPOINT_DYAD_SESSION_ID}/abort`
   static ENDPOINT_DYAD_MESSAGE = `${Http.ENDPOINT_DYAD_SESSION_ID}/message`
 
+  static ENDPOINT_DYAD_MESSAGE_PARENT_GUIDE = `${Http.ENDPOINT_DYAD_MESSAGE}/parent/guide`
+  static ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE = `${Http.ENDPOINT_DYAD_MESSAGE}/parent/message`
+  static ENDPOINT_DYAD_MESSAGE_PARENT_EXAMPLE = `${Http.ENDPOINT_DYAD_MESSAGE}/parent/example`
+  
+  
+  
+
+
   static getTemplateEndpoint(template: string, values: {[key:string]: string}): string {
     return format(template, values)
   }

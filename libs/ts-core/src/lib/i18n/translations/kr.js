@@ -31,6 +31,9 @@ module.exports = {
             PlanTemplate: "{child_name}가 오늘 할 일에 대해 대화를 시작해 보세요.",
             RecallTemplate: "{child_name}가 오늘 겪었던 일에 대해 대화를 시작해 보세요.",
             FreeTemplate: "{child_name}가 좋아하는 주제로 대화를 시작해 보세요."
+        },
+        LoadingMessage: {
+            ParentGuide: "대화 가이드를 만드는 중입니다..."
         }
     }
 }

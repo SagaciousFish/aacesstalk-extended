@@ -56,7 +56,7 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
 
     const onPressRecallButton = useCallback(()=>{
         const topic = { category: TopicCategory.Recall }
-        dispatch(startNewSession({ category: TopicCategory.Plan }, getTimeZone()))
+        dispatch(startNewSession(topic, getTimeZone()))
         props.navigation.navigate(MainRoutes.ROUTE_SESSION, { topic })
     }, [])
 

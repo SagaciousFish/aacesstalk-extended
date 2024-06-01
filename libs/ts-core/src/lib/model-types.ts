@@ -60,7 +60,7 @@ export interface ParentGuideElement{
 }
 
 export interface ParentGuideRecommendationResult extends ModelWithIdAndTimestamp{
-    guides: ReadonlyArray<ParentGuideElement>
+    guides: Array<ParentGuideElement>
 }
 
 export interface ParentExampleMessage extends ModelWithIdAndTimestamp{

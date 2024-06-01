@@ -110,18 +110,6 @@ export const SessionTitleRibbon = (props: {
         }
     }, [t, child_name, props.topic.category])
 
-    const ribbonFgColor = useMemo(()=>{
-        switch(props.topic.category){
-            case TopicCategory.Plan:
-                return "#78AAFC"
-            case TopicCategory.Recall:
-                return "bg-topicplan-fg"
-            case TopicCategory.Free:
-                return "bg-topicplan-fg"
-        }
-    }, [props.topic.category])
-
-
     return <View className={`${props.containerClassName}`}>
         <View id='ribbon-body' className={`rounded-lg h-14 justify-center px-7 shadow-lg shadow-slate-700 bg-topic${props.topic.category.toLowerCase()}-fg`}>
             <Text style={styleTemplates.withBoldFont} className={`text-white text-lg ${props.titleClassName}`}>{label}</Text>

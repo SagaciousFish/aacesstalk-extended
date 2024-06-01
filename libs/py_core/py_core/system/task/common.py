@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Callable
 
 from py_core.system.model import Dialogue, DialogueRole, DialogueMessage, ParentType
-from py_core.system.session_topic import SessionTopicInfo
+from py_core.system.session_topic import SESSION_TOPIC_CATEGORY_DESC_DICT, SessionTopicInfo
 
 
 class DialogueToStrConversionFunction:
@@ -53,7 +53,7 @@ class DialogueInputToStrConversionFunction:
         
         if self.include_topic is True:
             subtopic_str = f"<subtopic>{input.topic.subtopic} ({input.topic.subdescription})</subtopic>" if input.topic.subtopic is not None else ""
-            rows.append(f"<topic><desc>{input.topic.category.description}</desc>{subtopic_str}</topic>")
+            rows.append(f"<topic><desc>{SESSION_TOPIC_CATEGORY_DESC_DICT[input.topic.category]}</desc>{subtopic_str}</topic>")
 
         rows.append(_dialogue_to_str(input.dialogue, params))
 
