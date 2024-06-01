@@ -1,5 +1,6 @@
 import asyncio
 from dataclasses import dataclass
+from enum import StrEnum
 
 from nanoid import generate
 
@@ -40,7 +41,6 @@ def speaker(role: DialogueRole):
 class ParentExampleGenerationTaskSet:
     recommendation_id: str
     tasks: dict[str, AsyncTaskInfo | None]
-
 
 class ModeratorSession:
 

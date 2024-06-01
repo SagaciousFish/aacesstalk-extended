@@ -42,7 +42,7 @@ const FreeTopicButton = (props: {style?: any}) => {
                 />
 }
 
-export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigatorParamList>) => {
+export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigatorParamList, "home">) => {
 
     const {t} = useTranslation()
 
