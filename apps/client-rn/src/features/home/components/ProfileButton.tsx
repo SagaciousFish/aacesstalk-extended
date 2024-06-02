@@ -25,8 +25,8 @@ export const ProfileButton = () => {
         }, style: 'destructive'}], {cancelable: true})
     }, [t, dispatch])
 
-    const tripleTap = Gesture.Tap().maxDuration(600).numberOfTaps(3)
-    .onStart(onTripplePress) 
+    const tripleTap = useMemo(()=>Gesture.Tap().maxDuration(600).numberOfTaps(3)
+    .onStart(onTripplePress), [onTripplePress])
     
     return <GestureDetector gesture={tripleTap}><View className="absolute right-5 top-5">
             <Text className={`text-lg text-center text-slate-400`} style={styleTemplates.withSemiboldFont}>{label}</Text>

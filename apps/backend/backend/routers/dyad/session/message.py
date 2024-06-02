@@ -47,7 +47,7 @@ class RequestExampleArgs(BaseModel):
 @router.post("/parent/example", response_model=ParentExampleMessage)
 async def request_example_message(
     args: RequestExampleArgs, session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]) -> ParentExampleMessage:
-    return await session.request_parent_example_message(**args)
+    return await session.request_parent_example_message(**args.model_dump())
 
 
 class CardSelectionResult(BaseModel):

@@ -25,6 +25,8 @@ export interface SessionState{
 
   parentExampleMessages: {[key:string]: ParentExampleMessage}
 
+  parentExampleMessageLoadingFlags: {[key:string]: boolean}
+
   isInitializing: boolean,
   isProcessingRecommendation: boolean,
   isGeneratingParentExample: boolean,
@@ -40,7 +42,8 @@ export const INITIAL_SESSION_STATE: SessionState = {
   isProcessingRecommendation: false,
   isGeneratingParentExample: false,
   error: undefined,
-  parentExampleMessages: {}
+  parentExampleMessages: {},
+  parentExampleMessageLoadingFlags: {}
 }
 
 const sessionSlice = createSlice({
@@ -49,15 +52,14 @@ const sessionSlice = createSlice({
   reducers: {
     initialize: () => {return {...INITIAL_SESSION_STATE}},
     _mountNewSession: (state, action: PayloadAction<{id: string, topic: SessionTopicInfo}>) => {
+
+      for (const key in INITIAL_PARENT_GUIDE_STATE){
+        (state as any)[key] = (INITIAL_PARENT_GUIDE_STATE as any)[key]
+      }
+
       state.id = action.payload.id
       state.topic = action.payload.topic
       state.currentTurn = DialogueRole.Parent
-      state.interimCards = undefined
-      state.parentExampleMessages = {}
-      state.childCardRecommendation= undefined
-      state.parentGuideRecommendationId = undefined
-      state.isGeneratingParentExample = false
-      state.isProcessingRecommendation =false
       parentGuideAdapter.removeAll(state.parentGuideEntityState)
     },
 
@@ -81,6 +83,17 @@ const sessionSlice = createSlice({
       parentGuideAdapter.removeAll(state.parentGuideEntityState)
       parentGuideAdapter.addMany(state.parentGuideEntityState, action.payload.guides)
       state.parentGuideRecommendationId = action.payload.id
+    },
+
+    _setGuideExampleMessageLoadingFlag: (state, action: PayloadAction<{guideId: string, flag: boolean}>) => {
+      state.parentExampleMessageLoadingFlags[action.payload.guideId] = action.payload.flag
+    },
+
+    _addGuideExampleMessage: (state, action: PayloadAction<ParentExampleMessage>) => {
+      if(action.payload.guide_id){
+        state.parentExampleMessageLoadingFlags[action.payload.guide_id] = false
+        state.parentExampleMessages[action.payload.guide_id] = action.payload
+      }
     }
   }
 })
@@ -204,6 +217,27 @@ export function requestParentGuides(): CoreThunk {
       }
     }, true
   )
+}
+
+export function requestParentGuideExampleMessage(guideId: string): CoreThunk {
+  return makeSignedInThunk({
+    runIfSignedIn: async (dispatch, getState, header) => {
+      dispatch(sessionSlice.actions._setGuideExampleMessageLoadingFlag({guideId, flag: true}))
+      const state = getState()
+        const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_EXAMPLE, { session_id: state.session.id!! }), {
+          guide_id: guideId,
+          recommendation_id: state.session.parentGuideRecommendationId
+        }, {
+          headers: header
+        })
+        const exampleMessage : ParentExampleMessage = resp.data
+        dispatch(sessionSlice.actions._addGuideExampleMessage(exampleMessage))
+    },
+
+    onFinally: async (dispatch) => {
+      dispatch(sessionSlice.actions._setGuideExampleMessageLoadingFlag({guideId, flag: false}))
+    }
+  })
 }
 
 

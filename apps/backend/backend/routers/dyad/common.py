@@ -54,7 +54,7 @@ async def retrieve_moderator_session(session_id: str, dyad: Annotated[Dyad, Depe
     print("Retrieve moderator session...")
     if session_id in sessions:
         session = sessions[session_id]
-        session.storage = SQLSessionStorage.restore_instance(session_id, db)
+        session.storage = await SQLSessionStorage.restore_instance(session_id, db)
         return session
     else:
         session_info_orm = await find_session_orm(session_id, dyad.id, db)
