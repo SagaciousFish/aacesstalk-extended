@@ -42,7 +42,7 @@ class Dyad(SQLModel, IdTimestampMixin, table=True):
     sessions: list['Session'] = Relationship(back_populates='dyad')
 
     def to_data_model(self) -> _Dyad:
-        return _Dyad(id=self.id, alias=self.alias, parent_type=self.parent_type)
+        return _Dyad(id=self.id, alias=self.alias, parent_type=self.parent_type, child_name=self.child_name)
 
 
 class Session(SQLModel, IdTimestampMixin, table=True):

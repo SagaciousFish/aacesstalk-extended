@@ -14,6 +14,7 @@ from py_core.system.task import ChildCardRecommendationGenerator
 from py_core.system.task.parent_guide_recommendation import ParentGuideRecommendationGenerator, \
     ParentExampleMessageGenerator
 from py_core.system.task.parent_guide_recommendation.dialogue_inspector import DialogueInspector
+from py_core.system.task.parent_guide_recommendation.static_guide_factory import StaticGuideFactory
 from py_core.utils.deepl_translator import DeepLTranslator
 from py_core.utils.models import AsyncTaskInfo
 from chatlib.llm.integration import GPTChatCompletionAPI
@@ -58,6 +59,9 @@ class ModeratorSession:
 
             cls.__dialogue_inspector = DialogueInspector()
             cls.__parent_example_generator = ParentExampleMessageGenerator(vector_db)
+
+            cls.__static_guide_factory = StaticGuideFactory()
+
             cls.class_variables_initialized = True
 
     def __init__(self, dyad: Dyad, storage: SessionStorage):
@@ -101,7 +105,12 @@ class ModeratorSession:
             self.__parent_example_generation_tasks = None
 
     async def __parent_example_generate_func(self, dialogue: Dialogue, guide: ParentGuideElement, recommendation_id: str) -> ParentExampleMessage:
-        message = await self.__parent_example_generator.generate(dialogue, guide, recommendation_id)
+        if len(dialogue) == 0:
+            message = self.__static_guide_factory.get_example_message(self.storage.session_topic, self.__dyad, guide, recommendation_id)
+            print("Static example message:", message)
+        else:
+            message = await self.__parent_example_generator.generate(dialogue, guide, recommendation_id)
+        
         await self.__storage.add_parent_example_message(message)
         return message
 
@@ -127,7 +136,10 @@ class ModeratorSession:
         # Clear
         self.__dialogue_inspection_task_info = None
 
-        recommendation = await self.__parent_guide_recommender.generate(self.__dyad.parent_type, self.storage.session_topic, dialogue, dialogue_inspection_result)
+        if len(dialogue) == 0:
+            recommendation = self.__static_guide_factory.get_guide_recommendation(self.storage.session_topic, self.__dyad)
+        else:
+            recommendation = await self.__parent_guide_recommender.generate(self.__dyad, self.storage.session_topic, dialogue, dialogue_inspection_result)
 
         await self.__storage.add_parent_guide_recommendation_result(recommendation)
 

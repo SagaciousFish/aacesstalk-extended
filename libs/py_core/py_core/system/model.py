@@ -111,12 +111,16 @@ class ParentGuideElement(BaseModel):
     guide_localized: Optional[str] = None
     type: ParentGuideType = ParentGuideType.Messaging
 
+    is_generated: bool = True
+    static_guide_key: str | None = None
+        
+
     def with_guide_localized(self, localized: str) -> 'ParentGuideElement':
         return self.model_copy(update=dict(guide_localized=localized))
 
     @classmethod
-    def messaging_guide(cls, category: ParentGuideCategory, guide: str) -> 'ParentGuideElement':
-        return ParentGuideElement(category=category, guide=guide, type=ParentGuideType.Messaging)
+    def messaging_guide(cls, category: ParentGuideCategory, guide: str, guide_localized: str | None = None, is_generated: bool = True, static_guide_key: str | None = None) -> 'ParentGuideElement':
+        return ParentGuideElement(category=category, guide=guide, type=ParentGuideType.Messaging, guide_localized=guide_localized, is_generated=is_generated, static_guide_key=static_guide_key)
 
     @classmethod
     def feedback(cls, category: list[DialogueInspectionCategory], guide: str) -> 'ParentGuideElement':

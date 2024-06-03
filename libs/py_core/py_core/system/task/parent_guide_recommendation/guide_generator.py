@@ -38,7 +38,7 @@ _prompt_template = convert_to_jinja_template("""
 [General instructions for parent's guide]
 - Provide simple and easy-to-understand sentences consisting of no more than 5-6 words.
 - Each guide should contain one purpose or intention.
-- {%if dialogue | length > 0 -%}Based on the child's last message, s{%else%}S{%endif%}elect up to {% if dialogue_inspection_result is not none and dialogue_inspection_result.feedback is not none %}two{% else %}three{% endif %} most appropriate directions from the parent guide categories provided below.
+- {%if dialogue | length > 0 -%}Based on the child's last message, s{%else%}S{%endif%}elect up to {% if dialogue_inspection_result is not none and dialogue_inspection_result.feedback is not none %}2{% else %}3{% endif %} most appropriate directions from the parent guide categories provided below.
 {% if dialogue | length > 0 %}- Each guide should be contextualized based on the child's response and not be too general.{%endif%}
 
 [Parent guide categories]

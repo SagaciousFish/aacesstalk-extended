@@ -59,6 +59,6 @@ async def retrieve_moderator_session(session_id: str, dyad: Annotated[Dyad, Depe
     else:
         session_info_orm = await find_session_orm(session_id, dyad.id, db)
         
-        session = ModeratorSession(dyad, SQLSessionStorage(db, session_info_orm.to_data_model()))
+        session = ModeratorSession(dyad.to_data_model(), SQLSessionStorage(db, session_info_orm.to_data_model()))
         sessions[session_id] = session
         return session
