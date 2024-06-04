@@ -14,8 +14,6 @@ GPTChatCompletionAPI.assert_authorize()
 DeepLTranslator.assert_authorize()
 
 engine = create_database_engine("database-test.db", verbose=True)
-db_session = get_async_session(engine)
-
 asyncio.run(create_db_and_tables(engine))
 
 
@@ -24,6 +22,6 @@ session_info = asyncio.run(cli_get_session_info())
 
 print(dyad_info, session_info)
 
-session = ModeratorSession(dyad_info, SQLSessionStorage(db_session, session_info))
+session = ModeratorSession(dyad_info, SQLSessionStorage(lambda: get_async_session(engine), session_info))
 
 asyncio.run(test_session_loop(session))

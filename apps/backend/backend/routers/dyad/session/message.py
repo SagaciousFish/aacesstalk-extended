@@ -9,7 +9,7 @@ from py_core.system.model import Dialogue, ParentGuideRecommendationResult, Card
 
 from py_database.model import Dyad
 
-from backend.routers.dyad.common import get_signed_in_dyad, retrieve_moderator_session
+from backend.routers.dyad.common import get_signed_in_dyad_orm, retrieve_moderator_session
 
 
 router = APIRouter()
@@ -19,7 +19,7 @@ class DialogueResponse(BaseModel):
     dialogue: Dialogue
 
 @router.get("/all", response_model=DialogueResponse)
-async def get_dialogue(dyad: Annotated[Dyad, Depends(get_signed_in_dyad)], session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]) -> DialogueResponse:
+async def get_dialogue(dyad: Annotated[Dyad, Depends(get_signed_in_dyad_orm)], session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]) -> DialogueResponse:
     dialogue = await session.storage.get_dialogue()
     return DialogueResponse(dyad_id=dyad.id, dialogue=dialogue)
 

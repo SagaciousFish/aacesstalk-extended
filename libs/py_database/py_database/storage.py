@@ -1,3 +1,4 @@
+from typing import Callable
 from sqlmodel import select, col, delete
 
 from py_core.system.model import ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
@@ -16,23 +17,27 @@ class TimeStampAndSessionChildModel(SessionIdMixin, TimestampColumnMixin):
 
 class SQLSessionStorage(SessionStorage):
 
-    def __init__(self, sql_session: AsyncSession, session: Session):
+    def __init__(self, sql_session_maker: Callable[[], AsyncSession], session: Session):
         super().__init__(session)
-        self.__sql_session = sql_session
+        self.__sql_session_maker = sql_session_maker
+        self.__current_sql_session: AsyncSession | None = None
 
     @property
     def _sql_session(self)->AsyncSession:
-        print(f"DB session active: {self.__sql_session.is_active}")
-        return self.__sql_session
+        if self.__current_sql_session is None or self.__current_sql_session.is_active is False:
+            self.__current_sql_session = self.__sql_session_maker()
+
+        return self.__current_sql_session
 
     
     @classmethod
-    async def restore_instance(cls, id: str, params: AsyncSession) -> SessionStorage | None:
-        session_orm = await params.get(SessionORM, id)
-        if session_orm is not None:
-            return SQLSessionStorage(params, session_orm.to_data_model())
-        else:
-            return None
+    async def restore_instance(cls, id: str, params: Callable[[], AsyncSession]) -> SessionStorage | None:
+        async with params() as db:
+            session_orm = await db.get(SessionORM, id)
+            if session_orm is not None:
+                return SQLSessionStorage(params, session_orm.to_data_model())
+            else:
+                return None
 
 
     async def add_dialogue_message(self, message: DialogueMessage):

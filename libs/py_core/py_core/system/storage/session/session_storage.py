@@ -8,8 +8,8 @@ from py_core.system.session_topic import SessionTopicInfo
 
 class SessionStorage(ABC):
 
-    def __init__(self, info: Session):
-        self.__session = info
+    def __init__(self, session_info: Session):
+        self.__session = session_info
 
     @classmethod
     @abstractmethod
