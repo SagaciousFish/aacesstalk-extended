@@ -219,7 +219,7 @@ export function requestParentGuides(): CoreThunk {
   )
 }
 
-export function requestParentGuideExampleMessage(guideId: string): CoreThunk {
+export function requestParentGuideExampleMessage(guideId: string, onComplete?: (message: ParentExampleMessage) => void): CoreThunk {
   return makeSignedInThunk({
     runIfSignedIn: async (dispatch, getState, header) => {
       dispatch(sessionSlice.actions._setGuideExampleMessageLoadingFlag({guideId, flag: true}))
@@ -232,6 +232,7 @@ export function requestParentGuideExampleMessage(guideId: string): CoreThunk {
         })
         const exampleMessage : ParentExampleMessage = resp.data
         dispatch(sessionSlice.actions._addGuideExampleMessage(exampleMessage))
+        onComplete?.(exampleMessage)
     },
 
     onFinally: async (dispatch) => {
