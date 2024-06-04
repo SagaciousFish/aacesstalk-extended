@@ -15,7 +15,7 @@ class GuideTranslator:
             text=guide_texts,
             source_lang="EN",
             target_lang="KO",
-            context="The phrases are guides for parents' communication with children with Autism Spectrum Disorder."
+            context="The phrases are guides for parents' communication with children with Autism Spectrum Disorder. The sentences should be translated into casual Korean so parents can easily understand and use them."
         )
 
         return [entry.with_guide_localized(guide) for guide, entry in zip(translated_guides, guides)] if isinstance(guides, list) else guides.with_guide_localized(translated_guides)
