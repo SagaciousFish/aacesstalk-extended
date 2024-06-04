@@ -2,7 +2,7 @@ import { useSelector } from "apps/client-rn/src/redux/hooks"
 import { styleTemplates } from "apps/client-rn/src/styles"
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native"
-import { ParentGuideElementView } from "./ParengGuideElementView";
+import { ParentGuideElementView } from "./ParentGuideElementView";
 
 
 export const SessionParentView = () => {

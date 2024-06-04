@@ -13,5 +13,6 @@ export const styleTemplates = StyleSheet.create({
     withRegularFont: {"fontFamily": fontFamilyByWeight.regular},
     withSemiboldFont: {"fontFamily": fontFamilyByWeight.semibold},
     withBoldFont: {"fontFamily": fontFamilyByWeight.bold},
-    withExtraboldFont: {"fontFamily": fontFamilyByWeight.extrabold},   
+    withExtraboldFont: {"fontFamily": fontFamilyByWeight.extrabold},
+    withHandwritingFont: {"fontFamily": "KyoboHandwriting2019"}
 })

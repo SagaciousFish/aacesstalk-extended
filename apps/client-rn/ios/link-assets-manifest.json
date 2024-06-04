@@ -2,6 +2,10 @@
   "migIndex": 1,
   "data": [
     {
+      "path": "src/assets/fonts/KyoboHandwriting2019.ttf",
+      "sha1": "63e0d02b4202cb535508319182245ace6952318e"
+    },
+    {
       "path": "src/assets/fonts/NanumSquareNeo-Bold.ttf",
       "sha1": "cd9e58031c41271195ad793ae6443f7ee7e9f1c1"
     },

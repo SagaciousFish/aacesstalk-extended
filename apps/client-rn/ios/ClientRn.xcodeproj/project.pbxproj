@@ -20,6 +20,7 @@
 		8F8B746D895C4C608A46D59E /* NanumSquareNeo-Extrabold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0086574EC56A4C3BA0EE9384 /* NanumSquareNeo-Extrabold.ttf */; };
 		D3B8662C6A6835650E9998E9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = AA63D5173537C3C5C4687F2B /* PrivacyInfo.xcprivacy */; };
 		FFA7B30634A74135BFCDAF3D /* NanumSquareNeo-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E4AD3B37AD247229F327D3A /* NanumSquareNeo-Bold.ttf */; };
+		146498305F424BA6911D68C6 /* KyoboHandwriting2019.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C309E00562745E18EC3C3BD /* KyoboHandwriting2019.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		E350997ECA7D47ED846EF97C /* NanumSquareNeo-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "NanumSquareNeo-Regular.ttf"; path = "../src/assets/fonts/NanumSquareNeo-Regular.ttf"; sourceTree = "<group>"; };
 		ECDB7A18585D4E0CAE2BA147 /* NanumSquareNeo-Heavy.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "NanumSquareNeo-Heavy.ttf"; path = "../src/assets/fonts/NanumSquareNeo-Heavy.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		4C309E00562745E18EC3C3BD /* KyoboHandwriting2019.ttf */ = {isa = PBXFileReference; name = "KyoboHandwriting2019.ttf"; path = "../src/assets/fonts/KyoboHandwriting2019.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +163,7 @@
 				ECDB7A18585D4E0CAE2BA147 /* NanumSquareNeo-Heavy.ttf */,
 				6FC5B4F343034AAABD9FB8C1 /* NanumSquareNeo-Light.ttf */,
 				E350997ECA7D47ED846EF97C /* NanumSquareNeo-Regular.ttf */,
+				4C309E00562745E18EC3C3BD /* KyoboHandwriting2019.ttf */,
 			);
 			name = Resources;
 			path = "";
@@ -278,6 +281,7 @@
 				6AB04420BE244AE69D2ABD05 /* NanumSquareNeo-Heavy.ttf in Resources */,
 				40F2C7E7E2844ADBBDD1B540 /* NanumSquareNeo-Light.ttf in Resources */,
 				83C09A54287B45A88F4C8879 /* NanumSquareNeo-Regular.ttf in Resources */,
+				146498305F424BA6911D68C6 /* KyoboHandwriting2019.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
