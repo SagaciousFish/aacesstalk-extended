@@ -6,7 +6,7 @@ from chatlib.utils.jinja_utils import convert_to_jinja_template
 from time import perf_counter
 
 from py_core.system.guide_categories import ParentGuideCategory
-from py_core.system.model import CardCategory, DialogueMessage, ParentGuideRecommendationResult, Dialogue, ParentGuideElement, ParentType
+from py_core.system.model import CardCategory, DialogueMessage, ParentGuideRecommendationResult, Dialogue, ParentGuideElement, ParentType, Dyad
 from py_core.system.task.parent_guide_recommendation.common import ParentGuideRecommendationAPIResult, \
     DialogueInspectionResult
 from py_core.system.task.parent_guide_recommendation.guide_translator import GuideTranslator
@@ -118,9 +118,12 @@ class ParentGuideRecommendationGenerator:
 
         self.__translator = GuideTranslator()
 
-    async def generate(self, parent_type: ParentType, topic: SessionTopicInfo, dialogue: Dialogue, inspection_result: DialogueInspectionResult | None) -> ParentGuideRecommendationResult:
+    async def generate(self, dyad: Dyad, topic: SessionTopicInfo, dialogue: Dialogue, inspection_result: DialogueInspectionResult | None) -> ParentGuideRecommendationResult:
         t_start = perf_counter()
-        guide_list: ParentGuideRecommendationAPIResult = await self.__mapper.run(PARENT_GUIDE_EXAMPLES, DialogueInput(parent_type=parent_type, topic=topic, dialogue=dialogue),
+
+        parent_type_str = dyad.parent_type.value
+        
+        guide_list: ParentGuideRecommendationAPIResult = await self.__mapper.run(PARENT_GUIDE_EXAMPLES, DialogueInput(parent_type=parent_type_str, topic=topic, dialogue=dialogue),
                                                                                  ParentGuideRecommendationParams.instance(inspection_result))
 
         if inspection_result is not None and inspection_result.feedback is not None:

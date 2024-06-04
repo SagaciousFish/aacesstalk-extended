@@ -44,7 +44,7 @@
     "@nx/jest": "18.0.8",
     "@nx/js": "18.0.8",
     "@nx/react": "18.0.8",
-    "@nx/react-native": "^18.0.8",
+    "@nx/react-native": "^18.3.5",
     "@nx/vite": "18.0.8",
     "@nx/web": "18.0.8",
     "@nx/webpack": "18.0.8",
