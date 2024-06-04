@@ -1,7 +1,7 @@
 import { ParentGuideCategory, ParentGuideType, TopicCategory, requestParentGuideExampleMessage } from "@aacesstalk/libs/ts-core";
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { styleTemplates } from "apps/client-rn/src/styles"
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, Text, View, StyleSheet } from "react-native"
 import Animated ,{ Easing, ZoomIn, interpolate, interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 const themeColors = require('../../../../styles/colors')
@@ -43,6 +43,8 @@ const ParentMessageGuideElementView = (props: Props) => {
     const isExampleLoading = useSelector(state => state.session.parentExampleMessageLoadingFlags[props.id] || false)
     const exampleMessage = useSelector(state => state.session.parentExampleMessages[props.id])
 
+    const [isExampleMessageShown, setIsExampleMessageShown] = useState(false)
+
     const enteringAnim = useMemo(() => ZoomIn.springify().duration(600).delay(props.order * 100), [props.order])
 
     const pressAnimProgress = useSharedValue(0)
@@ -51,35 +53,35 @@ const ParentMessageGuideElementView = (props: Props) => {
     const exampleTransitionAnimProgress = useSharedValue(0)
 
     const onPressIn = useCallback(()=>{
-        if(exampleMessage == null && isExampleLoading === false){
-            pressAnimProgress.value = withTiming(1, {duration: 200, easing: Easing.out(Easing.cubic)})
-        }
+        pressAnimProgress.value = withTiming(1, {duration: 200, easing: Easing.out(Easing.cubic)})
     }, [isExampleLoading, exampleMessage])
 
     const onPressOut = useCallback(()=>{
-        if(exampleMessage == null && isExampleLoading === false){
-            pressAnimProgress.value = withSpring(0, {duration: 500})
-        }
+        pressAnimProgress.value = withSpring(0, {duration: 500})
     }, [isExampleLoading, exampleMessage])
 
-    const runFlipAnim = useCallback(()=>{
-        exampleTransitionAnimProgress.value = withTiming(1, {duration: 800, easing: Easing.elastic(1)})
+    const runFlipAnim = useCallback((flipTo: 0|1)=>{
+        exampleTransitionAnimProgress.value = withTiming(flipTo, {duration: 800, easing: Easing.elastic(1)})
     }, [])
 
     const onPress = useCallback(()=>{
-        if(exampleMessage == null && isExampleLoading === false){
-            dispatch(requestParentGuideExampleMessage(props.id, runFlipAnim))
-        }
-    }, [props.id, isExampleLoading, exampleMessage])
+            if(!isExampleMessageShown){
+                dispatch(requestParentGuideExampleMessage(props.id, () => {runFlipAnim(1)}))
+                setIsExampleMessageShown(true)
+            }else{
+                setIsExampleMessageShown(false)
+                runFlipAnim(0)
+            }
+    }, [props.id, isExampleMessageShown, setIsExampleMessageShown])
 
     const containerAnimStyle = useAnimatedStyle(() => {
         return {
             transform: [
                 {scale: interpolate(pressAnimProgress.value, [0, 1], [1, 0.90])},
-                {translateY: interpolate(pressAnimProgress.value, [0, 1], [0, 5])}
+                {translateY: interpolate(pressAnimProgress.value, [0, 1], [0, 5])},
         ] as any
         }
-    }, [])
+    }, [isExampleMessageShown])
 
     const guideMessageAnimStyle = useAnimatedStyle(()=>{
         return {
