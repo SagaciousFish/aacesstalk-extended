@@ -1,5 +1,6 @@
 from typing import Callable
 from sqlmodel import select, col, delete
+from pydantic import validate_call
 
 from py_core.system.model import ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
     DialogueMessage, ParentExampleMessage, InterimCardSelection, DialogueRole, Session
@@ -17,6 +18,7 @@ class TimeStampAndSessionChildModel(SessionIdMixin, TimestampColumnMixin):
 
 class SQLSessionStorage(SessionStorage):
 
+    @validate_call
     def __init__(self, sql_session_maker: Callable[[], AsyncSession], session: Session):
         super().__init__(session)
         self.__sql_session_maker = sql_session_maker
@@ -31,6 +33,7 @@ class SQLSessionStorage(SessionStorage):
 
     
     @classmethod
+    @validate_call
     async def restore_instance(cls, id: str, params: Callable[[], AsyncSession]) -> SessionStorage | None:
         async with params() as db:
             session_orm = await db.get(SessionORM, id)
@@ -133,9 +136,7 @@ class SQLSessionStorage(SessionStorage):
             return None
 
     async def delete_entities(self):
-        with self._sql_session.begin():
+        async with self.__sql_session_maker() as s:
             for model in [DialogueMessageORM, ChildCardRecommendationResultORM, InterimCardSelectionORM, ParentGuideRecommendationResultORM, ParentExampleMessageORM]:
-                await self._sql_session.exec(delete(model).where(DialogueMessageORM.session_id == self.session_id))
-
-
-            
+                await s.exec(delete(model).where(DialogueMessageORM.session_id == self.session_id))
+            await s.commit()

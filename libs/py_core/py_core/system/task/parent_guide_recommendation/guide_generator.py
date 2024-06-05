@@ -125,9 +125,13 @@ class ParentGuideRecommendationGenerator:
         
         guide_list: ParentGuideRecommendationAPIResult = await self.__mapper.run(PARENT_GUIDE_EXAMPLES, DialogueInput(parent_type=parent_type_str, topic=topic, dialogue=dialogue),
                                                                                  ParentGuideRecommendationParams.instance(inspection_result))
+        
 
         if inspection_result is not None and inspection_result.feedback is not None:
+            guide_list = guide_list[:2]
             guide_list.insert(0, ParentGuideElement.feedback(inspection_result.categories, inspection_result.feedback))
+        else:
+            guide_list = guide_list[:3]
 
         print(guide_list)
         t_trans = perf_counter()

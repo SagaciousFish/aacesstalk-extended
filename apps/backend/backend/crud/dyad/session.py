@@ -30,12 +30,3 @@ async def end_session(session_id: str, dyad_id: str, db: AsyncSession):
        await db.commit()
    else:
        ValueError("No such session with the id and dyad id.")
-
-
-async def abort_session(session_id: str, dyad_id: str, db: AsyncSession):
-   s = await find_session_orm(session_id, dyad_id, db)
-   if s is not None:
-       await SQLSessionStorage(db, s).delete_entities()
-       await db.delete(s)
-   else:
-       ValueError("No such session with the id and dyad id.")

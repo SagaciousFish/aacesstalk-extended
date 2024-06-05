@@ -96,6 +96,12 @@ class ModeratorSession:
     @property
     def next_speaker(self) -> DialogueRole:
         return self.__next_speaker
+    
+    def cancel_all_async_tasks(self):
+        print("Cancel all moderation session tasks.")
+        self.__clear_parent_example_generation_tasks()
+        if self.__dialogue_inspection_task_info is not None:
+            self.__dialogue_inspection_task_info.task.cancel()
 
     def __clear_parent_example_generation_tasks(self):
         if self.__parent_example_generation_tasks is not None:
