@@ -17,6 +17,7 @@ template = convert_to_jinja_template("""You are a helpful translator who transla
 - Translate the following English message to Korean.
 - Note that the messages are intended to be spoken by parent to a kid.
 - Don't use honorific form of Korean.
+- Reflect the cultural and linguistic characteristics of Korea.
 """)
 
 

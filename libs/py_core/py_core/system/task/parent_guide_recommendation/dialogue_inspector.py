@@ -26,7 +26,7 @@ _EXAMPLES = [
          input=[
              DialogueMessage.example_parent_message("What did you do at school?"),
              DialogueMessage.example_child_message(("Play", CardCategory.Action)),
-             DialogueMessage.example_parent_message("I should say, 'I played with my friends at school.'")
+             DialogueMessage.example_parent_message("You should say, 'I played with my friends at school.'")
          ],
          output=DialogueInspectionResult(categories=[DialogueInspectionCategory.Correction], rationale="The parent is trying to improve the child's response with better sentences or phrases.", feedback="You seem to be correcting the child's response. Please focus more on the topic and context of the conversation.")
        ),

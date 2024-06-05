@@ -29,9 +29,10 @@ async def cli_get_session_info()->Session:
 
     if topic_category is SessionTopicCategory.Free:
         subtopic = await questionary.text("What is a specific topic? (e.g., Cartoon character)", validate=make_non_empty_string_validator(
-                                                        "A topic should not be empty."))
+                                                        "A topic should not be empty.")).ask_async()
         subtopic_description = await questionary.text(f"Describe your subtopic '{subtopic}':", validate=make_non_empty_string_validator(
-                                                        "The description should not be empty."))
+                                                        "The description should not be empty.")).ask_async()
+
     else:
         subtopic = None
         subtopic_description = None

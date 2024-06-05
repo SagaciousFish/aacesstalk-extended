@@ -57,7 +57,7 @@ class ChildCardRecommendationGenerator:
 
 {"" if params.prev_recommendation is None else "- The child had previous recommendation: " + params.prev_recommendation.model_dump_json(exclude={"id", "timestamp"}) + ". Try to generate cards that are distinct to this previous recommendation."}
 {"" if params.interim_cards is None else "- The child had selected the following cards: " + ', '.join([card.label for card in params.interim_cards]) + ". The generated recommendation should be relevant to these selections."}
-- Provide up to 4 options for each category.
+- Provide 4 options for each category.
 """
             return prompt
 

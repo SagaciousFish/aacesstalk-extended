@@ -37,6 +37,7 @@ _PROMPT = """You are a helpful assistant who helps facilitate communication betw
 
 [Output]
 A text string containing an utterance of the parent that complies with the message generation guide.
+Output should consist of a single sentence at most, and should be short, within 8 words.
 """
 
 _EXAMPLES = [
@@ -63,7 +64,7 @@ _EXAMPLES = [
             guide=ParentGuideElement.messaging_guide(ParentGuideCategory.Empathize,
                                                      "Empathize that the kid had tough time due to a friend.")
         ),
-        output="That must be tough due to a friend! I'm so sorry to hear that."
+        output="That must be tough due to a friend!"
     )
 ]
 
