@@ -10,6 +10,7 @@ import {
 import { Action, createEntityAdapter, createSlice, PayloadAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { CoreState, CoreThunk } from '../store';
 import { Http } from '../../net/http';
+import { finishAfterMinimumDelay } from '@aacesstalk/libs/ts-core';
 
 const parentGuideAdapter = createEntityAdapter<ParentGuideElement>()
 const INITIAL_PARENT_GUIDE_STATE = parentGuideAdapter.getInitialState()
@@ -219,9 +220,9 @@ export function requestParentGuides(): CoreThunk {
       runIfSignedIn: async (dispatch, getState, header) => {
         console.log("Request parent guides...")
         const state = getState()
-        const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_GUIDE, { session_id: state.session.id!! }), null, {
+        const resp = await finishAfterMinimumDelay(Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_GUIDE, { session_id: state.session.id!! }), null, {
           headers: header
-        })
+        }), 0)
         console.log("Retrieved parent guides.")
         const result: ParentGuideRecommendationResult = resp.data
         dispatch(sessionSlice.actions._storeNewParentGuideRecommendation(result))
@@ -235,12 +236,12 @@ export function requestParentGuideExampleMessage(guideId: string, onComplete?: (
     runIfSignedIn: async (dispatch, getState, header) => {
       dispatch(sessionSlice.actions._setGuideExampleMessageLoadingFlag({ guideId, flag: true }))
       const state = getState()
-      const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_EXAMPLE, { session_id: state.session.id!! }), {
+      const resp = await finishAfterMinimumDelay(Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_EXAMPLE, { session_id: state.session.id!! }), {
         guide_id: guideId,
         recommendation_id: state.session.parentGuideRecommendationId
       }, {
         headers: header
-      })
+      }), 0)
       const exampleMessage: ParentExampleMessage = resp.data
       dispatch(sessionSlice.actions._addGuideExampleMessage(exampleMessage))
       onComplete?.(exampleMessage)
@@ -263,6 +264,8 @@ export function submitParentMessage(message: string): CoreThunk {
       const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE, { session_id: state.session.id!! }), {
         message,
         recommendation_id: state.session.parentGuideRecommendationId
+      }, {
+        headers: signedInHeader
       })
       dispatch(sessionSlice.actions._incNumTurn())
       

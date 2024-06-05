@@ -1,7 +1,9 @@
 import { ParentGuideCategory, ParentGuideType, TopicCategory, requestParentGuideExampleMessage } from "@aacesstalk/libs/ts-core";
+import { LoadingIndicator } from "apps/client-rn/src/components/LoadingIndicator";
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { styleTemplates } from "apps/client-rn/src/styles"
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, Text, View, StyleSheet } from "react-native"
 import Animated ,{ Easing, ZoomIn, interpolate, interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 const themeColors = require('../../../../styles/colors')
@@ -49,30 +51,42 @@ const ParentMessageGuideElementView = (props: Props) => {
 
     const pressAnimProgress = useSharedValue(0)
 
+    const {t} = useTranslation()
 
     const exampleTransitionAnimProgress = useSharedValue(0)
 
+    const exampleLoadingModeAnimProgress = useSharedValue(0)
+
     const onPressIn = useCallback(()=>{
         pressAnimProgress.value = withTiming(1, {duration: 200, easing: Easing.out(Easing.cubic)})
-    }, [isExampleLoading, exampleMessage])
+    }, [])
 
     const onPressOut = useCallback(()=>{
         pressAnimProgress.value = withSpring(0, {duration: 500})
-    }, [isExampleLoading, exampleMessage])
+    }, [])
 
     const runFlipAnim = useCallback((flipTo: 0|1)=>{
         exampleTransitionAnimProgress.value = withTiming(flipTo, {duration: 800, easing: Easing.elastic(1)})
     }, [])
 
     const onPress = useCallback(()=>{
-            if(!isExampleMessageShown){
-                dispatch(requestParentGuideExampleMessage(props.id, () => {runFlipAnim(1)}))
+            if(!isExampleMessageShown && !isExampleLoading){
+                if(exampleMessage == null){
+                        exampleLoadingModeAnimProgress.value = withTiming(1, {duration: 400, easing: Easing.out(Easing.cubic)})
+                        dispatch(requestParentGuideExampleMessage(props.id, () => {
+                            runFlipAnim(1)
+                            exampleLoadingModeAnimProgress.value = withTiming(0, {duration: 400, easing: Easing.in(Easing.cubic)})
+                        }))
+                    
+                }else{
+                    runFlipAnim(1)
+                }
                 setIsExampleMessageShown(true)
             }else{
                 setIsExampleMessageShown(false)
                 runFlipAnim(0)
             }
-    }, [props.id, isExampleMessageShown, setIsExampleMessageShown])
+    }, [props.id, isExampleMessageShown, exampleMessage, isExampleLoading, setIsExampleMessageShown])
 
     const containerAnimStyle = useAnimatedStyle(() => {
         return {
@@ -102,6 +116,18 @@ const ParentMessageGuideElementView = (props: Props) => {
         }
     }, [])
 
+    const guideMessageTextAnimStyle = useAnimatedStyle(()=>{
+        return {
+            opacity: interpolate(exampleLoadingModeAnimProgress.value, [0,1], [1,0], 'clamp'),
+        }
+    }, [])
+
+    const exampleMessageLoadingIndicatorAnimStyle = useAnimatedStyle(()=>{
+        return {
+            opacity: interpolate(exampleLoadingModeAnimProgress.value, [0,1], [0,1], 'clamp'),
+        }
+    }, [])
+
     const [guideMessageFrameBackgroundClassName, exampleMessageFrameBackgroundClassName] = useMemo(()=>{
         switch(topicCategory){
             case TopicCategory.Plan:
@@ -117,7 +143,8 @@ const ParentMessageGuideElementView = (props: Props) => {
             <Pressable onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut} >
                 <Animated.View style={containerAnimStyle} className={`${GUIDE_FRAME_DIMENSION_CLASSNAME}`}>
                     <Animated.View style={[styles.guideFrame, guideMessageAnimStyle]} className={`${GUIDE_FRAME_CLASSNAME} ${guideMessageFrameBackgroundClassName}`}>
-                        <Text style={styleTemplates.withSemiboldFont} className={TEXT_MESSAGE_CLASSNAME}>{guideMessage}</Text>
+                        <Animated.Text style={[styleTemplates.withSemiboldFont, guideMessageTextAnimStyle]} className={`${TEXT_MESSAGE_CLASSNAME}`}>{guideMessage}</Animated.Text>
+                        <Animated.View className="absolute self-center" style={exampleMessageLoadingIndicatorAnimStyle}><LoadingIndicator color="white" titleClassName="text-white" label={t("Session.LoadingMessage.ParentExample")} horizontal/></Animated.View>
                     </Animated.View>
                     <Animated.View style={[styles.guideFrame, exampleMessageAnimStyle]} className={`${GUIDE_FRAME_CLASSNAME} ${exampleMessageFrameBackgroundClassName}`}>
                         <Text style={styleTemplates.withHandwritingFont} className={`${TEXT_MESSAGE_CLASSNAME} text-black text-3xl`}>"{exampleMessage?.message_localized || exampleMessage?.message}"</Text>

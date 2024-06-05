@@ -33,7 +33,9 @@ module.exports = {
             FreeTemplate: "{child_name}가 좋아하는 주제로 대화를 시작해 보세요."
         },
         LoadingMessage: {
-            ParentGuide: "대화 가이드를 만드는 중입니다..."
+            Initializing: "준비중입니다...",
+            ParentGuide: "대화 가이드를 만드는 중입니다...",
+            ParentExample: "예시 문장을 만드는 중입니다...",
         },
         Menu: {
             NextTurn: "대화 턴 넘기기",
