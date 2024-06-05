@@ -1,8 +1,6 @@
-import { StyleSheet } from 'react-native'
 import { DialogueRole, TopicCategory, requestParentGuides } from '@aacesstalk/libs/ts-core'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { MainRoutes } from 'apps/client-rn/src/navigation'
-import { View, Text } from 'react-native'
 import HillPlanImage from '../../../assets/images/hill_plan.svg'
 import HillRecallImage from '../../../assets/images/hill_recall.svg'
 import HillFreeImage from '../../../assets/images/hill_free.svg'
@@ -10,13 +8,13 @@ import { HillBackgroundView } from 'apps/client-rn/src/components/HillBackground
 import { SessionTitleRibbon } from '../components/SessionTitleRibbon'
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'apps/client-rn/src/redux/hooks'
-import { Fragment, useCallback, useEffect, useMemo } from 'react'
-import format from 'string-template'
+import { Fragment, useCallback, useEffect } from 'react'
 import { SessionStartingMessage } from '../components/SessionStartingMessage'
 import { SessionParentView } from '../components/parent/SessionParentView'
 import { TailwindButton } from 'apps/client-rn/src/components/tailwind-components'
 import { MenuIcon } from 'apps/client-rn/src/components/vector-icons'
-import Animated, { Easing, SlideInUp, SlideInDown } from 'react-native-reanimated'
+import Animated, { Easing, SlideInDown } from 'react-native-reanimated'
+import { SessionChildView } from '../components/child/SessionChildView'
 
 const BG_COLOR_BY_TOPIC_CATEGORY = {
     [TopicCategory.Plan]: 'bg-topicplan-bg',
@@ -68,7 +66,7 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
         <Fragment key={"session-content"}>
             <SessionStartingMessage topic={props.route.params.topic} containerClassName='mt-14'/>
             {
-                currentTurn === DialogueRole.Parent? <SessionParentView/> : null
+                currentTurn === DialogueRole.Parent? <SessionParentView/> : <SessionChildView/>
             }
         </Fragment>
         <Animated.View className='absolute left-5 bottom-5' entering={menuButtonEnteringAnim}>

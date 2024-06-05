@@ -14,7 +14,7 @@ import { Http } from '../../net/http';
 const parentGuideAdapter = createEntityAdapter<ParentGuideElement>()
 const INITIAL_PARENT_GUIDE_STATE = parentGuideAdapter.getInitialState()
 
-export interface SessionState{
+export interface SessionState {
   id: string | undefined
   topic?: SessionTopicInfo
   currentTurn?: DialogueRole
@@ -23,14 +23,16 @@ export interface SessionState{
   parentGuideEntityState: typeof INITIAL_PARENT_GUIDE_STATE
   childCardRecommendation?: ChildCardRecommendationResult
 
-  parentExampleMessages: {[key:string]: ParentExampleMessage}
+  numTurns: number
 
-  parentExampleMessageLoadingFlags: {[key:string]: boolean}
+  parentExampleMessages: { [key: string]: ParentExampleMessage }
+
+  parentExampleMessageLoadingFlags: { [key: string]: boolean }
 
   isInitializing: boolean,
   isProcessingRecommendation: boolean,
   isGeneratingParentExample: boolean,
-  error? : string
+  error?: string
 }
 
 export const INITIAL_SESSION_STATE: SessionState = {
@@ -43,17 +45,18 @@ export const INITIAL_SESSION_STATE: SessionState = {
   isGeneratingParentExample: false,
   error: undefined,
   parentExampleMessages: {},
-  parentExampleMessageLoadingFlags: {}
+  parentExampleMessageLoadingFlags: {},
+  numTurns: 0
 }
 
 const sessionSlice = createSlice({
   name: "session",
   initialState: INITIAL_SESSION_STATE,
   reducers: {
-    initialize: () => {return {...INITIAL_SESSION_STATE}},
-    _mountNewSession: (state, action: PayloadAction<{id: string, topic: SessionTopicInfo}>) => {
+    initialize: () => { return { ...INITIAL_SESSION_STATE } },
+    _mountNewSession: (state, action: PayloadAction<{ id: string, topic: SessionTopicInfo }>) => {
 
-      for (const key in INITIAL_PARENT_GUIDE_STATE){
+      for (const key in INITIAL_PARENT_GUIDE_STATE) {
         (state as any)[key] = (INITIAL_PARENT_GUIDE_STATE as any)[key]
       }
 
@@ -67,16 +70,20 @@ const sessionSlice = createSlice({
       state.isInitializing = action.payload
     },
 
-    _setLoadingFlag: (state, action: PayloadAction<{key: keyof SessionState, flag: boolean}>) => {
+    _setLoadingFlag: (state, action: PayloadAction<{ key: keyof SessionState, flag: boolean }>) => {
       (state as any)[action.payload.key] = action.payload.flag
     },
 
-    _setError: (state, action: PayloadAction<string|undefined>) => {
+    _setError: (state, action: PayloadAction<string | undefined>) => {
       state.error = action.payload
     },
 
     _setNextTurn: (state, action: PayloadAction<DialogueRole>) => {
       state.currentTurn = action.payload
+    },
+
+    _incNumTurn: (state) => {
+      state.numTurns++
     },
 
     _storeNewParentGuideRecommendation: (state, action: PayloadAction<ParentGuideRecommendationResult>) => {
@@ -85,15 +92,19 @@ const sessionSlice = createSlice({
       state.parentGuideRecommendationId = action.payload.id
     },
 
-    _setGuideExampleMessageLoadingFlag: (state, action: PayloadAction<{guideId: string, flag: boolean}>) => {
+    _setGuideExampleMessageLoadingFlag: (state, action: PayloadAction<{ guideId: string, flag: boolean }>) => {
       state.parentExampleMessageLoadingFlags[action.payload.guideId] = action.payload.flag
     },
 
     _addGuideExampleMessage: (state, action: PayloadAction<ParentExampleMessage>) => {
-      if(action.payload.guide_id){
+      if (action.payload.guide_id) {
         state.parentExampleMessageLoadingFlags[action.payload.guide_id] = false
         state.parentExampleMessages[action.payload.guide_id] = action.payload
       }
+    },
+
+    _storeNewChildCardRecommendation: (state, action: PayloadAction<ChildCardRecommendationResult>) => {
+
     }
   }
 })
@@ -101,35 +112,35 @@ const sessionSlice = createSlice({
 function makeSignedInThunk(
   options: {
     loadingFlagKey?: keyof SessionState,
-    runIfSignedIn?: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: ()=>CoreState, signedInHeader: any) => Promise<void>,
-    runIfNotSignedIn?: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: ()=>CoreState) => Promise<void>,
-    onError?: (ex: any, dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: ()=>CoreState) => Promise<void>,
-    onFinally?: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: ()=>CoreState) => Promise<void>
+    runIfSignedIn?: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: () => CoreState, signedInHeader: any) => Promise<void>,
+    runIfNotSignedIn?: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: () => CoreState) => Promise<void>,
+    onError?: (ex: any, dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: () => CoreState) => Promise<void>,
+    onFinally?: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: () => CoreState) => Promise<void>
   },
   checkSessionId: boolean = false
 ): CoreThunk {
   return async (dispatch, getState) => {
     const state = getState()
-    if(state.auth.jwt && options.runIfSignedIn && (checkSessionId == false || state.session.id != null)){
-      if(options.loadingFlagKey){
-        dispatch(sessionSlice.actions._setLoadingFlag({key: options.loadingFlagKey, flag: true}))
+    if (state.auth.jwt && options.runIfSignedIn && (checkSessionId == false || state.session.id != null)) {
+      if (options.loadingFlagKey) {
+        dispatch(sessionSlice.actions._setLoadingFlag({ key: options.loadingFlagKey, flag: true }))
       }
       try {
         const header = await Http.getSignedInHeaders(state.auth.jwt)
         await options.runIfSignedIn(dispatch, getState, header)
-      }catch(ex: any){
-        if(options.onError){
+      } catch (ex: any) {
+        if (options.onError) {
           await options.onError(ex, dispatch, getState)
         }
-      }finally {
-        if(options.onFinally){
+      } finally {
+        if (options.onFinally) {
           await options.onFinally(dispatch, getState)
         }
-        if(options.loadingFlagKey){
-          dispatch(sessionSlice.actions._setLoadingFlag({key: options.loadingFlagKey, flag: false}))
+        if (options.loadingFlagKey) {
+          dispatch(sessionSlice.actions._setLoadingFlag({ key: options.loadingFlagKey, flag: false }))
         }
       }
-    }else if(options.runIfNotSignedIn){
+    } else if (options.runIfNotSignedIn) {
       await options.runIfNotSignedIn(dispatch, getState)
     }
   }
@@ -165,7 +176,7 @@ export function endSession(): CoreThunk {
     {
       runIfSignedIn: async (dispatch, getState, header) => {
         const state = getState()
-        await Http.axios.put(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_SESSION_END, {session_id: state.session.id!!}), {
+        await Http.axios.put(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_SESSION_END, { session_id: state.session.id!! }), {
           headers: header
         })
         dispatch(sessionSlice.actions.initialize())
@@ -184,14 +195,14 @@ export function cancelSession(): CoreThunk {
     {
       runIfSignedIn: async (dispatch, getState, header) => {
         const state = getState()
-        const resp = await Http.axios.delete(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_SESSION_ABORT, {session_id: state.session.id!!}), {
+        const resp = await Http.axios.delete(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_SESSION_ABORT, { session_id: state.session.id!! }), {
           headers: header
         })
       },
       onFinally: async (dispatch) => {
         dispatch(sessionSlice.actions.initialize())
       }
-    }, 
+    },
     true
   )
 }
@@ -222,23 +233,44 @@ export function requestParentGuides(): CoreThunk {
 export function requestParentGuideExampleMessage(guideId: string, onComplete?: (message: ParentExampleMessage) => void): CoreThunk {
   return makeSignedInThunk({
     runIfSignedIn: async (dispatch, getState, header) => {
-      dispatch(sessionSlice.actions._setGuideExampleMessageLoadingFlag({guideId, flag: true}))
+      dispatch(sessionSlice.actions._setGuideExampleMessageLoadingFlag({ guideId, flag: true }))
       const state = getState()
-        const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_EXAMPLE, { session_id: state.session.id!! }), {
-          guide_id: guideId,
-          recommendation_id: state.session.parentGuideRecommendationId
-        }, {
-          headers: header
-        })
-        const exampleMessage : ParentExampleMessage = resp.data
-        dispatch(sessionSlice.actions._addGuideExampleMessage(exampleMessage))
-        onComplete?.(exampleMessage)
+      const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_EXAMPLE, { session_id: state.session.id!! }), {
+        guide_id: guideId,
+        recommendation_id: state.session.parentGuideRecommendationId
+      }, {
+        headers: header
+      })
+      const exampleMessage: ParentExampleMessage = resp.data
+      dispatch(sessionSlice.actions._addGuideExampleMessage(exampleMessage))
+      onComplete?.(exampleMessage)
     },
 
     onFinally: async (dispatch) => {
-      dispatch(sessionSlice.actions._setGuideExampleMessageLoadingFlag({guideId, flag: false}))
+      dispatch(sessionSlice.actions._setGuideExampleMessageLoadingFlag({ guideId, flag: false }))
     }
-  })
+  }, true)
+}
+
+export function submitParentMessage(message: string): CoreThunk {
+  return makeSignedInThunk({
+    loadingFlagKey: 'isProcessingRecommendation',
+    runIfSignedIn: async (dispatch, getState, signedInHeader) => {
+      const state = getState()
+
+      dispatch(sessionSlice.actions._incNumTurn())
+
+      const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE, { session_id: state.session.id!! }), {
+        message,
+        recommendation_id: state.session.parentGuideRecommendationId
+      })
+      dispatch(sessionSlice.actions._incNumTurn())
+      
+      const cardRecommendationResult: ChildCardRecommendationResult = resp.data
+      dispatch(sessionSlice.actions._storeNewChildCardRecommendation(cardRecommendationResult))
+      dispatch(sessionSlice.actions._setNextTurn(DialogueRole.Child))
+    },
+  }, true)
 }
 
 
