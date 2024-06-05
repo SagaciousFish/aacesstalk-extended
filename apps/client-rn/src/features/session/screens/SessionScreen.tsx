@@ -10,10 +10,13 @@ import { HillBackgroundView } from 'apps/client-rn/src/components/HillBackground
 import { SessionTitleRibbon } from '../components/SessionTitleRibbon'
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'apps/client-rn/src/redux/hooks'
-import { Fragment, useEffect, useMemo } from 'react'
+import { Fragment, useCallback, useEffect, useMemo } from 'react'
 import format from 'string-template'
 import { SessionStartingMessage } from '../components/SessionStartingMessage'
 import { SessionParentView } from '../components/parent/SessionParentView'
+import { TailwindButton } from 'apps/client-rn/src/components/tailwind-components'
+import { MenuIcon } from 'apps/client-rn/src/components/vector-icons'
+import Animated, { Easing, SlideInUp, SlideInDown } from 'react-native-reanimated'
 
 const BG_COLOR_BY_TOPIC_CATEGORY = {
     [TopicCategory.Plan]: 'bg-topicplan-bg',
@@ -21,13 +24,7 @@ const BG_COLOR_BY_TOPIC_CATEGORY = {
     [TopicCategory.Free]: 'bg-topicfree-bg',
 }
 
-const styles = StyleSheet.create({
-    hill: {
-        zIndex: -1,
-        position: 'absolute',
-        bottom: 0
-    }
-})
+const menuButtonEnteringAnim = SlideInDown.duration(500).delay(300).easing(Easing.elastic(0.7))
 
 export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigatorParamList, "session">) => {
 
@@ -62,6 +59,10 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
             throw Error("Unsupported topic category.")
     }
 
+    const onMenuButtonPress = useCallback(()=>{
+        props.navigation.navigate('session-menu')
+    }, [])
+
     return <HillBackgroundView containerClassName={`items-center ${BG_COLOR_BY_TOPIC_CATEGORY[props.route.params.topic.category]}`} hillComponentClass={HillView} hillImageHeight={165}>
         <SessionTitleRibbon containerClassName="mt-12" topic={props.route.params.topic}/>
         <Fragment key={"session-content"}>
@@ -70,5 +71,8 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
                 currentTurn === DialogueRole.Parent? <SessionParentView/> : null
             }
         </Fragment>
+        <Animated.View className='absolute left-5 bottom-5' entering={menuButtonEnteringAnim}>
+            <TailwindButton onPress={onMenuButtonPress} roundedClassName='rounded-xl' buttonStyleClassName='p-3'><MenuIcon width={32} height={32} fill={"#575757"}/></TailwindButton>        
+        </Animated.View>
     </HillBackgroundView>
 }
