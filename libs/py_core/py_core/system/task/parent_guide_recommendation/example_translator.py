@@ -49,7 +49,7 @@ class ParentExampleMessageTranslator:
         ]
 
         result = await self.__example_translator.run(samples_formatted, original_message, ChatCompletionFewShotMapperParams(
-            api_params={}, model=ChatGPTModel.GPT_3_5_0613))
+            api_params={}, model="gpt-4o"))
 
         t_end = perf_counter()
 
