@@ -41,16 +41,16 @@ _EXAMPLES = [
          output=DialogueInspectionResult(categories=[DialogueInspectionCategory.Complex], rationale="The parent is confusing the child by asking about both plans and location at once.", feedback="YPlease ask about only one thing to make it easier for the child to answer.")
      ),
 
-     MapperInputOutputPair(
-         input=[
-             DialogueMessage.example_parent_message("How are you feeling right now?"),
-             DialogueMessage.example_child_message(("Happy", CardCategory.Emotion)),
-             DialogueMessage.example_parent_message("What are your plans for today and where are you going to be?"),
-             DialogueMessage.example_child_message(("Kinder", CardCategory.Topic)),
-             DialogueMessage.example_parent_message("Where are we going this afternoon?")
-         ],
-         output=DialogueInspectionResult(categories=[DialogueInspectionCategory.Complex], rationale="While talking about the events of the day, the parent suddenly asks about the schedule for today.", feedback="Please maintain the general direction of the conversation.")
-     )
+    #  MapperInputOutputPair(
+    #      input=[
+    #          DialogueMessage.example_parent_message("How are you feeling right now?"),
+    #          DialogueMessage.example_child_message(("Happy", CardCategory.Emotion)),
+    #          DialogueMessage.example_parent_message("What are your plans for today and where are you going to be?"),
+    #          DialogueMessage.example_child_message(("Kinder", CardCategory.Topic)),
+    #          DialogueMessage.example_parent_message("Where are we going this afternoon?")
+    #      ],
+    #      output=DialogueInspectionResult(categories=[DialogueInspectionCategory.Complex], rationale="While talking about the events of the day, the parent suddenly asks about the schedule for today.", feedback="Please maintain the general direction of the conversation.")
+    #  )
 ]
 
 _prompt_template = convert_to_jinja_template("""

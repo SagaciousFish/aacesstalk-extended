@@ -14,18 +14,18 @@ class DialogueInspectionCategory(StrEnum):
     Blame = "blame"
     Correction = "correction"
     Complex = "complex"
-    Deviation = "deviation"
+    # Deviation = "deviation"
 
     def __init__(self, value):
         self.description: str = {
             "blame": "When the parent criticizes or negatively evaluates the child's responds, like reprimanding or scolding",
             "correction": "When the parent is compulsively correcting the child's response or pointing out that the child is wrong",
             "complex": "When a parent's dialogue contains more than one goal or intent",
-            "deviation": "When both parent and child stray from the main topic of the conversation"
+            # "deviation": "When both parent and child stray from the main topic of the conversation"
         }[value]
 
         min_turns_table = {
-            "deviation": 5
+            # "deviation": 5
         }
 
         self.inspection_min_turns: int | None = min_turns_table[value] if value in min_turns_table else None
@@ -67,7 +67,8 @@ class ParentGuideCategory(StrEnum):
         }[value]
 
         min_turns_table = {
-            "terminate": 5
+            "extend": 3,
+            "terminate": 3
         }
 
         self.active_min_turns: int | None = min_turns_table[value] if value in min_turns_table else None
