@@ -52,7 +52,7 @@ class DialogueInputToStrConversionFunction:
         rows: list[str] = []
         
         if self.include_topic is True:
-            subtopic_str = f"<subtopic>{input.topic.subtopic} ({input.topic.subdescription})</subtopic>" if input.topic.subtopic is not None else ""
+            subtopic_str = f"<subtopic>{input.topic.subtopic} ({input.topic.subtopic_description})</subtopic>" if input.topic.subtopic is not None else ""
             rows.append(f"<topic><desc>{SESSION_TOPIC_CATEGORY_DESC_DICT[input.topic.category]}</desc>{subtopic_str}</topic>")
 
         rows.append(_dialogue_to_str(input.dialogue, params))
