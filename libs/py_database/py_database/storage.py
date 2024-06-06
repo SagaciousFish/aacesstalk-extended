@@ -115,21 +115,21 @@ class SQLSessionStorage(SessionStorage):
             return None
 
     async def get_latest_card_selection(self) -> InterimCardSelection | None:
-        d = await self.__get_latest_model(InterimCardSelectionORM, latest_role=DialogueRole.Parent)
+        d = await self.__get_latest_model(InterimCardSelectionORM)
         if d is not None and isinstance(d, InterimCardSelectionORM):
             return d.to_data_model()
         else:
             return None
 
     async def get_latest_parent_guide_recommendation(self) -> ParentGuideRecommendationResult | None:
-        d = await self.__get_latest_model(ParentGuideRecommendationResultORM, latest_role=DialogueRole.Child)
+        d = await self.__get_latest_model(ParentGuideRecommendationResultORM)
         if d is not None and isinstance(d, ParentGuideRecommendationResultORM):
             return d.to_data_model()
         else:
             return None
 
     async def get_latest_child_card_recommendation(self) -> ChildCardRecommendationResult | None:
-        d = await self.__get_latest_model(ChildCardRecommendationResultORM, latest_role=DialogueRole.Parent)
+        d = await self.__get_latest_model(ChildCardRecommendationResultORM)
         if d is not None and isinstance(d, ChildCardRecommendationResultORM):
             return d.to_data_model()
         else:

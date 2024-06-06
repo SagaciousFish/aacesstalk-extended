@@ -1,4 +1,5 @@
 import {
+  CardCategory,
   CardInfo,
   ChildCardRecommendationResult,
   DialogueRole,
@@ -7,13 +8,32 @@ import {
   ParentGuideRecommendationResult,
   SessionTopicInfo
 } from '../../model-types';
-import { Action, createEntityAdapter, createSlice, PayloadAction, ThunkDispatch } from '@reduxjs/toolkit';
+import { Action, createEntityAdapter, createSlice, EntityAdapter, EntityState, PayloadAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { CoreState, CoreThunk } from '../store';
 import { Http } from '../../net/http';
 import { finishAfterMinimumDelay } from '@aacesstalk/libs/ts-core';
+const group = require('group-array')
 
 const parentGuideAdapter = createEntityAdapter<ParentGuideElement>()
 const INITIAL_PARENT_GUIDE_STATE = parentGuideAdapter.getInitialState()
+
+type ChildCardTypeAdapters = {[key in CardCategory | string]: {
+  adapter: EntityAdapter<CardInfo, string>,
+  initialState: EntityState<CardInfo, string> 
+}}
+
+const childCardAdapters: ChildCardTypeAdapters = Object.fromEntries([CardCategory.Action, CardCategory.Emotion, CardCategory.Topic, CardCategory.Core].map(category => {
+  const adapter = createEntityAdapter<CardInfo>()
+  return [category, {
+    adapter, initialState: adapter.getInitialState() 
+  }]
+})) as ChildCardTypeAdapters
+
+function forEachChildCardAdapters(handler:(category: CardCategory, adapter: EntityAdapter<CardInfo, string>) => void){
+  Object.keys(childCardAdapters).forEach(category => {
+    handler(category as CardCategory, childCardAdapters[category].adapter)
+  })
+}
 
 export interface SessionState {
   id: string | undefined
@@ -22,13 +42,15 @@ export interface SessionState {
   interimCards?: Array<CardInfo>
   parentGuideRecommendationId?: string
   parentGuideEntityState: typeof INITIAL_PARENT_GUIDE_STATE
-  childCardRecommendation?: ChildCardRecommendationResult
 
   numTurns: number
 
   parentExampleMessages: { [key: string]: ParentExampleMessage }
 
   parentExampleMessageLoadingFlags: { [key: string]: boolean }
+
+  childCardEntityStateByCategory: {[key in CardCategory]: EntityState<CardInfo, string> },
+  childCardRecommendationId?: string
 
   isInitializing: boolean,
   isProcessingRecommendation: boolean,
@@ -39,14 +61,19 @@ export interface SessionState {
 export const INITIAL_SESSION_STATE: SessionState = {
   id: undefined,
   topic: undefined,
+
   parentGuideEntityState: INITIAL_PARENT_GUIDE_STATE,
   parentGuideRecommendationId: undefined,
+  parentExampleMessages: {},
+  parentExampleMessageLoadingFlags: {},
+
+  childCardEntityStateByCategory: Object.fromEntries(Object.keys(childCardAdapters).map(key => [key, (childCardAdapters as any)[key].initialState])) as any,
+  childCardRecommendationId: undefined,
+
   isInitializing: false,
   isProcessingRecommendation: false,
   isGeneratingParentExample: false,
   error: undefined,
-  parentExampleMessages: {},
-  parentExampleMessageLoadingFlags: {},
   numTurns: 0
 }
 
@@ -57,14 +84,13 @@ const sessionSlice = createSlice({
     initialize: () => { return { ...INITIAL_SESSION_STATE } },
     _mountNewSession: (state, action: PayloadAction<{ id: string, topic: SessionTopicInfo }>) => {
 
-      for (const key in INITIAL_PARENT_GUIDE_STATE) {
-        (state as any)[key] = (INITIAL_PARENT_GUIDE_STATE as any)[key]
+      for (const key in INITIAL_SESSION_STATE) {
+        (state as any)[key] = (INITIAL_SESSION_STATE as any)[key]
       }
 
       state.id = action.payload.id
       state.topic = action.payload.topic
-      state.currentTurn = DialogueRole.Parent
-      parentGuideAdapter.removeAll(state.parentGuideEntityState)
+      state.currentTurn = DialogueRole.Parent      
     },
 
     _setInitializingFlag: (state, action: PayloadAction<boolean>) => {
@@ -105,7 +131,16 @@ const sessionSlice = createSlice({
     },
 
     _storeNewChildCardRecommendation: (state, action: PayloadAction<ChildCardRecommendationResult>) => {
+      
+      const cardGroupByCategory = group(action.payload.cards, "category")
 
+      forEachChildCardAdapters((category, adapter) => {
+        console.log("Loop for ", category)
+        adapter.removeAll(state.childCardEntityStateByCategory[category])
+        adapter.addMany(state.childCardEntityStateByCategory[category], cardGroupByCategory[category])
+      })
+
+      state.childCardRecommendationId = action.payload.id
     }
   }
 })
@@ -177,7 +212,7 @@ export function endSession(): CoreThunk {
     {
       runIfSignedIn: async (dispatch, getState, header) => {
         const state = getState()
-        await Http.axios.put(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_SESSION_END, { session_id: state.session.id!! }), {
+        await Http.axios.put(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_SESSION_END, { session_id: state.session.id!! }), null, {
           headers: header
         })
         dispatch(sessionSlice.actions.initialize())
@@ -259,20 +294,27 @@ export function submitParentMessage(message: string): CoreThunk {
     runIfSignedIn: async (dispatch, getState, signedInHeader) => {
       const state = getState()
 
-      dispatch(sessionSlice.actions._incNumTurn())
+      console.log("Send parent message and retrieve child card recommendation...")
 
+      dispatch(sessionSlice.actions._incNumTurn())
       const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE, { session_id: state.session.id!! }), {
         message,
-        recommendation_id: state.session.parentGuideRecommendationId
+        //recommendation_id: state.session.parentGuideRecommendationId
       }, {
         headers: signedInHeader
       })
+
+      console.log("Retrieved new child card recommendations.")
+
       dispatch(sessionSlice.actions._incNumTurn())
       
       const cardRecommendationResult: ChildCardRecommendationResult = resp.data
       dispatch(sessionSlice.actions._storeNewChildCardRecommendation(cardRecommendationResult))
       dispatch(sessionSlice.actions._setNextTurn(DialogueRole.Child))
     },
+    onError: async (ex) => {
+      console.log(ex)
+    }
   }, true)
 }
 

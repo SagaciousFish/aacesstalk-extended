@@ -26,7 +26,6 @@ async def get_dialogue(dyad: Annotated[Dyad, Depends(get_signed_in_dyad_orm)], s
 
 class SendParentMessageArgs(BaseModel):
     message: str
-    recommendation_id: str
 
 @router.post("/parent/guide", response_model=ParentGuideRecommendationResult)
 async def generate_parent_guides(
@@ -38,7 +37,7 @@ async def generate_parent_guides(
 @router.post("/parent/message", response_model=ChildCardRecommendationResult)
 async def send_parent_message(args: SendParentMessageArgs,
                               session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]):
-    return await session.submit_parent_message(parent_message=args.message, recommendation_id=args.recommendation_id)
+    return await session.submit_parent_message(parent_message=args.message)
 
 class RequestExampleArgs(BaseModel):
     recommendation_id: str

@@ -11,7 +11,8 @@ export interface CardIdentity{
 export enum CardCategory{
     Topic="topic",
     Emotion="emotion",
-    Action="action"
+    Action="action",
+    Core="core"
 }
 
 export interface CardInfo extends CardIdentity{
@@ -21,7 +22,7 @@ export interface CardInfo extends CardIdentity{
 }
 
 export interface ChildCardRecommendationResult extends ModelWithIdAndTimestamp{
-    cards: ReadonlyArray<CardCategory>
+    cards: Array<CardInfo>
 }
 
 export enum ParentGuideType {
