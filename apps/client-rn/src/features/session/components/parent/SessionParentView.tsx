@@ -10,7 +10,9 @@ import { LoadingIndicator } from "apps/client-rn/src/components/LoadingIndicator
 import { PopupMenuScreenFrame } from "apps/client-rn/src/components/PopupMenuScreenFrame";
 import { TailwindButton } from "apps/client-rn/src/components/tailwind-components";
 import { useController, useForm } from "react-hook-form";
-import { submitParentMessage } from '@aacesstalk/libs/ts-core';
+import { SessionTopicInfo, TopicCategory, submitParentMessage } from '@aacesstalk/libs/ts-core';
+import { SessionTitleRibbon } from './SessionTitleRibbon';
+import { SessionStartingMessage } from './SessionStartingMessage';
 
 const ParentMessageTextInputView = (props: {
     onPopTextInput: () => void,
@@ -46,11 +48,14 @@ const ParentMessageTextInputView = (props: {
     </PopupMenuScreenFrame>
 }
 
-export const SessionParentView = () => {
+export const SessionParentView = (props: {
+    topic: SessionTopicInfo
+}) => {
     
     const isProcessing = useSelector(state => state.session.isProcessingRecommendation)
     const parentGuideIds = useSelector(state => state.session.parentGuideEntityState.ids)
-    const topic = useSelector(state => state.session.topic)
+
+    const numTurns = useSelector(state => state.session.numTurns)
 
     const {t} = useTranslation()
 
@@ -66,10 +71,14 @@ export const SessionParentView = () => {
     },[])
     
     return <>
+        <SessionTitleRibbon containerClassName="mt-12" topic={props.topic} />
+        {
+            numTurns == 0 ? <SessionStartingMessage topic={props.topic} containerClassName='mt-14' /> : null
+        }
         <MultiTapButton numberOfTaps={5} onTapGesture={onTapSecretButton}><View className="absolute top-0 left-0 w-20 h-20 bg-transparent"/></MultiTapButton>
         <View className="flex-1 self-stretch justify-center items-center mb-8 mt-5">
         {
-            isProcessing === true ? <LoadingIndicator colorTopic={topic?.category} label={t("Session.LoadingMessage.ParentGuide")}/> : <View className="justify-evenly flex-1">
+            isProcessing === true ? <LoadingIndicator colorTopic={props.topic.category} label={t("Session.LoadingMessage.ParentGuide")}/> : <View className="justify-evenly flex-1">
                 {parentGuideIds.map((id, i) => <ParentGuideElementView key={id} id={id} order={i}/>)}
             </View>
         }

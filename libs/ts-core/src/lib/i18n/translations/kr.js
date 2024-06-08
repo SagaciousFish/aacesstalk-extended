@@ -35,6 +35,7 @@ module.exports = {
         LoadingMessage: {
             Initializing: "준비중입니다...",
             ParentGuide: "대화 가이드를 만드는 중입니다...",
+            ChildCardsTemplate: "{child_name}를 위한 카드를 고르고 있습니다...",
             ParentExample: "예시 문장을 만드는 중입니다...",
         },
         Menu: {
@@ -44,6 +45,13 @@ module.exports = {
             TerminateAndSave: "저장하고 종료하기",
             TerminateWithoutSave: "저장하지 않고 종료하기",
             CancelTermination: "취소"
+        },
+        Cards: {
+            Category:{
+                topic: "주제",
+                action: "행동",
+                emotion: "감정"
+            }
         }
     }
 }

@@ -37,8 +37,8 @@ function forEachChildCardAdapters(handler:(category: CardCategory, adapter: Enti
 
 export interface SessionState {
   id: string | undefined
-  topic?: SessionTopicInfo
-  currentTurn?: DialogueRole
+  topic?: SessionTopicInfo | undefined
+  currentTurn: DialogueRole
   interimCards?: Array<CardInfo>
   parentGuideRecommendationId?: string
   parentGuideEntityState: typeof INITIAL_PARENT_GUIDE_STATE
@@ -61,6 +61,7 @@ export interface SessionState {
 export const INITIAL_SESSION_STATE: SessionState = {
   id: undefined,
   topic: undefined,
+  currentTurn: DialogueRole.Parent,
 
   parentGuideEntityState: INITIAL_PARENT_GUIDE_STATE,
   parentGuideRecommendationId: undefined,
@@ -82,6 +83,10 @@ const sessionSlice = createSlice({
   initialState: INITIAL_SESSION_STATE,
   reducers: {
     initialize: () => { return { ...INITIAL_SESSION_STATE } },
+    setSessionInitInfo: (state, action: PayloadAction<{ topic: SessionTopicInfo }>) => {
+      state.topic = action.payload.topic
+      state.currentTurn = DialogueRole.Parent 
+    },
     _mountNewSession: (state, action: PayloadAction<{ id: string, topic: SessionTopicInfo }>) => {
 
       for (const key in INITIAL_SESSION_STATE) {
@@ -190,6 +195,7 @@ export function startNewSession(topic: SessionTopicInfo, timezone: string): Core
       runIfSignedIn: async (dispatch, getState, header) => {
         console.log("Init session...")
         dispatch(sessionSlice.actions._setInitializingFlag(true))
+        dispatch(sessionSlice.actions.setSessionInitInfo({ topic }))
         const resp = await Http.axios.post(Http.ENDPOINT_DYAD_SESSION_NEW, { topic, timezone }, {
           headers: header
         })
@@ -297,6 +303,8 @@ export function submitParentMessage(message: string): CoreThunk {
       console.log("Send parent message and retrieve child card recommendation...")
 
       dispatch(sessionSlice.actions._incNumTurn())
+      dispatch(sessionSlice.actions._setNextTurn(DialogueRole.Child))
+
       const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE, { session_id: state.session.id!! }), {
         message,
         //recommendation_id: state.session.parentGuideRecommendationId
@@ -306,11 +314,8 @@ export function submitParentMessage(message: string): CoreThunk {
 
       console.log("Retrieved new child card recommendations.")
 
-      dispatch(sessionSlice.actions._incNumTurn())
-      
       const cardRecommendationResult: ChildCardRecommendationResult = resp.data
       dispatch(sessionSlice.actions._storeNewChildCardRecommendation(cardRecommendationResult))
-      dispatch(sessionSlice.actions._setNextTurn(DialogueRole.Child))
     },
     onError: async (ex) => {
       console.log(ex)
@@ -318,6 +323,7 @@ export function submitParentMessage(message: string): CoreThunk {
   }, true)
 }
 
+export const { setSessionInitInfo } = sessionSlice.actions
 
 export default sessionSlice.reducer
 

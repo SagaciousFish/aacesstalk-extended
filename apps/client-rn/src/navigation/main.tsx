@@ -6,7 +6,7 @@ import { SessionMenuPopupScreen } from "../features/session/screens/SessionMenuP
 
 const screenOptions = {headerShown: false}
 
-const sessionScreenOptions: NativeStackNavigationOptions = {animation: 'fade'}
+const sessionScreenOptions: NativeStackNavigationOptions = {animation: 'fade', statusBarHidden: true}
 const sessionMenuScreenOptions: NativeStackNavigationOptions = {presentation: 'transparentModal', animation: 'fade'}
 
 const Stack = createNativeStackNavigator<MainRoutes.MainNavigatorParamList>()

@@ -13,7 +13,7 @@ import LogoImage from "../../../assets/images/logo-extended.svg"
 import HomeImage from "../../../assets/images/home.svg"
 import StarImage from "../../../assets/images/star.svg"
 import { ProfileButton } from "../components/ProfileButton"
-import { TopicCategory, startNewSession } from "@aacesstalk/libs/ts-core"
+import { TopicCategory, setSessionInitInfo, startNewSession } from "@aacesstalk/libs/ts-core"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { MainRoutes } from "../../../navigation"
 import { getTimeZone } from "react-native-localize"
@@ -56,8 +56,12 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
 
     const onPressRecallButton = useCallback(()=>{
         const topic = { category: TopicCategory.Recall }
+        dispatch(setSessionInitInfo({topic}))
         dispatch(startNewSession(topic, getTimeZone()))
-        props.navigation.navigate(MainRoutes.ROUTE_SESSION, { topic })
+        requestAnimationFrame(()=>{
+            props.navigation.navigate(MainRoutes.ROUTE_SESSION, { topic })
+        })
+        
     }, [])
 
     return <HillBackgroundView containerClassName="items-center justify-center">

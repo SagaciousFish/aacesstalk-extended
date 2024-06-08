@@ -31,6 +31,7 @@ eSlLLkKkpf,action,comfort,편안해요,False
 ty-h7QgqIG,action,complete,완료해요,False
 jyYUo6mfI3,action,completed,완료했어요,False
 ZpDnU8cjbb,action,consider,고려해요,True
+l7VZUho5JC,action,cook,요리해요,False
 RnOviC3z8h,action,cooked,요리했어요,True
 gke9fcBIVb,action,count,세어요,False
 c9nrRATbZC,action,create,만들어요,True
@@ -45,6 +46,8 @@ DWKV6w20jL,action,dislike,싫어요,True
 qztJWM4PBi,action,disliked,싫어요,False
 hGuXhKudjg,action,disobey,반항해요,False
 o5KmEGtJjx,action,do,해요,True
+6E6QZM4AV_,action,do n't like,싫어해요,False
+Nn8mOGZveo,action,do n't want,원하거나,False
 gDBX_FfZB6,action,done,끝났어요,True
 TEOhxZmjK6,action,draw,그려요,True
 v3di8t0pWz,action,drawing,그려요,True
@@ -61,6 +64,7 @@ G3Wswt5Vb0,action,experiment,실험해요,False
 eM3DY40FFi,action,explain,설명해요,True
 lnHBypcdND,action,explore,탐험해요,False
 a3KelxlGJh,action,feel,느껴요,True
+JJ1sDRIr5m,action,feel like,느낌이 들어요,False
 jfG3onbLem,action,felt,느꼈어요,False
 iOZkNlA8cg,action,find,찾아요,False
 fOu7qH7shJ,action,finish,끝내요,True
@@ -103,6 +107,7 @@ K-ofbUjAcv,action,learning,공부해요,True
 KG4bVwfsD9,action,learnt,배웠어요,True
 zqOJNzjf6U,action,leave,떠나다,False
 Hb6_GV5J9o,action,like,좋아해요,True
+A5BihMEWDc,action,like to,좋아해요,False
 F3nPejvVfa,action,liked,좋았어요,True
 W36kb3y-0g,action,listen,들어요,True
 y3HnSIkPc3,action,listen to,들어요,False
@@ -132,6 +137,7 @@ t0zELtkhGT,action,played with,같이 놀았어요,True
 qD4-z3UnHP,action,playing,놀아요,True
 MU_ZL_K-I5,action,practice,연습해요,True
 FyNDnm0No-,action,practicing,연습해요,False
+gn6T12E7Y7,action,prefer to,선호해요,False
 8pUy5QouEZ,action,ran,뛰었어요,True
 _40IlXnAMr,action,read,읽어요,True
 Dndmc5vqWC,action,reading,읽어요,True
@@ -189,6 +195,7 @@ gtjJfAAdum,action,use,사용해요,True
 gKxC8_hMul,action,used,사용해요,False
 3w7mNezvPA,action,visit,방문해요,True
 EWpMoIaJI9,action,want,원해요,True
+1QCJlpFMwZ,action,want to,원해요,False
 6luWwXtp1D,action,wanted,원했어요,False
 AOIFIQ4lZv,action,was boring,지루했어요,False
 OECWt0H5PH,action,was fun,즐거웠어요,False
@@ -290,9 +297,11 @@ vkQDxIH4fx,topic,Cafeteria,학교 식당,False
 ij7TQkFJ_B,topic,English,영어,True
 o236se0ZMr,topic,Guitar,기타,False
 9WJuOOAUPP,topic,Homework,숙제,False
+9812Qtn8CN,topic,House,집,False
 U11phGXOj6,topic,House chores,일,False
 nf8ANTsVqz,topic,Jurassic period,쥬라기시대,False
 LJ0ZN-IZwE,topic,Korean,한국어,True
+murUTNemxc,topic,Nap,숙면,False
 O5Xh2AWFJv,topic,P.E. Class,체육 수업,False
 Bbg2hwrILA,topic,PE class,체육 수업,True
 PShoeM7f-D,topic,Park,공원,False
