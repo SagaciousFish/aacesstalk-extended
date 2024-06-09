@@ -36,6 +36,7 @@ module.exports = {
             Initializing: "준비중입니다...",
             ParentGuide: "대화 가이드를 만드는 중입니다...",
             ChildCardsTemplate: "{child_name}를 위한 카드를 고르고 있습니다...",
+            RefreshChildCards: "새로운 카드들을 준비중입니다...",
             ParentExample: "예시 문장을 만드는 중입니다...",
         },
         Menu: {

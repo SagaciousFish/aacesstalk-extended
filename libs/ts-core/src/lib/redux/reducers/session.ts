@@ -17,6 +17,9 @@ const group = require('group-array')
 const parentGuideAdapter = createEntityAdapter<ParentGuideElement>()
 const INITIAL_PARENT_GUIDE_STATE = parentGuideAdapter.getInitialState()
 
+const selectedCardAdapter = createEntityAdapter<CardInfo>()
+const INITIAL_SELECTED_CARD_STATE = selectedCardAdapter.getInitialState()
+
 type ChildCardTypeAdapters = {[key in CardCategory | string]: {
   adapter: EntityAdapter<CardInfo, string>,
   initialState: EntityState<CardInfo, string> 
@@ -52,6 +55,8 @@ export interface SessionState {
   childCardEntityStateByCategory: {[key in CardCategory]: EntityState<CardInfo, string> },
   childCardRecommendationId?: string
 
+  selectedChildCardEntityState: typeof INITIAL_SELECTED_CARD_STATE
+
   isInitializing: boolean,
   isProcessingRecommendation: boolean,
   isGeneratingParentExample: boolean,
@@ -70,6 +75,8 @@ export const INITIAL_SESSION_STATE: SessionState = {
 
   childCardEntityStateByCategory: Object.fromEntries(Object.keys(childCardAdapters).map(key => [key, (childCardAdapters as any)[key].initialState])) as any,
   childCardRecommendationId: undefined,
+
+  selectedChildCardEntityState: INITIAL_SELECTED_CARD_STATE,
 
   isInitializing: false,
   isProcessingRecommendation: false,
@@ -146,8 +153,20 @@ const sessionSlice = createSlice({
       })
 
       state.childCardRecommendationId = action.payload.id
-    }
-  }
+    },
+
+    _appendSelectedCard: (state, action: PayloadAction<CardInfo>) => {
+      selectedCardAdapter.addOne(state.selectedChildCardEntityState, action.payload) 
+    },
+
+    _popLastSelectedCard: (state) => {
+      const numSelectedCards = state.selectedChildCardEntityState.ids.length
+      if(numSelectedCards > 0){
+        selectedCardAdapter.removeOne(state.selectedChildCardEntityState, state.selectedChildCardEntityState.ids[numSelectedCards - 1]) 
+      }
+    },
+  },
+
 })
 
 function makeSignedInThunk(
@@ -321,6 +340,39 @@ export function submitParentMessage(message: string): CoreThunk {
       console.log(ex)
     }
   }, true)
+}
+
+export function selectCard(cardInfo: CardInfo): CoreThunk {
+  return makeSignedInThunk({
+    loadingFlagKey: 'isProcessingRecommendation',
+    runIfSignedIn: async (dispatch, getState, headers) => {
+      const state = getState()
+
+      dispatch(sessionSlice.actions._appendSelectedCard(cardInfo))
+
+      const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_CHILD_SELECT, { session_id: state.session.id!! }), 
+        { id: cardInfo.id, recommendation_id: cardInfo.recommendation_id }, 
+        { headers })
+
+      const { new_recommendation } = resp.data
+
+      dispatch(sessionSlice.actions._storeNewChildCardRecommendation(new_recommendation))
+
+    },
+    onError: async (ex) => {
+      console.log(ex)
+    }
+    
+  }, true)
+}
+
+export function removeLastCard(): CoreThunk {
+  return makeSignedInThunk({
+    loadingFlagKey: "isProcessingRecommendation",
+    runIfSignedIn: async (dispatch, getState, headers) => {
+      dispatch(sessionSlice.actions._popLastSelectedCard())
+    }
+  })
 }
 
 export const { setSessionInitInfo } = sessionSlice.actions

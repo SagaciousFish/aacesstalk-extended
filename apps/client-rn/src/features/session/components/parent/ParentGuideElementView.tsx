@@ -1,7 +1,7 @@
 import { ParentGuideCategory, ParentGuideType, TopicCategory, requestParentGuideExampleMessage } from "@aacesstalk/libs/ts-core";
 import { LoadingIndicator } from "apps/client-rn/src/components/LoadingIndicator";
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
-import { getTopicColors, styleTemplates } from "apps/client-rn/src/styles"
+import { getTopicColorClassNames, styleTemplates } from "apps/client-rn/src/styles"
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, View, StyleSheet } from "react-native"
@@ -129,7 +129,7 @@ const ParentMessageGuideElementView = (props: Props) => {
     }, [])
 
     const [guideMessageFrameBackgroundClassName, exampleMessageFrameBackgroundClassName] = useMemo(()=>{
-        return getTopicColors(topicCategory)
+        return getTopicColorClassNames(topicCategory)
     }, [topicCategory])
     
     return <Animated.View entering={enteringAnim}>

@@ -2,7 +2,7 @@ import axios, { Axios, CreateAxiosDefaults } from 'axios';
 import format = require('string-template');
 
 const DEFAULTS: CreateAxiosDefaults<any> = {
-  baseURL: (process.env["NODE_ENV"] == "development" ? "http://10.0.2.2:3000" : "") + "/api/v1"
+  baseURL: (process.env["NODE_ENV"] == "development" ? "http://192.168.2.3:3000" : "") + "/api/v1"
 }
 
 export class Http{
@@ -26,8 +26,7 @@ export class Http{
   static ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE = `${Http.ENDPOINT_DYAD_MESSAGE}/parent/message`
   static ENDPOINT_DYAD_MESSAGE_PARENT_EXAMPLE = `${Http.ENDPOINT_DYAD_MESSAGE}/parent/example`
   
-  
-  
+  static ENDPOINT_DYAD_MESSAGE_CHILD_SELECT = `${Http.ENDPOINT_DYAD_MESSAGE}/child/add_card`  
 
 
   static getTemplateEndpoint(template: string, values: {[key:string]: string}): string {
