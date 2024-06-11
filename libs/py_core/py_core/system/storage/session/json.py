@@ -1,4 +1,3 @@
-from functools import cached_property
 import os
 
 import json
@@ -8,7 +7,7 @@ from tinydb.storages import JSONStorage
 from tinydb.middlewares import CachingMiddleware
 from os import path, getcwd, makedirs
 
-from py_core.system.model import ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
+from py_core.system.model import DialogueTurn, Interaction, ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
     DialogueMessage, DialogueTypeAdapter, ParentExampleMessage, InterimCardSelection, DialogueRole, Session
 from py_core.system.storage import SessionStorage
 
@@ -22,6 +21,10 @@ class JsonSessionStorage(SessionStorage):
     TABLE_PARENT_EXAMPLE_MESSAGES = "parent_example_messages"
     TABLE_CARD_SELECTIONS = "card_selections"
     TABLE_CUSTOM_CARD_IMAGES = "custom_care_images"
+
+    TABLE_TURNS = "turns"
+
+    TABLE_INTERACTIONS = "interactions"
 
     def __init__(self, session):
         super().__init__(session)
@@ -108,11 +111,11 @@ class JsonSessionStorage(SessionStorage):
         else:
             return None
 
-    async def __get_latest_model(self, table_name: str) -> dict | None:
+    async def __get_latest_model(self, table_name: str, timestamp_column: str = "timestamp") -> dict | None:
         table = self.db(self.session_id).table(table_name)
         sorted_selections = sorted(
                 [row for row in table.all()],
-                key=lambda s: s["timestamp"], reverse=True)
+                key=lambda s: s[timestamp_column], reverse=True)
         if len(sorted_selections) > 0:
             return sorted_selections[0]
         else:
@@ -141,5 +144,28 @@ class JsonSessionStorage(SessionStorage):
         else:
             return None
 
+
+    async def upsert_dialogue_turn(self, turn: DialogueTurn):
+        table = self.db(self.session_id).table(self.TABLE_TURNS)
+
+        q = Query()
+        result = table.search((q.id == turn.id))
+        if len(result) > 0:
+            table.update(turn.model_dump(), q.id == turn.id)
+        else:
+            table.insert(turn.model_dump())
+
+    async def add_interaction(self, interaction: Interaction):
+        self.__insert_one(self.TABLE_INTERACTIONS, interaction)
+
+
+    async def get_latest_turn(self) -> DialogueTurn | None:
+        d = await self.__get_latest_model(self.TABLE_TURNS, "started_timestamp")
+        return DialogueTurn(**d) if d is not None else None
+
+
     async def delete_entities(self):
         os.unlink(self.session_db_dir_path(self.session_id))
+
+
+

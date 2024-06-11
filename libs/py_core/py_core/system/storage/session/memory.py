@@ -1,4 +1,4 @@
-from py_core.system.model import Dialogue, ParentGuideRecommendationResult, ChildCardRecommendationResult, \
+from py_core.system.model import Dialogue, DialogueTurn, Interaction, ParentGuideRecommendationResult, ChildCardRecommendationResult, \
     DialogueMessage, ParentExampleMessage, InterimCardSelection, DialogueRole, ModelWithIdAndTimestamp, Session
 from py_core.system.storage.session.session_storage import SessionStorage
 
@@ -15,6 +15,10 @@ class OnMemorySessionStorage(SessionStorage):
         self.__parent_example_messages: dict[tuple[str, str], ParentExampleMessage] = {}
 
         self.__interim_card_selections: dict[str, InterimCardSelection] = {}
+
+        self.__turns: dict[str, DialogueTurn] = {}
+
+        self.__interactions: dict[str, Interaction] = {}
 
     @classmethod
     async def restore_instance(cls, id: str) -> SessionStorage | None:
@@ -54,10 +58,10 @@ class OnMemorySessionStorage(SessionStorage):
         else:
             return None
 
-    async def __get_latest_model(self, model_dict: dict[str, ModelWithIdAndTimestamp]) -> ModelWithIdAndTimestamp | None:
+    async def __get_latest_model(self, model_dict: dict[str, ModelWithIdAndTimestamp], timestamp_column: str = "timestamp") -> ModelWithIdAndTimestamp | None:
         sorted_selections = sorted(
             [v for k, v in model_dict.items()],
-            key=lambda s: s.timestamp, reverse=True)
+            key=lambda s: s[timestamp_column], reverse=True)
         if len(sorted_selections) > 0:
             return sorted_selections[0]
         else:
@@ -87,4 +91,17 @@ class OnMemorySessionStorage(SessionStorage):
         self.__card_recommendations = {}
         self.__parent_example_messages = {}
         self.__interim_card_selections = {}
+        self.__interactions = {}
+        self.__turns = {}
+
+    async def upsert_dialogue_turn(self, turn: DialogueTurn):
+        self.__turns[turn.id] = turn
+
+    async def add_interaction(self, interaction: Interaction):
+        self.__interactions[interaction.id] = interaction
+
+    async def get_latest_turn(self) -> DialogueTurn | None:
+        return await self.__get_latest_model(self.__turns)
+
+
 

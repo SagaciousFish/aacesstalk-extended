@@ -1,4 +1,4 @@
-from enum import StrEnum
+from enum import StrEnum, auto
 from functools import cached_property
 from typing import TypeAlias, Optional
 
@@ -21,6 +21,9 @@ class ModelWithId(BaseModel):
 class ModelWithIdAndTimestamp(ModelWithId):
     timestamp: int = Field(default_factory=get_timestamp)
 
+class ModelWithTurnId(BaseModel):
+    turn_id: str
+
 
 class ParentType(StrEnum):
     Mother="mother"
@@ -39,7 +42,22 @@ class Session(ModelWithId):
     local_timezone: str
     started_timestamp: int = Field(default_factory=get_timestamp, index=True)
     ended_timestamp: int | None = Field(default=None, index=True)
-    
+
+
+class InteractionType(StrEnum):
+    SubmitParentMessage = auto()
+    RequestParentExampleMessage = auto()
+    RefreshChildCards = auto()
+    AppendChildCard = auto()
+    RemoveLastChildCard = auto()
+    ConfirmChildCardSelection = auto()
+
+
+class Interaction(ModelWithIdAndTimestamp):
+    type: InteractionType = Field(nullable=False)
+    turn_id: str = Field(nullable=False)
+    metadata: dict[str, dict | int | float | str | None]
+
 
 class CardIdentity(ModelWithId):
     model_config = ConfigDict(frozen=True)
@@ -77,13 +95,13 @@ class UserDefinedCardInfo(ModelWithIdAndTimestamp):
     image_height: Optional[int]
 
 
-class InterimCardSelection(ModelWithIdAndTimestamp):
+class InterimCardSelection(ModelWithIdAndTimestamp, ModelWithTurnId):
     model_config = ConfigDict(frozen=True)
 
     cards: list[CardIdentity]
 
 
-class ChildCardRecommendationResult(ModelWithIdAndTimestamp):
+class ChildCardRecommendationResult(ModelWithIdAndTimestamp, ModelWithTurnId):
     model_config = ConfigDict(frozen=True)
 
     cards: list[CardInfo]
@@ -127,7 +145,7 @@ class ParentGuideElement(BaseModel):
         return ParentGuideElement(category=category, guide=guide, type=ParentGuideType.Feedback)
 
 
-class ParentGuideRecommendationResult(ModelWithIdAndTimestamp):
+class ParentGuideRecommendationResult(ModelWithIdAndTimestamp, ModelWithTurnId):
     model_config = ConfigDict(frozen=True)
 
     guides: list[ParentGuideElement]
@@ -150,19 +168,31 @@ class ParentExampleMessage(ModelWithIdAndTimestamp):
     message: str
     message_localized: str | None = None
 
+    
+# Dialogue Models =======================================
 
 class DialogueRole(StrEnum):
     Parent = "parent"
     Child = "child"
 
 
-class DialogueMessage(ModelWithIdAndTimestamp):
+class DialogueTurn(ModelWithId):
+    model_config = ConfigDict(use_enum_values=True)
+
+    session_id: str
+
+    role: DialogueRole
+
+    started_timestamp: int = Field(default_factory=get_timestamp, index=True)
+    ended_timestamp: int | None = Field(default=None, index=True)
+
+class DialogueMessage(ModelWithIdAndTimestamp, ModelWithTurnId):
     model_config = ConfigDict(frozen=True)
 
     role: DialogueRole
     content_localized: str | None = None
     content: str | list[CardInfo]
-    recommendation_id: str | None = None
+    turn_id: str | None = None
 
     @classmethod
     def example_parent_message(cls, content: str) -> 'DialogueMessage':

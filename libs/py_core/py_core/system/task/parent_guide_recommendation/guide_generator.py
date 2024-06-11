@@ -118,7 +118,7 @@ class ParentGuideRecommendationGenerator:
 
         self.__translator = GuideTranslator()
 
-    async def generate(self, dyad: Dyad, topic: SessionTopicInfo, dialogue: Dialogue, inspection_result: DialogueInspectionResult | None) -> ParentGuideRecommendationResult:
+    async def generate(self, turn_id: str, dyad: Dyad, topic: SessionTopicInfo, dialogue: Dialogue, inspection_result: DialogueInspectionResult | None) -> ParentGuideRecommendationResult:
         t_start = perf_counter()
 
         parent_type_str = dyad.parent_type.value
@@ -140,4 +140,4 @@ class ParentGuideRecommendationGenerator:
         t_end = perf_counter()
         print(f"Translation took {t_end - t_trans} sec.")
         print(f"Total latency: {t_end - t_start} sec.")
-        return ParentGuideRecommendationResult(guides=translated_guide_list)
+        return ParentGuideRecommendationResult(guides=translated_guide_list, turn_id=turn_id)

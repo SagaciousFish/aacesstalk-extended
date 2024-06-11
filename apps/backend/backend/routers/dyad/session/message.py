@@ -55,9 +55,9 @@ class CardSelectionResult(BaseModel):
 
 
 @router.post("/child/add_card", response_model=CardSelectionResult)
-async def select_card(card_identity: CardIdentity,
+async def append_card(card_identity: CardIdentity,
                       session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]):
-    interim_selection = await session.select_child_card(card_identity)
+    interim_selection = await session.append_child_card(card_identity)
     interim_cards = await session.get_card_info_from_identities(interim_selection.cards)
     new_recommendation = await session.refresh_child_card_recommendation()
     return CardSelectionResult(interim_cards=interim_cards, new_recommendation=new_recommendation)

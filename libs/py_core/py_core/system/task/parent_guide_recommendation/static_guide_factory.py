@@ -32,14 +32,14 @@ class StaticGuideFactory:
             obj = yaml.safe_load(f)
             self.__guide_dict: dict[SessionTopicCategory, list[StaticGuideInfo]] = _guide_dict_type_adapter.validate_python(obj)
     
-    def get_guide_recommendation(self, topic: SessionTopicInfo, dyad: Dyad) -> ParentGuideRecommendationResult:
+    def get_guide_recommendation(self, topic: SessionTopicInfo, dyad: Dyad, turn_id: str) -> ParentGuideRecommendationResult:
         guides = [ParentGuideElement.messaging_guide(
             category=guide_info.guide_category, 
             guide=guide_info.guide.format(subtopic=topic.subtopic, child_name=dyad.child_name),
             guide_localized=guide_info.guide_localized.format(subtopic=topic.subtopic, child_name=dyad.child_name),
             is_generated=False,
             static_guide_key=guide_info.key) for guide_info in self.__guide_dict[topic.category]]
-        return ParentGuideRecommendationResult(guides=guides)
+        return ParentGuideRecommendationResult(guides=guides, turn_id=turn_id)
 
          
     def get_example_message(self, topic: SessionTopicInfo, dyad: Dyad, guide: ParentGuideElement, recommendation_id: str) -> ParentExampleMessage:

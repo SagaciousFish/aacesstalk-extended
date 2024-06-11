@@ -44,12 +44,15 @@ async def cli_get_session_info()->Session:
 
 async def test_session_loop(session: ModeratorSession):
 
+    await session.start()
+
     # get initial parent guide recommendation
     await session.generate_parent_guide_recommendation()
     
     # Conversation loop
     while True:
-        if session.next_speaker == DialogueRole.Parent:
+        current_speaker = await session.current_speaker()
+        if current_speaker == DialogueRole.Parent:
             current_parent_guide_recommendation_result = await session.storage.get_latest_parent_guide_recommendation()
             if current_parent_guide_recommendation_result is not None:
                 print(current_parent_guide_recommendation_result.model_dump_json(indent=2))
@@ -84,7 +87,7 @@ async def test_session_loop(session: ModeratorSession):
             await session.submit_parent_message(parent_message)
             continue
 
-        elif session.next_speaker == DialogueRole.Child:
+        elif current_speaker == DialogueRole.Child:
             current_card_recommendation_result = await session.storage.get_latest_child_card_recommendation()
             if current_card_recommendation_result is not None:
                 cards = current_card_recommendation_result.cards
@@ -115,6 +118,6 @@ async def test_session_loop(session: ModeratorSession):
                     continue
                 else:
                     # select
-                    await session.select_child_card(cards[choices.index(selection) - 1])
+                    await session.append_child_card(cards[choices.index(selection) - 1])
                     await session.refresh_child_card_recommendation()
                     continue

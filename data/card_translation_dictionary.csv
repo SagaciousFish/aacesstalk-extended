@@ -60,6 +60,8 @@ O96REKIxdF,action,decorate,장식해요,False
 La-iP5y-_Y,action,describe,설명해요,False
 O1Z_dMAq4X,action,did,했어요,True
 uretSwauQl,action,did ( core ),했어요,False
+X3UMphN-lr,action,did not like,싫어해요,False
+goFIN7iqFM,action,difficult,어려워요,False
 qCj-Koppsp,action,discuss,토의해요,True
 DWKV6w20jL,action,dislike,싫어요,True
 qztJWM4PBi,action,disliked,싫어요,False
@@ -73,6 +75,7 @@ v3di8t0pWz,action,drawing,그려요,True
 A69xsnZPHn,action,drawn,그린,False
 ZON1ssMHKK,action,drew,그렸어요,True
 aLdFWWnR6c,action,drive,운전하다,False
+BA6GILFqg7,action,easy,쉬워요,False
 qFMNNFSCX5,action,eat,먹어요,True
 H67n9i7nOg,action,eating,먹어요,True
 voBXCU3PyM,action,enjoy,즐겨요,True
@@ -96,6 +99,7 @@ ayJyQE-ie5,action,follow,따라해요,True
 RobMQHBl0E,action,forget,잊어버려요,True
 dcBKqBvDJT,action,forgive,용서해요,True
 FG6t-MIGTa,action,forgot,잊어버렸어요,False
+jMGJUTv6Cb,action,fun,재미있어요,False
 pcoAOCVBNo,action,give,주다,False
 -urVCbaa_L,action,go,가요,True
 l2G93VaoeV,action,go to,가요,False
@@ -104,6 +108,7 @@ SwTo9YVOJ-,action,going to,가는 중이에요,False
 O6u0XAv7Vm,action,had,했어요,True
 Qs2940d4qY,action,had Fun with,즐거웠어요,False
 5y7kANN0Oi,action,happy,행복해요,False
+DGulj9XZ6_,action,hard,어려워요,False
 IIfEakpYmR,action,have,가져요,True
 Wp55wRq1Xl,action,have fun,즐기세요,False
 gpH0wjIUdN,action,have fun with,즐거웠어요,False
@@ -165,6 +170,7 @@ uqW7Td0INw,action,participate,참여해요,True
 H5p_T5dcgq,action,participated,참여했어요,True
 ADPri_-gHj,action,pay,지불해요,False
 Yd6w1uAwWj,action,perform,공연해요,False
+S__lGFyVjw,action,performed,공연해요,False
 5ISgsZ5Jbv,action,pick,가져오다,False
 YjWL7NjV6c,action,pick up,가져오다,False
 4jQ2YtF4cp,action,plan,계획해요,False
@@ -175,6 +181,7 @@ CbqgYoqILA,action,played,놀았어요,True
 t0zELtkhGT,action,played with,같이 놀았어요,True
 qD4-z3UnHP,action,playing,놀아요,True
 MU_ZL_K-I5,action,practice,연습해요,True
+o8ZyLC2rrj,action,practiced,연습해요,False
 FyNDnm0No-,action,practicing,연습해요,False
 gn6T12E7Y7,action,prefer to,선호해요,False
 cfIJUPIYIh,action,prepare,준비해요,False
@@ -427,6 +434,7 @@ LYxWPzOkhE,topic,clean room,방,False
 oBmU19CegM,topic,cleaners,청소부,False
 FMk7yvs8rr,topic,clothes,옷,False
 63BIuiTJAL,topic,color,색깔,True
+CGMa4tcedr,topic,coloring book,컬러링북,False
 ZMzrVSxPQy,topic,colors,색깔,True
 ZqQmq0jgXj,topic,conversation,대화,True
 3WA8c-FPkI,topic,cookies,쿠키,False
@@ -456,6 +464,7 @@ P1ocXtrEhf,topic,error,오류,True
 OqptytpFU2,topic,experiment,실험,True
 7viZZuVxIr,topic,father,아빠,True
 sUYuN93nsf,topic,feeling,기분,False
+RAFAS9LuXC,topic,finish drawing,그리기 끝내요,False
 ZKBCxMyeFz,topic,first,첫 번째,True
 R7ZaxkCKYZ,topic,flower,꽃,False
 3hVLzR1uUk,topic,flowers,꽃,False
@@ -556,6 +565,7 @@ C7wG2s7cKo,topic,push button,버튼 누르기,False
 29KrNnXxhw,topic,puzzle,퍼즐,True
 J_fpsBQvUG,topic,puzzles,퍼즐,True
 1z_fyn0F2U,topic,read,읽기,True
+nZgAiNOnPJ,topic,read book,책 읽기,False
 xSUB5MbEYf,topic,reading,읽기,True
 Z9wiBg4ouG,topic,reading ( activity ),읽기,False
 _KaR2mar1c,topic,reading book,책 읽기,False
@@ -633,3 +643,4 @@ JTDj3vAlSA,topic,watch,관람,True
 keVw2A-FVW,topic,we,우리,False
 kYzgM-b-Vv,topic,work,일,False
 VekDlhcSYO,topic,writing,글쓰기,True
+gPrMixJ4B4,topic,zoo,동물원,False

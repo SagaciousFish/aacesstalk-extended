@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from py_core.system.model import ChildCardRecommendationResult, Dialogue, DialogueMessage, \
-    ParentGuideRecommendationResult, id_generator, ParentExampleMessage, InterimCardSelection, Session
+    ParentGuideRecommendationResult, id_generator, ParentExampleMessage, InterimCardSelection, Session, Interaction, DialogueTurn
 from py_core.system.session_topic import SessionTopicInfo
 
 
@@ -80,3 +80,16 @@ class SessionStorage(ABC):
     @abstractmethod
     async def delete_entities(self):
         pass
+
+    @abstractmethod
+    async def upsert_dialogue_turn(self, turn: DialogueTurn):
+        pass
+
+    @abstractmethod
+    async def get_latest_turn(self)->DialogueTurn | None:
+        pass
+
+    @abstractmethod
+    async def add_interaction(self, interaction: Interaction):
+        pass
+    

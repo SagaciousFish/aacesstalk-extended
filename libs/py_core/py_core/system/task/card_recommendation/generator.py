@@ -71,11 +71,13 @@ class ChildCardRecommendationGenerator:
                                         ))
 
     async def generate(self,
+                       turn_id: str,
                        parent_type: ParentType,
                        topic_info: SessionTopicInfo,
                        dialogue: Dialogue,
                        interim_cards: list[CardInfo] | None = None,
-                       previous_recommendation: ChildCardRecommendationResult | None = None) -> ChildCardRecommendationResult:
+                       previous_recommendation: ChildCardRecommendationResult | None = None,
+                       ) -> ChildCardRecommendationResult:
         t_start = perf_counter()
 
         recommendation = await self.__mapper.run(None,
@@ -102,7 +104,7 @@ class ChildCardRecommendationGenerator:
         keyword_category_list = [(word, CardCategory.Topic) for word in recommendation.topics] + [
             (word, CardCategory.Action) for word in recommendation.actions]
 
-        return ChildCardRecommendationResult(id=rec_id, cards=[
+        return ChildCardRecommendationResult(id=rec_id, turn_id=turn_id, cards=[
             CardInfo(label=word, label_localized=translated_keywords[i], category=category,
                      recommendation_id=rec_id) for i, (word, category) in
             enumerate(keyword_category_list)] + [CardInfo(label=c.get_label_for_parent(parent_type), label_localized=c.get_label_localized_for_parent(parent_type), 
