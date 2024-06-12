@@ -5,7 +5,6 @@ from fastapi.security import OAuth2PasswordBearer
 
 from backend import env_variables
 from backend.crud.dyad.account import get_dyad_by_id
-from backend.crud.dyad.session import find_session_orm
 from backend.database import with_db_session, AsyncSession, engine
 from py_database.model import DyadORM, SessionORM as SessionORM
 from jose import JWTError, jwt
@@ -13,9 +12,10 @@ from chatlib.utils.env_helper import get_env_variable
 
 
 from typing import Annotated
-from py_database import SQLSessionStorage
 from py_database.database import get_async_session
+from py_database.storage import SQLSessionStorage
 from py_core.system.moderator import ModeratorSession
+from py_core.system.model import Dyad, SessionTopicInfo, id_generator
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -50,17 +50,25 @@ async def get_signed_in_dyad_orm(token: Annotated[str, Depends(oauth2_scheme)], 
 
 sessions: dict[str, ModeratorSession] = {}
 
+SQLSessionStorage.set_session_maker(lambda: get_async_session(engine))
+            
+async def create_moderator_session(dyad: Dyad, topic: SessionTopicInfo, timezone: str) -> ModeratorSession:
+    return await ModeratorSession.create(dyad, topic, timezone, SQLSessionStorage(id_generator()))
 
 async def retrieve_moderator_session(session_id: str, dyad_orm: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)]):
     print("Retrieve moderator session...")
     if session_id in sessions:
         session = sessions[session_id]
-        session.storage = await SQLSessionStorage.restore_instance(session_id, lambda: get_async_session(engine))
+        session.storage = await SQLSessionStorage.restore_instance(session_id)
         return session
     else:
         async with get_async_session(engine) as db:
-            session_info_orm = await find_session_orm(session_id, dyad_orm.id, db)
-
-            session = ModeratorSession(dyad_orm.to_data_model(), SQLSessionStorage(lambda: get_async_session(engine), session_info_orm.to_data_model()))
+            storage = await SQLSessionStorage.restore_instance(session_id)
+            session = await ModeratorSession.restore_instance(dyad_orm.to_data_model(), storage)
             sessions[session_id] = session
             return session
+
+def dispose_session_instance(session_id: str):
+    if session_id in sessions:
+        sessions[session_id].storage.dispose()
+        sessions.__delitem__(session_id)

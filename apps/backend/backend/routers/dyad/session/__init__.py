@@ -3,12 +3,13 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
 from pydantic import BaseModel
 from backend.database import with_db_session, AsyncSession
-from backend.routers.dyad.common import get_signed_in_dyad_orm, retrieve_moderator_session
-from backend.crud.dyad.session import create_moderator_session, end_session, find_session_orm
+from backend.routers.dyad.common import create_moderator_session, dispose_session_instance, get_signed_in_dyad_orm, retrieve_moderator_session
+from backend.crud.dyad.session import find_session_orm
 from py_database.model import DyadORM, SessionORM as SessionORM
 from py_core.system.session_topic import SessionTopicInfo
 from py_core.system import ModeratorSession
 from sqlmodel import delete
+from py_core.system.model import ParentGuideRecommendationResult
 
 from . import message
 
@@ -30,20 +31,30 @@ class SessionInitiationArgs(BaseModel):
     timezone: str
 
 @router.post("/new")
-async def _initiate_session(req: Request, dyad: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)],
-                            db: Annotated[AsyncSession, Depends(with_db_session)]) -> str:
+async def _initiate_session(req: Request, dyad: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)]) -> str:
     args = SessionInitiationArgs(**(await req.json()))
-    new_session = await create_moderator_session(dyad, args.topic, args.timezone, db)
-    return new_session.id
+    new_session = await create_moderator_session(dyad.to_data_model(), args.topic, args.timezone)
+    return new_session.storage.session_id
+
+
+@router.post("/{session_id}/start", response_model=ParentGuideRecommendationResult)
+async def _start_session(
+    session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]):
+
+    turn, guides = await session.start()
+    print(guides)
+    return guides
 
 @router.delete("/{session_id}/abort")
-async def _abort_session(session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)],
+async def _abort_session(session_id: str, session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)],
                          dyad: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)],
                          db: Annotated[AsyncSession, Depends(with_db_session)]):
     try:
         session.cancel_all_async_tasks()
         await session.storage.delete_entities()
-        db.exec(delete(SessionORM).where(SessionORM.id == session.storage.session_id))
+        session_orm = await find_session_orm(session_id, dyad.id, db)
+        await db.delete(session_orm)
+        dispose_session_instance(session_id)
 
     except ValueError as ex:
         print(ex)
@@ -51,10 +62,9 @@ async def _abort_session(session: Annotated[ModeratorSession, Depends(retrieve_m
 
 
 @router.put("/{session_id}/end")
-async def _end_session(session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)], dyad: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)],
-                       db: Annotated[AsyncSession, Depends(with_db_session)]):
+async def _end_session(session_id: str, session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]):
     try:
-        session.cancel_all_async_tasks()
-        await end_session(session.storage.session_id, dyad.id, db)
+        await session.terminate()
+        dispose_session_instance(session_id)
     except ValueError:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "No session with the id and the corresponding dyad.")

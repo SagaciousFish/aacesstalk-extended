@@ -2,8 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from py_core.system.model import ChildCardRecommendationResult, Dialogue, DialogueMessage, \
-    ParentGuideRecommendationResult, id_generator, ParentExampleMessage, InterimCardSelection, SessionInfo, Interaction, DialogueTurn
-from py_core.system.session_topic import SessionTopicInfo
+    ParentGuideRecommendationResult, ParentExampleMessage, InterimCardSelection, SessionInfo, Interaction, DialogueTurn
 
 
 class SessionStorage(ABC):
@@ -15,6 +14,7 @@ class SessionStorage(ABC):
     @abstractmethod
     async def _load_session_info(cls, session_id: str) -> SessionInfo | None:
         pass
+    
     @classmethod
     async def restore_instance(cls, id: str)->Optional['SessionStorage']:
         session_info = await cls._load_session_info(id)
@@ -22,6 +22,9 @@ class SessionStorage(ABC):
             return cls(session_id=session_info.id)
         else:
             return None
+
+    def dispose(self):
+        return
 
     @property
     def session_id(self) -> str:

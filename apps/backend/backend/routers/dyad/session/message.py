@@ -27,13 +27,6 @@ async def get_dialogue(dyad: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)]
 class SendParentMessageArgs(BaseModel):
     message: str
 
-@router.post("/parent/guide", response_model=ParentGuideRecommendationResult)
-async def generate_parent_guides(
-    session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]):
-    guides = await session.generate_parent_guide_recommendation()
-    print(guides)
-    return guides
-
 @router.post("/parent/message", response_model=ChildCardRecommendationResult)
 async def send_parent_message(args: SendParentMessageArgs,
                               session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]):

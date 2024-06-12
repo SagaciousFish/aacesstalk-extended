@@ -273,14 +273,14 @@ export function cancelSession(): CoreThunk {
 
 // Parent messaging /////////////////////////////////////////////
 
-export function requestParentGuides(): CoreThunk {
+export function startSession(): CoreThunk {
   return makeSignedInThunk(
     {
       loadingFlagKey: 'isProcessingRecommendation',
       runIfSignedIn: async (dispatch, getState, header) => {
         console.log("Request parent guides...")
         const state = getState()
-        const resp = await finishAfterMinimumDelay(Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_GUIDE, { session_id: state.session.id!! }), null, {
+        const resp = await finishAfterMinimumDelay(Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_SESSION_START, { session_id: state.session.id!! }), null, {
           headers: header
         }), 0)
         console.log("Retrieved parent guides.")

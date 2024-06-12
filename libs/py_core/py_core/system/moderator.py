@@ -1,5 +1,6 @@
 import asyncio
 from dataclasses import dataclass
+from typing import Optional
 
 from nanoid import generate
 
@@ -107,11 +108,31 @@ class ModeratorSession:
 
         # Mount session info
         session_info = SessionInfo(id=storage.session_id, topic=topic, local_timezone=timezone, dyad_id=dyad.id)
-        print("New session info: ", session_info)
         await storage.update_session_info(session_info)
-        session_info_stored = await storage.get_session_info()
-        print("Stored session info; ", session_info)
         return cls(dyad, storage)
+
+    @classmethod
+    async def restore_instance(cls, dyad: Dyad, storage: SessionStorage) -> Optional['ModeratorSession']:
+        session_info = await storage.get_session_info()
+        if session_info is None:
+            # No session has been initialized.
+            return None
+        else:
+            instance = ModeratorSession(dyad, storage)
+            if session_info.status == SessionStatus.Started:
+                # It has been started but somehow terminated.
+                current_turn = await storage.get_latest_turn()
+                if current_turn is None:
+                    new_turn = DialogueTurn(session_id=storage.session_id, role=DialogueRole.Parent)
+                    await storage.upsert_dialogue_turn(new_turn)
+                elif current_turn.role == DialogueRole.Parent and current_turn.ended_timestamp is None:
+                    pass
+                else:
+                    raise WrongSessionStatusError()
+
+            
+            return instance
+
 
     async def start(self) -> tuple[DialogueTurn, ParentGuideRecommendationResult]:
 
@@ -141,10 +162,12 @@ class ModeratorSession:
 
 
     async def terminate(self):
+        self.cancel_all_async_tasks()
         session_info = await self.storage.get_session_info()
         session_info.ended_timestamp = get_timestamp()
         session_info.status = SessionStatus.Terminated
         await self.storage.update_session_info(session_info)
+        self.storage.dispose()
 
 
     async def current_speaker(self) -> DialogueRole | None:

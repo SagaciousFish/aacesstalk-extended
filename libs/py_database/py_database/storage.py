@@ -1,32 +1,43 @@
-from abc import ABC, abstractmethod
 from typing import Callable
-from sqlmodel import SQLModel, select, col, delete, update
 from pydantic import validate_call
+from sqlmodel import select, col, delete, update
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from py_core.system.model import DialogueTurn, Interaction, ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
-    DialogueMessage, ParentExampleMessage, InterimCardSelection, DialogueRole, SessionInfo
+    DialogueMessage, ParentExampleMessage, InterimCardSelection, SessionInfo
 from py_core.system.storage import SessionStorage
-from py_database.model import (DialogueMessageORM, DialogueTurnORM, InteractionORM, TimestampColumnMixin,
-                               SessionORM,
+from py_database.model import (DialogueMessageORM, DialogueTurnORM, InteractionORM, SessionORM,
                                ChildCardRecommendationResultORM,
                                InterimCardSelectionORM,
                                ParentGuideRecommendationResultORM,
                                ParentExampleMessageORM, SessionIdMixin)
-from py_database.database import AsyncSession
 
 
-class SQLSessionStorage(SessionStorage, ABC):
+class SQLSessionStorage(SessionStorage):
+
+    __sql_session_maker: Callable[[], AsyncSession]
 
     @classmethod
-    @abstractmethod
+    def set_session_maker(cls, func:Callable[[], AsyncSession]):
+        cls.__sql_session_maker = staticmethod(func)
+
+    @classmethod
     async def _load_session_info(cls, session_id: str) -> SessionInfo | None:
-        pass
+        db = cls.__sql_session_maker()
+        print("Find session with id", session_id)
+        statement = select(SessionORM).where(SessionORM.id == session_id)
+        results = await db.exec(statement)
+        session_orm = results.first()
+        print("Session orm:", session_orm)
+        if session_orm is not None:
+            return session_orm.to_data_model()
+        else:
+            return None
 
 
     @validate_call
-    def __init__(self, sql_session_maker: Callable[[], AsyncSession], session_id: str):
+    def __init__(self, session_id: str):
         super().__init__(session_id)
-        self.__sql_session_maker = sql_session_maker
         self.__current_sql_session: AsyncSession | None = None
 
     @property
@@ -36,17 +47,9 @@ class SQLSessionStorage(SessionStorage, ABC):
 
         return self.__current_sql_session
 
-
-    @classmethod
-    @validate_call
-    async def restore_instance(cls, id: str, params: Callable[[], AsyncSession]) -> SessionStorage | None:
-        async with params() as db:
-            session_orm = await db.get(SessionORM, id)
-            if session_orm is not None:
-                return SQLSessionStorage(params, session_orm.to_data_model())
-            else:
-                return None
-
+    def dispose(self):
+        if self.__current_sql_session is not None and self.__current_sql_session.is_active is True:
+            self.__current_sql_session.close()
 
     async def add_dialogue_message(self, message: DialogueMessage):
         self._sql_session.add(DialogueMessageORM.from_data_model(self.session_id, message))
@@ -151,8 +154,9 @@ class SQLSessionStorage(SessionStorage, ABC):
     async def delete_entities(self):
         async with self.__sql_session_maker() as s:
             for model in [DialogueMessageORM, ChildCardRecommendationResultORM, InterimCardSelectionORM, ParentGuideRecommendationResultORM, ParentExampleMessageORM]:
-                await s.exec(delete(model).where(DialogueMessageORM.session_id == self.session_id))
-            await s.commit()
+                rows = await s.exec(select(model).where(model.session_id == self.session_id))
+                for row in rows:
+                    await s.delete(row)
 
     async def update_session_info(self, info: SessionInfo):
         orig_orm = await self._load_session_info(info.id)

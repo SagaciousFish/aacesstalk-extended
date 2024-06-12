@@ -25,25 +25,9 @@ session_info = asyncio.run(cli_get_session_info(dyad_id=dyad_info.id))
 
 print(dyad_info, session_info)
 
-class SessionStorage(SQLSessionStorage):
-
-    @classmethod
-    async def _load_session_info(cls, session_id: str) -> SessionInfo | None:
-        async with get_async_session(engine) as db:
-            print("Find session with id", session_id)
-            statement = select(SessionORM).where(SessionORM.id == session_id)
-            results = await db.exec(statement)
-            session_orm = results.first()
-            print("Session orm:", session_orm)
-            if session_orm is not None:
-                return session_orm.to_data_model()
-            else:
-                return None
-
-
-
+SQLSessionStorage.set_session_maker(lambda: get_async_session(engine))
 
 session = asyncio.run(ModeratorSession.create(dyad_info, session_info.topic, session_info.local_timezone, 
-                                              SessionStorage(lambda: get_async_session(engine), session_info.id)))
+                                              SQLSessionStorage(session_info.id)))
 
 asyncio.run(test_session_loop(session))

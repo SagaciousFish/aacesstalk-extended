@@ -22,7 +22,7 @@ include = "py_database"
 
 [tool.poetry.dependencies]
 python = ">=3.11.8,<3.12"
-sqlmodel = "^0.0.16"
+sqlmodel = "0.0.19"
 aiosqlite = "^0.20.0"
 greenlet = "^3.0.3"
 

@@ -3,8 +3,8 @@ from time import perf_counter
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from backend.database import create_test_dyad, engine
 from py_database.database import create_db_and_tables
-from backend.database import engine
 from backend.routers import dyad
 
 
@@ -12,6 +12,7 @@ from backend.routers import dyad
 async def server_lifespan(app: FastAPI):
     print("Server launched.")
     await create_db_and_tables(engine)
+    await create_test_dyad()
 
     yield
 
