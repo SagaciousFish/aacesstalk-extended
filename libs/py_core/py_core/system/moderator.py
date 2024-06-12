@@ -101,14 +101,16 @@ class ModeratorSession:
         GPTChatCompletionAPI.assert_authorize()
         DeepLTranslator.assert_authorize()
 
-
     @classmethod
     async def create(cls, dyad: Dyad, topic: SessionTopicInfo, 
                      timezone: str, storage: SessionStorage)->'ModeratorSession':
         
         # Mount session info
-        session_info = SessionInfo(topic=topic, local_timezone=timezone)
+        session_info = SessionInfo(id=storage.session_id, topic=topic, local_timezone=timezone, dyad_id=dyad.id)
+        print("New session info: ", session_info)
         await storage.update_session_info(session_info)
+        session_info_stored = await storage.get_session_info()
+        print("Stored session info; ", session_info)
         return cls(dyad, storage)
 
     async def start(self) -> tuple[DialogueTurn, ParentGuideRecommendationResult]:

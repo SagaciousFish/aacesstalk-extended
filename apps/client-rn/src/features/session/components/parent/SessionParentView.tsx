@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { styleTemplates } from "apps/client-rn/src/styles"
 import { useTranslation } from "react-i18next";
-import { Text, TextInput, View } from "react-native"
+import { TextInput, View } from "react-native"
 import { ParentGuideElementView } from "./ParentGuideElementView";
 import { MultiTapButton } from "apps/client-rn/src/components/MultiTapButton";
 import { useCallback, useState } from "react";
@@ -10,7 +10,7 @@ import { LoadingIndicator } from "apps/client-rn/src/components/LoadingIndicator
 import { PopupMenuScreenFrame } from "apps/client-rn/src/components/PopupMenuScreenFrame";
 import { TailwindButton } from "apps/client-rn/src/components/tailwind-components";
 import { useController, useForm } from "react-hook-form";
-import { SessionTopicInfo, TopicCategory, submitParentMessage } from '@aacesstalk/libs/ts-core';
+import { SessionTopicInfo, submitParentMessage } from '@aacesstalk/libs/ts-core';
 import { SessionTitleRibbon } from './SessionTitleRibbon';
 import { SessionStartingMessage } from './SessionStartingMessage';
 

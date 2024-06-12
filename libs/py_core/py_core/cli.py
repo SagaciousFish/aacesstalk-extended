@@ -14,8 +14,7 @@ async def cli_get_dyad_info()->Dyad:
 
     return Dyad(alias="Test", child_name=child_name, parent_type=parent_type)
 
-
-async def cli_get_session_info()->SessionInfo:
+async def cli_get_session_info(dyad_id: str)->SessionInfo:
 
     # Topic selection
     topic_category: str = await questionary.select("Select conversation topic category:", [
@@ -38,7 +37,7 @@ async def cli_get_session_info()->SessionInfo:
         subtopic_description = None
 
     topic_info = SessionTopicInfo(category=topic_category, subtopic=subtopic, subtopic_description=subtopic_description)
-    session_info = SessionInfo(topic=topic_info, local_timezone=pendulum.local_timezone().name)
+    session_info = SessionInfo(topic=topic_info, local_timezone=pendulum.local_timezone().name, dyad_id=dyad_id)
 
     return session_info
 

@@ -41,6 +41,9 @@ class SessionStatus(StrEnum):
     Terminated="terminated"
 
 class SessionInfo(ModelWithId):
+    model_config = ConfigDict(use_enum_values=True)
+
+    dyad_id: str
 
     topic: SessionTopicInfo
 
@@ -61,6 +64,8 @@ class InteractionType(StrEnum):
 
 
 class Interaction(ModelWithIdAndTimestamp):
+    model_config = ConfigDict(frozen=True, use_enum_values=True)
+
     type: InteractionType = Field(nullable=False)
     turn_id: str = Field(nullable=False)
     metadata: dict[str, dict | int | float | str | None]
@@ -185,8 +190,6 @@ class DialogueRole(StrEnum):
 
 class DialogueTurn(ModelWithId):
     model_config = ConfigDict(use_enum_values=True)
-
-    session_id: str
 
     role: DialogueRole
 

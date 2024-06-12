@@ -56,6 +56,7 @@ c9nrRATbZC,action,create,만들어요,True
 3xqmUR6WRo,action,created,만들었어요,True
 ZM7wuj5mEf,action,cry,울어요,False
 n-Tf8mfwDt,action,dance,춤춰요,True
+t8IsG-bE8r,action,decided,결정했어요,False
 O96REKIxdF,action,decorate,장식해요,False
 La-iP5y-_Y,action,describe,설명해요,False
 O1Z_dMAq4X,action,did,했어요,True
@@ -148,6 +149,7 @@ y3HnSIkPc3,action,listen to,들어요,False
 FKx7TtcCcr,action,listened,들었어요,True
 oKi5PThAY7,action,listening,듣기해요,False
 siwWKm9BV8,action,look,보아요,True
+DUXsRDhQtT,action,looked,봤어요,False
 QHErJpKn02,action,lost,잃어버렸어요,False
 6aCL61BwoT,action,love,사랑해요,True
 K6c6-F2e8w,action,made,만들었어요,False

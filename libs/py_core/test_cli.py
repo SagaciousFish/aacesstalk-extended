@@ -13,7 +13,7 @@ DeepLTranslator.assert_authorize()
 
 dyad_info = asyncio.run(cli_get_dyad_info())
 
-session_info = asyncio.run(cli_get_session_info())
+session_info = asyncio.run(cli_get_session_info(dyad_info.id))
 
 print(dyad_info, session_info)
 

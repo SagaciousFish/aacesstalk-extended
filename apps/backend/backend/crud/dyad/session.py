@@ -8,7 +8,7 @@ from py_database.storage import SQLSessionStorage
 
 
 async def create_moderator_session(dyad: DyadORM, topic: SessionTopicInfo, timezone: str, db: AsyncSession) -> SessionORM:
-    s = SessionORM.from_data_model(SessionInfo(topic=topic, local_timezone=timezone), dyad_id=dyad.id)
+    s = SessionORM.from_data_model(SessionInfo(topic=topic, local_timezone=timezone, dyad_id=dyad.id), dyad_id=dyad.id)
     db.add(s)
     await db.commit()
     await db.refresh(s)

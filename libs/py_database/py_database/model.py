@@ -14,9 +14,11 @@ from py_core.system.model import (id_generator, DialogueRole, DialogueMessage,
                                   ParentType,
                                   ParentExampleMessage, CardIdentity,
                                   SessionInfo,
+                                  SessionStatus,
                                   DialogueTurn,
                                   Dyad,
-                                  InteractionType
+                                  InteractionType,
+                                  Interaction
                                   )
 from py_core.system.session_topic import SessionTopicCategory, SessionTopicInfo
 from chatlib.utils.time import get_timestamp
@@ -56,6 +58,8 @@ class SessionORM(SQLModel, IdTimestampMixin, table=True):
 
     dyad: DyadORM = Relationship(back_populates="sessions")
 
+    status: SessionStatus = Field(default=SessionStatus.Initial)
+
     topic_category: SessionTopicCategory
     subtopic: Optional[str] = None
     subtopic_description: Optional[str] = None
@@ -66,17 +70,13 @@ class SessionORM(SQLModel, IdTimestampMixin, table=True):
 
     def to_data_model(self) -> SessionInfo:
         return SessionInfo(
-            id=self.id,
+            **self.model_dump(exclude={"topic_category", "subtopic", "subtopic_description"}),
             topic=SessionTopicInfo(category=self.topic_category, subtopic=self.subtopic, subtopic_description=self.subtopic_description),
-            local_timezone=self.local_timezone,
-            started_timestamp=self.started_timestamp,
-            ended=self.ended_timestamp
         )
 
     @classmethod
-    def from_data_model(cls, session_info: SessionInfo, dyad_id: str) -> 'SessionORM':
+    def from_data_model(cls, session_info: SessionInfo) -> 'SessionORM':
         return SessionORM(**session_info.model_dump(exclude={'topic'}),
-                          dyad_id=dyad_id,
                           topic_category=session_info.topic.category,
                           subtopic=session_info.topic.subtopic,
                           subtopic_description=session_info.topic.subtopic_description
@@ -106,7 +106,7 @@ class DialogueTurnORM(SQLModel, IdTimestampMixin, SessionIdMixin, table=True):
         return DialogueTurnORM(**model.model_dump(), session_id=session_id)
 
     def to_data_model(self) -> DialogueTurn:
-        return DialogueTurn(**self.model_dump())
+        return DialogueTurn(**self.model_dump(exclude={"session_id"}))
 
 class TurnIdMixin(BaseModel):
     turn_id: str = Field(foreign_key=f"{DialogueTurnORM.__tablename__}.id")
@@ -125,10 +125,7 @@ class DialogueMessageORM(SQLModel, IdTimestampMixin, SessionIdMixin, TurnIdMixin
 
     def to_data_model(self) -> DialogueMessage:
         return DialogueMessage(
-            id=self.id,
-            timestamp=self.timestamp,
-            turn_id=self.turn_id,
-            role=self.role,
+            **self.model_dump(exclude={"content_str", "content_str_localized"}),
             content=self.content_str if self.content_type == DialogueMessageContentType.text else CardInfoListTypeAdapter.validate_json(
                 self.content_str),
             content_localized=self.content_str_localized
@@ -137,7 +134,7 @@ class DialogueMessageORM(SQLModel, IdTimestampMixin, SessionIdMixin, TurnIdMixin
     @classmethod
     def from_data_model(cls, session_id: str, message: DialogueMessage) -> 'DialogueMessageORM':
         return DialogueMessageORM(
-            **message.model_dump(),
+            **message.model_dump(exclude={"content", "content_localized"}),
             session_id=session_id,
             content_str_localized=message.content_localized,
             content_str=message.content if isinstance(message.content, str) else CardInfoListTypeAdapter.dump_json(
@@ -206,6 +203,12 @@ class ParentExampleMessageORM(SQLModel, IdTimestampMixin, SessionIdMixin, table=
 
 
 class InteractionORM(SQLModel, IdTimestampMixin, SessionIdMixin, table=True):
+    __tablename__: str = "interaction"
+
     type: InteractionType = Field(nullable=False)
     turn_id: str = Field(nullable=False)
-    metadata: dict[str, dict | int | float | str | None] = Field(sa_column=Column(JSON), default=None)
+    metadata_json: dict[str, dict | int | float | str | None] = Field(sa_column=Column(JSON, name="metadata"), default=None)
+
+    @classmethod
+    def from_data_model(cls, interaction: Interaction, session_id: str) -> 'InteractionORM':
+        return InteractionORM(**interaction.model_dump(exclude={'metadata'}), metadata_json=interaction.metadata, session_id=session_id)
