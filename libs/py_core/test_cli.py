@@ -17,6 +17,6 @@ session_info = asyncio.run(cli_get_session_info())
 
 print(dyad_info, session_info)
 
-session = ModeratorSession(dyad_info, JsonSessionStorage(session_info))
+moderator_session = asyncio.run(ModeratorSession.create(dyad_info, session_info.topic, session_info.local_timezone, JsonSessionStorage(session_info.id)))
 
-asyncio.run(test_session_loop(session))
+asyncio.run(test_session_loop(moderator_session))

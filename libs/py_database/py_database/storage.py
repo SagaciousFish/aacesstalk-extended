@@ -1,16 +1,16 @@
 from typing import Callable
-from sqlmodel import select, col, delete
+from sqlmodel import SQLModel, select, col, delete
 from pydantic import validate_call
 
-from py_core.system.model import ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
-    DialogueMessage, ParentExampleMessage, InterimCardSelection, DialogueRole, Session
+from py_core.system.model import DialogueTurn, Interaction, ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
+    DialogueMessage, ParentExampleMessage, InterimCardSelection, DialogueRole, SessionInfo
 from py_core.system.storage import SessionStorage
-from py_database.model import (DialogueMessage as DialogueMessageORM,
-                               Session as SessionORM,
-                               ChildCardRecommendationResult as ChildCardRecommendationResultORM,
-                               InterimCardSelection as InterimCardSelectionORM,
-                               ParentGuideRecommendationResult as ParentGuideRecommendationResultORM,
-                               ParentExampleMessage as ParentExampleMessageORM, SessionIdMixin, TimestampColumnMixin)
+from py_database.model import (DialogueMessageORM, DialogueTurnORM,
+                               SessionORM,
+                               ChildCardRecommendationResultORM,
+                               InterimCardSelectionORM as InterimCardSelectionORM,
+                               ParentGuideRecommendationResultORM as ParentGuideRecommendationResultORM,
+                               ParentExampleMessageORM as ParentExampleMessageORM, SessionIdMixin, TimestampColumnMixin)
 from py_database.database import AsyncSession
 
 class TimeStampAndSessionChildModel(SessionIdMixin, TimestampColumnMixin):
@@ -19,7 +19,7 @@ class TimeStampAndSessionChildModel(SessionIdMixin, TimestampColumnMixin):
 class SQLSessionStorage(SessionStorage):
 
     @validate_call
-    def __init__(self, sql_session_maker: Callable[[], AsyncSession], session: Session):
+    def __init__(self, sql_session_maker: Callable[[], AsyncSession], session: SessionInfo):
         super().__init__(session)
         self.__sql_session_maker = sql_session_maker
         self.__current_sql_session: AsyncSession | None = None
@@ -31,7 +31,7 @@ class SQLSessionStorage(SessionStorage):
 
         return self.__current_sql_session
 
-    
+
     @classmethod
     @validate_call
     async def restore_instance(cls, id: str, params: Callable[[], AsyncSession]) -> SessionStorage | None:
@@ -103,10 +103,10 @@ class SQLSessionStorage(SessionStorage):
         self._sql_session.add(InterimCardSelectionORM.from_data_model(self.session_id, selection))
         await self._sql_session.commit()
 
-    async def __get_latest_model(self, model: type[TimeStampAndSessionChildModel]) -> TimeStampAndSessionChildModel | None:
+    async def __get_latest_model(self, model: type[SessionIdMixin], timestamp_column: str = "timestamp") -> SessionIdMixin | None:
         statement = (select(model)
                          .where(model.session_id == self.session_id)
-                         .order_by(col(model.timestamp).desc()).limit(1))
+                         .order_by(col(model[timestamp_column]).desc()).limit(1))
         results = await self._sql_session.exec(statement)
         first = results.first()
         if first is not None:
@@ -140,3 +140,28 @@ class SQLSessionStorage(SessionStorage):
             for model in [DialogueMessageORM, ChildCardRecommendationResultORM, InterimCardSelectionORM, ParentGuideRecommendationResultORM, ParentExampleMessageORM]:
                 await s.exec(delete(model).where(DialogueMessageORM.session_id == self.session_id))
             await s.commit()
+
+    @classmethod
+    async def _load_session_info(cls, session_id: str) -> SessionInfo | None:
+        pass
+
+    async def update_session_info(self, info: SessionInfo):
+        self._sql_session.add(SessionORM.from_data_model(info))
+        await self._sql_session.commit()
+        await self._sql_session.refresh(info)
+
+    async def upsert_dialogue_turn(self, turn: DialogueTurn):
+        self._sql_session.add(DialogueTurnORM.from_data_model(turn))
+        await self._sql_session.commit()
+        await self._sql_session.refresh(turn)
+
+    async def get_latest_turn(self) -> DialogueTurn | None:
+        d = await self.__get_latest_model(DialogueTurnORM, "started_timestamp")
+        if d is not None and isinstance(d, DialogueTurnORM):
+            return d.to_data_model()
+        else:
+            return None
+
+    async def add_interaction(self, interaction: Interaction):
+        raise NotImplementedError
+

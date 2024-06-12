@@ -6,18 +6,18 @@ from sqlmodel import select
 
 from backend import env_variables
 from backend.database import DyadLoginCode, AsyncSession
-from py_database.model import Dyad, ParentType
+from py_database.model import DyadORM, ParentType
 
 
-async def get_dyad_list(session: AsyncSession) -> list[tuple[Dyad, DyadLoginCode]]:
-    statement = (select(DyadLoginCode, Dyad)
-                 .where(DyadLoginCode.dyad_id == Dyad.id))
+async def get_dyad_list(session: AsyncSession) -> list[tuple[DyadORM, DyadLoginCode]]:
+    statement = (select(DyadLoginCode, DyadORM)
+                 .where(DyadLoginCode.dyad_id == DyadORM.id))
     results = await session.exec(statement)
     return [row for row in results]
 
 
-async def create_dyad(alias: str, child_name: str, parent_type: ParentType, session: AsyncSession) -> tuple[Dyad, DyadLoginCode]:
-    dyad = Dyad(alias=alias, child_name=child_name, parent_type=parent_type)
+async def create_dyad(alias: str, child_name: str, parent_type: ParentType, session: AsyncSession) -> tuple[DyadORM, DyadLoginCode]:
+    dyad = DyadORM(alias=alias, child_name=child_name, parent_type=parent_type)
 
     print(dyad)
 
@@ -38,10 +38,10 @@ async def create_dyad(alias: str, child_name: str, parent_type: ParentType, sess
 
 
 async def login_with_code(login_code: str, session: AsyncSession) -> str:
-    statement = (select(DyadLoginCode, Dyad)
+    statement = (select(DyadLoginCode, DyadORM)
                  .where(DyadLoginCode.code == login_code)
                  .where(DyadLoginCode.active == True)
-                 .where(DyadLoginCode.dyad_id == Dyad.id)
+                 .where(DyadLoginCode.dyad_id == DyadORM.id)
                  .limit(1))
     results = await session.exec(statement)
     print(results.closed)
@@ -67,9 +67,9 @@ async def login_with_code(login_code: str, session: AsyncSession) -> str:
         raise ValueError("No such dyadic user with the code.")
 
 
-async def get_dyad_by_id(id: str, session: AsyncSession) -> Dyad | None:
-    statement = (select(Dyad)
-                 .where(Dyad.id == id)
+async def get_dyad_by_id(id: str, session: AsyncSession) -> DyadORM | None:
+    statement = (select(DyadORM)
+                 .where(DyadORM.id == id)
                  .limit(1))
     results = await session.exec(statement)
     return results.first()

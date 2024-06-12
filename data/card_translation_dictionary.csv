@@ -166,6 +166,7 @@ r0zmjR4QK7,action,obey,복종해요,True
 mtzoxffNyG,action,operate,작동해요,False
 LQz5Xfd2N_,action,or,또는,False
 cTZJXQvr1c,action,paint,그려요,True
+9PNKu8oOdY,action,painted,그린,False
 uqW7Td0INw,action,participate,참여해요,True
 H5p_T5dcgq,action,participated,참여했어요,True
 ADPri_-gHj,action,pay,지불해요,False
@@ -185,6 +186,7 @@ o8ZyLC2rrj,action,practiced,연습해요,False
 FyNDnm0No-,action,practicing,연습해요,False
 gn6T12E7Y7,action,prefer to,선호해요,False
 cfIJUPIYIh,action,prepare,준비해요,False
+7-S47Kz7EP,action,prepared,준비해요,False
 W8vovWamey,action,put away,가지고 들어요,False
 8pUy5QouEZ,action,ran,뛰었어요,True
 MkOW9SdkJ7,action,react,반응해요,False
@@ -444,6 +446,7 @@ JHO4VaHEpx,topic,cutting,잘라내기,True
 sNFn4U2eF5,topic,dance,춤,True
 DXoEukH8Xk,topic,dasom,다솜,False
 -p7DQL_cJH,topic,day,하루,True
+3J-01LE5m3,topic,dessert,디저트,False
 h0woy4Ut_M,topic,dinner,저녁,False
 vTKJn1aaDd,topic,dinosaur,공룡,False
 ob4zxP87-c,topic,do,행동,True
@@ -518,6 +521,7 @@ Ro7zGl_2ZO,topic,long time,오랜 시간,False
 _0hjBhSJwK,topic,lunchtime,점심 시간,False
 Vw7mR4BXYQ,topic,math,수학,True
 -Q6cagIwqO,topic,math class,수학 수업,False
+nMI7jhboBK,topic,mathematics,수학,False
 vMmv5GwdN7,topic,meal,식사,True
 GKOshDWEOH,topic,meals,식사,False
 92wk3FeCUg,topic,mom,엄마,True

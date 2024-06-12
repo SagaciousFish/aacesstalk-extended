@@ -2,27 +2,37 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from py_core.system.model import ChildCardRecommendationResult, Dialogue, DialogueMessage, \
-    ParentGuideRecommendationResult, id_generator, ParentExampleMessage, InterimCardSelection, Session, Interaction, DialogueTurn
+    ParentGuideRecommendationResult, id_generator, ParentExampleMessage, InterimCardSelection, SessionInfo, Interaction, DialogueTurn
 from py_core.system.session_topic import SessionTopicInfo
 
 
 class SessionStorage(ABC):
 
-    def __init__(self, session_info: Session):
-        self.__session = session_info
+    def __init__(self, session_id: str):
+        self.__session_id = session_id
 
     @classmethod
     @abstractmethod
-    async def restore_instance(cls, id: str, params: Optional[any] = None)->Optional['SessionStorage']:
+    async def _load_session_info(cls, session_id: str) -> SessionInfo | None:
         pass
+    @classmethod
+    async def restore_instance(cls, id: str)->Optional['SessionStorage']:
+        session_info = await cls._load_session_info(id)
+        if session_info is not None:
+            return cls(session_id=session_info.id)
+        else:
+            return None
 
     @property
     def session_id(self) -> str:
-        return self.__session.id
-    
-    @property
-    def session_topic(self) -> SessionTopicInfo:
-        return self.__session.topic
+        return self.__session_id
+
+    async def get_session_info(self) -> SessionInfo:
+        return await self._load_session_info(self.session_id)
+
+    @abstractmethod
+    async def update_session_info(self, info: SessionInfo):
+        pass
 
     @abstractmethod
     async def add_dialogue_message(self, message: DialogueMessage):
@@ -92,4 +102,3 @@ class SessionStorage(ABC):
     @abstractmethod
     async def add_interaction(self, interaction: Interaction):
         pass
-    

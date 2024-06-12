@@ -1,14 +1,14 @@
 from backend.database import AsyncSession
-from py_database.model import Session as SessionORM, Dyad
+from py_database.model import SessionORM, DyadORM
 from chatlib.utils.time import get_timestamp
 from sqlmodel import select
-from py_core.system.model import Session
+from py_core.system.model import SessionInfo
 from py_core.system.session_topic import SessionTopicInfo
 from py_database.storage import SQLSessionStorage
 
 
-async def create_moderator_session(dyad: Dyad, topic: SessionTopicInfo, timezone: str, db: AsyncSession) -> SessionORM:
-    s = SessionORM.from_data_model(Session(topic=topic, local_timezone=timezone), dyad_id=dyad.id)
+async def create_moderator_session(dyad: DyadORM, topic: SessionTopicInfo, timezone: str, db: AsyncSession) -> SessionORM:
+    s = SessionORM.from_data_model(SessionInfo(topic=topic, local_timezone=timezone), dyad_id=dyad.id)
     db.add(s)
     await db.commit()
     await db.refresh(s)

@@ -34,10 +34,17 @@ class Dyad(ModelWithId):
     child_name: str = Field(min_length=1)
     parent_type: ParentType = Field(nullable=False)
 
+class SessionStatus(StrEnum):
+    Initial="initial"
+    Started="started"
+    Conversation="conversation"
+    Terminated="terminated"
 
-class Session(ModelWithId):
+class SessionInfo(ModelWithId):
 
     topic: SessionTopicInfo
+
+    status: SessionStatus = SessionStatus.Initial
 
     local_timezone: str
     started_timestamp: int = Field(default_factory=get_timestamp, index=True)
@@ -131,7 +138,7 @@ class ParentGuideElement(BaseModel):
 
     is_generated: bool = True
     static_guide_key: str | None = None
-        
+
 
     def with_guide_localized(self, localized: str) -> 'ParentGuideElement':
         return self.model_copy(update=dict(guide_localized=localized))
@@ -168,7 +175,7 @@ class ParentExampleMessage(ModelWithIdAndTimestamp):
     message: str
     message_localized: str | None = None
 
-    
+
 # Dialogue Models =======================================
 
 class DialogueRole(StrEnum):

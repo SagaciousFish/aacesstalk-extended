@@ -8,7 +8,7 @@ from tinydb.middlewares import CachingMiddleware
 from os import path, getcwd, makedirs
 
 from py_core.system.model import DialogueTurn, Interaction, ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
-    DialogueMessage, DialogueTypeAdapter, ParentExampleMessage, InterimCardSelection, DialogueRole, Session
+    DialogueMessage, DialogueTypeAdapter, ParentExampleMessage, InterimCardSelection, DialogueRole, SessionInfo
 from py_core.system.storage import SessionStorage
 
 
@@ -26,19 +26,8 @@ class JsonSessionStorage(SessionStorage):
 
     TABLE_INTERACTIONS = "interactions"
 
-    def __init__(self, session):
-        super().__init__(session)
-
-    
-
-    @classmethod
-    async def restore_instance(cls, id: str) -> SessionStorage | None:
-        session_info_path = session_info_path(id)
-        if path.exists(session_info_path):
-            with open(session_info_path) as f:
-                return JsonSessionStorage(Session(**json.load(f)))
-        else:
-            return None
+    def __init__(self, id: str):
+        super().__init__(id)
 
     @classmethod
     def session_db_dir_path(cls, id: str) -> str:
@@ -51,10 +40,25 @@ class JsonSessionStorage(SessionStorage):
     @classmethod
     def session_db_path(cls, id: str) -> str:
         return path.join(cls.session_db_dir_path(id), "db.json")
-    
+
     @classmethod
     def session_info_path(cls, id: str) -> str:
-        return path.join(cls.session_db_dir_path, "info.json")
+        return path.join(cls.session_db_dir_path(id), "info.json")
+
+
+    @classmethod
+    async def _load_session_info(cls, session_id: str) -> SessionInfo | None:
+        session_info_path = cls.session_info_path(session_id)
+        if path.exists(session_info_path):
+            with open(session_info_path) as f:
+                return SessionInfo(**json.load(f))
+        else:
+            return None
+
+    async def update_session_info(self, info: SessionInfo):
+        session_info_path = self.session_info_path(self.session_id)
+        with open(session_info_path, 'w') as f:
+            json.dump(info.model_dump(), f)
 
     @classmethod
     def db(cls, id: str) -> TinyDB:
@@ -166,6 +170,7 @@ class JsonSessionStorage(SessionStorage):
 
     async def delete_entities(self):
         os.unlink(self.session_db_dir_path(self.session_id))
+
 
 
 

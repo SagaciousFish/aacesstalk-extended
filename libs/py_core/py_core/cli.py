@@ -3,19 +3,19 @@ from chatlib.utils.validator import make_non_empty_string_validator
 
 from py_core import ModeratorSession
 from py_core.system.model import DialogueRole, \
-    ParentExampleMessage, Session, ParentType, Dyad
+    ParentExampleMessage, SessionInfo, ParentType, Dyad
 from py_core.system.session_topic import SessionTopicCategory, SessionTopicInfo
 import pendulum
 
 async def cli_get_dyad_info()->Dyad:
 
     parent_type: str = await questionary.select("Select parent type:", [ParentType.Mother, ParentType.Father], ParentType.Mother).ask_async()
-    child_name: str = await questionary.text("Child name: ", "다솜이").ask_async()    
+    child_name: str = await questionary.text("Child name: ", "다솜이").ask_async()
 
     return Dyad(alias="Test", child_name=child_name, parent_type=parent_type)
 
-    
-async def cli_get_session_info()->Session:
+
+async def cli_get_session_info()->SessionInfo:
 
     # Topic selection
     topic_category: str = await questionary.select("Select conversation topic category:", [
@@ -38,17 +38,14 @@ async def cli_get_session_info()->Session:
         subtopic_description = None
 
     topic_info = SessionTopicInfo(category=topic_category, subtopic=subtopic, subtopic_description=subtopic_description)
-    session_info = Session(topic=topic_info, local_timezone=pendulum.local_timezone().name)
+    session_info = SessionInfo(topic=topic_info, local_timezone=pendulum.local_timezone().name)
 
     return session_info
 
 async def test_session_loop(session: ModeratorSession):
 
-    await session.start()
+    turn, current_parent_guide_recommendation_result = await session.start()
 
-    # get initial parent guide recommendation
-    await session.generate_parent_guide_recommendation()
-    
     # Conversation loop
     while True:
         current_speaker = await session.current_speaker()

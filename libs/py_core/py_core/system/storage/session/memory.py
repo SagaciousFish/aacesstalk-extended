@@ -1,12 +1,14 @@
 from py_core.system.model import Dialogue, DialogueTurn, Interaction, ParentGuideRecommendationResult, ChildCardRecommendationResult, \
-    DialogueMessage, ParentExampleMessage, InterimCardSelection, DialogueRole, ModelWithIdAndTimestamp, Session
+    DialogueMessage, ParentExampleMessage, InterimCardSelection, DialogueRole, ModelWithIdAndTimestamp, SessionInfo
 from py_core.system.storage.session.session_storage import SessionStorage
 
 
 class OnMemorySessionStorage(SessionStorage):
 
-    def __init__(self, info: Session):
-        super().__init__(info)
+    __session_infos: dict[str, SessionInfo] = {}
+
+    def __init__(self, id: str):
+        super().__init__(id)
 
         self.__dialogue: Dialogue = []
         self.__parent_guide_recommendations: dict[str, ParentGuideRecommendationResult] = {}
@@ -20,9 +22,7 @@ class OnMemorySessionStorage(SessionStorage):
 
         self.__interactions: dict[str, Interaction] = {}
 
-    @classmethod
-    async def restore_instance(cls, id: str) -> SessionStorage | None:
-        return None
+
 
     async def add_dialogue_message(self, message: DialogueMessage):
         self.__dialogue.append(message)
@@ -102,6 +102,14 @@ class OnMemorySessionStorage(SessionStorage):
 
     async def get_latest_turn(self) -> DialogueTurn | None:
         return await self.__get_latest_model(self.__turns)
+
+    @classmethod
+    async def _load_session_info(cls, session_id: str) -> SessionInfo | None:
+        return cls.__session_infos[session_id] if session_id in cls.__session_infos else None
+
+    async def update_session_info(self, info: SessionInfo):
+        self.__session_infos[info.id] = info
+
 
 
 
