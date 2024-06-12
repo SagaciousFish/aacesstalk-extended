@@ -58,26 +58,27 @@ class OnMemorySessionStorage(SessionStorage):
         else:
             return None
 
-    async def __get_latest_model(self, model_dict: dict[str, ModelWithIdAndTimestamp], timestamp_column: str = "timestamp") -> ModelWithIdAndTimestamp | None:
+    async def __get_latest_model(self, model_dict: dict[str, ModelWithIdAndTimestamp],
+                                 timestamp_column: str = "timestamp", turn_id: str | None = None) -> ModelWithIdAndTimestamp | None:
         sorted_selections = sorted(
-            [v for k, v in model_dict.items()],
+            [v for k, v in model_dict.items() if (v.turn_id == turn_id if turn_id is not None else True)],
             key=lambda s: s[timestamp_column], reverse=True)
         if len(sorted_selections) > 0:
             return sorted_selections[0]
         else:
             return None
 
-    async def get_latest_card_selection(self) -> InterimCardSelection | None:
-        return await self.__get_latest_model(self.__interim_card_selections)
+    async def get_latest_card_selection(self, turn_id: str | None = None) -> InterimCardSelection | None:
+        return await self.__get_latest_model(self.__interim_card_selections, turn_id=turn_id)
 
     async def add_card_selection(self, selection: InterimCardSelection):
         self.__interim_card_selections[selection.id] = selection
 
-    async def get_latest_parent_guide_recommendation(self) -> ParentGuideRecommendationResult | None:
-        return await self.__get_latest_model(self.__parent_guide_recommendations)
+    async def get_latest_parent_guide_recommendation(self, turn_id: str | None = None) -> ParentGuideRecommendationResult | None:
+        return await self.__get_latest_model(self.__parent_guide_recommendations, turn_id=turn_id)
 
-    async def get_latest_child_card_recommendation(self) -> ChildCardRecommendationResult | None:
-        return await self.__get_latest_model(self.__card_recommendations)
+    async def get_latest_child_card_recommendation(self, turn_id: str | None = None) -> ChildCardRecommendationResult | None:
+        return await self.__get_latest_model(self.__card_recommendations, turn_id=turn_id)
 
     async def get_latest_dialogue_message(self) -> DialogueMessage | None:
         if len(self.__dialogue) == 0:

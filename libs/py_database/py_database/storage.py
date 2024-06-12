@@ -16,7 +16,7 @@ from py_database.database import AsyncSession
 
 
 class SQLSessionStorage(SessionStorage, ABC):
-    
+
     @classmethod
     @abstractmethod
     async def _load_session_info(cls, session_id: str) -> SessionInfo | None:
@@ -108,14 +108,18 @@ class SQLSessionStorage(SessionStorage, ABC):
         self._sql_session.add(InterimCardSelectionORM.from_data_model(self.session_id, selection))
         await self._sql_session.commit()
 
-    async def __get_latest_model(self, model: type[SessionIdMixin], timestamp_column: any = None) -> SessionIdMixin | None:
+    async def __get_latest_model(self, model: type[SessionIdMixin], timestamp_column: any = None, turn_id: str | None = None) -> SessionIdMixin | None:
 
         if timestamp_column is None:
             timestamp_column = model.timestamp
 
-        statement = (select(model)
-                         .where(model.session_id == self.session_id)
-                         .order_by(col(timestamp_column).desc()).limit(1))
+
+        statement = select(model).where(model.session_id == self.session_id)
+
+        if turn_id is not None:
+            statement = statement.where(model.turn_id == turn_id)
+
+        statement = (statement.order_by(col(timestamp_column).desc()).limit(1))
         results = await self._sql_session.exec(statement)
         first = results.first()
         if first is not None:
@@ -123,22 +127,22 @@ class SQLSessionStorage(SessionStorage, ABC):
         else:
             return None
 
-    async def get_latest_card_selection(self) -> InterimCardSelection | None:
-        d = await self.__get_latest_model(InterimCardSelectionORM)
+    async def get_latest_card_selection(self, turn_id=None) -> InterimCardSelection | None:
+        d = await self.__get_latest_model(InterimCardSelectionORM, turn_id=turn_id)
         if d is not None and isinstance(d, InterimCardSelectionORM):
             return d.to_data_model()
         else:
             return None
 
-    async def get_latest_parent_guide_recommendation(self) -> ParentGuideRecommendationResult | None:
-        d = await self.__get_latest_model(ParentGuideRecommendationResultORM)
+    async def get_latest_parent_guide_recommendation(self, turn_id=None) -> ParentGuideRecommendationResult | None:
+        d = await self.__get_latest_model(ParentGuideRecommendationResultORM, turn_id=turn_id)
         if d is not None and isinstance(d, ParentGuideRecommendationResultORM):
             return d.to_data_model()
         else:
             return None
 
-    async def get_latest_child_card_recommendation(self) -> ChildCardRecommendationResult | None:
-        d = await self.__get_latest_model(ChildCardRecommendationResultORM)
+    async def get_latest_child_card_recommendation(self, turn_id=None) -> ChildCardRecommendationResult | None:
+        d = await self.__get_latest_model(ChildCardRecommendationResultORM, turn_id=turn_id)
         if d is not None and isinstance(d, ChildCardRecommendationResultORM):
             return d.to_data_model()
         else:

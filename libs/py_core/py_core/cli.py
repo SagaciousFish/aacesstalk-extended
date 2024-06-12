@@ -47,9 +47,10 @@ async def test_session_loop(session: ModeratorSession):
 
     # Conversation loop
     while True:
-        current_speaker = await session.current_speaker()
+        current_turn = await session.storage.get_latest_turn()
+        current_speaker = current_turn.role
         if current_speaker == DialogueRole.Parent:
-            current_parent_guide_recommendation_result = await session.storage.get_latest_parent_guide_recommendation()
+            current_parent_guide_recommendation_result = await session.storage.get_latest_parent_guide_recommendation(turn_id=current_turn.id)
             if current_parent_guide_recommendation_result is not None:
                 print(current_parent_guide_recommendation_result.model_dump_json(indent=2))
                 if len(current_parent_guide_recommendation_result.messaging_guides) > 0:
@@ -84,14 +85,14 @@ async def test_session_loop(session: ModeratorSession):
             continue
 
         elif current_speaker == DialogueRole.Child:
-            current_card_recommendation_result = await session.storage.get_latest_child_card_recommendation()
+            current_card_recommendation_result = await session.storage.get_latest_child_card_recommendation(turn_id=current_turn.id)
             if current_card_recommendation_result is not None:
                 cards = current_card_recommendation_result.cards
 
                 card_prompts = [card.simple_str() for card in cards]
                 choices = ["[Refresh cards]"] + card_prompts
 
-                current_interim_card_selection = await session.storage.get_latest_card_selection()
+                current_interim_card_selection = await session.storage.get_latest_card_selection(turn_id=current_turn.id)
                 current_interim_cards = await session.get_card_info_from_identities(
                     current_interim_card_selection.cards) if current_interim_card_selection is not None else []
                 submittable = len(current_interim_cards) > 0

@@ -68,7 +68,7 @@ class SessionStorage(ABC):
         pass
 
     @abstractmethod
-    async def get_latest_card_selection(self) -> InterimCardSelection | None:
+    async def get_latest_card_selection(self, turn_id: str | None = None) -> InterimCardSelection | None:
         pass
 
     @abstractmethod
@@ -76,11 +76,11 @@ class SessionStorage(ABC):
         pass
 
     @abstractmethod
-    async def get_latest_parent_guide_recommendation(self) -> ParentGuideRecommendationResult | None:
+    async def get_latest_parent_guide_recommendation(self, turn_id: str | None = None) -> ParentGuideRecommendationResult | None:
         pass
 
     @abstractmethod
-    async def get_latest_child_card_recommendation(self) -> ChildCardRecommendationResult | None:
+    async def get_latest_child_card_recommendation(self, turn_id: str | None = None) -> ChildCardRecommendationResult | None:
         pass
 
     @abstractmethod
@@ -96,7 +96,7 @@ class SessionStorage(ABC):
         pass
 
     @abstractmethod
-    async def get_latest_turn(self)->DialogueTurn | None:
+    async def get_latest_turn(self) -> DialogueTurn | None:
         pass
 
     @abstractmethod

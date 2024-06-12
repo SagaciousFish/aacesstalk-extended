@@ -115,29 +115,36 @@ class JsonSessionStorage(SessionStorage):
         else:
             return None
 
-    async def __get_latest_model(self, table_name: str, timestamp_column: str = "timestamp") -> dict | None:
+    async def __get_latest_model(self, table_name: str, timestamp_column: str = "timestamp", turn_id: str | None = None) -> dict | None:
         table = self.db(self.session_id).table(table_name)
+
+        if turn_id is not None:
+            q = Query()
+            rows = table.search(q.turn_id == turn_id)
+        else:
+            rows = table.all()
+
         sorted_selections = sorted(
-                [row for row in table.all()],
+                [row for row in rows],
                 key=lambda s: s[timestamp_column], reverse=True)
         if len(sorted_selections) > 0:
             return sorted_selections[0]
         else:
             return None
 
-    async def get_latest_card_selection(self) -> InterimCardSelection | None:
-        d = await self.__get_latest_model(self.TABLE_CARD_SELECTIONS)
+    async def get_latest_card_selection(self, turn_id=None) -> InterimCardSelection | None:
+        d = await self.__get_latest_model(self.TABLE_CARD_SELECTIONS, turn_id=turn_id)
         return InterimCardSelection(**d) if d is not None else None
 
     async def add_card_selection(self, selection: InterimCardSelection):
         self.__insert_one(self.TABLE_CARD_SELECTIONS, selection)
 
-    async def get_latest_parent_guide_recommendation(self) -> ParentGuideRecommendationResult | None:
-        d = await self.__get_latest_model(self.TABLE_PARENT_RECOMMENDATIONS)
+    async def get_latest_parent_guide_recommendation(self, turn_id: str | None = None) -> ParentGuideRecommendationResult | None:
+        d = await self.__get_latest_model(self.TABLE_PARENT_RECOMMENDATIONS, turn_id=turn_id)
         return ParentGuideRecommendationResult(**d) if d is not None else None
 
-    async def get_latest_child_card_recommendation(self) -> ChildCardRecommendationResult | None:
-        d = await self.__get_latest_model(self.TABLE_CARD_RECOMMENDATIONS)
+    async def get_latest_child_card_recommendation(self, turn_id: str | None = None) -> ChildCardRecommendationResult | None:
+        d = await self.__get_latest_model(self.TABLE_CARD_RECOMMENDATIONS, turn_id=turn_id)
         return ChildCardRecommendationResult(**d) if d is not None else None
 
     async def get_latest_dialogue_message(self) -> DialogueMessage | None:
