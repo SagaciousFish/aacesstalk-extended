@@ -18,12 +18,14 @@ AtpX8pHl4M,action,after school,학교 끝나고,False
 xtanQH_vnW,action,already did,이미 했어요,False
 Z7PKuepeFz,action,apologize,사과해요,False
 9xqfhNC0iY,action,argue,논해요,False
+ngWC3e5vtK,action,arrange,정리해요,False
 FIFK8XdIo9,action,arrive,도착해요,False
 rFP_f6kugO,action,ask,물어봐요,False
 5pdoQaqQEb,action,at library,도서관에서,False
 S5ybpAoUkJ,action,at lunch,점심 때,False
 C981hmNoSM,action,ate,먹었어요,True
 PcgcuBvG2g,action,attacked,공격했어요,False
+Rq-WS4idop,action,attend,참여해요,False
 iz3c5syd8u,action,bake,굽어요,False
 WuY3NIdVc7,action,bored,지루해요,False
 J3qH5TLi_n,action,bring,가져가요,True
@@ -34,8 +36,10 @@ Bir4yNufTz,action,buy,사요,True
 gz3aF3BWwY,action,call,전화해요,False
 -HG-AfkaA2,action,can we,할 수 있을까요,False
 8WcAkvge62,action,carry,들어요,False
+3MQozy88V-,action,catch,잡아요,False
 hSjmPiYA4J,action,celebrate,축하하세요,False
 9ApkXNWhGk,action,chat,잡담해요,True
+C6o185JDGT,action,check,확인해요,False
 tCQSoOhVWH,action,cheer,힘내요,False
 Z6-RUtuXwp,action,choose,선택해요,True
 FFp5dgF61U,action,clean,청소해요,False
@@ -119,6 +123,7 @@ Rcd8W2FfPP,action,hear,들어요,False
 SQOjY1hhrK,action,help,도와줘요,True
 2DMi2IWvj9,action,help with,도와줄 필요가 있어요,False
 LHl8HjriW6,action,helped,도와주었어요,True
+UFo9KLCant,action,hold,잡아요,False
 daLY5CMk-2,action,hug,안아줘요,True
 msz_pL-EzP,action,hungry,배고파요,False
 b3x4wXEe3m,action,hurt,다치게 해요,False
@@ -151,6 +156,7 @@ y3HnSIkPc3,action,listen to,들어요,False
 FKx7TtcCcr,action,listened,들었어요,True
 oKi5PThAY7,action,listening,듣기해요,False
 siwWKm9BV8,action,look,보아요,True
+FmSmDm0kSh,action,look for,찾아요,False
 DUXsRDhQtT,action,looked,봤어요,False
 QHErJpKn02,action,lost,잃어버렸어요,False
 6aCL61BwoT,action,love,사랑해요,True
@@ -175,11 +181,13 @@ cTZJXQvr1c,action,paint,그려요,True
 uqW7Td0INw,action,participate,참여해요,True
 H5p_T5dcgq,action,participated,참여했어요,True
 ADPri_-gHj,action,pay,지불해요,False
+76hFi-Xw0W,action,pay for,지불해요,False
 Yd6w1uAwWj,action,perform,공연해요,False
 S__lGFyVjw,action,performed,공연해요,False
 5ISgsZ5Jbv,action,pick,가져오다,False
 YjWL7NjV6c,action,pick up,가져오다,False
 4jQ2YtF4cp,action,plan,계획해요,False
+20sD_n-VJL,action,plan to,계획해요,False
 QtVvZagZaj,action,play,놀아요,True
 VkXbEqS_Wu,action,play at,놀아요,False
 EHJU05TX5k,action,play with,같이 놀아요,False
@@ -189,9 +197,11 @@ qD4-z3UnHP,action,playing,놀아요,True
 MU_ZL_K-I5,action,practice,연습해요,True
 o8ZyLC2rrj,action,practiced,연습해요,False
 FyNDnm0No-,action,practicing,연습해요,False
+56F22s_0P2,action,prefer,선호해요,False
 gn6T12E7Y7,action,prefer to,선호해요,False
 cfIJUPIYIh,action,prepare,준비해요,False
 7-S47Kz7EP,action,prepared,준비해요,False
+Yp9Wq3Q_ja,action,push,누르다,False
 W8vovWamey,action,put away,가지고 들어요,False
 8pUy5QouEZ,action,ran,뛰었어요,True
 MkOW9SdkJ7,action,react,반응해요,False
@@ -227,6 +237,7 @@ LafJITqEu9,action,speak,말해요,True
 i6ViejcBeN,action,spend time,시간을 보아요,False
 DKIxAuH6UO,action,spend time at,시간을 보아요,False
 f-mhbNXEPR,action,spent,보냈어요,True
+5YeexUzgz3,action,splash,튀기다,False
 sMhKvP82v6,action,start,시작해요,True
 JvDzduIcWT,action,started,시작했어요,True
 8VwnqW47oT,action,stay,머무르다,False
@@ -251,8 +262,10 @@ eQZL7MHvE9,action,threw,던졌어요,True
 7iZI-C4C66,action,throw,던져요,True
 5M-KuPT-LW,action,tired,피곤해요,False
 9ILQPBaUyL,action,today,오늘,False
+vLopuaTcEs,action,touch,만지다,False
 pP6L8xa3sm,action,tried,시도해요,False
 nLu2kQrCgk,action,try,시도해요,True
+WdoP8vl1U1,action,try to,시도해요,False
 hpsevNf_wR,action,understand,이해해요,True
 O68F6a00VU,action,upset,화나요,False
 gtjJfAAdum,action,use,사용해요,True
@@ -362,12 +375,14 @@ gJHJnTTPNT,emotion,upset,상처받았어요,True
 dcPChAHMPb,emotion,worried,걱정해요,True
 00MW5LFvvC,emotion,worry,걱정해요,True
 lEmJ6br9eG,topic,Bag,가방,False
+Ij3qOmgn36,topic,Bakery,빵집,False
 EVm_PduPEj,topic,Brachiosaurus,브라키오사우루스,False
 vkQDxIH4fx,topic,Cafeteria,학교 식당,False
 3dlJX28y11,topic,Cleaner 's,청소부,False
 flFBXF2iIc,topic,Cousin,사촌,False
 A1zdXROq16,topic,Dad,아빠,False
 jdJvqv24DR,topic,Dessert,디저트,False
+BEDBPJvc6d,topic,Doll,인형,False
 ij7TQkFJ_B,topic,English,영어,True
 Vf0OZQ_IP1,topic,Father,아빠,False
 02AFrNPPuz,topic,Giggle,꼬옥,False
@@ -383,6 +398,7 @@ U11phGXOj6,topic,House chores,일,False
 nf8ANTsVqz,topic,Jurassic period,쥬라기시대,False
 LJ0ZN-IZwE,topic,Korean,한국어,True
 fQU-HFRHY7,topic,Laugh,웃음,False
+tjkz2yliKy,topic,Math class,수학 수업,False
 murUTNemxc,topic,Nap,숙면,False
 O5Xh2AWFJv,topic,P.E. Class,체육 수업,False
 Bbg2hwrILA,topic,PE class,체육 수업,True
@@ -390,6 +406,7 @@ PShoeM7f-D,topic,Park,공원,False
 icZS7rpL4V,topic,Physical Education,체육 수업,False
 xxO96x1LbZ,topic,Sandbox,모래놀이,False
 pj32szL_tp,topic,Storybook,책,False
+BG0KtSt4DC,topic,Tablet,태블릿,False
 y4Z4dPffFA,topic,Zoo,동물원,False
 xvU29NPrLj,topic,activities,활동,True
 0swTtsJpkt,topic,activity,활동,True
@@ -404,9 +421,11 @@ ywQE0a80n_,topic,arts,예술,True
 Us1QEZe8tc,topic,aunt,이모,False
 IMftroKV4S,topic,ball,공,True
 -LDc6p71rz,topic,bath time,목욕 시간,False
+XXlVUHzQea,topic,beach,해변,False
 YP0FjcWKH-,topic,bed,침대,False
 9dBB6aKRqm,topic,bedtime,잠자는 시간,False
 1qt1uoBHbO,topic,behavior,행동,False
+nGpA0VT7ce,topic,bicycle,자전거,False
 uiMaluvFvG,topic,bike,자전거,True
 O2sjPoUIwA,topic,bike ride,자전거 타기,False
 iTfQW20laa,topic,birthday,생일,False
@@ -449,12 +468,14 @@ FMk7yvs8rr,topic,clothes,옷,False
 63BIuiTJAL,topic,color,색깔,True
 CGMa4tcedr,topic,coloring book,컬러링북,False
 ZMzrVSxPQy,topic,colors,색깔,True
+qZBdz6A-UZ,topic,computer,컴퓨터,False
 ZqQmq0jgXj,topic,conversation,대화,True
 3WA8c-FPkI,topic,cookies,쿠키,False
 zqVEMisZNk,topic,cooking,요리,True
 Nffft4shNo,topic,crafts,공예,True
 JHO4VaHEpx,topic,cutting,잘라내기,True
 sNFn4U2eF5,topic,dance,춤,True
+CtvZJODlsP,topic,dancing,춤,False
 DXoEukH8Xk,topic,dasom,다솜,False
 -p7DQL_cJH,topic,day,하루,True
 3J-01LE5m3,topic,dessert,디저트,False
@@ -463,6 +484,8 @@ vTKJn1aaDd,topic,dinosaur,공룡,False
 ob4zxP87-c,topic,do,행동,True
 AuS-NbVaGa,topic,dog,개,False
 0o55x3aumQ,topic,doll,인형,True
+KAtrzi67MR,topic,dolls,인형,False
+XL_k6Cf8FL,topic,download,다운로드,False
 QuW95kXgGG,topic,draw,그림,True
 o3o0f8L2ph,topic,drawing,그리기,True
 0GAgZdOFuq,topic,drawing ( activity ),그리기,False
@@ -591,11 +614,13 @@ bbuEkm70HA,topic,recess,외출,True
 GNb4wVR5kh,topic,rest,휴식,False
 HFcCaxrAIv,topic,restaurant,식당,False
 WIBPEKPI70,topic,ride,타요,False
+eEOjIafw0b,topic,robot,로봇,False
 Jw5KqXbGgq,topic,room,방,True
 sq4xJoaI5a,topic,rule,규칙,True
 qLY8rRApZW,topic,rules,규칙,True
 UeI__XeQNE,topic,run,달리기,True
 eZobLY2Zaa,topic,running,달리기,False
+QCd1yyXN1X,topic,sand,모래,False
 v87vwbFyNz,topic,sandbox,모래사장,True
 l6a_W_vdiO,topic,sandwich,샌드위치,True
 2bqHLaFEOK,topic,school,학교,True
@@ -623,6 +648,7 @@ I9akCSnebp,topic,sport,스포츠,False
 Ddl43DNFUp,topic,sports,스포츠,True
 L0dv_PTqgq,topic,store,가게,False
 lnpE__vNu7,topic,story,이야기,True
+B_xFi0negG,topic,story book,이야기,False
 sX6NvIW7H0,topic,study,공부,True
 6JyUR7bg_T,topic,studying,공부,False
 Oct0H6k8G7,topic,subject,과목,True
@@ -646,18 +672,22 @@ wkpLfQFBhQ,topic,toothbrush,칫솔,False
 05joagL419,topic,toy,장난감,True
 94P91PSrBv,topic,toy store,장난감 가게,False
 pt-tfZEEK4,topic,toys,장난감,True
+gXYPLyE3Jy,topic,tree,나무,False
 jGVNYDxLu4,topic,triceratops,트리케라톱스,False
 wR6jjqUIMI,topic,trip,여행,False
 TxjIz_Ta9s,topic,tv,TV,True
+ncqGVkfUxd,topic,tv Show,TV 프로그램,False
 8X3xGnZUXJ,topic,tv show,TV 프로그램,False
 2eRmnGqVDZ,topic,tyrannosaurus,티라노사우르스,False
 hX_5In0X6m,topic,uncle,삼촌,False
 k5Zet-Q-dz,topic,vegetables,채소,False
 mytaFEgWct,topic,velociraptor,벨로키랍터,False
+20Jqf32O5m,topic,video,비디오,False
 D-o5-bn56I,topic,video call,비디오 통화,False
 joF5kheIoO,topic,visit,방문,True
 uwqFzosvTz,topic,walk,걷기,False
 JTDj3vAlSA,topic,watch,관람,True
+W96jA19WK8,topic,water,물,False
 1x1x0oBhN2,topic,water friends,물 친구,False
 keVw2A-FVW,topic,we,우리,False
 kYzgM-b-Vv,topic,work,일,False

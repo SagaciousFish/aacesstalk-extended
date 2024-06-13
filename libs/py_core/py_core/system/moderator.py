@@ -381,7 +381,7 @@ class ModeratorSession:
             raise e
 
     @speaker(DialogueRole.Child)
-    async def pop_last_child_card(self) -> InterimCardSelection:
+    async def pop_last_child_card(self) -> tuple[InterimCardSelection, ChildCardRecommendationResult]:
         try:
             current_turn = await self.storage.get_latest_turn()
             current_card_selection = await self.storage.get_latest_card_selection(turn_id=current_turn.id)
@@ -391,6 +391,10 @@ class ModeratorSession:
                 new_card_selection = InterimCardSelection(turn_id=current_turn.id, cards=current_card_selection.cards[:-1])
                 await self.storage.add_card_selection(new_card_selection)
 
+                prev_recommendation = await self.storage.get_card_recommendation_result(last_card.recommendation_id)
+                new_recommendation = ChildCardRecommendationResult(**prev_recommendation.model_dump(exclude={"id"}))
+                await self.storage.add_card_recommendation_result(new_recommendation)
+                
                 await self.storage.add_interaction(Interaction(
                     type=InteractionType.RemoveLastChildCard,
                     turn_id=current_turn.id,
@@ -401,9 +405,10 @@ class ModeratorSession:
                     )
                 ))
 
-                return new_card_selection
+                return new_card_selection, new_recommendation
             else:
-                return current_card_selection
+                recommendation = await self.storage.get_latest_child_card_recommendation(turn_id = current_turn.id)
+                return current_card_selection, recommendation
         except Exception as e:
             raise e
 

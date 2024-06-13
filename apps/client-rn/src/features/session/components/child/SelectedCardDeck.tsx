@@ -9,12 +9,13 @@ import { RemoveCardIcon } from 'apps/client-rn/src/components/vector-icons'
 import Animated, { Easing, FlipInXUp, FlipOutXDown } from 'react-native-reanimated'
 
 const SelectedCardView = (props: {
-    id: string
+    id: string,
+    disabled?: boolean
 }) => {
 
     const cardInfo = useSelector(state => state.session.selectedChildCardEntityState.entities[props.id])
 
-    return <ChildCardView cardInfo={cardInfo}/>
+    return <ChildCardView cardInfo={cardInfo} disabled={props.disabled}/>
 }
 
 const selectedCardEnteringAnim = FlipInXUp.duration(300).springify()
@@ -32,6 +33,8 @@ export const SelectedCardDeck = (props: {
 
     const selectedCardIds = useSelector(state => state.session.selectedChildCardEntityState.ids)
 
+    const isInteractionEnabled = useSelector(state => state.session.isProcessingRecommendation === false)
+
     const removeButtonColor = useMemo(()=> getTopicColors(props.topicCategory).bg, [props.topicCategory])
 
     const onPressRemove = useCallback(()=>{
@@ -40,11 +43,13 @@ export const SelectedCardDeck = (props: {
 
     return <View className={`self-stretch h-[14vw] ${lightTopicColorClassName} flex-row items-center`}>
         {
-            selectedCardIds.map(id => <Animated.View entering={selectedCardEnteringAnim} exiting={selectedCardExitingAnim} key={id}><SelectedCardView id={id}/></Animated.View>)
+            selectedCardIds.map(id => <Animated.View entering={selectedCardEnteringAnim} exiting={selectedCardExitingAnim} key={id}>
+                <SelectedCardView id={id} disabled={!isInteractionEnabled}/>
+                </Animated.View>)
         }
         {
             selectedCardIds.length >= 1 ? <><View className='flex-1'/>
-            <TailwindButton buttonStyleClassName='self-stretch flex-1 bg-transparent' onPress={onPressRemove}>
+            <TailwindButton disabled={!isInteractionEnabled} buttonStyleClassName='self-stretch flex-1 bg-transparent' onPress={onPressRemove}>
                 <RemoveCardIcon fill={removeButtonColor}/>
             </TailwindButton></> : null
         }

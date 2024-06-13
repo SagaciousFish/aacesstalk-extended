@@ -147,7 +147,6 @@ const sessionSlice = createSlice({
       const cardGroupByCategory = group(action.payload.cards, "category")
 
       forEachChildCardAdapters((category, adapter) => {
-        console.log("Loop for ", category)
         adapter.removeAll(state.childCardEntityStateByCategory[category])
         adapter.addMany(state.childCardEntityStateByCategory[category], cardGroupByCategory[category])
       })
@@ -273,7 +272,7 @@ export function cancelSession(): CoreThunk {
 
 // Parent messaging /////////////////////////////////////////////
 
-export function startSession(): CoreThunk {
+export function startAndRetrieveInitialParentGuide(): CoreThunk {
   return makeSignedInThunk(
     {
       loadingFlagKey: 'isProcessingRecommendation',
@@ -342,7 +341,7 @@ export function submitParentMessage(message: string): CoreThunk {
   }, true)
 }
 
-export function selectCard(cardInfo: CardInfo): CoreThunk {
+export function appendCard(cardInfo: CardInfo): CoreThunk {
   return makeSignedInThunk({
     loadingFlagKey: 'isProcessingRecommendation',
     runIfSignedIn: async (dispatch, getState, headers) => {
@@ -350,7 +349,7 @@ export function selectCard(cardInfo: CardInfo): CoreThunk {
 
       dispatch(sessionSlice.actions._appendSelectedCard(cardInfo))
 
-      const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_CHILD_SELECT, { session_id: state.session.id!! }), 
+      const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_CHILD_APPEND_CARD, { session_id: state.session.id!! }), 
         { id: cardInfo.id, recommendation_id: cardInfo.recommendation_id }, 
         { headers })
 
@@ -370,7 +369,36 @@ export function removeLastCard(): CoreThunk {
   return makeSignedInThunk({
     loadingFlagKey: "isProcessingRecommendation",
     runIfSignedIn: async (dispatch, getState, headers) => {
+      const state = getState()
+
       dispatch(sessionSlice.actions._popLastSelectedCard())
+
+      const resp = await Http.axios.put(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_CHILD_POP_LAST_CARD, { session_id: state.session.id!! }), null, {
+        headers
+      })
+
+      const { new_recommendation } = resp.data
+
+      dispatch(sessionSlice.actions._storeNewChildCardRecommendation(new_recommendation))
+
+    }
+  })
+}
+
+export function refreshCards(): CoreThunk {
+  return makeSignedInThunk({
+    loadingFlagKey: "isProcessingRecommendation",
+    runIfSignedIn: async (dispatch, getState, headers) => {
+      const state = getState()
+
+      const resp = await Http.axios.put(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_CHILD_REFRESH_CARDS, { session_id: state.session.id!! }), null, {
+        headers
+      })
+
+      const new_recommendation = resp.data
+
+      dispatch(sessionSlice.actions._storeNewChildCardRecommendation(new_recommendation))
+
     }
   })
 }

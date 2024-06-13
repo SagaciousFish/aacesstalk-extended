@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { DialogueRole, TopicCategory, startSession } from '@aacesstalk/libs/ts-core'
+import { DialogueRole, TopicCategory, startAndRetrieveInitialParentGuide } from '@aacesstalk/libs/ts-core'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { MainRoutes } from 'apps/client-rn/src/navigation'
 import { View, Text } from 'react-native'
@@ -42,7 +42,7 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
     useEffect(() => {
         console.log(isInitializing)
         if (isInitializing == false && sessionId != null) {
-            dispatch(startSession())
+            dispatch(startAndRetrieveInitialParentGuide())
         }
     }, [isInitializing, sessionId])
 

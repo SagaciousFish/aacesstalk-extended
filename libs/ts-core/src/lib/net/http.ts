@@ -29,7 +29,11 @@ export class Http{
   static ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE = `${Http.ENDPOINT_DYAD_MESSAGE}/parent/message`
   static ENDPOINT_DYAD_MESSAGE_PARENT_EXAMPLE = `${Http.ENDPOINT_DYAD_MESSAGE}/parent/example`
   
-  static ENDPOINT_DYAD_MESSAGE_CHILD_SELECT = `${Http.ENDPOINT_DYAD_MESSAGE}/child/add_card`  
+  static ENDPOINT_DYAD_MESSAGE_CHILD_APPEND_CARD = `${Http.ENDPOINT_DYAD_MESSAGE}/child/add_card`
+  static ENDPOINT_DYAD_MESSAGE_CHILD_REFRESH_CARDS = `${Http.ENDPOINT_DYAD_MESSAGE}/child/refresh_cards`
+  static ENDPOINT_DYAD_MESSAGE_CHILD_CONFIRM_CARDS = `${Http.ENDPOINT_DYAD_MESSAGE}/child/confirm_cards`
+  static ENDPOINT_DYAD_MESSAGE_CHILD_POP_LAST_CARD = `${Http.ENDPOINT_DYAD_MESSAGE}/child/pop_last_card`
+
 
 
   static getTemplateEndpoint(template: string, values: {[key:string]: string}): string {

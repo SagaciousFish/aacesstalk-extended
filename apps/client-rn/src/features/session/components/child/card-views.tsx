@@ -1,4 +1,4 @@
-import { CardCategory, CardInfo, TopicCategory, selectCard } from "@aacesstalk/libs/ts-core"
+import { CardCategory, CardInfo, TopicCategory, appendCard } from "@aacesstalk/libs/ts-core"
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { getTopicColorClassNames, styleTemplates } from "apps/client-rn/src/styles"
 import { useCallback, useMemo } from "react"
@@ -49,7 +49,7 @@ export const TopicChildCardView = (props:{
     const isProcessing = useSelector(state => state.session.isProcessingRecommendation)
 
     const onPress = useCallback(()=>{
-        dispatch(selectCard(cardInfo))
+        dispatch(appendCard(cardInfo))
     }, [cardInfo])
 
     return <ChildCardView disabled={isProcessing} cardInfo={cardInfo} cardClassName={props.cardClassName} onPress={onPress}/>

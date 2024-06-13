@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from fastapi import APIRouter, Depends
 from py_core import ModeratorSession
 from py_core.system.model import Dialogue, ParentGuideRecommendationResult, CardIdentity, ChildCardRecommendationResult, \
-    CardInfo, ParentExampleMessage
+    CardInfo, ParentExampleMessage, InterimCardSelection
 
 from py_database.model import DyadORM
 
@@ -60,6 +60,15 @@ async def append_card(card_identity: CardIdentity,
 async def refresh_card_selection(
         session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]) -> ChildCardRecommendationResult:
     return await session.refresh_child_card_recommendation()
+
+@router.put("/child/pop_last_card", response_model=CardSelectionResult)
+async def _pop_last_child_card(
+        session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]) -> CardSelectionResult:
+    
+    selection, recommendation = await session.pop_last_child_card()
+    interim_cards = await session.get_card_info_from_identities(selection.cards)
+
+    return CardSelectionResult(interim_cards=interim_cards, new_recommendation=recommendation)
 
 
 @router.post("/child/confirm_cards", response_model=ParentGuideRecommendationResult)
