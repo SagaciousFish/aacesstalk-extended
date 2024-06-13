@@ -4,11 +4,12 @@ import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { useTranslation } from "react-i18next"
 import { View } from "react-native"
 import format from 'string-template'
-import { CardCategoryView, ChildCardView, TopicChildCardView } from "./card-views"
+import { CardCategoryView, TopicChildCardView } from "./card-views"
 import { SelectedCardDeck } from "./SelectedCardDeck"
 import { useCallback, useMemo } from "react"
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import { TailwindButton } from "apps/client-rn/src/components/tailwind-components"
+import { RefreshIcon } from "apps/client-rn/src/components/vector-icons"
 
 const MAIN_CATEGORIES = [CardCategory.Topic, CardCategory.Action, CardCategory.Emotion]
 
@@ -31,7 +32,9 @@ const RefreshButton = () => {
         dispatch(refreshCards())
     }, [])
 
-    return <TailwindButton disabled={isProcessing} title="Refresh" containerClassName="absolute bottom-5 right-5" onPress={onPress}/>
+    return <TailwindButton disabled={isProcessing} containerClassName="absolute bottom-5 right-5" roundedClassName='rounded-xl' buttonStyleClassName='p-3' onPress={onPress}>
+        <RefreshIcon width={32} height={32} fill={"#575757"} />
+    </TailwindButton>
 }
 
 export const SessionChildView = () => {
