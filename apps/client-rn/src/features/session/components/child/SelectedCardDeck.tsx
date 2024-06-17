@@ -1,4 +1,4 @@
-import { TopicCategory, removeLastCard } from '@aacesstalk/libs/ts-core'
+import { TopicCategory, removeLastCard, selectSelectedChildCardById, selectSelectedChildCardIds } from '@aacesstalk/libs/ts-core'
 import { useDispatch, useSelector } from 'apps/client-rn/src/redux/hooks'
 import { getTopicColorClassNames, getTopicColors } from 'apps/client-rn/src/styles'
 import { useCallback, useMemo } from 'react'
@@ -13,9 +13,9 @@ const SelectedCardView = (props: {
     disabled?: boolean
 }) => {
 
-    const cardInfo = useSelector(state => state.session.selectedChildCardEntityState.entities[props.id])
+    const cardInfo = useSelector(state => selectSelectedChildCardById(state, props.id))
 
-    return <ChildCardView cardInfo={cardInfo} disabled={props.disabled}/>
+    return <ChildCardView label={cardInfo?.label_localized} disabled={props.disabled}/>
 }
 
 const selectedCardEnteringAnim = FlipInXUp.duration(300).springify()
@@ -31,7 +31,7 @@ export const SelectedCardDeck = (props: {
     const [_, lightTopicColorClassName] = useMemo(()=>getTopicColorClassNames(props.topicCategory), [props.topicCategory])
 
 
-    const selectedCardIds = useSelector(state => state.session.selectedChildCardEntityState.ids)
+    const selectedCardIds = useSelector(selectSelectedChildCardIds)
 
     const isInteractionEnabled = useSelector(state => state.session.isProcessingRecommendation === false)
 

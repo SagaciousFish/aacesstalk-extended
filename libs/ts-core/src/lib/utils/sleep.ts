@@ -8,7 +8,6 @@ export async function finishAfterMinimumDelay<T>(promise: Promise<T>, minDelay: 
         const tEnd = Date.now()
     
         const leftTime = minDelay - (tEnd-tStart)
-        console.log("Left time:", leftTime)
         if(leftTime>0){
             setTimeout(()=>{ resolve(result) }, leftTime)
         }else{

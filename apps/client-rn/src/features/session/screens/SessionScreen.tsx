@@ -1,24 +1,20 @@
-import { StyleSheet } from 'react-native'
 import { DialogueRole, TopicCategory, startAndRetrieveInitialParentGuide } from '@aacesstalk/libs/ts-core'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { MainRoutes } from 'apps/client-rn/src/navigation'
-import { View, Text } from 'react-native'
 import HillPlanImage from '../../../assets/images/hill_plan.svg'
 import HillRecallImage from '../../../assets/images/hill_recall.svg'
 import HillFreeImage from '../../../assets/images/hill_free.svg'
 import { HillBackgroundView } from 'apps/client-rn/src/components/HillBackgroundView'
-import { SessionTitleRibbon } from '../components/parent/SessionTitleRibbon'
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'apps/client-rn/src/redux/hooks'
-import { Fragment, useCallback, useEffect, useMemo } from 'react'
-import format from 'string-template'
-import { SessionStartingMessage } from '../components/parent/SessionStartingMessage'
+import { Fragment, useCallback, useEffect } from 'react'
 import { SessionParentView } from '../components/parent/SessionParentView'
 import { TailwindButton } from 'apps/client-rn/src/components/tailwind-components'
 import { MenuIcon } from 'apps/client-rn/src/components/vector-icons'
-import Animated, { Easing, SlideInUp, SlideInDown } from 'react-native-reanimated'
+import Animated, { Easing, SlideInDown } from 'react-native-reanimated'
 import { LoadingIndicator } from 'apps/client-rn/src/components/LoadingIndicator'
 import { SessionChildView } from '../components/child/SessionChildView'
+import { TailwindClasses } from 'apps/client-rn/src/styles'
 
 const BG_COLOR_BY_TOPIC_CATEGORY = {
     [TopicCategory.Plan]: 'bg-topicplan-bg',
@@ -40,7 +36,6 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
     const currentTurn = useSelector(state => state.session.currentTurn)
 
     useEffect(() => {
-        console.log(isInitializing)
         if (isInitializing == false && sessionId != null) {
             dispatch(startAndRetrieveInitialParentGuide())
         }
@@ -76,7 +71,7 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
         </Fragment>
 
         <Animated.View className='absolute left-5 bottom-5' entering={menuButtonEnteringAnim}>
-            <TailwindButton onPress={onMenuButtonPress} roundedClassName='rounded-xl' buttonStyleClassName='p-3'><MenuIcon width={32} height={32} fill={"#575757"} /></TailwindButton>
+            <TailwindButton onPress={onMenuButtonPress} roundedClassName='rounded-xl' buttonStyleClassName={`p-3 ${TailwindClasses.ICON_BUTTON_SIZES}`}><MenuIcon width={32} height={32} fill={"#575757"} /></TailwindButton>
         </Animated.View>
     </HillBackgroundView>
 }

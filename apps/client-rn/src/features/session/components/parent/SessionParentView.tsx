@@ -10,7 +10,7 @@ import { LoadingIndicator } from "apps/client-rn/src/components/LoadingIndicator
 import { PopupMenuScreenFrame } from "apps/client-rn/src/components/PopupMenuScreenFrame";
 import { TailwindButton } from "apps/client-rn/src/components/tailwind-components";
 import { useController, useForm } from "react-hook-form";
-import { SessionTopicInfo, submitParentMessage } from '@aacesstalk/libs/ts-core';
+import { SessionTopicInfo, parentGuideSelectors, submitParentMessage } from '@aacesstalk/libs/ts-core';
 import { SessionTitleRibbon } from './SessionTitleRibbon';
 import { SessionStartingMessage } from './SessionStartingMessage';
 
@@ -53,7 +53,7 @@ export const SessionParentView = (props: {
 }) => {
     
     const isProcessing = useSelector(state => state.session.isProcessingRecommendation)
-    const parentGuideIds = useSelector(state => state.session.parentGuideEntityState.ids)
+    const parentGuideIds = useSelector(parentGuideSelectors.selectIds)
 
     const numTurns = useSelector(state => state.session.numTurns)
 

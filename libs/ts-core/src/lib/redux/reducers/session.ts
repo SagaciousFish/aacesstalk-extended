@@ -8,7 +8,7 @@ import {
   ParentGuideRecommendationResult,
   SessionTopicInfo
 } from '../../model-types';
-import { Action, createEntityAdapter, createSlice, EntityAdapter, EntityState, PayloadAction, ThunkDispatch } from '@reduxjs/toolkit';
+import { Action, createEntityAdapter, createSelector, createSlice, EntityAdapter, EntitySelectors, EntityState, PayloadAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { CoreState, CoreThunk } from '../store';
 import { Http } from '../../net/http';
 import { finishAfterMinimumDelay } from '@aacesstalk/libs/ts-core';
@@ -20,12 +20,14 @@ const INITIAL_PARENT_GUIDE_STATE = parentGuideAdapter.getInitialState()
 const selectedCardAdapter = createEntityAdapter<CardInfo>()
 const INITIAL_SELECTED_CARD_STATE = selectedCardAdapter.getInitialState()
 
+const CARD_CATEGORIES = [CardCategory.Action, CardCategory.Emotion, CardCategory.Topic, CardCategory.Core]
+
 type ChildCardTypeAdapters = {[key in CardCategory | string]: {
   adapter: EntityAdapter<CardInfo, string>,
   initialState: EntityState<CardInfo, string> 
 }}
 
-const childCardAdapters: ChildCardTypeAdapters = Object.fromEntries([CardCategory.Action, CardCategory.Emotion, CardCategory.Topic, CardCategory.Core].map(category => {
+const childCardAdapters: ChildCardTypeAdapters = Object.fromEntries(CARD_CATEGORIES.map(category => {
   const adapter = createEntityAdapter<CardInfo>()
   return [category, {
     adapter, initialState: adapter.getInitialState() 
@@ -200,6 +202,19 @@ const sessionSlice = createSlice({
   },
 
 })
+
+export const {selectIds: selectSelectedChildCardIds, selectById: selectSelectedChildCardById } = selectedCardAdapter.getSelectors<CoreState>(state => state.session.selectedChildCardEntityState)
+
+export const childCardSessionSelectors = Object.fromEntries(CARD_CATEGORIES.map(category => [category, childCardAdapters[category].adapter.getSelectors<CoreState>(state => state.session.childCardEntityStateByCategory[category])]))
+
+export const parentGuideSelectors = parentGuideAdapter.getSelectors<CoreState>(state => state.session.parentGuideEntityState)
+
+export const parentGuideMessageSelector = createSelector(
+  [parentGuideSelectors.selectById],
+  (guide) => {
+    return guide.guide_localized || guide.guide
+  }
+)
 
 function makeSignedInThunk(
   options: {

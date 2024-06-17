@@ -10,6 +10,7 @@ import { useCallback, useMemo } from "react"
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import { TailwindButton } from "apps/client-rn/src/components/tailwind-components"
 import { RefreshIcon } from "apps/client-rn/src/components/vector-icons"
+import { TailwindClasses } from "apps/client-rn/src/styles"
 
 const MAIN_CATEGORIES = [CardCategory.Topic, CardCategory.Action, CardCategory.Emotion]
 
@@ -32,8 +33,8 @@ const RefreshButton = () => {
         dispatch(refreshCards())
     }, [])
 
-    return <TailwindButton disabled={isProcessing} containerClassName="absolute bottom-5 right-5" roundedClassName='rounded-xl' buttonStyleClassName='p-3' onPress={onPress}>
-        <RefreshIcon width={32} height={32} fill={"#575757"} />
+    return <TailwindButton disabled={isProcessing} containerClassName="absolute bottom-5 right-5" roundedClassName='rounded-xl' buttonStyleClassName={`p-3 ${TailwindClasses.ICON_BUTTON_SIZES}`} onPress={onPress}>
+        <RefreshIcon width={28} height={28} fill={"#575757"} />
     </TailwindButton>
 }
 

@@ -53,7 +53,6 @@ export function loginDyadThunk(code: string): CoreThunk {
     dispatch(authSlice.actions._authorizingFlagOn());
 
     try {
-      console.log(Http.ENDPOINT_DYAD_ACCOUNT_LOGIN)
       const tokenResponse = await Http.axios.post(Http.ENDPOINT_DYAD_ACCOUNT_LOGIN,
         { code }, {
           headers: {

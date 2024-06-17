@@ -53,18 +53,17 @@ export function RefreshIcon(props) {
   return (
     <Svg
       xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-      className="size-6"
+      viewBox="0 0 16 16"
+      fill="currentColor"
+      className="size-4"
       {...props}
     >
       <Path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+        fillRule="evenodd"
+        d="M13.836 2.477a.75.75 0 01.75.75v3.182a.75.75 0 01-.75.75h-3.182a.75.75 0 010-1.5h1.37l-.84-.841a4.5 4.5 0 00-7.08.932.75.75 0 01-1.3-.75 6 6 0 019.44-1.242l.842.84V3.227a.75.75 0 01.75-.75zm-.911 7.5A.75.75 0 0113.199 11a6 6 0 01-9.44 1.241l-.84-.84v1.371a.75.75 0 01-1.5 0V9.591a.75.75 0 01.75-.75H5.35a.75.75 0 010 1.5H3.98l.841.841a4.5 4.5 0 007.08-.932.75.75 0 011.025-.273z"
+        clipRule="evenodd"
       />
     </Svg>
   )
 }
+

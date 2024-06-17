@@ -38,3 +38,7 @@ export function getTopicColors(topicCategory: TopicCategory): {
 } {
   return colors[`topic${topicCategory}`]
 }
+
+export namespace TailwindClasses{
+  export const ICON_BUTTON_SIZES="w-16 h-16"
+}

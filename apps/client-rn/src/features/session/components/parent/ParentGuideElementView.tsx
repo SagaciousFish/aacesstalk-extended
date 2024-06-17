@@ -1,4 +1,4 @@
-import { ParentGuideCategory, ParentGuideType, TopicCategory, requestParentGuideExampleMessage } from "@aacesstalk/libs/ts-core";
+import { ParentGuideCategory, ParentGuideType, TopicCategory, parentGuideMessageSelector, parentGuideSelectors, requestParentGuideExampleMessage } from "@aacesstalk/libs/ts-core";
 import { LoadingIndicator } from "apps/client-rn/src/components/LoadingIndicator";
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { getTopicColorClassNames, styleTemplates } from "apps/client-rn/src/styles"
@@ -6,8 +6,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, View, StyleSheet } from "react-native"
 import Animated ,{ Easing, ZoomIn, interpolate, interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
-const themeColors = require('../../../../styles/colors')
-console.log(themeColors)
 
 const styles = StyleSheet.create({
     guideFrame: {
@@ -27,7 +25,7 @@ const GUIDE_FRAME_DIMENSION_CLASSNAME = "w-[70vw] h-[16vh]"
 const GUIDE_FRAME_CLASSNAME = `absolute ${GUIDE_FRAME_DIMENSION_CLASSNAME} justify-center px-8 rounded-2xl border-white border-[6px]`
 
 export const ParentGuideElementView = (props: Props) => {
-    const guideType = useSelector(state => state.session.parentGuideEntityState.entities[props.id].type)
+    const guideType = useSelector(state => parentGuideSelectors.selectById(state, props.id).type)
 
     switch(guideType){
         case ParentGuideType.Messaging:
@@ -41,7 +39,7 @@ const ParentMessageGuideElementView = (props: Props) => {
     const dispatch = useDispatch()
 
     const topicCategory = useSelector(state => state.session.topic.category)
-    const guideMessage = useSelector(state => state.session.parentGuideEntityState.entities[props.id].guide_localized || state.session.parentGuideEntityState.entities[props.id].guide)
+    const guideMessage = useSelector(state => parentGuideMessageSelector(state, props.id))
     const isExampleLoading = useSelector(state => state.session.parentExampleMessageLoadingFlags[props.id] || false)
     const exampleMessage = useSelector(state => state.session.parentExampleMessages[props.id])
 
