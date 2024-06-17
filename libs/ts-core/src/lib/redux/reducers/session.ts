@@ -147,8 +147,41 @@ const sessionSlice = createSlice({
       const cardGroupByCategory = group(action.payload.cards, "category")
 
       forEachChildCardAdapters((category, adapter) => {
+
+        const previousCardEntityState = state.childCardEntityStateByCategory[category]
+        const newCardInfos: Array<CardInfo> = cardGroupByCategory[category]
+
+        const reorderedNewCardInfos: Array<CardInfo> = new Array(newCardInfos.length).fill(null)
+
+        // Index matching
+        const indexMap = new Map<string, number>()
+        const unmatchedElements: Array<CardInfo> = []
+
+        previousCardEntityState.ids.forEach((id, index) => {
+          indexMap.set(previousCardEntityState.entities[id].label_localized, index)
+        })
+
+        newCardInfos.forEach((cardInfo) => {
+          if(indexMap.has(cardInfo.label_localized)){
+            reorderedNewCardInfos[indexMap.get(cardInfo.label_localized)!!] = cardInfo
+          }else{
+            unmatchedElements.push(cardInfo)
+          }
+        })
+
+        let fillIndex=  0;
+        unmatchedElements.forEach(cardInfo => {
+          while(reorderedNewCardInfos[fillIndex] !== null && fillIndex < reorderedNewCardInfos.length){
+            fillIndex++;
+          }
+          if(fillIndex < reorderedNewCardInfos.length){
+            reorderedNewCardInfos[fillIndex] = cardInfo
+          }
+        })
+
+
         adapter.removeAll(state.childCardEntityStateByCategory[category])
-        adapter.addMany(state.childCardEntityStateByCategory[category], cardGroupByCategory[category])
+        adapter.addMany(state.childCardEntityStateByCategory[category], reorderedNewCardInfos)
       })
 
       state.childCardRecommendationId = action.payload.id

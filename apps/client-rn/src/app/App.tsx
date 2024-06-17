@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Provider } from 'react-redux';
 import { store, persistor } from '../redux/store';
 import { Text, View } from 'react-native';
@@ -13,9 +13,6 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Http } from '@aacesstalk/libs/ts-core';
 import { getTimeZone } from 'react-native-localize';
-
-
-Http.initialize(async () => {return getTimeZone()})
 
 const Stack = createNativeStackNavigator()
 
@@ -38,6 +35,10 @@ const GlobalNavigator = () => {
 }
 
 export const App = () => {
+
+  useEffect(()=>{
+    Http.initialize(async () => {return getTimeZone()})
+  }, [])
 
 
   return <Provider store={store}>
