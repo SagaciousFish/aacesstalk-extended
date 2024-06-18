@@ -6,11 +6,12 @@ import { View } from "react-native"
 import format from 'string-template'
 import { CardCategoryView, TopicChildCardView } from "./card-views"
 import { SelectedCardDeck } from "./SelectedCardDeck"
-import { useCallback, useMemo } from "react"
+import { useCallback, useEffect, useMemo } from "react"
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import { TailwindButton } from "apps/client-rn/src/components/tailwind-components"
 import { RefreshIcon } from "apps/client-rn/src/components/vector-icons"
 import { TailwindClasses } from "apps/client-rn/src/styles"
+import { VoiceOverManager } from "apps/client-rn/src/services/voiceover"
 
 const MAIN_CATEGORIES = [CardCategory.Topic, CardCategory.Action, CardCategory.Emotion]
 
@@ -54,6 +55,12 @@ export const SessionChildView = () => {
         }
         
     }, [latestChildCardRecommendationId])
+
+    useEffect(()=>{
+        return () => {
+            VoiceOverManager.instance.cancelAll()
+        }
+    }, [])
 
     return <View className="flex-1 self-stretch items-center justify-between pb-4">
         {latestChildCardRecommendationId != null ? <>

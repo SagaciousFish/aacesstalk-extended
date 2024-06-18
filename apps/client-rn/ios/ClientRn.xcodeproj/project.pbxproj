@@ -12,6 +12,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		146498305F424BA6911D68C6 /* KyoboHandwriting2019.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C309E00562745E18EC3C3BD /* KyoboHandwriting2019.ttf */; };
 		40F2C7E7E2844ADBBDD1B540 /* NanumSquareNeo-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6FC5B4F343034AAABD9FB8C1 /* NanumSquareNeo-Light.ttf */; };
 		6AB04420BE244AE69D2ABD05 /* NanumSquareNeo-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECDB7A18585D4E0CAE2BA147 /* NanumSquareNeo-Heavy.ttf */; };
 		7699B88040F8A987B510C191 /* libPods-ClientRn-ClientRnTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-ClientRn-ClientRnTests.a */; };
@@ -20,7 +21,6 @@
 		8F8B746D895C4C608A46D59E /* NanumSquareNeo-Extrabold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0086574EC56A4C3BA0EE9384 /* NanumSquareNeo-Extrabold.ttf */; };
 		D3B8662C6A6835650E9998E9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = AA63D5173537C3C5C4687F2B /* PrivacyInfo.xcprivacy */; };
 		FFA7B30634A74135BFCDAF3D /* NanumSquareNeo-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E4AD3B37AD247229F327D3A /* NanumSquareNeo-Bold.ttf */; };
-		146498305F424BA6911D68C6 /* KyoboHandwriting2019.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C309E00562745E18EC3C3BD /* KyoboHandwriting2019.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +47,7 @@
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = ClientRn/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-ClientRn-ClientRnTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ClientRn-ClientRnTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B4392A12AC88292D35C810B /* Pods-ClientRn.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClientRn.debug.xcconfig"; path = "Target Support Files/Pods-ClientRn/Pods-ClientRn.debug.xcconfig"; sourceTree = "<group>"; };
+		4C309E00562745E18EC3C3BD /* KyoboHandwriting2019.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = KyoboHandwriting2019.ttf; path = ../src/assets/fonts/KyoboHandwriting2019.ttf; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-ClientRn.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClientRn.release.xcconfig"; path = "Target Support Files/Pods-ClientRn/Pods-ClientRn.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-ClientRn-ClientRnTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClientRn-ClientRnTests.debug.xcconfig"; path = "Target Support Files/Pods-ClientRn-ClientRnTests/Pods-ClientRn-ClientRnTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-ClientRn.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ClientRn.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -58,7 +59,6 @@
 		E350997ECA7D47ED846EF97C /* NanumSquareNeo-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "NanumSquareNeo-Regular.ttf"; path = "../src/assets/fonts/NanumSquareNeo-Regular.ttf"; sourceTree = "<group>"; };
 		ECDB7A18585D4E0CAE2BA147 /* NanumSquareNeo-Heavy.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "NanumSquareNeo-Heavy.ttf"; path = "../src/assets/fonts/NanumSquareNeo-Heavy.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		4C309E00562745E18EC3C3BD /* KyoboHandwriting2019.ttf */ = {isa = PBXFileReference; name = "KyoboHandwriting2019.ttf"; path = "../src/assets/fonts/KyoboHandwriting2019.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

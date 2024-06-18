@@ -1,5 +1,6 @@
 import { CardCategory, CardInfo, TopicCategory, appendCard, childCardSessionSelectors } from "@aacesstalk/libs/ts-core"
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
+import { VoiceOverManager } from "apps/client-rn/src/services/voiceover"
 import { getTopicColorClassNames, styleTemplates } from "apps/client-rn/src/styles"
 import React from "react"
 import { useCallback, useMemo } from "react"
@@ -55,9 +56,13 @@ export const TopicChildCardView = (props:{
     const cardInfo = useSelector(state => childCardSessionSelectors[props.category].selectById(state, props.id))
     const isProcessing = useSelector(state => state.session.isProcessingRecommendation)
 
-    const onPress = useCallback(()=>{
+    const token = useSelector(state => state.auth.jwt)
+
+    const onPress = useCallback(async ()=>{
         dispatch(appendCard(cardInfo))
-    }, [cardInfo])
+        // Play voice over
+        await VoiceOverManager.instance.placeVoiceoverFetchTask(cardInfo, token)
+    }, [cardInfo, token])
 
     return <ChildCardView disabled={isProcessing} label={cardInfo?.label_localized || cardInfo?.label} cardClassName={props.cardClassName} onPress={onPress}/>
 }
@@ -89,7 +94,11 @@ export const ChildCardView = React.memo((props:{
         }
     }, [])
 
-    return <Pressable disabled={props.disabled} onPressIn={onPressIn} onPressOut={onPressOut} onPress={props.onPress}><Animated.View
+    const onPress = useCallback(()=>{
+        props.onPress?.()
+    }, [props.onPress])
+
+    return <Pressable disabled={props.disabled} onPressIn={onPressIn} onPressOut={onPressOut} onPress={onPress}><Animated.View
         style={containerAnimStyle} className={`rounded-xl shadow-lg shadow-black/80 border-2 border-slate-200 p-2 bg-white w-[11vw] h-[11vw] m-2 ${props.cardClassName}`}>
         <View className="aspect-square bg-gray-200 flex-1 self-center"></View>
         <Text className="self-center mt-2 text-black/80" style={styleTemplates.withBoldFont}>{props.label}</Text>

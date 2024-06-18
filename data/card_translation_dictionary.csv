@@ -116,6 +116,8 @@ jMGJUTv6Cb,action,fun,재미있어요,False
 pcoAOCVBNo,action,give,주다,False
 -urVCbaa_L,action,go,가요,True
 l2G93VaoeV,action,go to,가요,False
+9GssDTtIk-,action,go to sleep,자요,False
+RTG7JJwPC5,action,go with,같이 가요,False
 eUmRaSta5L,action,going,가는 중이에요,False
 SwTo9YVOJ-,action,going to,가는 중이에요,False
 O6u0XAv7Vm,action,had,했어요,True
@@ -265,6 +267,7 @@ R6t6WVbYyu,action,struggled,고생했어요,True
 pr0AVEr8-U,action,studied,공부했어요,True
 Inbws15J66,action,study,공부해요,True
 QDCT2oWGfF,action,swing,그네타요,True
+6nR6inUa3Z,action,swung,그네탈래요,False
 YBiRJA8TK5,action,take,가져요,False
 iNgDEMrO7S,action,talk,이야기해요,True
 SPDAUYUd3i,action,talk to,이야기해요,False
@@ -464,6 +467,8 @@ iTfQW20laa,topic,birthday,생일,False
 hVf-CF8rj8,topic,biscuits,비스킷,False
 2utmg4R8Fg,topic,blanket,담요,False
 tEDMBJYVR8,topic,blocks,블록,True
+0UuERnAQkd,topic,board game,보드 게임,False
+bRKJF_O5UX,topic,board games,보드 게임,False
 rwvFdtPeH0,topic,book,책,True
 4PGgVIYgeR,topic,books,책,False
 LAGP3HuKGc,topic,bread,빵,False
@@ -505,7 +510,9 @@ Mv0qUUpOV1,topic,coloring,색칠하기,False
 CGMa4tcedr,topic,coloring book,컬러링북,False
 ZMzrVSxPQy,topic,colors,색깔,True
 qZBdz6A-UZ,topic,computer,컴퓨터,False
+q_GQdjMLWU,topic,computer games,컴퓨터 게임,False
 ZqQmq0jgXj,topic,conversation,대화,True
+hyrWpizg14,topic,cook,요리,False
 3WA8c-FPkI,topic,cookies,쿠키,False
 zqVEMisZNk,topic,cooking,요리,True
 Nffft4shNo,topic,crafts,공예,True
@@ -529,6 +536,7 @@ o3o0f8L2ph,topic,drawing,그리기,True
 0GAgZdOFuq,topic,drawing ( activity ),그리기,False
 UxogNdDpFf,topic,drawings,그림,False
 4e_lfMS9uv,topic,dress,드레스,False
+neDNX7NRWJ,topic,drink,마실거에요,False
 PtVtyhl2En,topic,drums,드럼,False
 t7egnpdkbv,topic,dry cleaning,드라이 클리닝,False
 gry1dm2ab7,topic,eat,식사,True
@@ -597,6 +605,7 @@ pTo8nkxVXx,topic,listening music,음악 청취,False
 Ro7zGl_2ZO,topic,long time,오랜 시간,False
 4PgUQB51Ht,topic,lunch,점심,True
 _0hjBhSJwK,topic,lunchtime,점심 시간,False
+WtBG1qiU3i,topic,magazine,잡지,False
 LHNnALZED5,topic,markers,마커,False
 Vw7mR4BXYQ,topic,math,수학,True
 -Q6cagIwqO,topic,math class,수학 수업,False
@@ -621,6 +630,7 @@ lxb1gsAXuA,topic,night,밤,False
 nWwmU8Akdg,topic,night light,"야간 등 (topic, noun)",False
 fJ7k0KL_2P,topic,outdoor,야외,False
 rpOcgCG1CB,topic,outside,밖,True
+5tQi2dZn06,topic,outside games,외부 게임,False
 ZqpLyaTe55,topic,paint,페인트,True
 avHz0ZRm75,topic,painting,그림 그리기,True
 BlYBgOB8Tf,topic,pajamas,잠옷,False
@@ -646,7 +656,9 @@ XvkJ6Xd1Nh,topic,play time,놀이 시간,False
 _7iDLDiSOU,topic,played,놀았어요,False
 4o8ZrJyql0,topic,playground,놀이터,True
 SgrJ3-soFj,topic,playing,놀이,True
+Ey9foSp4qG,topic,playing games,놀이 게임,False
 xMfaBD18lL,topic,playing instrument,악기 연주,False
+qfSEo16dyq,topic,playing outside,놀이 밖,False
 aqa0CuQBT2,topic,playtime,놀이 시간,True
 QYYzlF7QT2,topic,popcorn,팝콘,True
 krpVH4nyGR,topic,practice,연습,True
@@ -742,6 +754,7 @@ k5Zet-Q-dz,topic,vegetables,채소,False
 mytaFEgWct,topic,velociraptor,벨로키랍터,False
 20Jqf32O5m,topic,video,비디오,False
 D-o5-bn56I,topic,video call,비디오 통화,False
+7lbh1_Y6Dl,topic,video games,비디오 게임,False
 joF5kheIoO,topic,visit,방문,True
 LPrkx7VKpR,topic,voice,목소리,False
 uwqFzosvTz,topic,walk,걷기,False

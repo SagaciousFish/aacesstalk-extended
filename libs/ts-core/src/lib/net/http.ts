@@ -2,7 +2,7 @@ import axios, { Axios, CreateAxiosDefaults } from 'axios';
 import format = require('string-template');
 
 const DEFAULTS: CreateAxiosDefaults<any> = {
-  baseURL: (process.env["NODE_ENV"] == "development" ? "http://192.168.2.3:3000" : "") + "/api/v1"
+  baseURL: (process.env["NODE_ENV"] == "development" ? "http://192.168.2.11:3000" : "") + "/api/v1"
 }
 
 export class Http{
@@ -11,6 +11,8 @@ export class Http{
   static ENDPOINT_DYAD_ACCOUNT = `${Http.ENDPOINT_DYAD}/account`
 
   static ENDPOINT_DYAD_ACCOUNT_LOGIN = `${Http.ENDPOINT_DYAD_ACCOUNT}/login`
+
+  static ENDPOINT_DYAD_MEDIA = `${Http.ENDPOINT_DYAD}/media`
 
   static ENDPOINT_DYAD_SESSION = `${Http.ENDPOINT_DYAD}/session`
   static ENDPOINT_DYAD_SESSION_NEW = `${Http.ENDPOINT_DYAD_SESSION}/new`
@@ -35,6 +37,8 @@ export class Http{
   static ENDPOINT_DYAD_MESSAGE_CHILD_POP_LAST_CARD = `${Http.ENDPOINT_DYAD_MESSAGE}/child/pop_last_card`
 
 
+  static ENDPOINT_DYAD_MEDIA_VOICEOVER = `${Http.ENDPOINT_DYAD_MEDIA}/voiceover`
+
 
   static getTemplateEndpoint(template: string, values: {[key:string]: string}): string {
     return format(template, values)
@@ -58,7 +62,7 @@ export class Http{
 
     return {
       "Timezone": await this.getTimezone(),
-      "Timestamp": Date.now()
+      "Timestamp": Date.now().toString()
     }
   }
 

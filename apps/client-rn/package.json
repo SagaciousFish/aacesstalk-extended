@@ -37,7 +37,12 @@
     "redux-persist": "*",
     "react-native-mmkv-storage": "*",
     "react-native-gesture-handler": "*",
-    "react-native-localize": "*"
+    "react-native-localize": "*",
+    "@sayem314/react-native-keep-awake": "*",
+    "react-native-sound-player": "*",
+    "group-array": "*",
+    "react-native-progress": "*",
+    "react-native-file-access": "*"
   },
   "devDependencies": {}
 }

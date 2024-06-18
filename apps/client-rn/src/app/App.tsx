@@ -13,6 +13,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Http } from '@aacesstalk/libs/ts-core';
 import { getTimeZone } from 'react-native-localize';
+import { useKeepAwake } from '@sayem314/react-native-keep-awake';
 
 const Stack = createNativeStackNavigator()
 
@@ -35,6 +36,8 @@ const GlobalNavigator = () => {
 }
 
 export const App = () => {
+
+  useKeepAwake()
 
   useEffect(()=>{
     Http.initialize(async () => {return getTimeZone()})

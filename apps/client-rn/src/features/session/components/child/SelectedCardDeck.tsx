@@ -7,6 +7,7 @@ import { ChildCardView } from './card-views'
 import { TailwindButton } from 'apps/client-rn/src/components/tailwind-components'
 import { RemoveCardIcon } from 'apps/client-rn/src/components/vector-icons'
 import Animated, { Easing, FlipInXUp, FlipOutXDown } from 'react-native-reanimated'
+import { VoiceOverManager } from 'apps/client-rn/src/services/voiceover'
 
 const SelectedCardView = (props: {
     id: string,
@@ -14,8 +15,13 @@ const SelectedCardView = (props: {
 }) => {
 
     const cardInfo = useSelector(state => selectSelectedChildCardById(state, props.id))
+    const token = useSelector(state => state.auth.jwt)
 
-    return <ChildCardView label={cardInfo?.label_localized} disabled={props.disabled}/>
+    const onPress = useCallback(async ()=>{
+        await VoiceOverManager.instance.placeVoiceoverFetchTask(cardInfo, token)
+    }, [cardInfo?.id, cardInfo?.recommendation_id, token])
+
+    return <ChildCardView label={cardInfo?.label_localized} disabled={props.disabled} onPress={onPress}/>
 }
 
 const selectedCardEnteringAnim = FlipInXUp.duration(300).springify()
@@ -35,7 +41,7 @@ export const SelectedCardDeck = (props: {
 
     const isInteractionEnabled = useSelector(state => state.session.isProcessingRecommendation === false)
 
-    const removeButtonColor = useMemo(()=> getTopicColors(props.topicCategory).bg, [props.topicCategory])
+    const removeButtonColor = useMemo(()=> getTopicColors(props.topicCategory).fg, [props.topicCategory])
 
     const onPressRemove = useCallback(()=>{
         dispatch(removeLastCard())

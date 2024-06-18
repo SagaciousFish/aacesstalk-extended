@@ -25,7 +25,7 @@ const GUIDE_FRAME_DIMENSION_CLASSNAME = "w-[70vw] h-[16vh]"
 const GUIDE_FRAME_CLASSNAME = `absolute ${GUIDE_FRAME_DIMENSION_CLASSNAME} justify-center px-8 rounded-2xl border-white border-[6px]`
 
 export const ParentGuideElementView = (props: Props) => {
-    const guideType = useSelector(state => parentGuideSelectors.selectById(state, props.id).type)
+    const guideType = useSelector(state => parentGuideSelectors.selectById(state, props.id)?.type)
 
     switch(guideType){
         case ParentGuideType.Messaging:
