@@ -16,7 +16,9 @@ export const styleTemplates = StyleSheet.create({
     withSemiboldFont: {"fontFamily": fontFamilyByWeight.semibold},
     withBoldFont: {"fontFamily": fontFamilyByWeight.bold},
     withExtraboldFont: {"fontFamily": fontFamilyByWeight.extrabold},
-    withHandwritingFont: {"fontFamily": "KyoboHandwriting2019"}
+    withHandwritingFont: {"fontFamily": "KyoboHandwriting2019"},
+
+    itemsCenter: {alignItems: 'center'}
 })
 
 export function getTopicColorClassNames(topicCategory: TopicCategory): [string, string]{

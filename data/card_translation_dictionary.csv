@@ -11,6 +11,7 @@ NPtCO4kroC,action,Laugh,웃어요,False
 5HEsTlrO2H,action,Liked ( core ),좋아해요,False
 qn-eVMVboh,action,Met,만났어요,False
 kkrAUI__2u,action,Miss,그립게 해요,False
+6uKqIiVST0,action,Review,검토해요,False
 l6y2YnT8NS,action,Sat,앉았어요,False
 sPW_mTFWbr,action,Sleepy,졸려요,False
 ZjSiH2TiFw,action,Slept,잤어요,False
@@ -29,6 +30,7 @@ C981hmNoSM,action,ate,먹었어요,True
 PcgcuBvG2g,action,attacked,공격했어요,False
 Rq-WS4idop,action,attend,참여해요,False
 iz3c5syd8u,action,bake,굽어요,False
+Bvxy36dzfe,action,begin,시작해요,False
 WuY3NIdVc7,action,bored,지루해요,False
 4hJt7Dz1-5,action,bought,사요,False
 J3qH5TLi_n,action,bring,가져가요,True
@@ -44,6 +46,7 @@ hSjmPiYA4J,action,celebrate,축하하세요,False
 9ApkXNWhGk,action,chat,잡담해요,True
 C6o185JDGT,action,check,확인해요,False
 tCQSoOhVWH,action,cheer,힘내요,False
+IsLwcliTff,action,chew,씹어요,False
 Z6-RUtuXwp,action,choose,선택해요,True
 FFp5dgF61U,action,clean,청소해요,False
 Y8B-lSXI_c,action,climb,올라가요,False
@@ -55,6 +58,7 @@ Vb_TokgFEr,action,come,오세요,False
 eSlLLkKkpf,action,comfort,편안해요,False
 ty-h7QgqIG,action,complete,완료해요,False
 jyYUo6mfI3,action,completed,완료했어요,False
+4fhkowx0NH,action,completing,완료해요,False
 ZpDnU8cjbb,action,consider,고려해요,True
 yKC4VLeixs,action,continue,계속해요,False
 l7VZUho5JC,action,cook,요리해요,False
@@ -89,6 +93,7 @@ aLdFWWnR6c,action,drive,운전하다,False
 BA6GILFqg7,action,easy,쉬워요,False
 qFMNNFSCX5,action,eat,먹어요,True
 H67n9i7nOg,action,eating,먹어요,True
+Fi8WK_C07M,action,end,끝내요,False
 voBXCU3PyM,action,enjoy,즐겨요,True
 bFnGzqF9Yj,action,enjoyed,즐겼어요,True
 c-KAMGabVR,action,enjoyed ( core ),즐겼어요,False
@@ -106,6 +111,7 @@ jfG3onbLem,action,felt,느꼈어요,False
 iOZkNlA8cg,action,find,찾아요,False
 fOu7qH7shJ,action,finish,끝내요,True
 Jugth0n2i7,action,finished,끝났어요,True
+zlRoEPRtnO,action,finishes,끝내요,False
 TOMgwksER3,action,focus,집중해요,True
 ayJyQE-ie5,action,follow,따라해요,True
 RobMQHBl0E,action,forget,잊어버려요,True
@@ -141,6 +147,7 @@ b3x4wXEe3m,action,hurt,다치게 해요,False
 VLo71idqvn,action,ignore,무시해요,False
 fQvoeG4dUc,action,ignored,무시했어요,False
 ao7f8fwIUP,action,imagine,상상해요,False
+cYvO3EOaVL,action,improve,개선해요,False
 FWsrExL8lN,action,in class,수업 중,False
 j6zL-wHGqV,action,install,설치해요,False
 ccmJoEsu9M,action,interact,소통해요,True
@@ -186,6 +193,7 @@ JsSK3Mng_u,action,need,필요해요,True
 3pYHLnsKCf,action,need help,도와줄 필요가 있어요,False
 F6Lmdjarca,action,need help with,도와줄 필요가 있어요,False
 _pqGzrlyU5,action,need to,해야 해요,False
+Q1Qhh-qaF7,action,needs,필요해요,False
 Ua62jLrady,action,nervous,긴장해요,False
 O8D2GARmHI,action,not want,원하지 않아요,False
 r0zmjR4QK7,action,obey,복종해요,True
@@ -195,7 +203,9 @@ LQz5Xfd2N_,action,or,또는,False
 cTZJXQvr1c,action,paint,그려요,True
 9PNKu8oOdY,action,painted,그린,False
 uqW7Td0INw,action,participate,참여해요,True
+Lnd4DT7uJc,action,participate in,참여해요,False
 H5p_T5dcgq,action,participated,참여했어요,True
+gMiFeOkNhk,action,pause,일시정지하세요,False
 ADPri_-gHj,action,pay,지불해요,False
 76hFi-Xw0W,action,pay for,지불해요,False
 Yd6w1uAwWj,action,perform,공연해요,False
@@ -260,12 +270,15 @@ f-mhbNXEPR,action,spent,보냈어요,True
 5YeexUzgz3,action,splash,튀기다,False
 sMhKvP82v6,action,start,시작해요,True
 JvDzduIcWT,action,started,시작했어요,True
+9JPe2MIe6w,action,starts,시작해요,False
 8VwnqW47oT,action,stay,머무르다,False
 M0PSrZvTZB,action,stayed in,있어요,False
+2ioIBnykur,action,stop,멈추세요,False
 cqlJuud-RW,action,struggle,고생해요,True
 R6t6WVbYyu,action,struggled,고생했어요,True
 pr0AVEr8-U,action,studied,공부했어요,True
 Inbws15J66,action,study,공부해요,True
+h2RnSvs5Tq,action,swallow,삼켜요,False
 QDCT2oWGfF,action,swing,그네타요,True
 6nR6inUa3Z,action,swung,그네탈래요,False
 YBiRJA8TK5,action,take,가져요,False
@@ -313,6 +326,8 @@ w-_kU07I2-,action,wear,입다,False
 wIA4U1wsM-,action,went,갔어요,True
 NMrxbE-haE,action,went out,나갔어요,False
 O3mCQ_7rji,action,went to,갔어요,False
+-cwD-ijddQ,action,will,할게요,False
+NUXknX4RlA,action,wishes,원해요,False
 J5crw_4O_q,action,with,와,False
 KxQZ-vrJLN,action,with friend,친구와,False
 Ga2ulwzo8C,action,work,일해요,True
@@ -730,6 +745,7 @@ yb3uK8mcyv,topic,swings,그네,False
 rjRieEWi9P,topic,talk,이야기,True
 xpYRomG2S2,topic,talked,이야기,False
 53eLBLSTuk,topic,teacher,선생님,True
+Cl-805ZmS-,topic,television,텔레비전,False
 8T9a-E4F7B,topic,theater,극장,True
 9EyQPO_OO5,topic,therapeutic,치료적,False
 bEMVGp6vdz,topic,therapy,치료,False
@@ -759,9 +775,11 @@ joF5kheIoO,topic,visit,방문,True
 LPrkx7VKpR,topic,voice,목소리,False
 uwqFzosvTz,topic,walk,걷기,False
 JTDj3vAlSA,topic,watch,관람,True
+8CHEDOiBjz,topic,watching tv,텔레비전 보기,False
 W96jA19WK8,topic,water,물,False
 1x1x0oBhN2,topic,water friends,물 친구,False
 keVw2A-FVW,topic,we,우리,False
 kYzgM-b-Vv,topic,work,일,False
+Nlqa9L4A7P,topic,write,쓰기,False
 VekDlhcSYO,topic,writing,글쓰기,True
 gPrMixJ4B4,topic,zoo,동물원,False
