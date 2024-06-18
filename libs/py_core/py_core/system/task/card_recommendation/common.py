@@ -1,13 +1,10 @@
 from typing import Callable
 from chatlib.tool.converter import generate_pydantic_converter
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, validator
+import yaml
+from py_core.config import AACessTalkConfig
 from py_core.system.model import CardCategory, Dialogue, DialogueMessage, DialogueRole, ParentType
 
-class ChildCardRecommendationAPIResult(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    topics: list[str]
-    actions: list[str]
 
 
 class DefaultCardInfo(BaseModel):
@@ -26,6 +23,31 @@ class DefaultCardInfo(BaseModel):
             return self.label_localized
         else:
             return self.label_localized[parent_type]
+
+
+def load_default_cards(path: str)->list[DefaultCardInfo]:
+    with open(path) as f:
+       l = yaml.load(f, yaml.SafeLoader)
+       return [DefaultCardInfo(**e) for e in l]
+    
+DEFAULT_EMOTION_CARDS = load_default_cards(AACessTalkConfig.default_emotion_card_table_path)
+DEFAULT_EMOTION_LABELS = [c.label.lower().strip() for c in DEFAULT_EMOTION_CARDS]
+
+
+class ChildCardRecommendationAPIResult(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    topics: list[str]
+    actions: list[str]
+    emotions: list[str]
+
+    @validator('emotions')
+    @classmethod
+    def check_emotion_types(cls, v: list[str]):
+        if not all(keyword.lower().strip() in DEFAULT_EMOTION_LABELS for keyword in v):
+            raise ValueError("emotion keywords must be one of the default emotion card set.")
+        else:
+            return v
 
 
 class DialogueToStrConversionFunction:
@@ -55,4 +77,3 @@ class DialogueToStrConversionFunction:
 {script}
 </dialogue>"""
         return result
-    

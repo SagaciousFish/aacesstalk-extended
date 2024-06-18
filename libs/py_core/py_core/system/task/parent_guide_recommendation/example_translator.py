@@ -53,6 +53,6 @@ class ParentExampleMessageTranslator:
 
         t_end = perf_counter()
 
-        # print(f"LLM translation took {t_end - t_start} sec.")
+        print(f"LLM translation took {t_end - t_start} sec.")
 
         return result

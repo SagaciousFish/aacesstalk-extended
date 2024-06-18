@@ -1,4 +1,3 @@
-import yaml
 from chatlib.tool.converter import generate_pydantic_converter
 from pydantic import BaseModel, ConfigDict
 from time import perf_counter
@@ -9,18 +8,12 @@ from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompl
 from py_core.config import AACessTalkConfig
 from py_core.system.model import Dialogue, CardInfo, ChildCardRecommendationResult, ParentType, id_generator, CardCategory
 from py_core.system.session_topic import SessionTopicInfo
-from py_core.system.task.card_recommendation.common import ChildCardRecommendationAPIResult, DefaultCardInfo
+from py_core.system.task.card_recommendation.common import DEFAULT_EMOTION_CARDS, ChildCardRecommendationAPIResult, load_default_cards
 from py_core.system.task.card_recommendation.translator import CardTranslator
 from py_core.system.task.common import DialogueInput, DialogueInputToStrConversionFunction
 from py_core.utils.vector_db import VectorDB
 
 str_output_converter, output_str_converter = generate_pydantic_converter(ChildCardRecommendationAPIResult, 'yaml')
-
-def load_default_cards()->list[DefaultCardInfo]:
-    with open(AACessTalkConfig.default_card_table_path) as f:
-       l = yaml.load(f, yaml.SafeLoader)
-       print(l)
-       return [DefaultCardInfo(**e) for e in l]    
 
 class ChildCardRecommendationParams(ChatCompletionFewShotMapperParams):
     model_config = ConfigDict(frozen=True)
@@ -38,8 +31,7 @@ class ChildCardRecommendationGenerator:
 
         self.__translator = CardTranslator(vector_db)
 
-        default_cards = load_default_cards()
-        self.__default_cards = default_cards
+        self.__default_core_cards = load_default_cards(AACessTalkConfig.default_core_card_table_path)
 
         def __prompt_generator(input: DialogueInput, params: ChildCardRecommendationParams) -> str:
             prompt = f"""
@@ -47,12 +39,14 @@ class ChildCardRecommendationGenerator:
 - Suppose that you are helping a communication with a child and a {input.parent_type.lower()} in Korean. The autistic child has the language proficiency of a 5 to 7-year-old, so recommendations should consider their cognitive level.
 - For the conversation, {input.topic.to_readable_description()}
 - Given the last message of the {input.parent_type.lower()}, suggest a list of English keywords that can help the child pick to create a sentence as an answer.
-- Note that 'emotions' and 'core' cards are static and provided by default. So do NOT recommend the following cards: {", ".join([f"{c.get_label_for_parent(input.parent_type)} ({c.category})" for c in default_cards])}
+- Note that the 'core' cards are static and provided by default. So do NOT recommend the following cards: {", ".join([f"{c.get_label_for_parent(input.parent_type)}" for c in self.__default_core_cards])}
+- Note that the 'emotion' cards must be selected from the given list: {", ".join([f"{c.get_label_for_parent(input.parent_type)}" for c in DEFAULT_EMOTION_CARDS])}
 """"""
 
 - Return an YAML string with variables as in the following:
     topics: [] // Noun topics that reflect detailed context based on your parents' questions
     actions: [] // Verb actions that can be matched with the suggested topics
+    emotions: [] // Emotion candidates that may describe the feeling of the child. 
 """f"""
 
 {"" if params.prev_recommendation is None else "- The child had previous recommendation: " + params.prev_recommendation.model_dump_json(exclude={"id", "timestamp"}) + ". Try to generate cards that are distinct to this previous recommendation."}
@@ -87,6 +81,8 @@ class ChildCardRecommendationGenerator:
                                                      interim_cards=interim_cards,
                                                      model=ChatGPTModel.GPT_4_0613,
                                                      api_params={}))
+        
+        print(recommendation)
 
         t_trans = perf_counter()
 
@@ -103,10 +99,18 @@ class ChildCardRecommendationGenerator:
 
         keyword_category_list = [(word, CardCategory.Topic) for word in recommendation.topics] + [
             (word, CardCategory.Action) for word in recommendation.actions]
+        
+        selected_emotion_cards = []
+        for emotion in recommendation.emotions:
+            matched = [c for c in DEFAULT_EMOTION_CARDS if c.label.lower().strip() == emotion.lower().strip()]
+            if len(matched) > 0:
+                selected_emotion_cards.append(matched[0])
+            else:
+                print(f"Emotion not matched - {emotion}")
 
         return ChildCardRecommendationResult(id=rec_id, turn_id=turn_id, cards=[
             CardInfo(label=word, label_localized=translated_keywords[i], category=category,
                      recommendation_id=rec_id) for i, (word, category) in
             enumerate(keyword_category_list)] + [CardInfo(label=c.get_label_for_parent(parent_type), label_localized=c.get_label_localized_for_parent(parent_type), 
                                                           recommendation_id=rec_id, category=c.category
-                                                          ) for c in self.__default_cards])
+                                                          ) for c in (selected_emotion_cards + self.__default_core_cards)])
