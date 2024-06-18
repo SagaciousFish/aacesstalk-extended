@@ -95,6 +95,13 @@
         "command": "poetry run python test_card_image_retrieval.py",
         "cwd": "libs/py_core"
       }
+    },
+    "test_clova_voice": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run python test_clova_voice.py",
+        "cwd": "libs/py_core"
+      }
     }
   },
   "tags": []

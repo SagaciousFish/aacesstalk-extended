@@ -21,6 +21,7 @@ from py_core.utils.deepl_translator import DeepLTranslator
 from py_core.utils.models import AsyncTaskInfo
 from chatlib.llm.integration import GPTChatCompletionAPI
 
+from py_core.utils.tts.clova_voice import ClovaVoice
 from py_core.utils.vector_db import VectorDB
 
 class WrongSessionStatusError(BaseException):
@@ -101,6 +102,7 @@ class ModeratorSession:
     def assert_authorize(cls):
         GPTChatCompletionAPI.assert_authorize()
         DeepLTranslator.assert_authorize()
+        ClovaVoice.assert_authorize()
 
     @classmethod
     async def create(cls, dyad: Dyad, topic: SessionTopicInfo,

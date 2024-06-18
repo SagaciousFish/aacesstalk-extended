@@ -5,8 +5,9 @@ from pydantic import BaseModel
 from tinydb import TinyDB, Query
 from tinydb.storages import JSONStorage
 from tinydb.middlewares import CachingMiddleware
-from os import path, getcwd, makedirs
+from os import path, makedirs
 
+from py_core.config import AACessTalkConfig
 from py_core.system.model import DialogueTurn, Interaction, ParentGuideRecommendationResult, ChildCardRecommendationResult, Dialogue, \
     DialogueMessage, DialogueTypeAdapter, ParentExampleMessage, InterimCardSelection, DialogueRole, SessionInfo
 from py_core.system.storage import SessionStorage
@@ -31,7 +32,7 @@ class JsonSessionStorage(SessionStorage):
 
     @classmethod
     def session_db_dir_path(cls, id: str) -> str:
-        dir_path = path.join(getcwd(), "../../database/json/sessions", id)
+        dir_path = path.join(AACessTalkConfig.database_dir_path, "json/sessions", id)
         if not path.exists(dir_path):
             makedirs(dir_path)
 
