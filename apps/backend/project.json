@@ -81,6 +81,13 @@
         "command": "poetry run python backend/main.py",
         "cwd": "apps/backend"
       }
+    },
+    "daemon-dev": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run gunicorn backend.server:app --workers 1 --worker-class backend.workers.DevelopmentWorker --daemon --bind 0.0.0.0:3000",
+        "cwd": "apps/backend"
+      }
     }
   },
   "tags": []

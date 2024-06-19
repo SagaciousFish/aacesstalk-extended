@@ -44,26 +44,37 @@ export class VoiceOverManager {
 
         const filePath = dir + `/voiceover_${cardInfo.id}.mp3`
 
-        const task = FileSystem.fetchManaged( `${Http.axios.defaults.baseURL}${Http.ENDPOINT_DYAD_MEDIA_VOICEOVER}?card_id=${cardInfo.id}&recommendation_id=${cardInfo.recommendation_id}`, 
-            {
-                headers,
-                method: 'GET',
-                path: filePath
-            })
-
-        this.fileFetchTaskMap.set(cardInfo.id, task)
-
-        const result = await task.result
-        if(result.ok){
-            console.log("Play audio...", filePath)
+        if(await FileSystem.exists(filePath)){
             SoundPlayer.playUrl("file://" + filePath)
+            return {
+                cancel: async ()=> {
+                    return
+                }
+            }
         }else{
-            console.log("Fail", result.statusText)
-        }
-        
-        return {
-            cancel: async () => {
-                await task.cancel()
+            const task = FileSystem.fetchManaged( `${Http.axios.defaults.baseURL}${Http.ENDPOINT_DYAD_MEDIA_VOICEOVER}?card_id=${cardInfo.id}&recommendation_id=${cardInfo.recommendation_id}`, 
+                {
+                    headers,
+                    method: 'GET',
+                    path: filePath
+                })
+
+            this.fileFetchTaskMap.set(cardInfo.id, task)
+
+            task.result.then(result => {
+                if(result.ok){
+                    console.log("Play audio...", filePath)
+                    SoundPlayer.playUrl("file://" + filePath)
+                }else{
+                    console.log("Fail", result.statusText)
+                }
+                this.fileFetchTaskMap.delete(cardInfo.id)
+            })
+            
+            return {
+                cancel: async () => {
+                    await task.cancel()
+                }
             }
         }
     }
