@@ -71,9 +71,9 @@ ZM7wuj5mEf,action,cry,울어요,False
 n-Tf8mfwDt,action,dance,춤춰요,True
 t8IsG-bE8r,action,decided,결정했어요,False
 O96REKIxdF,action,decorate,장식해요,False
-La-iP5y-_Y,action,describe,설명해요,False
+La-iP5y-_Y,action,describe,묘사해요,True
 O1Z_dMAq4X,action,did,했어요,True
-uretSwauQl,action,did ( core ),했어요,False
+uretSwauQl,action,did,했어요,False
 X3UMphN-lr,action,did not like,싫어해요,False
 goFIN7iqFM,action,difficult,어려워요,False
 qCj-Koppsp,action,discuss,토의해요,True
@@ -81,8 +81,6 @@ DWKV6w20jL,action,dislike,싫어요,True
 qztJWM4PBi,action,disliked,싫어요,False
 hGuXhKudjg,action,disobey,반항해요,False
 o5KmEGtJjx,action,do,해요,True
-6E6QZM4AV_,action,do n't like,싫어해요,False
-Nn8mOGZveo,action,do n't want,원하거나,False
 gDBX_FfZB6,action,done,끝났어요,True
 DkB3fWFsS0,action,download,다운로드해요,False
 TEOhxZmjK6,action,draw,그려요,True
@@ -560,6 +558,7 @@ G4WNl89j6t,topic,e - book,이북,False
 gry1dm2ab7,topic,eat,식사,True
 x2EAtHB2Rj,topic,eating,식사,True
 WUaJMObp8p,topic,eating ( activity ),식사,False
+4RdEet_2gQ,topic,ebook,이북,False
 P1ocXtrEhf,topic,error,오류,True
 fAlEV1fr-D,topic,evening,저녁,False
 -d9rICnFrM,topic,exercise,운동,False
@@ -584,6 +583,7 @@ wYZ3hlqRaH,topic,fun,즐거움,False
 1nhBJAbTzM,topic,fun activity,즐거운 활동,False
 t-cMR8Pbvc,topic,funny,웃긴,False
 sR6Y5pG8tb,topic,funny story,웃긴 이야기,False
+fba96lFYKN,topic,funny thing,웃긴 것,False
 kIjPY5r2mK,topic,game,놀이,True
 HXUW6Aqul2,topic,games,게임,True
 Ny8FcghSxt,topic,garden,정원,False
@@ -682,6 +682,7 @@ QYYzlF7QT2,topic,popcorn,팝콘,True
 krpVH4nyGR,topic,practice,연습,True
 t5WaCx28br,topic,present,선물,False
 wDOPUCmm8o,topic,problem,문제,True
+_KPE_OyQTw,topic,program,프로그램,False
 SeRymPAZgl,topic,project,프로젝트,True
 C7wG2s7cKo,topic,push button,버튼 누르기,False
 29KrNnXxhw,topic,puzzle,퍼즐,True

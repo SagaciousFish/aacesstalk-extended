@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { TopicCategory, removeLastCard, selectSelectedChildCardById, selectSelectedChildCardIds } from '@aacesstalk/libs/ts-core'
+import { TopicCategory, removeLastCard, selectedChildCardSelectors } from '@aacesstalk/libs/ts-core'
 import { useDispatch, useSelector } from 'apps/client-rn/src/redux/hooks'
 import { getTopicColorClassNames, getTopicColors, styleTemplates } from 'apps/client-rn/src/styles'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
@@ -21,7 +21,7 @@ const SelectedCardView = (props: {
     disabled?: boolean
 }) => {
 
-    const cardInfo = useSelector(state => selectSelectedChildCardById(state, props.id))
+    const cardInfo = useSelector(state => selectedChildCardSelectors.selectById(state, props.id))
     const token = useSelector(state => state.auth.jwt)
 
     const onPress = useCallback(async ()=>{
@@ -45,7 +45,7 @@ export const SelectedCardDeck = (props: {
 
     const scrollViewRef = useRef<ScrollView>(null)
 
-    const selectedCardIds = useSelector(selectSelectedChildCardIds)
+    const selectedCardIds = useSelector(selectedChildCardSelectors.selectIds)
 
     const previousSelectedCardCount = usePrevious(selectedCardIds.length)
 

@@ -7,9 +7,8 @@ export const PopupMenuItemView = (props: {
     title: string,
     showBorder?: boolean,
     destructive?: boolean,
+    disabled?: boolean,
     onPress?: () => void
 }) => {
-    return <TailwindButton onPress={props.onPress} buttonStyleClassName="flex-row items-center justify-between py-5" containerClassName={`${props.showBorder !== false ? "border-t-2" : "border-none"} border-slate-200`}>
-        <Text style={styleTemplates.withBoldFont} className={`text-lg ${props.destructive === true ? 'text-red-400' : ""}`}>{props.title}</Text>
-    </TailwindButton>
+    return <TailwindButton onPress={props.onPress} disabled={props.disabled} titleClassName={`text-lg ${props.destructive === true ? 'text-red-400' : ""}`} disabledTitleClassName="opacity-30" buttonStyleClassName="flex-row items-center justify-between py-5" containerClassName={`${props.showBorder !== false ? "border-t-2" : "border-none"} border-slate-200`} title={props.title}/>
 }

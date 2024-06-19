@@ -37,9 +37,9 @@ DEFAULT_EMOTION_LABELS = [c.label.lower().strip() for c in DEFAULT_EMOTION_CARDS
 class ChildCardRecommendationAPIResult(BaseModel):
     model_config = ConfigDict(frozen=True)
 
-    topics: list[str] = conlist(item_type=str, min_length=4, max_length=4)
-    actions: list[str] = conlist(item_type=str, min_length=4, max_length=4)
-    emotions: list[str] = conlist(item_type=str, min_length=4, max_length=4)
+    topics: list[str] = conlist(item_type=str, min_length=4, max_length=4, unique_items=True)
+    actions: list[str] = conlist(item_type=str, min_length=4, max_length=4, unique_items=True)
+    emotions: list[str] = conlist(item_type=str, min_length=4, max_length=4, unique_items=True)
 
     @validator('emotions')
     @classmethod

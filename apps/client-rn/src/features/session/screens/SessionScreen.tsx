@@ -31,6 +31,7 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
     const dispatch = useDispatch()
 
     const isInitializing = useSelector(state => state.session.isInitializing)
+    const isLoadingRecommendation = useSelector(state => state.session.isProcessingRecommendation)
     const sessionId = useSelector(state => state.session.id)
 
     const currentTurn = useSelector(state => state.session.currentTurn)
@@ -69,9 +70,13 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
                 currentTurn === DialogueRole.Parent ? <SessionParentView topic={props.route.params.topic}/> : <SessionChildView/>
             }
         </Fragment>
-
-        <Animated.View className='absolute left-5 bottom-5' entering={menuButtonEnteringAnim}>
-            <TailwindButton onPress={onMenuButtonPress} roundedClassName='rounded-xl' buttonStyleClassName={`p-3 ${TailwindClasses.ICON_BUTTON_SIZES}`}><MenuIcon width={32} height={32} fill={"#575757"} /></TailwindButton>
-        </Animated.View>
+        
+        {
+            (!isInitializing && !isLoadingRecommendation) ?
+            <Animated.View className='absolute left-5 bottom-5' entering={menuButtonEnteringAnim}>
+                <TailwindButton onPress={onMenuButtonPress} roundedClassName='rounded-xl' buttonStyleClassName={`p-3 ${TailwindClasses.ICON_BUTTON_SIZES}`}><MenuIcon width={32} height={32} fill={"#575757"} /></TailwindButton>
+            </Animated.View> : null
+        }
+        
     </HillBackgroundView>
 }

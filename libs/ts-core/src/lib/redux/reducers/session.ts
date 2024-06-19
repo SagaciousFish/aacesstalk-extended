@@ -203,7 +203,7 @@ const sessionSlice = createSlice({
 
 })
 
-export const {selectIds: selectSelectedChildCardIds, selectById: selectSelectedChildCardById } = selectedCardAdapter.getSelectors<CoreState>(state => state.session.selectedChildCardEntityState)
+export const selectedChildCardSelectors = selectedCardAdapter.getSelectors<CoreState>(state => state.session.selectedChildCardEntityState)
 
 export const childCardSessionSelectors = Object.fromEntries(CARD_CATEGORIES.map(category => [category, childCardAdapters[category].adapter.getSelectors<CoreState>(state => state.session.childCardEntityStateByCategory[category])]))
 
@@ -214,6 +214,13 @@ export const parentGuideMessageSelector = createSelector(
   (guide) => {
     return guide.guide_localized || guide.guide
   }
+)
+
+export const isChildCardConfirmValidSelector = createSelector(
+  [selectedChildCardSelectors.selectIds],
+  (ids) => {
+    return ids.length > 0
+  } 
 )
 
 function makeSignedInThunk(
@@ -430,7 +437,7 @@ export function removeLastCard(): CoreThunk {
       dispatch(sessionSlice.actions._storeNewChildCardRecommendation(new_recommendation))
 
     }
-  })
+  }, true)
 }
 
 export function refreshCards(): CoreThunk {
@@ -448,7 +455,28 @@ export function refreshCards(): CoreThunk {
       dispatch(sessionSlice.actions._storeNewChildCardRecommendation(new_recommendation))
 
     }
-  })
+  }, true)
+}
+
+
+export function confirmSelectedCards(): CoreThunk {
+  return makeSignedInThunk({
+    loadingFlagKey: "isProcessingRecommendation",
+    runIfSignedIn: async (dispatch, getState, headers) => {
+      const state = getState()
+      dispatch(sessionSlice.actions._incNumTurn())
+      dispatch(sessionSlice.actions._setNextTurn(DialogueRole.Parent))
+
+      const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_CHILD_CONFIRM_CARDS, { session_id: state.session.id!! }), null, {
+        headers
+      })
+
+      const new_recommendation = resp.data
+
+      dispatch(sessionSlice.actions._storeNewParentGuideRecommendation(new_recommendation))
+
+    }
+  }, true)
 }
 
 export const { setSessionInitInfo } = sessionSlice.actions
