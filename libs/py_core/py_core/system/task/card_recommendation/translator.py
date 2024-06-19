@@ -43,6 +43,8 @@ template = convert_to_jinja_template("""
 def _generate_prompt(input, params: ChildCardTranslationParams) -> str:
     return template.render(similar_cards=params.similar_cards, stringify=_stringify_english_word)
 
+def _validate_translation_output(input: list[str], output: list[str])->bool:
+    return len(input) == len(output)
 
 str_output_converter, output_str_converter = generate_type_converter(list[str], 'json')
 
@@ -60,7 +62,8 @@ class CardTranslator:
                                                               _generate_prompt,
                                                               input_str_converter=output_str_converter,
                                                               output_str_converter=output_str_converter,
-                                                              str_output_converter=str_output_converter
+                                                              str_output_converter=str_output_converter,
+                                                              output_validator=_validate_translation_output
                                                               )
 
         self.__dictionary = LookupTranslator("cards", AACessTalkConfig.card_translation_dictionary_path,
@@ -112,6 +115,9 @@ class CardTranslator:
                                                                         similar_cards=list(similar_card_set)
                                                                         ))
             print(localized_words, result)
+
+            if len(result) > len(input):
+                print("Resulting dict exceeds the input length.")
 
             for i, translated in enumerate(result):
                 localized_words[indices_to_translate[i]] = translated

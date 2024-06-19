@@ -36,7 +36,7 @@ class ChildCardRecommendationGenerator:
         def __prompt_generator(input: DialogueInput, params: ChildCardRecommendationParams) -> str:
             prompt = f"""
 - You are a helpful assistant that serves as an Alternative Augmented Communication tool.
-- Suppose that you are helping a communication with a child and a {input.parent_type.lower()} in Korean. The autistic child has the language proficiency of a 5 to 7-year-old, so recommendations should consider their cognitive level.
+- Suppose that you are helping a communication with a child and a {input.parent_type.lower()}. The autistic child has the language proficiency of a 5 to 7-year-old, so recommendations should consider their cognitive level.
 - For the conversation, {input.topic.to_readable_description()}
 - Given the last message of the {input.parent_type.lower()}, suggest a list of English keywords that can help the child pick to create a sentence as an answer.
 - Note that the 'core' cards are static and provided by default. So do NOT recommend the following cards: {", ".join([f"{c.get_label_for_parent(input.parent_type)}" for c in self.__default_core_cards])}

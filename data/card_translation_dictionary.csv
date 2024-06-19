@@ -84,6 +84,7 @@ o5KmEGtJjx,action,do,해요,True
 6E6QZM4AV_,action,do n't like,싫어해요,False
 Nn8mOGZveo,action,do n't want,원하거나,False
 gDBX_FfZB6,action,done,끝났어요,True
+DkB3fWFsS0,action,download,다운로드해요,False
 TEOhxZmjK6,action,draw,그려요,True
 v3di8t0pWz,action,drawing,그려요,True
 A69xsnZPHn,action,drawn,그린,False
@@ -417,6 +418,7 @@ wEV-vqC_EI,emotion,unsure,불확실해요,True
 gJHJnTTPNT,emotion,upset,상처받았어요,True
 dcPChAHMPb,emotion,worried,걱정해요,True
 00MW5LFvvC,emotion,worry,걱정해요,True
+s_-GCilWaw,topic,App,어플,False
 lEmJ6br9eG,topic,Bag,가방,False
 Ij3qOmgn36,topic,Bakery,빵집,False
 EVm_PduPEj,topic,Brachiosaurus,브라키오사우루스,False
@@ -554,6 +556,7 @@ UxogNdDpFf,topic,drawings,그림,False
 neDNX7NRWJ,topic,drink,마실거에요,False
 PtVtyhl2En,topic,drums,드럼,False
 t7egnpdkbv,topic,dry cleaning,드라이 클리닝,False
+G4WNl89j6t,topic,e - book,이북,False
 gry1dm2ab7,topic,eat,식사,True
 x2EAtHB2Rj,topic,eating,식사,True
 WUaJMObp8p,topic,eating ( activity ),식사,False

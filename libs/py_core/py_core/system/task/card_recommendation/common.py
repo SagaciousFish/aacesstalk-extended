@@ -1,6 +1,6 @@
 from typing import Callable
 from chatlib.tool.converter import generate_pydantic_converter
-from pydantic import BaseModel, ConfigDict, validator
+from pydantic import BaseModel, ConfigDict, conlist, validator
 import yaml
 from py_core.config import AACessTalkConfig
 from py_core.system.model import CardCategory, Dialogue, DialogueMessage, DialogueRole, ParentType
@@ -37,9 +37,9 @@ DEFAULT_EMOTION_LABELS = [c.label.lower().strip() for c in DEFAULT_EMOTION_CARDS
 class ChildCardRecommendationAPIResult(BaseModel):
     model_config = ConfigDict(frozen=True)
 
-    topics: list[str]
-    actions: list[str]
-    emotions: list[str]
+    topics: list[str] = conlist(item_type=str, min_length=4, max_length=4)
+    actions: list[str] = conlist(item_type=str, min_length=4, max_length=4)
+    emotions: list[str] = conlist(item_type=str, min_length=4, max_length=4)
 
     @validator('emotions')
     @classmethod
