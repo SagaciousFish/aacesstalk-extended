@@ -9,7 +9,7 @@ from py_core.utils.deepl_translator import DeepLTranslator
 from sqlmodel import select
 from py_database import SQLSessionStorage
 from py_database.model import SessionORM
-from py_database.database import create_database_engine, get_async_session, create_db_and_tables
+from py_database.database import create_database_engine, make_async_session_maker, create_db_and_tables
 
 
 GlobalConfig.is_cli_mode = True
@@ -25,7 +25,7 @@ session_info = asyncio.run(cli_get_session_info(dyad_id=dyad_info.id))
 
 print(dyad_info, session_info)
 
-SQLSessionStorage.set_session_maker(lambda: get_async_session(engine))
+SQLSessionStorage.set_session_maker(make_async_session_maker(engine))
 
 session = asyncio.run(ModeratorSession.create(dyad_info, session_info.topic, session_info.local_timezone, 
                                               SQLSessionStorage(session_info.id)))

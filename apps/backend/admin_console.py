@@ -4,7 +4,9 @@ import questionary
 from chatlib.utils.cli import make_non_empty_string_validator
 from backend.crud.dyad.account import create_dyad, get_dyad_list
 from backend.database import engine
-from py_database.database import create_db_and_tables, get_async_session, AsyncSession
+from py_database.database import create_db_and_tables, make_async_session_maker, AsyncSession
+
+session_factory = make_async_session_maker(engine)
 
 
 class ConsoleMenu(StrEnum):
@@ -31,7 +33,8 @@ async def _create_dyad():
             print(f"Created a dyad {dyad.alias} (Child: {dyad.child_name}, Parent type: {dyad.parent_type}). Code: {dyad_code.code}")
 
 async def _list_dyad():
-    async with AsyncSession(engine) as session:
+    
+    async with session_factory() as session:
         l = await get_dyad_list(session)
         print(f"{len(l)} dyads in the database.")
         print(l)

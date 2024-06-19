@@ -1,16 +1,15 @@
+from typing import AsyncGenerator, Callable
 from .model import *
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.orm import sessionmaker
 
 def create_database_engine(db_path: str, verbose: bool = False) -> AsyncEngine:
     return create_async_engine(f"sqlite+aiosqlite:///{db_path}", echo=verbose)
 
 
-def get_async_session(engine: AsyncEngine) -> AsyncSession:
-    return AsyncSession(
-        bind=engine
-    )
-
+def make_async_session_maker(engine: AsyncEngine) -> sessionmaker[AsyncSession]:
+    return sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
 async def create_db_and_tables(engine: AsyncEngine):
     async with engine.begin() as conn:

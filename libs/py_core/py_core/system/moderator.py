@@ -169,7 +169,7 @@ class ModeratorSession:
         session_info.ended_timestamp = get_timestamp()
         session_info.status = SessionStatus.Terminated
         await self.storage.update_session_info(session_info)
-        self.storage.dispose()
+        await self.storage.dispose()
 
 
     async def current_speaker(self) -> DialogueRole | None:

@@ -480,7 +480,7 @@ files = [
 
 [[package]]
 name = "chatlib"
-version = "0.7.14"
+version = "0.7.15"
 description = "A generalizable Python Chatbot Library"
 optional = false
 python-versions = "^3.10"
@@ -509,8 +509,8 @@ yaspin = "^2.3.0"
 [package.source]
 type = "git"
 url = "https://github.com/yghokim/chatlib.git"
-reference = "0.7.14"
-resolved_reference = "b4bbec107710113b2fc75545be3e457842c756f5"
+reference = "0.7.15"
+resolved_reference = "fdacca50088fc878b56e6e7071a324d67fa79ece"
 
 [[package]]
 name = "chroma-hnswlib"
@@ -2789,7 +2789,7 @@ develop = true
 
 [package.dependencies]
 aiofiles = "^23.2.1"
-chatlib = {git = "https://github.com/yghokim/chatlib.git", tag = "0.7.14"}
+chatlib = {git = "https://github.com/yghokim/chatlib.git", tag = "0.7.15"}
 chromadb = "^0.4.24"
 deepl = "^1.17.0"
 diskcache = "^5.6.3"

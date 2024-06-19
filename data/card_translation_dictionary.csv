@@ -54,6 +54,7 @@ r35xvR3VnP,action,climbed,올라갔어요,True
 rxpr1-OcV4,action,close,닫다,False
 tIhdQMzeY6,action,collect,모아요,False
 f7x6vYZGZH,action,color,색칠해요,True
+bByGQFesH1,action,colored,색칠했어요,False
 Vb_TokgFEr,action,come,오세요,False
 eSlLLkKkpf,action,comfort,편안해요,False
 ty-h7QgqIG,action,complete,완료해요,False
@@ -73,7 +74,6 @@ t8IsG-bE8r,action,decided,결정했어요,False
 O96REKIxdF,action,decorate,장식해요,False
 La-iP5y-_Y,action,describe,묘사해요,True
 O1Z_dMAq4X,action,did,했어요,True
-uretSwauQl,action,did,했어요,False
 X3UMphN-lr,action,did not like,싫어해요,False
 goFIN7iqFM,action,difficult,어려워요,False
 qCj-Koppsp,action,discuss,토의해요,True
@@ -145,6 +145,7 @@ msz_pL-EzP,action,hungry,배고파요,False
 b3x4wXEe3m,action,hurt,다치게 해요,False
 VLo71idqvn,action,ignore,무시해요,False
 fQvoeG4dUc,action,ignored,무시했어요,False
+CPTlD4-tHi,action,illustrated,그렸어요,False
 ao7f8fwIUP,action,imagine,상상해요,False
 cYvO3EOaVL,action,improve,개선해요,False
 FWsrExL8lN,action,in class,수업 중,False
@@ -267,6 +268,7 @@ i6ViejcBeN,action,spend time,시간을 보아요,False
 DKIxAuH6UO,action,spend time at,시간을 보아요,False
 f-mhbNXEPR,action,spent,보냈어요,True
 5YeexUzgz3,action,splash,튀기다,False
+WwIjDoz2Uq,action,spoke,말해요,False
 sMhKvP82v6,action,start,시작해요,True
 JvDzduIcWT,action,started,시작했어요,True
 9JPe2MIe6w,action,starts,시작해요,False
@@ -310,6 +312,7 @@ gKxC8_hMul,action,used,사용해요,False
 kAULHURWOI,action,visited,방문해요,False
 tkxESsHQeg,action,wait,기다려요,False
 J7Iii-TRwI,action,wake up,일어나요,False
+VNOqWcuNrA,action,walk,걷다,False
 ZmREQ8tKiw,action,walked,걸었어요,False
 EWpMoIaJI9,action,want,원해요,True
 1QCJlpFMwZ,action,want to,원해요,False
@@ -549,6 +552,7 @@ XL_k6Cf8FL,topic,download,다운로드,False
 QuW95kXgGG,topic,draw,그림,True
 o3o0f8L2ph,topic,drawing,그리기,True
 0GAgZdOFuq,topic,drawing ( activity ),그리기,False
+bTl54LXdDI,topic,drawing book,그림책,False
 UxogNdDpFf,topic,drawings,그림,False
 4e_lfMS9uv,topic,dress,드레스,False
 neDNX7NRWJ,topic,drink,마실거에요,False

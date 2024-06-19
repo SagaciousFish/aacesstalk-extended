@@ -54,7 +54,7 @@ async def _abort_session(session_id: str, session: Annotated[ModeratorSession, D
         await session.storage.delete_entities()
         session_orm = await find_session_orm(session_id, dyad.id, db)
         await db.delete(session_orm)
-        dispose_session_instance(session_id)
+        await dispose_session_instance(session_id)
 
     except ValueError as ex:
         print(ex)
@@ -65,6 +65,6 @@ async def _abort_session(session_id: str, session: Annotated[ModeratorSession, D
 async def _end_session(session_id: str, session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]):
     try:
         await session.terminate()
-        dispose_session_instance(session_id)
+        await dispose_session_instance(session_id)
     except ValueError:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "No session with the id and the corresponding dyad.")

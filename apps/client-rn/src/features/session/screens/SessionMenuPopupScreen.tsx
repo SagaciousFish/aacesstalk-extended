@@ -33,10 +33,8 @@ export const SessionMenuPopupScreen = (props: NativeStackScreenProps<MainRoutes.
             Alert.alert(t("Session.Menu.ConfirmTermination"), null, [
                 {text: t("Session.Menu.CancelTermination"), style: 'cancel'},
                 {text: t("Session.Menu.TerminateAndSave"), style: 'default', onPress: () => {
-                    if(canSubmitSelectedChildCards === true){
-                        dispatch(endSession())
-                        props.navigation.pop()
-                    }
+                    dispatch(endSession())
+                    props.navigation.pop()
                     //TODO go to result screen
                 }},
             ], {cancelable: true})
@@ -49,8 +47,10 @@ export const SessionMenuPopupScreen = (props: NativeStackScreenProps<MainRoutes.
                 //TODO submit parent message
                 break;
             case DialogueRole.Child:
-                dispatch(confirmSelectedCards())
-                props.navigation.pop()
+                if(canSubmitSelectedChildCards === true){    
+                    dispatch(confirmSelectedCards())
+                    props.navigation.pop()
+                }
                 break;
         }
     }, [currentTurn])

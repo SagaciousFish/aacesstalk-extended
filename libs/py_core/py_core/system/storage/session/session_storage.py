@@ -23,7 +23,7 @@ class SessionStorage(ABC):
         else:
             return None
 
-    def dispose(self):
+    async def dispose(self):
         return
 
     @property
