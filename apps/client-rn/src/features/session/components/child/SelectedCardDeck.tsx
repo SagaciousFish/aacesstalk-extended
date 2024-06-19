@@ -10,7 +10,7 @@ import { RemoveCardIcon } from 'apps/client-rn/src/components/vector-icons'
 import Animated, { Easing, FlipInXUp, FlipOutXDown, LinearTransition } from 'react-native-reanimated'
 import { VoiceOverManager } from 'apps/client-rn/src/services/voiceover'
 import { ScrollView } from 'react-native-gesture-handler'
-import usePrevious from 'apps/client-rn/src/utils/hooks'
+import { usePrevious } from 'apps/client-rn/src/utils/hooks'
 
 const styles = StyleSheet.create({
     cardScrollViewContentContainerStyle: {...styleTemplates.itemsCenter, flexGrow: 1, paddingRight: 120}

@@ -15,6 +15,7 @@ import Animated, { Easing, SlideInDown } from 'react-native-reanimated'
 import { LoadingIndicator } from 'apps/client-rn/src/components/LoadingIndicator'
 import { SessionChildView } from '../components/child/SessionChildView'
 import { TailwindClasses } from 'apps/client-rn/src/styles'
+import { useDisableBack } from 'apps/client-rn/src/utils/hooks'
 
 const BG_COLOR_BY_TOPIC_CATEGORY = {
     [TopicCategory.Plan]: 'bg-topicplan-bg',
@@ -27,6 +28,8 @@ const menuButtonEnteringAnim = SlideInDown.duration(500).delay(300).easing(Easin
 export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigatorParamList, "session">) => {
 
     const { t } = useTranslation()
+
+    useDisableBack()
 
     const dispatch = useDispatch()
 

@@ -4,9 +4,9 @@ import { SessionScreen } from "../features/session/screens/SessionScreen";
 import { MainRoutes } from ".";
 import { SessionMenuPopupScreen } from "../features/session/screens/SessionMenuPopupScreen";
 
-const screenOptions = {headerShown: false}
+const screenOptions = {headerShown: false, gestureEnabled: false}
 
-const sharedScreenOptions: NativeStackNavigationOptions = {statusBarHidden: true}
+const sharedScreenOptions: NativeStackNavigationOptions = {statusBarHidden: true, gestureEnabled: false}
 
 const sessionScreenOptions: NativeStackNavigationOptions = {...sharedScreenOptions, animation: 'fade'}
 const sessionMenuScreenOptions: NativeStackNavigationOptions = {...sharedScreenOptions, presentation: 'transparentModal', animation: 'fade'}

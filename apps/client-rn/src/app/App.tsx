@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Provider } from 'react-redux';
 import { store, persistor } from '../redux/store';
-import { Text, View } from 'react-native';
+import { BackHandler, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { NativeStackNavigationOptions, createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SignInScreen } from '../features/auth/screens/SignInScreen';

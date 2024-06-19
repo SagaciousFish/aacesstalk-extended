@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { styleTemplates } from "apps/client-rn/src/styles"
 import { useTranslation } from "react-i18next";
-import { TextInput, View } from "react-native"
+import { Image, Text, TextInput, View } from "react-native"
 import { ParentGuideElementView } from "./ParentGuideElementView";
 import { MultiTapButton } from "apps/client-rn/src/components/MultiTapButton";
 import { useCallback, useState } from "react";
@@ -57,6 +57,10 @@ export const SessionParentView = (props: {
 
     const numTurns = useSelector(state => state.session.numTurns)
 
+    const numTurnsLoopArray = useMemo(()=>{
+        return new Array(Math.floor(numTurns/2)).fill(null)
+    }, [numTurns])
+
     const {t} = useTranslation()
 
     const [isTextInputOn, setIsTextInputOn] = useState(false)    
@@ -73,7 +77,11 @@ export const SessionParentView = (props: {
     return <>
         <SessionTitleRibbon containerClassName="mt-12" topic={props.topic} />
         {
-            numTurns == 0 ? <SessionStartingMessage topic={props.topic} containerClassName='mt-14' /> : null
+            numTurns == 0 ? <SessionStartingMessage topic={props.topic} containerClassName='mt-14' /> : <View pointerEvents='none' className='mt-12 flex-row space-x-3'>
+                {
+                    numTurnsLoopArray.map((_, index) => <Image key={index} source={require('../../../../assets/images/feedback-star.png')} className="w-16 h-16"/>)
+                }              
+            </View>
         }
         <MultiTapButton numberOfTaps={5} onTapGesture={onTapSecretButton}><View className="absolute top-0 left-0 w-20 h-20 bg-transparent"/></MultiTapButton>
         <View className="flex-1 self-stretch justify-center items-center mb-8 mt-5">

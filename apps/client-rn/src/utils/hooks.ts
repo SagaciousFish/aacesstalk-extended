@@ -1,6 +1,8 @@
-import { useRef } from "react"
+import { useFocusEffect } from "@react-navigation/native"
+import { useCallback, useRef } from "react"
+import { BackHandler } from "react-native"
 
-export default function usePrevious<T>(value: T): T {
+export function usePrevious<T>(value: T): T {
     const currentRef = useRef<T>(value)
     const previousRef = useRef<T>()
     if (currentRef.current !== value) {
@@ -8,4 +10,16 @@ export default function usePrevious<T>(value: T): T {
         currentRef.current = value
     }
     return previousRef.current
+}
+
+export function useDisableBack(){
+    
+    useFocusEffect(useCallback(()=>{
+        const subs = BackHandler.addEventListener('hardwareBackPress', () => {
+            console.log("Back prevented.")
+            return true
+        })
+
+        return () => subs.remove()
+    }, []))
 }
