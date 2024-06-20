@@ -60,6 +60,7 @@ export interface SessionState {
   selectedChildCardEntityState: typeof INITIAL_SELECTED_CARD_STATE
 
   isInitializing: boolean,
+  isClosingSession: boolean,
   isProcessingRecommendation: boolean,
   isGeneratingParentExample: boolean,
   error?: string
@@ -81,6 +82,7 @@ export const INITIAL_SESSION_STATE: SessionState = {
   selectedChildCardEntityState: INITIAL_SELECTED_CARD_STATE,
 
   isInitializing: false,
+  isClosingSession: false,
   isProcessingRecommendation: false,
   isGeneratingParentExample: false,
   error: undefined,
@@ -109,6 +111,10 @@ const sessionSlice = createSlice({
 
     _setInitializingFlag: (state, action: PayloadAction<boolean>) => {
       state.isInitializing = action.payload
+    },
+
+    _setClosingFlag: (state, action: PayloadAction<boolean>) => {
+      state.isClosingSession = action.payload
     },
 
     _setLoadingFlag: (state, action: PayloadAction<{ key: keyof SessionState, flag: boolean }>) => {
@@ -229,7 +235,7 @@ function makeSignedInThunk(
     runIfSignedIn?: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: () => CoreState, signedInHeader: any) => Promise<void>,
     runIfNotSignedIn?: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: () => CoreState) => Promise<void>,
     onError?: (ex: any, dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: () => CoreState) => Promise<void>,
-    onFinally?: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: () => CoreState) => Promise<void>
+    onFinally?: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: () => CoreState, error?: any) => Promise<void>
   },
   checkSessionId: boolean = false
 ): CoreThunk {
@@ -239,16 +245,19 @@ function makeSignedInThunk(
       if (options.loadingFlagKey) {
         dispatch(sessionSlice.actions._setLoadingFlag({ key: options.loadingFlagKey, flag: true }))
       }
+      let error = null
       try {
         const header = await Http.getSignedInHeaders(state.auth.jwt)
         await options.runIfSignedIn(dispatch, getState, header)
+        
       } catch (ex: any) {
         if (options.onError) {
           await options.onError(ex, dispatch, getState)
         }
+        error = ex
       } finally {
         if (options.onFinally) {
-          await options.onFinally(dispatch, getState)
+          await options.onFinally(dispatch, getState, error)
         }
         if (options.loadingFlagKey) {
           dispatch(sessionSlice.actions._setLoadingFlag({ key: options.loadingFlagKey, flag: false }))
@@ -286,19 +295,27 @@ export function startNewSession(topic: SessionTopicInfo, timezone: string): Core
 }
 
 
-export function endSession(): CoreThunk {
+export function endSession(onComplete?: (success: boolean) => Promise<void>): CoreThunk {
   return makeSignedInThunk(
     {
       runIfSignedIn: async (dispatch, getState, header) => {
+        dispatch(sessionSlice.actions._setClosingFlag(true))
         const state = getState()
         await Http.axios.put(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_SESSION_END, { session_id: state.session.id!! }), null, {
           headers: header
         })
-        dispatch(sessionSlice.actions.initialize())
       },
       onError: async (ex, dispatch) => {
         console.log("Session ending error")
+        console.error(ex)
         dispatch(sessionSlice.actions._setError("Session ending error."))
+      },
+      onFinally: async (dispatch, _, error) => {
+        dispatch(sessionSlice.actions._setClosingFlag(false))
+        dispatch(sessionSlice.actions.initialize())
+        if(onComplete){
+          await onComplete(error == null)
+        }
       }
     },
     true
@@ -314,7 +331,7 @@ export function cancelSession(): CoreThunk {
           headers: header
         })
       },
-      onFinally: async (dispatch) => {
+      onFinally: async (dispatch, _, error) => {
         dispatch(sessionSlice.actions.initialize())
       }
     },

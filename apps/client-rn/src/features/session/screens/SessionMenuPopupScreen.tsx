@@ -12,6 +12,7 @@ export const SessionMenuPopupScreen = (props: NativeStackScreenProps<MainRoutes.
     
     const {t} = useTranslation()
 
+    const sessionId = useSelector(state => state.session.id)
     const numTurns = useSelector(state => state.session.numTurns)
     const currentTurn = useSelector(state => state.session.currentTurn)
 
@@ -33,13 +34,11 @@ export const SessionMenuPopupScreen = (props: NativeStackScreenProps<MainRoutes.
             Alert.alert(t("Session.Menu.ConfirmTermination"), null, [
                 {text: t("Session.Menu.CancelTermination"), style: 'cancel'},
                 {text: t("Session.Menu.TerminateAndSave"), style: 'default', onPress: () => {
-                    dispatch(endSession())
-                    props.navigation.pop()
-                    //TODO go to result screen
+                    props.navigation.replace(MainRoutes.ROUTE_SESSION_CLOSING, { sessionId })
                 }},
             ], {cancelable: true})
         }
-    }, [t, numTurns])
+    }, [t, numTurns, sessionId])
 
     const onNextTurnPress = useCallback(()=>{
         switch(currentTurn){
