@@ -81,6 +81,7 @@ DWKV6w20jL,action,dislike,싫어요,True
 qztJWM4PBi,action,disliked,싫어요,False
 hGuXhKudjg,action,disobey,반항해요,False
 o5KmEGtJjx,action,do,해요,True
+9vqnNR5W-U,action,do n't want,원하지 않아요,False
 gDBX_FfZB6,action,done,끝났어요,True
 DkB3fWFsS0,action,download,다운로드해요,False
 TEOhxZmjK6,action,draw,그려요,True
@@ -420,6 +421,7 @@ gJHJnTTPNT,emotion,upset,상처받았어요,True
 dcPChAHMPb,emotion,worried,걱정해요,True
 00MW5LFvvC,emotion,worry,걱정해요,True
 s_-GCilWaw,topic,App,어플,False
+fdlnoVsKYK,topic,Backyard,뒷마당,False
 lEmJ6br9eG,topic,Bag,가방,False
 Ij3qOmgn36,topic,Bakery,빵집,False
 EVm_PduPEj,topic,Brachiosaurus,브라키오사우루스,False
@@ -495,6 +497,7 @@ SPH_0gDzXd,topic,break time,쉬는 시간,True
 LSYObzf2y5,topic,breakfast,아침,False
 LsJBeFwtmA,topic,breaktime,쉬는 시간,False
 3TuEWgvpd3,topic,brush teeth,이를 닦아요,False
+ay9zFdOvUK,topic,build,건설,False
 2DV5YXDN2U,topic,bus,버스,False
 0vIPQcotMf,topic,cake,케이크,False
 uSZbfWd24K,topic,call,전화,False
@@ -623,6 +626,7 @@ KqMbwnuQTE,topic,lessons,수업,True
 owb2-pLJgY,topic,letter,편지,False
 Yr4ahWlSAA,topic,library,도서관,False
 7HjNTrqSKY,topic,listen,듣기,True
+thb-xxVWGc,topic,listening,듣기,False
 pTo8nkxVXx,topic,listening music,음악 청취,False
 Ro7zGl_2ZO,topic,long time,오랜 시간,False
 4PgUQB51Ht,topic,lunch,점심,True
@@ -720,12 +724,14 @@ volZ4dnema,topic,see,보기,False
 n01SVLYqK5,topic,session,세션,False
 JB4_-guove,topic,share,나누기,True
 q_hYE0lLKz,topic,shopping,쇼핑,True
+hRnYLaKVu9,topic,show,쇼,False
 Msw_kz72pO,topic,sing,노래,True
 g1Q1d8pbGe,topic,singing,노래,False
 74ZjcTaESH,topic,sketchbook,스케치북,False
 KEucnKsB6z,topic,sleep,잠,False
 ozvjJfx0a3,topic,sleeping,잠,False
 7Dv5wonLcC,topic,slide,미끄럼틀,True
+8F3FVWQ3_y,topic,slides,미끄럼틀,False
 7GLpr3arzH,topic,smile,미소,False
 m1j5PkKgIo,topic,snack,과자,True
 I6RvE1jO9P,topic,snacks,과자,True
@@ -738,6 +744,7 @@ ymcbqCiwH-,topic,songs,노래,False
 uzKg7g3sZd,topic,special day,특별한 날,False
 I9akCSnebp,topic,sport,스포츠,False
 Ddl43DNFUp,topic,sports,스포츠,True
+CpTUu-s-qk,topic,stay,머무르기,False
 L0dv_PTqgq,topic,store,가게,False
 kqzvhWOBrc,topic,stories,이야기,False
 lnpE__vNu7,topic,story,이야기,True
@@ -778,6 +785,7 @@ k5Zet-Q-dz,topic,vegetables,채소,False
 mytaFEgWct,topic,velociraptor,벨로키랍터,False
 20Jqf32O5m,topic,video,비디오,False
 D-o5-bn56I,topic,video call,비디오 통화,False
+FTmjcKhPX5,topic,video game,비디오 게임,False
 7lbh1_Y6Dl,topic,video games,비디오 게임,False
 joF5kheIoO,topic,visit,방문,True
 LPrkx7VKpR,topic,voice,목소리,False

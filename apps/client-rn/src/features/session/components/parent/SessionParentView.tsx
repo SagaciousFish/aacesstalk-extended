@@ -13,6 +13,7 @@ import { useController, useForm } from "react-hook-form";
 import { SessionTopicInfo, parentGuideSelectors, submitParentMessage } from '@aacesstalk/libs/ts-core';
 import { SessionTitleRibbon } from './SessionTitleRibbon';
 import { SessionStartingMessage } from './SessionStartingMessage';
+import { useNonNullUpdatedValue } from 'apps/client-rn/src/utils/hooks';
 
 const ParentMessageTextInputView = (props: {
     onPopTextInput: () => void,
@@ -57,7 +58,7 @@ export const SessionParentView = (props: {
 
     const numTurns = useSelector(state => state.session.numTurns)
 
-    const numTurnsLoopArray = useMemo(()=>{
+    const numStarsLoopArray = useMemo(()=>{
         return new Array(Math.floor(numTurns/2)).fill(null)
     }, [numTurns])
 
@@ -73,20 +74,22 @@ export const SessionParentView = (props: {
     const onPopTextInput = useCallback(()=>{
         setIsTextInputOn(false)
     },[])
+
+    const topic = useNonNullUpdatedValue(props.topic)
     
     return <>
-        <SessionTitleRibbon containerClassName="mt-12" topic={props.topic} />
+        <SessionTitleRibbon containerClassName="mt-12" topic={topic} />
         {
-            numTurns == 0 ? <SessionStartingMessage topic={props.topic} containerClassName='mt-14' /> : <View pointerEvents='none' className='mt-12 flex-row space-x-3'>
+            numTurns == 0 ? <SessionStartingMessage topic={topic} containerClassName='mt-14' /> : <View pointerEvents='none' className='mt-12 flex-row space-x-3'>
                 {
-                    numTurnsLoopArray.map((_, index) => <Image key={index} source={require('../../../../assets/images/feedback-star.png')} className="w-16 h-16"/>)
+                    numStarsLoopArray.map((_, index) => <Image key={index} source={require('../../../../assets/images/feedback-star.png')} className="w-16 h-16"/>)
                 }              
             </View>
         }
         <MultiTapButton numberOfTaps={5} onTapGesture={onTapSecretButton}><View className="absolute top-0 left-0 w-20 h-20 bg-transparent"/></MultiTapButton>
         <View className="flex-1 self-stretch justify-center items-center mb-8 mt-5">
         {
-            isProcessing === true ? <LoadingIndicator colorTopic={props.topic.category} label={t("Session.LoadingMessage.ParentGuide")}/> : <View className="justify-evenly flex-1">
+            isProcessing === true ? <LoadingIndicator colorTopic={topic.category} label={t("Session.LoadingMessage.ParentGuide")}/> : <View className="justify-evenly flex-1">
                 {parentGuideIds.map((id, i) => <ParentGuideElementView key={id} id={id} order={i}/>)}
             </View>
         }

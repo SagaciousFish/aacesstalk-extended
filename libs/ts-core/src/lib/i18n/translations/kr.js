@@ -39,13 +39,15 @@ module.exports = {
             RefreshChildCards: "새로운 카드들을 준비중입니다...",
             ParentExample: "예시 문장을 만드는 중입니다...",
         },
+        EndingMessage: "멋진 대화였어요!",
         Menu: {
             NextTurn: "대화 턴 넘기기",
             TerminateSession: "대화 종료하기",
             ConfirmTermination: "현재 대화를 종료하시겠습니까?",
             TerminateAndSave: "저장하고 종료하기",
             TerminateWithoutSave: "저장하지 않고 종료하기",
-            CancelTermination: "취소"
+            CancelTermination: "취소",
+            GoHome: "처음 화면으로 돌아가기"
         },
         Cards: {
             Category:{

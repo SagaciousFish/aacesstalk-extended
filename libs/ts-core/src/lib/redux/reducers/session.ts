@@ -137,6 +137,8 @@ const sessionSlice = createSlice({
       parentGuideAdapter.removeAll(state.parentGuideEntityState)
       parentGuideAdapter.addMany(state.parentGuideEntityState, action.payload.guides)
       state.parentGuideRecommendationId = action.payload.id
+      state.parentExampleMessageLoadingFlags = {}
+      state.parentExampleMessages = {}
     },
 
     _setGuideExampleMessageLoadingFlag: (state, action: PayloadAction<{ guideId: string, flag: boolean }>) => {
@@ -205,6 +207,10 @@ const sessionSlice = createSlice({
         selectedCardAdapter.removeOne(state.selectedChildCardEntityState, state.selectedChildCardEntityState.ids[numSelectedCards - 1]) 
       }
     },
+
+    _clearSelectedCard: (state) => {
+      selectedCardAdapter.removeAll(state.selectedChildCardEntityState)
+    }
   },
 
 })
@@ -405,6 +411,7 @@ export function submitParentMessage(message: string): CoreThunk {
       console.log("Retrieved new child card recommendations.")
 
       const cardRecommendationResult: ChildCardRecommendationResult = resp.data
+      dispatch(sessionSlice.actions._clearSelectedCard())
       dispatch(sessionSlice.actions._storeNewChildCardRecommendation(cardRecommendationResult))
     },
     onError: async (ex) => {
@@ -481,6 +488,7 @@ export function confirmSelectedCards(): CoreThunk {
     loadingFlagKey: "isProcessingRecommendation",
     runIfSignedIn: async (dispatch, getState, headers) => {
       const state = getState()
+      dispatch(sessionSlice.actions._clearSelectedCard())
       dispatch(sessionSlice.actions._incNumTurn())
       dispatch(sessionSlice.actions._setNextTurn(DialogueRole.Parent))
 

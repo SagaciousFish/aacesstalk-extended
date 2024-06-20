@@ -10,6 +10,6 @@ export namespace MainRoutes{
         [ROUTE_HOME]: undefined,
         [ROUTE_SESSION]: {topic: SessionTopicInfo},
         [ROUTE_SESSION_MENU]: undefined,
-        [ROUTE_SESSION_CLOSING]: {sessionId: string}
+        [ROUTE_SESSION_CLOSING]: {sessionId: string, numStars: number}
     }
 }

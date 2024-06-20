@@ -34,7 +34,7 @@ export const SessionMenuPopupScreen = (props: NativeStackScreenProps<MainRoutes.
             Alert.alert(t("Session.Menu.ConfirmTermination"), null, [
                 {text: t("Session.Menu.CancelTermination"), style: 'cancel'},
                 {text: t("Session.Menu.TerminateAndSave"), style: 'default', onPress: () => {
-                    props.navigation.replace(MainRoutes.ROUTE_SESSION_CLOSING, { sessionId })
+                    props.navigation.replace(MainRoutes.ROUTE_SESSION_CLOSING, { sessionId, numStars: Math.floor(numTurns/2) })
                 }},
             ], {cancelable: true})
         }

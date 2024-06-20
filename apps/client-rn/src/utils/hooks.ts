@@ -1,5 +1,5 @@
 import { useFocusEffect } from "@react-navigation/native"
-import { useCallback, useRef } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { BackHandler } from "react-native"
 
 export function usePrevious<T>(value: T): T {
@@ -22,4 +22,17 @@ export function useDisableBack(){
 
         return () => subs.remove()
     }, []))
+}
+
+export function useNonNullUpdatedValue<Result>(value: Result): Result {
+
+    const [safeState, setSafeState] = useState<Result>(value)
+
+    useEffect(()=>{
+        if(value != null){
+            setSafeState(value)
+        }
+    }, [value])
+    
+    return safeState
 }
