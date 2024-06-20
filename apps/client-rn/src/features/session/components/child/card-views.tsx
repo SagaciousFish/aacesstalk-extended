@@ -30,7 +30,7 @@ export const CardCategoryView = (props: {
     }, [cardIds])
 
     return <View className={`${lightTopicColor} rounded-2xl p-2`} style={props.style}>
-        <Text style={styleTemplates.withBoldFont} className="text-lg text-center">{t(`Session.Cards.Category.${props.cardCategory}`)}</Text>
+        <Text style={styleTemplates.withBoldFont} className="text-lg text-center">{t(`Session.Cards.Category.${props.cardCategory}`)}</Text>        
         
 
             {

@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { styleTemplates } from "apps/client-rn/src/styles"
 import { useTranslation } from "react-i18next";
-import { Image, Text, TextInput, View } from "react-native"
+import { Image, InteractionManager, Text, TextInput, View } from "react-native"
 import { ParentGuideElementView } from "./ParentGuideElementView";
 import { MultiTapButton } from "apps/client-rn/src/components/MultiTapButton";
 import { useCallback, useState } from "react";
@@ -28,8 +28,10 @@ const ParentMessageTextInputView = (props: {
     const dispatch = useDispatch()
 
     const onSubmit = useMemo(()=> handleSubmit((values)=>{
-        props.onPopTextInput()
-        dispatch(submitParentMessage(values.message))
+        InteractionManager.runAfterInteractions(()=>{
+            props.onPopTextInput()
+            dispatch(submitParentMessage(values.message))
+        })
     }), [])
 
     return <PopupMenuScreenFrame onPop={props.onPopTextInput} 

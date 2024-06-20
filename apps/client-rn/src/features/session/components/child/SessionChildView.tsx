@@ -7,7 +7,7 @@ import format from 'string-template'
 import { CardCategoryView, TopicChildCardView } from "./card-views"
 import { SelectedCardDeck } from "./SelectedCardDeck"
 import { useCallback, useEffect, useMemo } from "react"
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeOut, LayoutAnimationConfig } from 'react-native-reanimated'
 import { TailwindButton } from "apps/client-rn/src/components/tailwind-components"
 import { RefreshIcon } from "apps/client-rn/src/components/vector-icons"
 import { TailwindClasses } from "apps/client-rn/src/styles"
@@ -69,11 +69,11 @@ export const SessionChildView = () => {
         {latestChildCardRecommendationId != null ? <>
             <SelectedCardDeck topicCategory={topic.category}/>
             <View id="main-category-cards" className="flex-row self-stretch justify-evenly px-14">
-                {
+                <LayoutAnimationConfig skipExiting={true}>{
                     MAIN_CATEGORIES.map(cardCategory => {
-                    return <CardCategoryView key={cardCategory} topicCategory={topic.category} cardCategory={cardCategory}/>
-                })
-            }
+                        return <CardCategoryView key={cardCategory} topicCategory={topic.category} cardCategory={cardCategory}/>
+                    })
+                }</LayoutAnimationConfig>
             </View>
             <CoreCardsDeck/>
             <RefreshButton/>

@@ -7,7 +7,7 @@ import {View} from 'react-native'
 import { ChildCardView } from './card-views'
 import { TailwindButton } from 'apps/client-rn/src/components/tailwind-components'
 import { RemoveCardIcon } from 'apps/client-rn/src/components/vector-icons'
-import Animated, { Easing, FlipInXUp, FlipOutXDown, LinearTransition } from 'react-native-reanimated'
+import Animated, { Easing, FlipInXUp, FlipOutXDown, LayoutAnimationConfig, LinearTransition } from 'react-native-reanimated'
 import { VoiceOverManager } from 'apps/client-rn/src/services/voiceover'
 import { ScrollView } from 'react-native-gesture-handler'
 import { usePrevious } from 'apps/client-rn/src/utils/hooks'
@@ -69,7 +69,7 @@ export const SelectedCardDeck = (props: {
     }, [previousSelectedCardCount, selectedCardIds.length])
 
     return <View className={`self-stretch h-[14vw] ${lightTopicColorClassName} flex-row items-stretch relative`}>
-        <ScrollView ref={scrollViewRef} nestedScrollEnabled={false} horizontal className='flex-1' 
+        <LayoutAnimationConfig skipExiting={true}><ScrollView ref={scrollViewRef} nestedScrollEnabled={false} horizontal className='flex-1' 
             contentContainerStyle={styles.cardScrollViewContentContainerStyle}
             endFillColor={panelBackgroundColor}
             fadingEdgeLength={200}
@@ -79,7 +79,7 @@ export const SelectedCardDeck = (props: {
                 <SelectedCardView id={id} disabled={!isInteractionEnabled}/>
                 </Animated.View>)
         }
-        </ScrollView>
+        </ScrollView></LayoutAnimationConfig>
         {
             selectedCardIds.length >= 1 ?<View className='absolute right-0 top-0 bottom-0'><TailwindButton containerClassName='self-center' disabled={!isInteractionEnabled} buttonStyleClassName='self-stretch flex-1 bg-transparent' onPress={onPressRemove}>
                 <RemoveCardIcon fill={removeButtonColor}/>

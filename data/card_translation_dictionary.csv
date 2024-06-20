@@ -19,6 +19,7 @@ T-w6AqR2WI,action,Wrote,썼어요,False
 VBq9Ncvjil,action,accompany,동반해요,False
 AtpX8pHl4M,action,after school,학교 끝나고,False
 xtanQH_vnW,action,already did,이미 했어요,False
+JIVJJMuHka,action,answer,대답해요,False
 Z7PKuepeFz,action,apologize,사과해요,False
 9xqfhNC0iY,action,argue,논해요,False
 ngWC3e5vtK,action,arrange,정리해요,False
@@ -71,6 +72,7 @@ c9nrRATbZC,action,create,만들어요,True
 z4lIIzP994,action,creating,만들어요,False
 MscINlnwuN,action,cried,울었어요,False
 ZM7wuj5mEf,action,cry,울어요,False
+RHx2iT6CZc,action,cut,자르세요,False
 n-Tf8mfwDt,action,dance,춤춰요,True
 t8IsG-bE8r,action,decided,결정했어요,False
 O96REKIxdF,action,decorate,장식해요,False
@@ -85,6 +87,7 @@ hGuXhKudjg,action,disobey,반항해요,False
 o5KmEGtJjx,action,do,해요,True
 9vqnNR5W-U,action,do n't want,원하지 않아요,False
 gDBX_FfZB6,action,done,끝났어요,True
+kxSN7eriBw,action,doodle,그림을 그려요,False
 DkB3fWFsS0,action,download,다운로드해요,False
 TEOhxZmjK6,action,draw,그려요,True
 v3di8t0pWz,action,drawing,그려요,True
@@ -115,6 +118,7 @@ fOu7qH7shJ,action,finish,끝내요,True
 Jugth0n2i7,action,finished,끝났어요,True
 zlRoEPRtnO,action,finishes,끝내요,False
 TOMgwksER3,action,focus,집중해요,True
+X2QZhC_FZB,action,fold,접어요,False
 ayJyQE-ie5,action,follow,따라해요,True
 RobMQHBl0E,action,forget,잊어버려요,True
 dcBKqBvDJT,action,forgive,용서해요,True
@@ -208,6 +212,7 @@ cTZJXQvr1c,action,paint,그려요,True
 uqW7Td0INw,action,participate,참여해요,True
 Lnd4DT7uJc,action,participate in,참여해요,False
 H5p_T5dcgq,action,participated,참여했어요,True
+b7i7bU1NGS,action,paste,붙여요,False
 gMiFeOkNhk,action,pause,일시정지하세요,False
 ADPri_-gHj,action,pay,지불해요,False
 76hFi-Xw0W,action,pay for,지불해요,False
@@ -305,6 +310,7 @@ eQZL7MHvE9,action,threw,던졌어요,True
 9ILQPBaUyL,action,today,오늘,False
 eLOs9GdlMn,action,told,이야기해요,False
 vLopuaTcEs,action,touch,만지다,False
+5LEOEk0Yoe,action,trace,트레이스해요,False
 pP6L8xa3sm,action,tried,시도해요,False
 nLu2kQrCgk,action,try,시도해요,True
 WdoP8vl1U1,action,try to,시도해요,False
@@ -336,6 +342,7 @@ wIA4U1wsM-,action,went,갔어요,True
 NMrxbE-haE,action,went out,나갔어요,False
 O3mCQ_7rji,action,went to,갔어요,False
 -cwD-ijddQ,action,will,할게요,False
+fQehZlY_5M,action,win,이겼어요,False
 NUXknX4RlA,action,wishes,원해요,False
 J5crw_4O_q,action,with,와,False
 KxQZ-vrJLN,action,with friend,친구와,False
@@ -431,6 +438,7 @@ s_-GCilWaw,topic,App,어플,False
 fdlnoVsKYK,topic,Backyard,뒷마당,False
 lEmJ6br9eG,topic,Bag,가방,False
 Ij3qOmgn36,topic,Bakery,빵집,False
+w2eNoueL1U,topic,Board Games,보드 게임,False
 EVm_PduPEj,topic,Brachiosaurus,브라키오사우루스,False
 vkQDxIH4fx,topic,Cafeteria,학교 식당,False
 3dlJX28y11,topic,Cleaner 's,청소부,False
@@ -465,6 +473,7 @@ UR3LuRsUdK,topic,Soccer Ball,축구,False
 fzUqCBPlJ3,topic,Story Book,공,False
 pj32szL_tp,topic,Storybook,책,False
 BG0KtSt4DC,topic,Tablet,태블릿,False
+iQRL-gQRCe,topic,Video Games,비디오 게임,False
 y4Z4dPffFA,topic,Zoo,동물원,False
 xvU29NPrLj,topic,activities,활동,True
 0swTtsJpkt,topic,activity,활동,True
@@ -505,6 +514,7 @@ LSYObzf2y5,topic,breakfast,아침,False
 LsJBeFwtmA,topic,breaktime,쉬는 시간,False
 3TuEWgvpd3,topic,brush teeth,이를 닦아요,False
 ay9zFdOvUK,topic,build,건설,False
+jYO6Z9S8WD,topic,building blocks,블록 조립놀이,False
 2DV5YXDN2U,topic,bus,버스,False
 0vIPQcotMf,topic,cake,케이크,False
 uSZbfWd24K,topic,call,전화,False
@@ -545,6 +555,7 @@ hyrWpizg14,topic,cook,요리,False
 zqVEMisZNk,topic,cooking,요리,True
 Nffft4shNo,topic,crafts,공예,True
 6wjDWr7QTB,topic,crayons,크레용,False
+0DLZqeybtr,topic,creativity,창의력,False
 JHO4VaHEpx,topic,cutting,잘라내기,True
 sNFn4U2eF5,topic,dance,춤,True
 CtvZJODlsP,topic,dancing,춤,False
@@ -558,6 +569,7 @@ _YxmVQyJQf,topic,document,문서,False
 AuS-NbVaGa,topic,dog,개,False
 0o55x3aumQ,topic,doll,인형,True
 KAtrzi67MR,topic,dolls,인형,False
+Rmkhi9Y5sx,topic,doodle,낙서,False
 XL_k6Cf8FL,topic,download,다운로드,False
 QuW95kXgGG,topic,draw,그림,True
 o3o0f8L2ph,topic,drawing,그리기,True
@@ -610,6 +622,7 @@ DGTakTQt9D,topic,grandpa,할아버지,False
 FkJKHidooM,topic,gym,체육관,False
 9U1qtuAJy9,topic,help,도움,True
 HJe1_inAW7,topic,hide and seek,숨바꼭질,True
+Aqidqup3q2,topic,history,역사,False
 d5tUph-sO7,topic,home,집,False
 Z9QfUYXuVg,topic,homework,숙제,True
 RPyf30i9Eg,topic,house,집,False
@@ -685,6 +698,7 @@ R3fv0mDELD,topic,pillow,베개,False
 tTsnEB1qB3,topic,plan,계획,False
 KhOKsfuOAb,topic,play,놀이,True
 WgxTknY-Gq,topic,play ( activity ),놀이,False
+S1dcqg8pYQ,topic,play dough,실내 놀이용 점토,False
 VmRehPy4mC,topic,play outside,놀이 밖,False
 XvkJ6Xd1Nh,topic,play time,놀이 시간,False
 _7iDLDiSOU,topic,played,놀았어요,False
@@ -700,6 +714,7 @@ t5WaCx28br,topic,present,선물,False
 wDOPUCmm8o,topic,problem,문제,True
 _KPE_OyQTw,topic,program,프로그램,False
 SeRymPAZgl,topic,project,프로젝트,True
+bdoCOQ7sIi,topic,puppet show,인형극,False
 C7wG2s7cKo,topic,push button,버튼 누르기,False
 29KrNnXxhw,topic,puzzle,퍼즐,True
 J_fpsBQvUG,topic,puzzles,퍼즐,True
@@ -715,6 +730,7 @@ HFcCaxrAIv,topic,restaurant,식당,False
 WIBPEKPI70,topic,ride,타요,False
 jLwA_oRqfo,topic,rides,타요,False
 eEOjIafw0b,topic,robot,로봇,False
+cloYyt8OGb,topic,role play,롤플레이,False
 Jw5KqXbGgq,topic,room,방,True
 sq4xJoaI5a,topic,rule,규칙,True
 qLY8rRApZW,topic,rules,규칙,True
@@ -735,6 +751,7 @@ q_hYE0lLKz,topic,shopping,쇼핑,True
 hRnYLaKVu9,topic,show,쇼,False
 Msw_kz72pO,topic,sing,노래,True
 g1Q1d8pbGe,topic,singing,노래,False
+LDNDyEmQql,topic,sketch,스케치,False
 74ZjcTaESH,topic,sketchbook,스케치북,False
 KEucnKsB6z,topic,sleep,잠,False
 ozvjJfx0a3,topic,sleeping,잠,False
@@ -757,6 +774,7 @@ L0dv_PTqgq,topic,store,가게,False
 kqzvhWOBrc,topic,stories,이야기,False
 lnpE__vNu7,topic,story,이야기,True
 B_xFi0negG,topic,story book,이야기,False
+qiyskAciMh,topic,storytelling,이야기,False
 sX6NvIW7H0,topic,study,공부,True
 6JyUR7bg_T,topic,studying,공부,False
 Oct0H6k8G7,topic,subject,과목,True
@@ -780,6 +798,7 @@ UhU29qrEDh,topic,together,함께,True
 wkpLfQFBhQ,topic,toothbrush,칫솔,False
 05joagL419,topic,toy,장난감,True
 oO9Gh8AGCX,topic,toy car,장난감 자동차,False
+oC-pUJyHFY,topic,toy cars,장난감 자동차,False
 94P91PSrBv,topic,toy store,장난감 가게,False
 pt-tfZEEK4,topic,toys,장난감,True
 gXYPLyE3Jy,topic,tree,나무,False
@@ -796,6 +815,7 @@ mytaFEgWct,topic,velociraptor,벨로키랍터,False
 D-o5-bn56I,topic,video call,비디오 통화,False
 FTmjcKhPX5,topic,video game,비디오 게임,False
 7lbh1_Y6Dl,topic,video games,비디오 게임,False
+O2vYZpGzyP,topic,videogame,비디오 게임,False
 joF5kheIoO,topic,visit,방문,True
 LPrkx7VKpR,topic,voice,목소리,False
 uwqFzosvTz,topic,walk,걷기,False
