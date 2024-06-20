@@ -33,6 +33,7 @@ iz3c5syd8u,action,bake,굽어요,False
 Bvxy36dzfe,action,begin,시작해요,False
 WuY3NIdVc7,action,bored,지루해요,False
 4hJt7Dz1-5,action,bought,사요,False
+oL_-Q4w-BF,action,box,상자,False
 J3qH5TLi_n,action,bring,가져가요,True
 fwwyi2Bvj8,action,brush teeth,이를 닦아요,False
 q8F67fPvIt,action,build,지어요,False
@@ -67,6 +68,7 @@ RnOviC3z8h,action,cooked,요리했어요,True
 gke9fcBIVb,action,count,세어요,False
 c9nrRATbZC,action,create,만들어요,True
 3xqmUR6WRo,action,created,만들었어요,True
+z4lIIzP994,action,creating,만들어요,False
 MscINlnwuN,action,cried,울었어요,False
 ZM7wuj5mEf,action,cry,울어요,False
 n-Tf8mfwDt,action,dance,춤춰요,True
@@ -253,6 +255,7 @@ WKb3RbrCmU,action,see,보아요,True
 1N_POFEXle,action,share,함께 나누어요,True
 AvJsfa28_0,action,share with,공유해요,False
 Uz9Quu0uS2,action,shared,나눴어요,True
+RcymBaIG-R,action,sharing,나눠요,False
 MTOgG4RLt0,action,show,보여줘요,True
 WtGf9nb3O6,action,showed,보여주었어요,True
 jHtmbQ023Z,action,sing,노래해요,True
@@ -270,6 +273,7 @@ DKIxAuH6UO,action,spend time at,시간을 보아요,False
 f-mhbNXEPR,action,spent,보냈어요,True
 5YeexUzgz3,action,splash,튀기다,False
 WwIjDoz2Uq,action,spoke,말해요,False
+yiOGaOuXP-,action,stack,쌓다,False
 sMhKvP82v6,action,start,시작해요,True
 JvDzduIcWT,action,started,시작했어요,True
 9JPe2MIe6w,action,starts,시작해요,False
@@ -294,6 +298,7 @@ CEj5APFHRY,action,teach,가르쳐요,False
 ssoybtBkSf,action,tease,놀려요,False
 SVk91PDyct,action,tell,이야기해요,True
 7h9bH4ghay,action,think,생각해요,False
+i1K1S9aLE5,action,thinking about,생각해요,False
 eQZL7MHvE9,action,threw,던졌어요,True
 7iZI-C4C66,action,throw,던져요,True
 5M-KuPT-LW,action,tired,피곤해요,False
@@ -309,6 +314,7 @@ hpsevNf_wR,action,understand,이해해요,True
 O68F6a00VU,action,upset,화나요,False
 gtjJfAAdum,action,use,사용해요,True
 gKxC8_hMul,action,used,사용해요,False
+i8fthr5Un7,action,using,사용해요,False
 3w7mNezvPA,action,visit,방문해요,True
 kAULHURWOI,action,visited,방문해요,False
 tkxESsHQeg,action,wait,기다려요,False
@@ -334,6 +340,7 @@ NUXknX4RlA,action,wishes,원해요,False
 J5crw_4O_q,action,with,와,False
 KxQZ-vrJLN,action,with friend,친구와,False
 Ga2ulwzo8C,action,work,일해요,True
+U6oiOjI537,action,work on,일해요,False
 J4T_aPeS_t,action,wrap,싸요,False
 c9aGllE8jS,action,write,써요,True
 qY0plBcYn8,action,wrote,썼어요,True
@@ -665,6 +672,7 @@ yVzbsrSuDr,topic,park,공원,True
 Hk0kYPbxze,topic,parks,공원,False
 4OZcY0Z2ny,topic,party,파티,False
 -CvDkFa4-c,topic,pencil,연필,True
+1y_lZKNBSf,topic,pencils,연필,False
 RN_5LxJx9Q,topic,phone,전화기,False
 jjY6UuexSu,topic,physical education,체육 수업,False
 TKIDIbkl3s,topic,piano,피아노,False
@@ -771,6 +779,7 @@ DTobD2zH-f,topic,today,오늘,False
 UhU29qrEDh,topic,together,함께,True
 wkpLfQFBhQ,topic,toothbrush,칫솔,False
 05joagL419,topic,toy,장난감,True
+oO9Gh8AGCX,topic,toy car,장난감 자동차,False
 94P91PSrBv,topic,toy store,장난감 가게,False
 pt-tfZEEK4,topic,toys,장난감,True
 gXYPLyE3Jy,topic,tree,나무,False

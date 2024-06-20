@@ -1,4 +1,4 @@
-import { CardCategory, refreshCards } from "@aacesstalk/libs/ts-core"
+import { CardCategory, DialogueRole, refreshCards } from "@aacesstalk/libs/ts-core"
 import { LoadingIndicator } from "apps/client-rn/src/components/LoadingIndicator"
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { useTranslation } from "react-i18next"
@@ -12,6 +12,7 @@ import { TailwindButton } from "apps/client-rn/src/components/tailwind-component
 import { RefreshIcon } from "apps/client-rn/src/components/vector-icons"
 import { TailwindClasses } from "apps/client-rn/src/styles"
 import { VoiceOverManager } from "apps/client-rn/src/services/voiceover"
+import { useNonNullUpdatedValue } from "apps/client-rn/src/utils/hooks"
 
 const MAIN_CATEGORIES = [CardCategory.Topic, CardCategory.Action, CardCategory.Emotion]
 
@@ -40,10 +41,12 @@ const RefreshButton = () => {
 }
 
 export const SessionChildView = () => {
-    const child_name = useSelector(state => state.auth.dyadInfo?.child_name)
-    const topic = useSelector(state => state.session.topic)
+    const child_name = useNonNullUpdatedValue(useSelector(state => state.auth.dyadInfo?.child_name))
+    const topic = useNonNullUpdatedValue(useSelector(state => state.session.topic))
     const isProcessing = useSelector(state => state.session.isProcessingRecommendation)
     const latestChildCardRecommendationId = useSelector(state => state.session.childCardRecommendationId)
+
+    const currentTurn = useSelector(state => state.session.currentTurn)
     
     const {t} = useTranslation()
 

@@ -208,8 +208,12 @@ const sessionSlice = createSlice({
       }
     },
 
-    _clearSelectedCard: (state) => {
+    _claerCardRecommendation: (state) => {
       selectedCardAdapter.removeAll(state.selectedChildCardEntityState)
+      forEachChildCardAdapters((category, adapter) => {
+        adapter.removeAll(state.childCardEntityStateByCategory[category])
+      })
+      state.childCardRecommendationId = undefined
     }
   },
 
@@ -411,7 +415,6 @@ export function submitParentMessage(message: string): CoreThunk {
       console.log("Retrieved new child card recommendations.")
 
       const cardRecommendationResult: ChildCardRecommendationResult = resp.data
-      dispatch(sessionSlice.actions._clearSelectedCard())
       dispatch(sessionSlice.actions._storeNewChildCardRecommendation(cardRecommendationResult))
     },
     onError: async (ex) => {
@@ -488,7 +491,7 @@ export function confirmSelectedCards(): CoreThunk {
     loadingFlagKey: "isProcessingRecommendation",
     runIfSignedIn: async (dispatch, getState, headers) => {
       const state = getState()
-      dispatch(sessionSlice.actions._clearSelectedCard())
+      dispatch(sessionSlice.actions._claerCardRecommendation())
       dispatch(sessionSlice.actions._incNumTurn())
       dispatch(sessionSlice.actions._setNextTurn(DialogueRole.Parent))
 
