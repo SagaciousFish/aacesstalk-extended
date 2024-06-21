@@ -85,8 +85,17 @@ export const SessionParentView = (props: {
         {
             numTurns == 0 ? <SessionStartingMessage topic={topic} containerClassName='mt-14' /> : <View pointerEvents='none' className='mt-12 flex-row space-x-3'>
                 {
-                    numStarsLoopArray.map((_, index) => <TurnStar key={index} useEnteringAttentionAnimation/>)
-                }              
+                    numStarsLoopArray.map((_, index) => {
+                        if(index < numStarsLoopArray.length - 1){
+                            return <TurnStar key={index} useEnteringAttentionAnimation={false}/>
+                        }else{
+                            return null
+                        }
+                    })
+                }
+                {
+                    numStarsLoopArray.length > 0 ? <TurnStar useEnteringAttentionAnimation/> : null // Animate only last star.
+                }
             </View>
         }
         <MultiTapButton numberOfTaps={5} onTapGesture={onTapSecretButton}><View className="absolute top-0 left-0 w-20 h-20 bg-transparent"/></MultiTapButton>

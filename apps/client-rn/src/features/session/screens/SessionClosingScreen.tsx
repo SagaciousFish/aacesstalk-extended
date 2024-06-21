@@ -59,7 +59,7 @@ export const SessionClosingScreen = (props: NativeStackScreenProps<MainRoutes.Ma
             <Text style={styleTemplates.withBoldFont} className={`text-3xl text-slate-700 mt-20 mb-8`}>{t("Session.EndingMessage")}</Text>
             <View className="flex-row flex-wrap gap-10">
                 {
-                    numStarsLoopArray.map((_, index) => <TurnStar key={index} starClassName="w-36 h-36"/>)
+                    numStarsLoopArray.map((_, index) => <TurnStar key={index} starClassName="w-36 h-36" useEnteringAttentionAnimation enteringAnimationDelay={300 * index}/>)
                 }
             </View>
             <TailwindButton onPress={onPressExit} disabled={!canClose} title={t("Session.Menu.GoHome")} containerClassName="min-w-[300px] w-[30vw] mx-16 mt-20" buttonStyleClassName={`${topicColorFG} h-20`} disabledButtonStyleClassName={topicColorDimmed} titleClassName="text-white text-2xl" roundedClassName="rounded-full"/>
