@@ -14,7 +14,7 @@ import Svg, {
     Stop
   } from "react-native-svg"
 
-import * as colors from '../../../../styles/colors'
+import * as colors from '../../../styles/colors'
 
 function RibbonEnd(props:{svgClassName?:string, fgColor?: string, direction: "left"|"right"}) {
   return (

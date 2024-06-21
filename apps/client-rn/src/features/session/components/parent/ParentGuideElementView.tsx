@@ -1,8 +1,8 @@
-import { ParentGuideCategory, ParentGuideType, TopicCategory, parentGuideMessageSelector, parentGuideSelectors, requestParentGuideExampleMessage } from "@aacesstalk/libs/ts-core";
+import { ParentGuideType, parentGuideMessageSelector, parentGuideSelectors, requestParentGuideExampleMessage } from "@aacesstalk/libs/ts-core";
 import { LoadingIndicator } from "apps/client-rn/src/components/LoadingIndicator";
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { getTopicColorClassNames, styleTemplates } from "apps/client-rn/src/styles"
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, View, StyleSheet } from "react-native"
 import Animated ,{ Easing, ZoomIn, interpolate, interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';

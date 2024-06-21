@@ -11,9 +11,10 @@ import { PopupMenuScreenFrame } from "apps/client-rn/src/components/PopupMenuScr
 import { TailwindButton } from "apps/client-rn/src/components/tailwind-components";
 import { useController, useForm } from "react-hook-form";
 import { SessionTopicInfo, parentGuideSelectors, submitParentMessage } from '@aacesstalk/libs/ts-core';
-import { SessionTitleRibbon } from './SessionTitleRibbon';
+import { SessionTitleRibbon } from '../SessionTitleRibbon';
 import { SessionStartingMessage } from './SessionStartingMessage';
 import { useNonNullUpdatedValue } from 'apps/client-rn/src/utils/hooks';
+import { TurnStar } from '../TurnStar';
 
 const ParentMessageTextInputView = (props: {
     onPopTextInput: () => void,
@@ -84,7 +85,7 @@ export const SessionParentView = (props: {
         {
             numTurns == 0 ? <SessionStartingMessage topic={topic} containerClassName='mt-14' /> : <View pointerEvents='none' className='mt-12 flex-row space-x-3'>
                 {
-                    numStarsLoopArray.map((_, index) => <Image key={index} source={require('../../../../assets/images/feedback-star.png')} className="w-16 h-16"/>)
+                    numStarsLoopArray.map((_, index) => <TurnStar key={index} useEnteringAttentionAnimation/>)
                 }              
             </View>
         }

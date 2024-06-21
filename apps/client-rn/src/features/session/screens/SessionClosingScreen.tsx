@@ -6,10 +6,11 @@ import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { useDisableBack, useNonNullUpdatedValue } from "apps/client-rn/src/utils/hooks"
 import { useCallback, useMemo, useState } from "react"
 import { Text, View, Image } from "react-native"
-import { SessionTitleRibbon } from "../components/parent/SessionTitleRibbon"
+import { SessionTitleRibbon } from "../components/SessionTitleRibbon"
 import { useTranslation } from "react-i18next"
 import { getTopicColorClassNames, styleTemplates } from "apps/client-rn/src/styles"
 import { TailwindButton } from "apps/client-rn/src/components/tailwind-components"
+import { TurnStar } from "../components/TurnStar"
 
 export const SessionClosingScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigatorParamList, "session-closing">) => {
 
@@ -58,7 +59,7 @@ export const SessionClosingScreen = (props: NativeStackScreenProps<MainRoutes.Ma
             <Text style={styleTemplates.withBoldFont} className={`text-3xl text-slate-700 mt-20 mb-8`}>{t("Session.EndingMessage")}</Text>
             <View className="flex-row flex-wrap gap-10">
                 {
-                    numStarsLoopArray.map((_, index) => <Image key={index} source={require('../../../assets/images/feedback-star.png')} className="w-36 h-36"/>)
+                    numStarsLoopArray.map((_, index) => <TurnStar key={index} starClassName="w-36 h-36"/>)
                 }
             </View>
             <TailwindButton onPress={onPressExit} disabled={!canClose} title={t("Session.Menu.GoHome")} containerClassName="min-w-[300px] w-[30vw] mx-16 mt-20" buttonStyleClassName={`${topicColorFG} h-20`} disabledButtonStyleClassName={topicColorDimmed} titleClassName="text-white text-2xl" roundedClassName="rounded-full"/>
