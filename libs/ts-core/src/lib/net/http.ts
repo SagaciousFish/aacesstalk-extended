@@ -38,6 +38,8 @@ export class Http{
 
 
   static ENDPOINT_DYAD_MEDIA_VOICEOVER = `${Http.ENDPOINT_DYAD_MEDIA}/voiceover`
+  static ENDPOINT_DYAD_MEDIA_CARD_IMAGE = `${Http.ENDPOINT_DYAD_MEDIA}/card_image`
+  static ENDPOINT_DYAD_MEDIA_MATCH_CARD_IMAGES = `${Http.ENDPOINT_DYAD_MEDIA}/match_card_images`
 
 
   static getTemplateEndpoint(template: string, values: {[key:string]: string}): string {

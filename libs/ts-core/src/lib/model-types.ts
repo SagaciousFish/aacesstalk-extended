@@ -21,6 +21,13 @@ export interface CardInfo extends CardIdentity{
     category: CardCategory
 }
 
+export interface CardImageMatching{
+    id: string
+    card_info_id: string
+    type: "stock" | "custom"
+    image_id: string
+}
+
 export interface ChildCardRecommendationResult extends ModelWithIdAndTimestamp{
     cards: Array<CardInfo>
 }

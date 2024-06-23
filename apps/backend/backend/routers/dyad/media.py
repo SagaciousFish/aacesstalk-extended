@@ -39,7 +39,7 @@ async def get_voiceover(card_id: str, recommendation_id: str,
 class CardImageMatchingResult:
     matchings: list[CardImageMatching]
 
-@router.get('/card_image_match/{recommendation_id}', response_class=CardImageMatchingResult)
+@router.get('/match_card_images/{recommendation_id}', response_class=CardImageMatchingResult)
 async def match_card_images(recommendation_id: str, db: Annotated[AsyncSession, Depends(with_db_session)], image_matcher: Annotated[CardImageMatcher, Depends(get_card_image_matcher)]):
     t_start = perf_counter()
     card_recommendation = await db.get(ChildCardRecommendationResultORM, recommendation_id)
