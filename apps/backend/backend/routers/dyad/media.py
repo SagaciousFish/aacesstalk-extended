@@ -1,4 +1,5 @@
-import select
+from os import path
+from time import perf_counter
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse
@@ -8,8 +9,9 @@ from py_database.database import AsyncSession
 from py_database.model import DyadORM, ChildCardRecommendationResultORM
 from sqlmodel import select
 from py_core.utils.tts.clova_voice import ClovaVoice, ClovaVoiceParams
+from py_core.system.task.card_image_matching import CardType, CardImageMatcher, CardImageMatching
 
-from backend.routers.dyad.common import get_signed_in_dyad_orm
+from backend.routers.dyad.common import get_card_image_matcher, get_signed_in_dyad_orm
 
 
 router = APIRouter()
@@ -32,3 +34,22 @@ async def get_voiceover(card_id: str, recommendation_id: str,
             return FileResponse(await voice_engine.create_voice(card.label_localized, voice_default_params))
 
     raise HTTPException(status_code=400, detail="NoSuchCard")
+
+
+class CardImageMatchingResult:
+    matchings: list[CardImageMatching]
+
+@router.get('/card_image_match/{recommendation_id}', response_class=CardImageMatchingResult)
+async def match_card_images(recommendation_id: str, db: Annotated[AsyncSession, Depends(with_db_session)], image_matcher: Annotated[CardImageMatcher, Depends(get_card_image_matcher)]):
+    t_start = perf_counter()
+    card_recommendation = await db.get(ChildCardRecommendationResultORM, recommendation_id)
+    matches = await image_matcher.match_card_images(card_recommendation.cards)
+    t_end = perf_counter()
+    print(f"Card matching took {t_end} sec.")
+    return CardImageMatchingResult(matchinggs=matches)
+
+@router.get('/card_image', response_class=FileResponse)
+async def get_card_image(type: CardType, image_id: str, image_matcher: Annotated[CardImageMatcher, Depends(get_card_image_matcher)]):
+    image_path = await image_matcher.get_card_image_filepath(type, image_id)
+    if path.exists(image_path):
+        return FileResponse(image_path)

@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
@@ -13,8 +14,10 @@ from chatlib.utils.env_helper import get_env_variable
 
 from typing import Annotated
 from py_database.database import make_async_session_maker
-from py_database.storage import SQLSessionStorage
+from py_database import SQLSessionStorage, SQLUserStorage
 from py_core.system.moderator import ModeratorSession
+from py_core.system.storage import UserStorage
+from py_core.system.task.card_image_matching.card_image_matcher import CardImageMatcher 
 from py_core.system.model import Dyad, SessionTopicInfo, id_generator
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -51,6 +54,18 @@ async def get_signed_in_dyad_orm(token: Annotated[str, Depends(oauth2_scheme)], 
 sessions: dict[str, ModeratorSession] = {}
 
 SQLSessionStorage.set_session_maker(db_sessionmaker)
+SQLUserStorage.set_session_maker(db_sessionmaker)
+
+@lru_cache(maxsize=20)
+def _get_user_storage(dyad_id: str)->SQLUserStorage:
+    return SQLUserStorage(dyad_id)
+
+@lru_cache(maxsize=20)
+def _get_card_image_matcher(dyad_id: str) -> CardImageMatcher:
+    return CardImageMatcher(_get_user_storage(dyad_id))
+
+def get_card_image_matcher(dyad_orm: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)]) -> CardImageMatcher:
+    return _get_card_image_matcher(dyad_orm.id)
             
 async def create_moderator_session(dyad: Dyad, topic: SessionTopicInfo, timezone: str) -> ModeratorSession:
     return await ModeratorSession.create(dyad, topic, timezone, SQLSessionStorage(id_generator()))

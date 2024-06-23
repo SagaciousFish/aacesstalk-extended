@@ -18,7 +18,9 @@ from py_core.system.model import (id_generator, DialogueRole, DialogueMessage,
                                   DialogueTurn,
                                   Dyad,
                                   InteractionType,
-                                  Interaction
+                                  Interaction,
+                                  CardCategory,
+                                  UserDefinedCardInfo
                                   )
 from py_core.system.session_topic import SessionTopicCategory, SessionTopicInfo
 from chatlib.utils.time import get_timestamp
@@ -50,11 +52,12 @@ class DyadORM(SQLModel, IdTimestampMixin, table=True):
     def to_data_model(self) -> Dyad:
         return Dyad(id=self.id, alias=self.alias, parent_type=self.parent_type, child_name=self.child_name)
 
-
-class SessionORM(SQLModel, IdTimestampMixin, table=True):
-    __tablename__: str = "session"
-
+class DyadIdMixin(BaseModel):
     dyad_id: str = Field(foreign_key=f"{DyadORM.__tablename__}.id")
+
+
+class SessionORM(SQLModel, IdTimestampMixin, DyadIdMixin, table=True):
+    __tablename__: str = "session"
 
     dyad: DyadORM = Relationship(back_populates="sessions")
 
@@ -212,3 +215,22 @@ class InteractionORM(SQLModel, IdTimestampMixin, SessionIdMixin, table=True):
     @classmethod
     def from_data_model(cls, interaction: Interaction, session_id: str) -> 'InteractionORM':
         return InteractionORM(**interaction.model_dump(exclude={'metadata'}), metadata_json=interaction.metadata, session_id=session_id)
+    
+
+class UserDefinedCardInfoORM(SQLModel, IdTimestampMixin, TimestampColumnMixin, DyadIdMixin, table=True):
+    __tablename__:str = "user_defined_card"
+
+    label: Optional[str] = Field(index=True, default=None)
+    label_localized: str = Field(index=True)
+    category: CardCategory = Field(index=True)
+
+    image_filename: Optional[str]
+    image_width: Optional[int]
+    image_height: Optional[int]
+
+    @classmethod
+    def from_data_model(cls, info: UserDefinedCardInfo, dyad_id: str)->'UserDefinedCardInfoORM':
+        return UserDefinedCardInfoORM(**info.model_dump(), dyad_id=dyad_id)
+
+    def to_data_model(self) -> UserDefinedCardInfo:
+        return UserDefinedCardInfo(**self.model_dump(exclude={'dyad_id'}))

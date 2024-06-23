@@ -44,6 +44,9 @@ class CardImageDBRetriever:
             embeddings=[emb.tolist() for emb in name_embeddings]
         )
 
+    def get_card_image_info(self, id: str)->CardImageInfo:
+        return self.__card_info_dict[id]
+
     def __query_result_to_info_list(self, query_result) -> list[list[tuple[CardImageInfo, float]]]:
         list_length = len(query_result["ids"])
 

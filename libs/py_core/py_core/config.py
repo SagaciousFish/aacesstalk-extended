@@ -13,6 +13,8 @@ class AACessTalkConfig:
     initial_parent_guides_path: str = path.join(dataset_dir_path, "initial_parent_guides.yml")
     card_image_embeddings_path: str = path.join(dataset_dir_path, "cards_image_desc_embeddings.npz")
 
+    user_data_dir_path: str = path.join(dataset_dir_path, 'user_data')
+
     database_dir_path: str = path.join(getcwd(), "../../database")
 
     cache_dir_path: str = path.join(database_dir_path, "cache")

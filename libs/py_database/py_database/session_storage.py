@@ -12,15 +12,10 @@ from py_database.model import (DialogueMessageORM, DialogueTurnORM, InteractionO
                                InterimCardSelectionORM,
                                ParentGuideRecommendationResultORM,
                                ParentExampleMessageORM, SessionIdMixin)
+from py_database.storage_base import SQLStorageBase
 
 
-class SQLSessionStorage(SessionStorage):
-
-    __sql_session_maker: sessionmaker[AsyncSession]
-
-    @classmethod
-    def set_session_maker(cls, func: sessionmaker[AsyncSession]):
-        cls.__sql_session_maker = func
+class SQLSessionStorage(SessionStorage, SQLStorageBase):
 
     @classmethod
     async def _load_session_info(cls, session_id: str) -> SessionInfo | None:
