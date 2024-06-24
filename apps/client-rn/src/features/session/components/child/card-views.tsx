@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { VoiceOverManager } from "apps/client-rn/src/services/voiceover"
 import { getTopicColorClassNames, styleTemplates } from "apps/client-rn/src/styles"
 import { useNonNullUpdatedValue } from "apps/client-rn/src/utils/hooks"
-import React from "react"
+import React, { useEffect } from "react"
 import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Pressable, Text, View } from "react-native"
@@ -98,6 +98,10 @@ export const ChildCardView = React.memo((props:{
     const onPress = useCallback(()=>{
         props.onPress?.()
     }, [props.onPress])
+
+    useEffect(()=>{
+        
+    }, [])
 
     return <Pressable disabled={props.disabled} onPressIn={onPressIn} onPressOut={onPressOut} onPress={onPress}><Animated.View
         style={containerAnimStyle} className={`rounded-xl shadow-lg shadow-black/80 border-2 border-slate-200 p-2 bg-white w-[11vw] h-[11vw] m-2 ${props.cardClassName}`}>

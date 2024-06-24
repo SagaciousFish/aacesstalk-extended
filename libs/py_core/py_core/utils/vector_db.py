@@ -4,7 +4,7 @@ import chromadb.utils.embedding_functions as ef
 from openai import OpenAI
 
 from chatlib.llm.integration import GPTChatCompletionAPI
-from chatlib.utils.integration import APIAuthorizationVariableSpec, APIAuthorizationVariableType
+from chatlib.utils.integration import APIAuthorizationVariableSpecPresets
 from chromadb.api.models.Collection import Collection
 from numpy import ndarray
 
@@ -36,7 +36,7 @@ class VectorDB:
 
         GPTChatCompletionAPI.assert_authorize()
         api_key = GPTChatCompletionAPI.get_auth_variable_for_spec(
-            APIAuthorizationVariableSpec(APIAuthorizationVariableType.ApiKey))
+            APIAuthorizationVariableSpecPresets.ApiKey)
 
         self.__decode = OpenAIEmbeddingFunction(api_key=api_key, model=embedding_model, dimensions=embedding_dimensions)
 

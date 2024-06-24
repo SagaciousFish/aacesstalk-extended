@@ -13,6 +13,7 @@ import { RefreshIcon } from "apps/client-rn/src/components/vector-icons"
 import { TailwindClasses } from "apps/client-rn/src/styles"
 import { VoiceOverManager } from "apps/client-rn/src/services/voiceover"
 import { useNonNullUpdatedValue } from "apps/client-rn/src/utils/hooks"
+import { CardImageManager } from "apps/client-rn/src/services/card-image"
 
 const MAIN_CATEGORIES = [CardCategory.Topic, CardCategory.Action, CardCategory.Emotion]
 
@@ -45,8 +46,7 @@ export const SessionChildView = () => {
     const topic = useNonNullUpdatedValue(useSelector(state => state.session.topic))
     const isProcessing = useSelector(state => state.session.isProcessingRecommendation)
     const latestChildCardRecommendationId = useSelector(state => state.session.childCardRecommendationId)
-
-    const currentTurn = useSelector(state => state.session.currentTurn)
+    const token = useSelector(state => state.auth.jwt)
     
     const {t} = useTranslation()
 
@@ -58,6 +58,14 @@ export const SessionChildView = () => {
         }
         
     }, [latestChildCardRecommendationId])
+
+    useEffect(()=>{
+        const subscription = CardImageManager.instance.registerImageMatchingTask(latestChildCardRecommendationId, token)
+
+        return () => {
+            subscription.cancel()
+        }
+    },[latestChildCardRecommendationId, token])
 
     useEffect(()=>{
         return () => {
