@@ -91,7 +91,7 @@ class CardImageDBRetriever:
 
         return result
 
-    def query_nearest_card_image_infos(self, names: list[str], k=3)->list[list[CardImageInfo]]:
+    def query_nearest_card_image_infos(self, names: list[str])->list[list[CardImageInfo]]:
         t_start = perf_counter()
         #First, find exact match.
         name_result_dict: dict[str, list[CardImageInfo]|None] = {name:None for name in names}
@@ -105,31 +105,29 @@ class CardImageDBRetriever:
         no_name_matched_card_names = [name for name in names if (name not in name_result_dict or name_result_dict[name] is None or len(name_result_dict[name]) == 0)]
         
         if len(no_name_matched_card_names) > 0:
-            if False:
-                # Find fuzzy name match.
-                print("Find fuzzy name match.")
-                name_query_results = self.__collection_name.query(
-                    query_texts=no_name_matched_card_names,
-                    n_results=k
-                )
-                name_query_results = self.__query_result_to_info_list(name_query_results)
-                print(name_query_results)
+            name_query_results = self.__collection_name.query(
+                query_texts=no_name_matched_card_names,
+                n_results=1
+            )
+            name_query_results = self.__query_result_to_info_list(name_query_results)
 
-                for i, name in enumerate(no_name_matched_card_names):
-                    name_result_dict[name] = [tup[0] for tup in name_query_results[i]]
-                      
-                result = [name_result_dict[name] for name in names]  
 
             desc_query_results = self.__collection_desc.query(
                 query_texts=no_name_matched_card_names,
-                n_results=k
+                n_results=1
             )
             desc_query_results = self.__query_result_to_info_list(desc_query_results)
 
+
             for i, name in enumerate(no_name_matched_card_names):
-                name_result_dict[name] = [tup[0] for tup in desc_query_results[i]]
+                if name_query_results[i][0][1] < 0.6:
+                    name_result_dict[name] = [name_query_results[i][0][0]]
+                    print(f"Name win - {name} => {name_result_dict[name][0].filename}")
+                else:
+                    name_result_dict[name] = [desc_query_results[i][0][0]]
+                    print(f"Description win - {name} => {name_result_dict[name][0].filename}")
                       
-            result = [name_result_dict[name] for name in names]
+            result = [name_result_dict[name] for name in names]  
         
         t_end = perf_counter()
         print(f"Card retrieval took {t_end - t_start} sec.")

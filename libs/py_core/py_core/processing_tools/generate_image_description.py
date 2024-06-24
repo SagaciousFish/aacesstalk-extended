@@ -408,7 +408,7 @@ if __name__ == "__main__":
     genai.configure(api_key=env_helper.get_env_variable("GOOGLE_API_KEY"))
 
     # scan_card_images()
-    inspect_card_info_data()
+    #inspect_card_info_data()
     #generate_card_descriptions_all(openai_client)
     #fix_refused_requests(threshold=0.4, client=openai_client)
     #asyncio.run(generate_short_descriptions_all())
