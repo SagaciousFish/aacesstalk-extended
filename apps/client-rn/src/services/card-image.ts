@@ -34,7 +34,8 @@ export class CardImageManager{
     }
 
     registerImageMatchingTask(recommendationId: string, token: string): {cancel:()=>void}{
-        const controller = new AbortController()
+        let controller = new AbortController()
+        
         Http.getSignedInHeaders(token).then(headers => {
             Http.axios.get(Http.ENDPOINT_DYAD_MEDIA_MATCH_CARD_IMAGES + "/" + recommendationId, {
                 headers,
@@ -50,13 +51,18 @@ export class CardImageManager{
                         }
                     }
                 }
-            )
+            ).catch((err) => {
+                console.log(err)
+            }).finally(()=>{
+                controller = null
+            })
         })
         
         
         return {
             cancel:()=>{
-                controller.abort()
+                console.log("controller: ", controller)
+                controller?.abort()
             }
         }
     }

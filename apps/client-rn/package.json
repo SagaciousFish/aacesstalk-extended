@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "@candlefinance/faster-image": "*",
     "@react-native/metro-config": "*",
     "@testing-library/jest-native": "*",
     "@testing-library/react-native": "*",
@@ -42,7 +43,8 @@
     "react-native-sound-player": "*",
     "group-array": "*",
     "react-native-progress": "*",
-    "react-native-file-access": "*"
+    "react-native-file-access": "*",
+    "rxjs": "*"
   },
   "devDependencies": {}
 }

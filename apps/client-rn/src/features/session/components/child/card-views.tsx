@@ -7,8 +7,14 @@ import { useNonNullUpdatedValue } from "apps/client-rn/src/utils/hooks"
 import React, { useEffect, useState } from "react"
 import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
-import { Pressable, Text, View, Image, ImageSourcePropType } from "react-native"
+import { Pressable, StyleSheet, Text, View } from "react-native"
 import Animated, { Easing, FlipInYLeft, FlipOutEasyY, interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated"
+import { FasterImageView, ImageOptions } from '@candlefinance/faster-image';
+
+
+const styles = StyleSheet.create({
+    imageView: {aspectRatio: 1, flex:1, alignSelf: 'center'}
+})
 
 export const CardCategoryView = (props: {
     topicCategory: TopicCategory,
@@ -102,18 +108,15 @@ export const ChildCardView = React.memo((props:{
         props.onPress?.()
     }, [props.onPress])
 
-    const [imageSource, setImageSource] = useState<ImageSourcePropType>(undefined)
+    const [imageSource, setImageSource] = useState<ImageOptions>(undefined)
 
     const applyCardImage = useCallback(async (matching: CardImageMatching) => {
         const headers = await Http.getSignedInHeaders(token)
 
         setImageSource({
             headers,
-            uri: Http.axios.defaults.baseURL + Http.ENDPOINT_DYAD_MEDIA_CARD_IMAGE + "?card_type=" + matching.type + "&image_id=" + matching.image_id,
-            method: 'GET',
-            width: 512,
-            height: 512
-        } as ImageSourcePropType)
+            url: Http.axios.defaults.baseURL + Http.ENDPOINT_DYAD_MEDIA_CARD_IMAGE + "?card_type=" + matching.type + "&image_id=" + matching.image_id,
+        } as ImageOptions)
     }, [token])
 
     useEffect(()=>{
@@ -129,9 +132,7 @@ export const ChildCardView = React.memo((props:{
 
     return <Pressable disabled={props.disabled} onPressIn={onPressIn} onPressOut={onPressOut} onPress={onPress}><Animated.View
         style={containerAnimStyle} className={`rounded-xl shadow-lg shadow-black/80 border-2 border-slate-200 p-2 bg-white w-[11vw] h-[11vw] m-2 ${props.cardClassName}`}>
-        {
-            imageSource != null ? <Image className="aspect-square flex-1 self-center" source={imageSource}/> : <View className="aspect-square flex-1 self-center"/> 
-        }
+        <FasterImageView style={styles.imageView} source={imageSource}/>
         <Text className="self-center mt-2 text-black/80" style={styleTemplates.withBoldFont}>{props.label}</Text>
     </Animated.View></Pressable>
 })
