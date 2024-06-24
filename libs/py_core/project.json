@@ -102,6 +102,13 @@
         "command": "poetry run python test_clova_voice.py",
         "cwd": "libs/py_core"
       }
+    },
+    "test_corpus_download": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run python test_corpus_download.py",
+        "cwd": "libs/py_core"
+      }
     }
   },
   "tags": []

@@ -3,12 +3,12 @@ from time import perf_counter
 from typing import Any, Union, Iterable
 
 import deepl
-from chatlib.utils.integration import IntegrationService, APIAuthorizationVariableSpec, APIAuthorizationVariableType
+from chatlib.utils.integration import IntegrationService, APIAuthorizationVariableSpec,  APIAuthorizationVariableSpecPresets, APIAuthorizationVariableType
 from deepl import TextResult, SplitSentences
 
 
 class DeepLTranslator(IntegrationService):
-    __api_key_spec = APIAuthorizationVariableSpec(APIAuthorizationVariableType.ApiKey)
+    __api_key_spec = APIAuthorizationVariableSpecPresets.ApiKey
 
     @classmethod
     def provider_name(cls) -> str:

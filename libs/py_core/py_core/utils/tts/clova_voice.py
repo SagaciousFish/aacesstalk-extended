@@ -2,7 +2,7 @@ from functools import cached_property
 from os import path
 from time import perf_counter
 from typing import Any, Literal, Union
-from chatlib.utils.integration import APIAuthorizationVariableSpec, APIAuthorizationVariableType, IntegrationService
+from chatlib.utils.integration import APIAuthorizationVariableSpec, APIAuthorizationVariableSpecPresets, APIAuthorizationVariableType, IntegrationService
 import pendulum
 from pydantic import BaseModel, ConfigDict, Field
 import requests
@@ -43,8 +43,8 @@ class ClovaVoice(IntegrationService):
 
     ENDPOINT_TTS = "https://naveropenapi.apigw.ntruss.com/tts-premium/v1/tts"
 
-    __client_id_spec = APIAuthorizationVariableSpec(APIAuthorizationVariableType.ApiKey)
-    __client_secret_spec = APIAuthorizationVariableSpec(APIAuthorizationVariableType.Secret)
+    __client_id_spec = APIAuthorizationVariableSpecPresets.ApiKey
+    __client_secret_spec = APIAuthorizationVariableSpecPresets.Secret
 
 
     def __init__(self):

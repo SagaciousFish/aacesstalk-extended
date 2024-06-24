@@ -7,6 +7,7 @@ from chatlib.global_config import GlobalConfig
 
 from backend import env_variables
 from py_core.system.moderator import ModeratorSession
+from py_core.utils.aac_corpus_downloader import AACCorpusDownloader
 from chatlib.utils import env_helper
 
 if __name__ == "__main__":
@@ -23,5 +24,7 @@ if __name__ == "__main__":
     if env_helper.get_env_variable(env_variables.AUTH_SECRET) is None:
         auth_secret = questionary.text("Insert auth secret (Any random string).", default="Naver1784", validate=make_non_empty_string_validator("Put a string with length > 0.")).ask()
         set_key(env_file, env_variables.AUTH_SECRET, auth_secret)
+
+    AACCorpusDownloader.download_corpus_cli()
 
     print("Setup complete.")
