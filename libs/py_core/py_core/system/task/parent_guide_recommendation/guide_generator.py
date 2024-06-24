@@ -10,7 +10,7 @@ from py_core.system.model import CardCategory, DialogueMessage, ParentGuideRecom
 from py_core.system.task.parent_guide_recommendation.common import ParentGuideRecommendationAPIResult, \
     DialogueInspectionResult
 from py_core.system.task.parent_guide_recommendation.guide_translator import GuideTranslator
-from py_core.system.task.common import DialogueInput, DialogueInputToStrConversionFunction
+from py_core.system.task.dialogue_conversion import DialogueInput, DialogueInputToStrConversionFunction
 from py_core.system.session_topic import SessionTopicCategory, SessionTopicInfo
 
 class ParentGuideRecommendationParams(ChatCompletionFewShotMapperParams):

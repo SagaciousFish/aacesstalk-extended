@@ -9,7 +9,7 @@ from chatlib.llm.integration import GPTChatCompletionAPI, ChatGPTModel
 from py_core.system.guide_categories import DialogueInspectionCategory
 from py_core.system.model import Dialogue, DialogueMessage, DialogueRole, CardCategory
 from py_core.system.task.parent_guide_recommendation.common import DialogueInspectionResult
-from py_core.system.task.card_recommendation.common import DialogueToStrConversionFunction
+from py_core.system.task.dialogue_conversion import DialogueToStrConversionFunction
 
 _EXAMPLES = [
    MapperInputOutputPair(

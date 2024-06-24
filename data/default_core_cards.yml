@@ -1,16 +1,26 @@
-- label: 'Yes'
+- id: 'yes'
+  label: 'Yes'
   label_localized: 네
   category: core
-- label: 'No'
+  image: 'card_core/네.png'
+- id: 'no'
+  label: 'No'
   label_localized: 아니오
   category: core
-- label: I don't know
+  image: 'card_core/아니오.png'
+- id: idk
+  label: I don't know
   label_localized: 모르겠어요
   category: core
-- label:
+  image: 'card_core/모르겠어요.png'
+- id: hby
+  label:
     father: How about you, dad?
     mother: How about you, mom?
   label_localized: 
     father: 아빠는요?
     mother: 엄마는요?
   category: core
+  image:
+    father: 'card_core/아빠.png'
+    mother: 'card_core/엄마.png'

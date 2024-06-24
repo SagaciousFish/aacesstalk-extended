@@ -18,7 +18,7 @@ class CardImageDBRetriever:
             for row in reader:
                 info_list.append(CardImageInfo(**row))
 
-        self.__card_info_dict = {inf.id:inf for inf in info_list}
+        self.__card_info_dict = {inf.id:inf for inf in info_list}        
 
         embedding_store = numpy.load(AACessTalkConfig.card_image_embeddings_path)
         ids = embedding_store["ids"]
@@ -32,7 +32,7 @@ class CardImageDBRetriever:
         self.__collection_desc.add(
             ids=[id for id in ids],
             documents=[info.description_brief for info in info_list],
-            metadatas=[info.model_dump(include={"name", "category"}) for info in info_list],
+            metadatas=[info.model_dump(include={"name", "category", "filename"}) for info in info_list],
             embeddings=[emb.tolist() for emb in desc_embeddings]
         )
 
@@ -40,7 +40,7 @@ class CardImageDBRetriever:
         self.__collection_name.add(
             ids=[id for id in ids],
             documents=[info.name for info in info_list],
-            metadatas=[info.model_dump(include={"name", "category", "description_brief"}) for info in info_list],
+            metadatas=[info.model_dump(include={"name", "category", "description_brief", "filename"}) for info in info_list],
             embeddings=[emb.tolist() for emb in name_embeddings]
         )
 
@@ -52,7 +52,6 @@ class CardImageDBRetriever:
 
         result = []
         for i in range(list_length):
-            print(i)        
             if len(query_result["ids"][i]) > 0:
                 objs = [self.__card_info_dict[id] for id in query_result["ids"][i]]
                 distances = [s for s in query_result["distances"][i]]
@@ -106,28 +105,32 @@ class CardImageDBRetriever:
         no_name_matched_card_names = [name for name in names if (name not in name_result_dict or name_result_dict[name] is None or len(name_result_dict[name]) == 0)]
         
         if len(no_name_matched_card_names) > 0:
-            # Find fuzzy name match.
-            print("Find fuzzy name match.")
-            name_query_results = self.__collection_name.query(
+            if False:
+                # Find fuzzy name match.
+                print("Find fuzzy name match.")
+                name_query_results = self.__collection_name.query(
+                    query_texts=no_name_matched_card_names,
+                    n_results=k
+                )
+                name_query_results = self.__query_result_to_info_list(name_query_results)
+                print(name_query_results)
+
+                for i, name in enumerate(no_name_matched_card_names):
+                    name_result_dict[name] = [tup[0] for tup in name_query_results[i]]
+                      
+                result = [name_result_dict[name] for name in names]  
+
+            desc_query_results = self.__collection_desc.query(
                 query_texts=no_name_matched_card_names,
                 n_results=k
             )
-            name_query_results = self.__query_result_to_info_list(name_query_results)
-            print(name_query_results)
+            desc_query_results = self.__query_result_to_info_list(desc_query_results)
 
             for i, name in enumerate(no_name_matched_card_names):
-                name_result_dict[name] = [tup[0] for tup in name_query_results[i]]
-
+                name_result_dict[name] = [tup[0] for tup in desc_query_results[i]]
                       
-
-            #result = self.__collection_desc.query(
-            #    query_texts=[name],
-            #    n_results=k
-            #)
-            #return [tup[0] for tup in self.__query_result_to_info_list(result)]
+            result = [name_result_dict[name] for name in names]
         
-        result = [name_result_dict[name] for name in names]  
-
         t_end = perf_counter()
         print(f"Card retrieval took {t_end - t_start} sec.")
 

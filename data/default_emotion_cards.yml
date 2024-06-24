@@ -1,39 +1,52 @@
-- label: 'Joyful'
+- id: 'joyful'
+  label: 'Joyful'
   label_localized: '즐거워요'
   category: emotion
-- label: 'Glad'
+- id: 'glad'
+  label: 'Glad'
   label_localized: 기뻐요
   category: emotion
-- label: 'Happy'
+- id: 'happy'
+  label: 'Happy'
   label_localized: 행복해요
   category: emotion
-- label: 'Excited'
+- id: 'excited'
+  label: 'Excited'
   label_localized: 신나요
   category: emotion
-- label: 'Sad'
+- id: 'sad'
+  label: 'Sad'
   label_localized: '즐거워요'
   category: emotion
-- label: 'Angry'
+- id: 'angry'
+  label: 'Angry'
   label_localized: 화나요
   category: emotion
-- label: 'Upset'
+- id: 'upset'
+  label: 'Upset'
   label_localized: 속상해요
   category: emotion
-- label: 'Scared'
+- id: 'scared'
+  label: 'Scared'
   label_localized: 무서워요
   category: emotion
-- label: 'Afraid'
+- id: 'afraid'
+  label: 'Afraid'
   label_localized: 겁나요
   category: emotion
-- label: 'Surprised'
+- id: surprised
+  label: 'Surprised'
   label_localized: 놀라워요
   category: emotion
-- label: 'Amazed'
+- id: 'amazed'
+  label: 'Amazed'
   label_localized: 신기해요
   category: emotion
-- label: 'Bored'
+- id: 'bored'
+  label: 'Bored'
   label_localized: 지루해요
   category: emotion
-- label: 'Tearful'
+- id: 'tearful'
+  label: 'Tearful'
   label_localized: 눈물 나요
   category: emotion

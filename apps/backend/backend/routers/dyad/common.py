@@ -29,9 +29,7 @@ async def get_signed_in_dyad_orm(token: Annotated[str, Depends(oauth2_scheme)], 
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-
-    print("Try get signed_in dyad.")
-
+    
     try:
         payload = jwt.decode(token, get_env_variable(env_variables.AUTH_SECRET))
         dyad_id: str = payload.get("sub")
@@ -47,7 +45,6 @@ async def get_signed_in_dyad_orm(token: Annotated[str, Depends(oauth2_scheme)], 
     if dyad is None:
         raise credentials_exception
     else:
-        print("Successfully found a signed-in dyad.")
         return dyad
 
 

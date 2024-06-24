@@ -8,9 +8,10 @@ from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompl
 from py_core.config import AACessTalkConfig
 from py_core.system.model import Dialogue, CardInfo, ChildCardRecommendationResult, ParentType, id_generator, CardCategory
 from py_core.system.session_topic import SessionTopicInfo
-from py_core.system.task.card_recommendation.common import DEFAULT_EMOTION_CARDS, ChildCardRecommendationAPIResult, load_default_cards
+from py_core.system.task.card_recommendation.common import ChildCardRecommendationAPIResult
 from py_core.system.task.card_recommendation.translator import CardTranslator
-from py_core.system.task.common import DialogueInput, DialogueInputToStrConversionFunction
+from py_core.system.task.dialogue_conversion import DialogueInput, DialogueInputToStrConversionFunction
+from py_core.utils.default_cards import DEFAULT_CORE_CARDS, DEFAULT_EMOTION_CARDS
 from py_core.utils.vector_db import VectorDB
 
 str_output_converter, output_str_converter = generate_pydantic_converter(ChildCardRecommendationAPIResult, 'yaml')
@@ -31,15 +32,13 @@ class ChildCardRecommendationGenerator:
 
         self.__translator = CardTranslator(vector_db)
 
-        self.__default_core_cards = load_default_cards(AACessTalkConfig.default_core_card_table_path)
-
         def __prompt_generator(input: DialogueInput, params: ChildCardRecommendationParams) -> str:
             prompt = f"""
 - You are a helpful assistant that serves as an Alternative Augmented Communication tool.
 - Suppose that you are helping a communication with a child and a {input.parent_type.lower()}. The autistic child has the language proficiency of a 5 to 7-year-old, so recommendations should consider their cognitive level.
 - For the conversation, {input.topic.to_readable_description()}
 - Given the last message of the {input.parent_type.lower()}, suggest a list of English keywords that can help the child pick to create a sentence as an answer.
-- Note that the 'core' cards are static and provided by default. So do NOT recommend the following cards: {", ".join([f"{c.get_label_for_parent(input.parent_type)}" for c in self.__default_core_cards])}
+- Note that the 'core' cards are static and provided by default. So do NOT recommend the following cards: {", ".join([f"{c.get_label_for_parent(input.parent_type)}" for c in DEFAULT_CORE_CARDS])}
 - Note that the 'emotion' cards must be selected from the given list: {", ".join([f"{c.get_label_for_parent(input.parent_type)}" for c in DEFAULT_EMOTION_CARDS])}
 """"""
 
@@ -81,8 +80,6 @@ class ChildCardRecommendationGenerator:
                                                      interim_cards=interim_cards,
                                                      model=ChatGPTModel.GPT_4_0613,
                                                      api_params={}))
-        
-        print(recommendation)
 
         t_trans = perf_counter()
 
@@ -113,4 +110,4 @@ class ChildCardRecommendationGenerator:
                      recommendation_id=rec_id) for i, (word, category) in
             enumerate(keyword_category_list)] + [CardInfo(label=c.get_label_for_parent(parent_type), label_localized=c.get_label_localized_for_parent(parent_type), 
                                                           recommendation_id=rec_id, category=c.category
-                                                          ) for c in (selected_emotion_cards + self.__default_core_cards)])
+                                                          ) for c in (selected_emotion_cards + DEFAULT_CORE_CARDS)])

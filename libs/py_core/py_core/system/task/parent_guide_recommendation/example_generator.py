@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from py_core.system.guide_categories import ParentGuideCategory
 from py_core.system.model import ParentGuideElement, ParentExampleMessage, Dialogue, DialogueMessage, CardCategory
 from py_core.system.task.parent_guide_recommendation.example_translator import ParentExampleMessageTranslator
-from py_core.system.task.card_recommendation.common import DialogueToStrConversionFunction
+from py_core.system.task.dialogue_conversion import DialogueToStrConversionFunction
 from py_core.utils.vector_db import VectorDB
 
 
