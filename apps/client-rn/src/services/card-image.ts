@@ -29,7 +29,7 @@ export class CardImageManager{
         }
     }
 
-    subscribeToImageMatching(cardInfoId: string, callback: ()=>void): Subscription {
+    subscribeToImageMatching(cardInfoId: string, callback: ((matching: CardImageMatching)=>void) | ((matching: CardImageMatching)=>Promise<void>)): Subscription {
         return this.eventSubject.pipe(filter(event => event.id === cardInfoId), map(event => event.matching)).subscribe(callback)
     }
 

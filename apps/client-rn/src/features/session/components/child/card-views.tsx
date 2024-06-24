@@ -1,12 +1,13 @@
-import { CardCategory, CardInfo, TopicCategory, appendCard, childCardSessionSelectors } from "@aacesstalk/libs/ts-core"
+import { CardCategory, CardImageMatching, CardInfo, Http, TopicCategory, appendCard, childCardSessionSelectors } from "@aacesstalk/libs/ts-core"
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
+import { CardImageManager } from "apps/client-rn/src/services/card-image"
 import { VoiceOverManager } from "apps/client-rn/src/services/voiceover"
 import { getTopicColorClassNames, styleTemplates } from "apps/client-rn/src/styles"
 import { useNonNullUpdatedValue } from "apps/client-rn/src/utils/hooks"
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
-import { Pressable, Text, View } from "react-native"
+import { Pressable, Text, View, Image, ImageSourcePropType } from "react-native"
 import Animated, { Easing, FlipInYLeft, FlipOutEasyY, interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated"
 
 export const CardCategoryView = (props: {
@@ -65,16 +66,18 @@ export const TopicChildCardView = (props:{
         await VoiceOverManager.instance.placeVoiceoverFetchTask(cardInfo, token)
     }, [cardInfo, token])
 
-    return <ChildCardView disabled={isProcessing} label={cardInfo?.label_localized || cardInfo?.label} cardClassName={props.cardClassName} onPress={onPress}/>
+    return <ChildCardView disabled={isProcessing} imageQueryId={props.id} label={cardInfo?.label_localized || cardInfo?.label} cardClassName={props.cardClassName} onPress={onPress}/>
 }
 
 export const ChildCardView = React.memo((props:{
     label: string,
+    imageQueryId?: string,
     disabled?: boolean,
     onPress?: () => void,
     cardClassName?: string
 }) => {
 
+    const token = useSelector(state => state.auth.jwt)
 
     const pressAnimProgress = useSharedValue(0)
 
@@ -99,13 +102,36 @@ export const ChildCardView = React.memo((props:{
         props.onPress?.()
     }, [props.onPress])
 
+    const [imageSource, setImageSource] = useState<ImageSourcePropType>(undefined)
+
+    const applyCardImage = useCallback(async (matching: CardImageMatching) => {
+        const headers = await Http.getSignedInHeaders(token)
+
+        setImageSource({
+            headers,
+            uri: Http.axios.defaults.baseURL + Http.ENDPOINT_DYAD_MEDIA_CARD_IMAGE + "?card_type=" + matching.type + "&image_id=" + matching.image_id,
+            method: 'GET',
+            width: 512,
+            height: 512
+        } as ImageSourcePropType)
+    }, [token])
+
     useEffect(()=>{
-        
-    }, [])
+        if(props.imageQueryId){
+            const cached = CardImageManager.instance.getCachedMatching(props.imageQueryId)
+            if(cached){
+                applyCardImage(cached)
+            }
+
+            CardImageManager.instance.subscribeToImageMatching(props.imageQueryId, applyCardImage)
+        }
+    }, [props.imageQueryId, applyCardImage])
 
     return <Pressable disabled={props.disabled} onPressIn={onPressIn} onPressOut={onPressOut} onPress={onPress}><Animated.View
         style={containerAnimStyle} className={`rounded-xl shadow-lg shadow-black/80 border-2 border-slate-200 p-2 bg-white w-[11vw] h-[11vw] m-2 ${props.cardClassName}`}>
-        <View className="aspect-square bg-gray-200 flex-1 self-center"></View>
+        {
+            imageSource != null ? <Image className="aspect-square flex-1 self-center" source={imageSource}/> : <View className="aspect-square flex-1 self-center"/> 
+        }
         <Text className="self-center mt-2 text-black/80" style={styleTemplates.withBoldFont}>{props.label}</Text>
     </Animated.View></Pressable>
 })

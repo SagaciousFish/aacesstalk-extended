@@ -47,11 +47,11 @@ async def match_card_images(recommendation_id: str, db: Annotated[AsyncSession, 
     card_recommendation = card_recommendation.to_data_model()
     matches = await image_matcher.match_card_images(card_recommendation.cards)
     t_end = perf_counter()
-    print(f"Card matching took {t_end} sec.")
+    print(f"Card matching took {t_end - t_start} sec.")
     return CardImageMatchingResult(matchings=matches)
 
 @router.get('/card_image', response_class=FileResponse)
-async def get_card_image(type: CardType, image_id: str, image_matcher: Annotated[CardImageMatcher, Depends(get_card_image_matcher)]):
-    image_path = await image_matcher.get_card_image_filepath(type, image_id)
+async def get_card_image(card_type: CardType, image_id: str, image_matcher: Annotated[CardImageMatcher, Depends(get_card_image_matcher)]):
+    image_path = await image_matcher.get_card_image_filepath(card_type, image_id)
     if path.exists(image_path):
         return FileResponse(image_path)

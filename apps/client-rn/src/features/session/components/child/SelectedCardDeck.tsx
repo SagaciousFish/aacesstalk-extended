@@ -28,7 +28,7 @@ const SelectedCardView = (props: {
         await VoiceOverManager.instance.placeVoiceoverFetchTask(cardInfo, token)
     }, [cardInfo?.id, cardInfo?.recommendation_id, token])
 
-    return <ChildCardView label={cardInfo?.label_localized} disabled={props.disabled} onPress={onPress}/>
+    return <ChildCardView label={cardInfo?.label_localized} imageQueryId={props.id} disabled={props.disabled} onPress={onPress}/>
 }
 
 const selectedCardEnteringAnim = FlipInXUp.duration(300).springify()
