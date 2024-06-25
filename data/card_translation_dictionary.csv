@@ -59,6 +59,7 @@ Y8B-lSXI_c,action,climb,올라가요,False
 r35xvR3VnP,action,climbed,올라갔어요,True
 rxpr1-OcV4,action,close,닫다,False
 tIhdQMzeY6,action,collect,모아요,False
+IirZnrgimq,action,collection,모아요,False
 f7x6vYZGZH,action,color,색칠해요,True
 bByGQFesH1,action,colored,색칠했어요,False
 Vb_TokgFEr,action,come,오세요,False
@@ -100,6 +101,7 @@ A69xsnZPHn,action,drawn,그린,False
 ZON1ssMHKK,action,drew,그렸어요,True
 2cQDvX663z,action,drink,마셔요,False
 aLdFWWnR6c,action,drive,운전하다,False
+FIJYloJ_C9,action,dust off,먼지를 털어내요,False
 BA6GILFqg7,action,easy,쉬워요,False
 qFMNNFSCX5,action,eat,먹어요,True
 H67n9i7nOg,action,eating,먹어요,True
@@ -119,6 +121,7 @@ a3KelxlGJh,action,feel,느껴요,True
 JJ1sDRIr5m,action,feel like,느낌이 들어요,False
 g8o1R3j3h5,action,fell,넘어졌어요,False
 jfG3onbLem,action,felt,느꼈어요,False
+cDf71uC5HO,action,felt dizzy,어지러웠어요,False
 iOZkNlA8cg,action,find,찾아요,False
 fOu7qH7shJ,action,finish,끝내요,True
 Jugth0n2i7,action,finished,끝났어요,True
@@ -153,6 +156,7 @@ SQOjY1hhrK,action,help,도와줘요,True
 2DMi2IWvj9,action,help with,도와줄 필요가 있어요,False
 LHl8HjriW6,action,helped,도와주었어요,True
 UFo9KLCant,action,hold,잡아요,False
+vzxXz5EtUU,action,how about,어떨까요,False
 daLY5CMk-2,action,hug,안아줘요,True
 Bf_VrLHEne,action,hugged,안아줬어요,False
 msz_pL-EzP,action,hungry,배고파요,False
@@ -249,6 +253,7 @@ W8vovWamey,action,put away,가지고 들어요,False
 VvHnmmGff2,action,put on,켜다,False
 rjLWA2neRR,action,queued,맞섰어요,False
 8pUy5QouEZ,action,ran,뛰었어요,True
+HCfexXgKkh,action,ran around,뛰어다녔어요,False
 MkOW9SdkJ7,action,react,반응해요,False
 _40IlXnAMr,action,read,읽어요,True
 Dndmc5vqWC,action,reading,읽어요,True
@@ -274,6 +279,7 @@ WKb3RbrCmU,action,see,보아요,True
 AvJsfa28_0,action,share with,공유해요,False
 Uz9Quu0uS2,action,shared,나눴어요,True
 RcymBaIG-R,action,sharing,나눠요,False
+BZlzoEm23O,action,should we,해볼까요,False
 MTOgG4RLt0,action,show,보여줘요,True
 WtGf9nb3O6,action,showed,보여주었어요,True
 jHtmbQ023Z,action,sing,노래해요,True
@@ -291,6 +297,7 @@ DKIxAuH6UO,action,spend time at,시간을 보아요,False
 f-mhbNXEPR,action,spent,보냈어요,True
 5YeexUzgz3,action,splash,튀기다,False
 WwIjDoz2Uq,action,spoke,말해요,False
+dgv7vXJFZa,action,spun,돌렸어요,False
 yiOGaOuXP-,action,stack,쌓다,False
 sMhKvP82v6,action,start,시작해요,True
 JvDzduIcWT,action,started,시작했어요,True
@@ -305,6 +312,7 @@ Inbws15J66,action,study,공부해요,True
 WiVLGh9MW7,action,suggest,제안해요,False
 G0zwKYfMvP,action,support,지지해요,False
 h2RnSvs5Tq,action,swallow,삼켜요,False
+EyXVstgZ1b,action,sweep,청소해요,False
 xDBOWUZ5GF,action,swim,수영해요,False
 QDCT2oWGfF,action,swing,그네타요,True
 6nR6inUa3Z,action,swung,그네탈래요,False
@@ -366,6 +374,7 @@ fQehZlY_5M,action,win,이겼어요,False
 NUXknX4RlA,action,wishes,원해요,False
 J5crw_4O_q,action,with,와,False
 KxQZ-vrJLN,action,with friend,친구와,False
+LfGSWRSvwP,action,won,이겼어요,False
 Ga2ulwzo8C,action,work,일해요,True
 U6oiOjI537,action,work on,일해요,False
 J4T_aPeS_t,action,wrap,싸요,False
@@ -515,6 +524,7 @@ zpoAMjrPm_,topic,art,미술,True
 AXww_Z6iiJ,topic,art class,미술 수업,True
 ywQE0a80n_,topic,arts,예술,True
 Us1QEZe8tc,topic,aunt,이모,False
+JG0h3A10zx,topic,bake,굽다,False
 IMftroKV4S,topic,ball,공,True
 01JmpxDAa-,topic,balloon,풍선,False
 Ld_-rx6Cgu,topic,balloons,풍선,False
@@ -551,6 +561,7 @@ Gu4Vk7WaBY,topic,bumper cars,범퍼 카,False
 uSZbfWd24K,topic,call,전화,False
 lCNH9iEedK,topic,cancel,취소,False
 IA0iR5equz,topic,candy,사탕,False
+rFPMYNyp9u,topic,candy floss,솜사탕,False
 2DNqirPt0_,topic,car,자동차,False
 -1SJyugBuX,topic,car ride,자동차 타기,False
 h4bhZV_kxu,topic,card,카드,False
@@ -739,6 +750,7 @@ Hk0kYPbxze,topic,parks,공원,False
 4OZcY0Z2ny,topic,party,파티,False
 -CvDkFa4-c,topic,pencil,연필,True
 1y_lZKNBSf,topic,pencils,연필,False
+SWu4OkoRjD,topic,people,사람,False
 RN_5LxJx9Q,topic,phone,전화기,False
 jjY6UuexSu,topic,physical education,체육 수업,False
 TKIDIbkl3s,topic,piano,피아노,False
@@ -850,6 +862,7 @@ g2TlurOrjX,topic,tasks,할일,False
 53eLBLSTuk,topic,teacher,선생님,True
 Cl-805ZmS-,topic,television,텔레비전,False
 8T9a-E4F7B,topic,theater,극장,True
+J0N0vDHNxo,topic,theme park food,테마 파크 음식,False
 9EyQPO_OO5,topic,therapeutic,치료적,False
 bEMVGp6vdz,topic,therapy,치료,False
 AMdyvxe2Qz,topic,there,거기,False
@@ -859,6 +872,7 @@ DTobD2zH-f,topic,today,오늘,False
 UhU29qrEDh,topic,together,함께,True
 wkpLfQFBhQ,topic,toothbrush,칫솔,False
 05joagL419,topic,toy,장난감,True
+qCnrbCsLI4,topic,toy blocks,장난감 블록,False
 oO9Gh8AGCX,topic,toy car,장난감 자동차,False
 oC-pUJyHFY,topic,toy cars,장난감 자동차,False
 94P91PSrBv,topic,toy store,장난감 가게,False

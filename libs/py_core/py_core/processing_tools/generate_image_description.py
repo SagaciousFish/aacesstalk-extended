@@ -3,7 +3,7 @@ import base64
 import csv
 import math
 from io import BytesIO
-from os import listdir, scandir, path
+from os import DirEntry, listdir, scandir, path, remove
 
 from pydantic import BaseModel
 from time import perf_counter
@@ -52,6 +52,25 @@ CATEGORY_HUMAN_READABLE_STRING_DICT = {
     "service": "Car caring, cell phones, wheelchairs, customer services"
 }
 
+def _create_info_row_from_file(file: DirEntry[str], category_name: str, dir_name: str) -> CardImageInfo:
+    with Image.open(file.path) as image:
+        orig_width, orig_height = image.size
+        if orig_width != 512 or orig_height != 512:
+            resized = ImageOps.pad(image, size=(512, 512), method=Image.Resampling.BICUBIC)
+            print(f"resized to {resized.size}")
+            with open(file.path, 'wb') as f:
+                resized.save(f, format="PNG")
+                resized.close()
+
+            row = CardImageInfo(
+                category=category_name,
+                name_ko=file.name[:-len(".png")],
+                filename=path.join(dir_name, file.name),
+                format=image.format,
+                width=512,
+                height=512
+            )
+
 def scan_card_images():
     with open(AACessTalkConfig.card_image_table_path, "w") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=CardImageInfo.model_fields)
@@ -62,24 +81,7 @@ def scan_card_images():
                 rows = []
                 for file in scandir(path.join(AACessTalkConfig.card_image_directory_path, dir_name)):
                     if file.is_file() and file.name.lower().endswith(".png"):
-                        with Image.open(file.path) as image:
-                            orig_width, orig_height = image.size
-                            if orig_width != 512 or orig_height != 512:
-                                resized = ImageOps.pad(image, size=(512, 512), method=Image.Resampling.BICUBIC)
-                                print(f"resized to {resized.size}")
-                                with open(file.path, 'wb') as f:
-                                    resized.save(f, format="PNG")
-                                    resized.close()
-
-                            row = CardImageInfo(
-                                category=category_name,
-                                name_ko=file.name[:-len(".png")],
-                                filename=path.join(dir_name, file.name),
-                                format=image.format,
-                                width=512,
-                                height=512
-                            )
-                            rows.append(row)
+                        rows.append(_create_info_row_from_file(file, category_name, dir_name))
                     else:
                         print("Exclude", file.path)
 
@@ -105,6 +107,27 @@ def _save_card_descriptions(rows: list[CardImageInfo]):
         writer = csv.DictWriter(csvfile, fieldnames=CardImageInfo.model_fields)
         writer.writeheader()
         writer.writerows([row.model_dump() for row in rows])
+
+def sync_file_to_info_list(delete: bool = False, add_to_list: bool = False)->list[str]:
+    info_rows = _load_card_descriptions()
+    new_rows = []
+    for dir_name in listdir(AACessTalkConfig.card_image_directory_path):
+            if dir_name.startswith("card_"):
+                category_name = str(dir_name[len("card_"):])
+                for file in scandir(path.join(AACessTalkConfig.card_image_directory_path, dir_name)):
+                    if file.is_file() and file.name.lower().endswith(".png"):
+                        filename = path.join(dir_name, file.name)
+                        matched = [r for r in info_rows if r.category == category_name and r.filename == filename]
+                        print(file.name, matched)
+
+                        if len(matched) == 0:
+                            if delete == True:
+                                print(f"{filename} does not matches and will be deleted.")
+                                remove(path.join(AACessTalkConfig.card_image_directory_path, filename))
+                            elif add_to_list == True:
+                                new_rows.append(_create_info_row_from_file(file, category_name, dir_name))
+    print(new_rows)
+                        
 
 def inspect_card_info_data():
     rows = _load_card_descriptions()
@@ -409,8 +432,12 @@ if __name__ == "__main__":
 
     # scan_card_images()
     #inspect_card_info_data()
+    #sync_file_to_info_list(add_to_list=True)
     #generate_card_descriptions_all(openai_client)
     #fix_refused_requests(threshold=0.4, client=openai_client)
     #asyncio.run(generate_short_descriptions_all())
     # asyncio.run(translate_card_names())
-    cache_description_embeddings_all(openai_client)
+
+    # sync_file_to_info_list(delete=True)
+    
+    #cache_description_embeddings_all(openai_client)

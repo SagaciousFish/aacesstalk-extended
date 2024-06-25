@@ -2,23 +2,27 @@ from csv import DictReader
 from time import perf_counter
 
 import numpy
+from pandas import DataFrame
 
 from py_core.config import AACessTalkConfig
 from py_core.utils.models import CardImageInfo
 from py_core.utils.vector_db import VectorDB
+from py_core.system.model import CardInfo
 
 
 class CardImageDBRetriever:
     def __init__(self):
         print("Initialize card image DB retriever.")
         info_list: list[CardImageInfo] = []
-        with open(AACessTalkConfig.card_image_table_path, 'r') as f:
+        with open(AACessTalkConfig.card_image_table_path, 'r', encoding='utf-8') as f:
             reader = DictReader(f, fieldnames=CardImageInfo.model_fields)
             next(reader)
             for row in reader:
                 info_list.append(CardImageInfo(**row))
 
         self.__card_info_dict = {inf.id:inf for inf in info_list}        
+
+        self.__card_info_table = DataFrame(data=[inf.model_dump() for inf in info_list])        
 
         embedding_store = numpy.load(AACessTalkConfig.card_image_embeddings_path)
         ids = embedding_store["ids"]
@@ -32,7 +36,7 @@ class CardImageDBRetriever:
         self.__collection_desc.add(
             ids=[id for id in ids],
             documents=[info.description_brief for info in info_list],
-            metadatas=[info.model_dump(include={"name", "category", "filename"}) for info in info_list],
+            metadatas=[info.model_dump(include={"name", "name_ko", "category", "filename"}) for info in info_list],
             embeddings=[emb.tolist() for emb in desc_embeddings]
         )
 
@@ -40,7 +44,7 @@ class CardImageDBRetriever:
         self.__collection_name.add(
             ids=[id for id in ids],
             documents=[info.name for info in info_list],
-            metadatas=[info.model_dump(include={"name", "category", "description_brief", "filename"}) for info in info_list],
+            metadatas=[info.model_dump(include={"name", "name_ko", "category", "description_brief", "filename"}) for info in info_list],
             embeddings=[emb.tolist() for emb in name_embeddings]
         )
 
@@ -61,39 +65,19 @@ class CardImageDBRetriever:
         
         return result
 
-    def __query_nearest_card_image_info_single(self, name: str, k=3)->list[list[CardImageInfo]]:
+
+    def query_nearest_card_image_infos(self, card_infos: list[CardInfo])->list[list[CardImageInfo]]:
         t_start = perf_counter()
-        #First, find exact match.
-        name_match_result = self.__collection_name.get(where={"name": name})
-        if len(name_match_result["ids"]) > 0:
-            print("Found exact name match.")
-            result = [self.__card_info_dict[id] for id in name_match_result["ids"]]
-        else:
-            # Find fuzzy name match.
-            print("Find fuzzy name match.")
-            name_query_result = self.__collection_name.query(
-                query_texts=[name],
-                n_results=k
-            )
-            name_query_result = self.__query_result_to_info_list(name_query_result)[0]
-            print(name_query_result)
 
-            result = [tup[0] for tup in name_query_result]
+        #Find exact match of Korean labels.
+        localized_names = [c.label_localized for c in card_infos]
+        localized_name_match_results = self.__card_info_table[self.__card_info_table['name_ko'].isin(localized_names)]
+        print("name_ko matches: ", localized_name_match_results)
+        print(type(self.__card_info_table.name_ko.tolist()[0]))
 
-            #result = self.__collection_desc.query(
-            #    query_texts=[name],
-            #    n_results=k
-            #)
-            #return [tup[0] for tup in self.__query_result_to_info_list(result)]
-
-        t_end = perf_counter()
-        print(f"Card retrieval took {t_end - t_start} sec.")
-
-        return result
-
-    def query_nearest_card_image_infos(self, names: list[str])->list[list[CardImageInfo]]:
-        t_start = perf_counter()
-        #First, find exact match.
+        #Find exact match of English labels.
+        names = [c.label for c in card_infos]
+        
         name_result_dict: dict[str, list[CardImageInfo]|None] = {name:None for name in names}
         
         name_match_results = self.__collection_name.get(where={"name": {"$in": names}})
@@ -120,7 +104,7 @@ class CardImageDBRetriever:
 
 
             for i, name in enumerate(no_name_matched_card_names):
-                if name_query_results[i][0][1] < 0.6:
+                if name_query_results[i][0][1] < 0.5:
                     name_result_dict[name] = [name_query_results[i][0][0]]
                     print(f"Name win - {name} => {name_result_dict[name][0].filename}")
                 else:
