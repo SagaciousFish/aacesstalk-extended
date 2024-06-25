@@ -4,7 +4,7 @@ from chatlib.global_config import GlobalConfig
 from chatlib.llm.integration.openai_api import GPTChatCompletionAPI
 from chatlib.utils.cli import make_non_empty_string_validator
 
-from py_core.system.model import CardInfo, CardCategory, ParentType
+from py_core.system.model import CardInfo, CardCategory, ChildGender, ParentType
 from py_core.system.storage.user.memory import OnMemoryUserStorage
 from py_core.system.task.card_image_matching import CardImageMatcher
 
@@ -16,7 +16,7 @@ async def routine(matcher: CardImageMatcher):
         keyword_localized: str = await questionary.text("Insert card names in Koreab.", "학교, 학생, 가족", validate=make_non_empty_string_validator("Empty string is not allowed.")).ask_async()
         
 
-        matches = await matcher.match_card_images([CardInfo(recommendation_id="", label=kw, label_localized=kwl, category=CardCategory.Topic) for kw, kwl in zip(keyword.split(","), keyword_localized.split(","))], parent_type=ParentType.Father)
+        matches = await matcher.match_card_images([CardInfo(recommendation_id="", label=kw, label_localized=kwl, category=CardCategory.Topic) for kw, kwl in zip(keyword.split(","), keyword_localized.split(","))], parent_type=ParentType.Father, child_gender=ChildGender.Boy)
 
         for m in matches:
             print(await matcher.get_card_image_filepath(m.type, m.image_id))

@@ -1,5 +1,5 @@
 from .models import *
-from py_core.system.model import ParentType
+from py_core.system.model import ParentType, ChildGender
 from py_database.database import AsyncSession, make_async_session_maker, create_database_engine
 from sqlmodel import select
 from py_database.model import DyadORM
@@ -20,7 +20,7 @@ async def create_test_dyad() -> bool:
             result = await db.exec(statement)
             
             if result.one_or_none() is None:
-                test_dyad = DyadORM(alias="test", child_name="다솜이", parent_type=ParentType.Mother)
+                test_dyad = DyadORM(alias="test", child_name="다솜이", parent_type=ParentType.Mother, child_gender=ChildGender.Girl)
                 dyad_login = DyadLoginCode(code="12345", dyad_id=test_dyad.id)
                 db.add(test_dyad)
                 db.add(dyad_login)

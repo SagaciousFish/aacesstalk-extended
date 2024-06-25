@@ -2,51 +2,61 @@
   label: 'Joyful'
   label_localized: '즐거워요'
   category: emotion
+  image:
+    boy: 'card_core/즐거워요(남자).png'
+    girl: 'card_core/즐거워요(여자).png'
 - id: 'glad'
   label: 'Glad'
   label_localized: 기뻐요
   category: emotion
+  image: "card_time/기뻐요.png"
 - id: 'happy'
   label: 'Happy'
   label_localized: 행복해요
   category: emotion
+  image: 'card_core/행복해요.png'
 - id: 'excited'
   label: 'Excited'
   label_localized: 신나요
   category: emotion
+  image: 'card_core/재미있어요.png'
 - id: 'sad'
   label: 'Sad'
-  label_localized: '즐거워요'
+  label_localized: '슬퍼요'
   category: emotion
+  image: 'card_core/슬퍼요.png'
 - id: 'angry'
   label: 'Angry'
   label_localized: 화나요
   category: emotion
+  image: 'card_core/화나요.png'
 - id: 'upset'
   label: 'Upset'
   label_localized: 속상해요
   category: emotion
+  image: 'card_core/속상해요.png'
 - id: 'scared'
   label: 'Scared'
   label_localized: 무서워요
   category: emotion
+  image: 'card_core/무서워요.png'
 - id: 'afraid'
   label: 'Afraid'
   label_localized: 겁나요
   category: emotion
+  image: 'card_core/떨려요.png'
 - id: surprised
   label: 'Surprised'
   label_localized: 놀라워요
   category: emotion
+  image: 'card_core/놀라워요.png'
 - id: 'amazed'
   label: 'Amazed'
   label_localized: 신기해요
   category: emotion
+  image: 'card_core/신기해요.png'
 - id: 'bored'
   label: 'Bored'
   label_localized: 지루해요
   category: emotion
-- id: 'tearful'
-  label: 'Tearful'
-  label_localized: 눈물 나요
-  category: emotion
+  image: 'card_core/심심해요.png'

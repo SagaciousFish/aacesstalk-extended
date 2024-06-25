@@ -4,7 +4,7 @@ from os import path
 
 from pydantic import BaseModel, Field, validate_call
 
-from py_core.system.model import CardInfo, ParentType, id_generator
+from py_core.system.model import CardInfo, ChildGender, ParentType, id_generator
 from py_core.system.storage import UserStorage
 from py_core.system.task.card_image_matching.card_image_db_retriever import CardImageDBRetriever
 
@@ -43,7 +43,7 @@ class CardImageMatcher:
         self.__user_storage = user_storage
         self._init_class_vars()
 
-    async def match_card_images(self, card_info_list: list[CardInfo], parent_type: ParentType) -> list[CardImageMatching]:
+    async def match_card_images(self, card_info_list: list[CardInfo], parent_type: ParentType, child_gender: ChildGender) -> list[CardImageMatching]:
 
         result = [None] * len(card_info_list)
 
@@ -59,7 +59,7 @@ class CardImageMatcher:
                 default_card = find_default_card(card_info.label_localized, card_info.category, parent_type)
                 print(f"Default card for {card_info.category}, {card_info.label_localized}: {default_card}")
                 if default_card is not None:
-                    image_filename = default_card.get_image_path_for_parent(parent_type=parent_type)
+                    image_filename = default_card.get_image_path_for_dyad(parent_type=parent_type, child_gender=child_gender)
                     if image_filename is not None:
                         result[i] = CardImageMatching(card_info_id=card_info.id, type=CardType.static, image_id=default_card.id)
                         
@@ -75,11 +75,11 @@ class CardImageMatcher:
         return result
 
     @validate_call
-    async def get_card_image_filepath(self, type: CardType, image_id: str, parent_type: ParentType)->str:
+    async def get_card_image_filepath(self, type: CardType, image_id: str, parent_type: ParentType, child_gender: ChildGender)->str:
         if type is CardType.custom:
             info = await self.__user_storage.get_user_defined_card(image_id)
             return path.join(self.__user_storage.get_user_custom_card_dir_path(), info.image_filename)
         elif type is CardType.stock:
             return path.join(AACessTalkConfig.card_image_directory_path, self.__db_retriever.get_card_image_info(image_id).filename)
         elif type is CardType.static:
-            return path.join(AACessTalkConfig.card_image_directory_path, find_default_card_by_id(image_id).get_image_path_for_parent(parent_type))
+            return path.join(AACessTalkConfig.card_image_directory_path, find_default_card_by_id(image_id).get_image_path_for_dyad(parent_type, child_gender))

@@ -6,7 +6,7 @@ from sqlmodel import select
 
 from backend import env_variables
 from backend.database import DyadLoginCode, AsyncSession
-from py_database.model import DyadORM, ParentType
+from py_database.model import DyadORM, ParentType, ChildGender
 
 
 async def get_dyad_list(session: AsyncSession) -> list[tuple[DyadORM, DyadLoginCode]]:
@@ -16,8 +16,8 @@ async def get_dyad_list(session: AsyncSession) -> list[tuple[DyadORM, DyadLoginC
     return [row for row in results]
 
 
-async def create_dyad(alias: str, child_name: str, parent_type: ParentType, session: AsyncSession) -> tuple[DyadORM, DyadLoginCode]:
-    dyad = DyadORM(alias=alias, child_name=child_name, parent_type=parent_type)
+async def create_dyad(alias: str, child_name: str, parent_type: ParentType, child_gender: ChildGender, session: AsyncSession) -> tuple[DyadORM, DyadLoginCode]:
+    dyad = DyadORM(alias=alias, child_name=child_name, parent_type=parent_type, child_gender=child_gender)
 
     print(dyad)
 

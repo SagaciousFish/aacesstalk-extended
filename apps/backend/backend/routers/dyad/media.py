@@ -45,13 +45,13 @@ async def match_card_images(recommendation_id: str, db: Annotated[AsyncSession, 
     t_start = perf_counter()
     card_recommendation = await db.get(ChildCardRecommendationResultORM, recommendation_id)
     card_recommendation = card_recommendation.to_data_model()
-    matches = await image_matcher.match_card_images(card_recommendation.cards, dyad_orm.parent_type)
+    matches = await image_matcher.match_card_images(card_recommendation.cards, dyad_orm.parent_type, dyad_orm.child_gender)
     t_end = perf_counter()
     print(f"Card matching took {t_end - t_start} sec.")
     return CardImageMatchingResult(matchings=matches)
 
 @router.get('/card_image', response_class=FileResponse)
 async def get_card_image(card_type: CardType, image_id: str, dyad_orm: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)], image_matcher: Annotated[CardImageMatcher, Depends(get_card_image_matcher)]):
-    image_path = await image_matcher.get_card_image_filepath(card_type, image_id, dyad_orm.parent_type)
+    image_path = await image_matcher.get_card_image_filepath(card_type, image_id, dyad_orm.parent_type, dyad_orm.child_gender)
     if path.exists(image_path):
         return FileResponse(image_path)

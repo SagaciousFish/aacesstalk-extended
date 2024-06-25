@@ -20,7 +20,8 @@ from py_core.system.model import (id_generator, DialogueRole, DialogueMessage,
                                   InteractionType,
                                   Interaction,
                                   CardCategory,
-                                  UserDefinedCardInfo
+                                  UserDefinedCardInfo,
+                                  ChildGender
                                   )
 from py_core.system.session_topic import SessionTopicCategory, SessionTopicInfo
 from chatlib.utils.time import get_timestamp
@@ -45,12 +46,13 @@ class DyadORM(SQLModel, IdTimestampMixin, table=True):
 
     alias: str = Field(min_length=1, unique=True)
     child_name: str = Field(min_length=1)
+    child_gender: ChildGender = Field(nullable=False)
     parent_type: ParentType = Field(nullable=False)
 
     sessions: list['SessionORM'] = Relationship(back_populates='dyad')
 
     def to_data_model(self) -> Dyad:
-        return Dyad(id=self.id, alias=self.alias, parent_type=self.parent_type, child_name=self.child_name)
+        return Dyad(**self.model_dump(exclude={"sessions"}))
 
 class DyadIdMixin(BaseModel):
     dyad_id: str = Field(foreign_key=f"{DyadORM.__tablename__}.id")

@@ -4,6 +4,7 @@ import csv
 import math
 from io import BytesIO
 from os import DirEntry, listdir, scandir, path, remove
+import unicodedata
 
 from pydantic import BaseModel
 from time import perf_counter
@@ -62,14 +63,15 @@ def _create_info_row_from_file(file: DirEntry[str], category_name: str, dir_name
                 resized.save(f, format="PNG")
                 resized.close()
 
-            row = CardImageInfo(
-                category=category_name,
-                name_ko=file.name[:-len(".png")],
-                filename=path.join(dir_name, file.name),
-                format=image.format,
-                width=512,
-                height=512
-            )
+        row = CardImageInfo(
+            category=category_name,
+            name_ko=file.name[:-len(".png")],
+            filename=path.join(dir_name, file.name),
+            format=image.format,
+            width=512,
+            height=512
+        )
+        return row
 
 def scan_card_images():
     with open(AACessTalkConfig.card_image_table_path, "w") as csvfile:
@@ -106,7 +108,7 @@ def _save_card_descriptions(rows: list[CardImageInfo]):
     with open(AACessTalkConfig.card_image_table_path, "w") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=CardImageInfo.model_fields)
         writer.writeheader()
-        writer.writerows([row.model_dump() for row in rows])
+        writer.writerows([row.model_dump(exclude={"name"}) for row in rows])
 
 def sync_file_to_info_list(delete: bool = False, add_to_list: bool = False)->list[str]:
     info_rows = _load_card_descriptions()
@@ -116,17 +118,21 @@ def sync_file_to_info_list(delete: bool = False, add_to_list: bool = False)->lis
                 category_name = str(dir_name[len("card_"):])
                 for file in scandir(path.join(AACessTalkConfig.card_image_directory_path, dir_name)):
                     if file.is_file() and file.name.lower().endswith(".png"):
-                        filename = path.join(dir_name, file.name)
+                        filename = unicodedata.normalize('NFC', path.join(dir_name, file.name))
                         matched = [r for r in info_rows if r.category == category_name and r.filename == filename]
-                        print(file.name, matched)
 
                         if len(matched) == 0:
+                            print(filename)
                             if delete == True:
                                 print(f"{filename} does not matches and will be deleted.")
                                 remove(path.join(AACessTalkConfig.card_image_directory_path, filename))
                             elif add_to_list == True:
                                 new_rows.append(_create_info_row_from_file(file, category_name, dir_name))
-    print(new_rows)
+    
+    if len(new_rows) > 0:
+        print("write new rows to file:")
+        print(new_rows)
+        _save_card_descriptions(info_rows + new_rows)
                         
 
 def inspect_card_info_data():
@@ -436,8 +442,8 @@ if __name__ == "__main__":
     #generate_card_descriptions_all(openai_client)
     #fix_refused_requests(threshold=0.4, client=openai_client)
     #asyncio.run(generate_short_descriptions_all())
-    # asyncio.run(translate_card_names())
+    #asyncio.run(translate_card_names())
 
     # sync_file_to_info_list(delete=True)
     
-    #cache_description_embeddings_all(openai_client)
+    cache_description_embeddings_all(openai_client)

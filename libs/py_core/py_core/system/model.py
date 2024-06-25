@@ -29,10 +29,15 @@ class ParentType(StrEnum):
     Mother="mother"
     Father="father"
 
+class ChildGender(StrEnum):
+    Boy="boy"
+    Girl="girl"
+
 class Dyad(ModelWithId):
     alias: str = Field(min_length=1, unique=True)
     child_name: str = Field(min_length=1)
     parent_type: ParentType = Field(nullable=False)
+    child_gender: ChildGender = Field(nullable=False)
 
 class SessionStatus(StrEnum):
     Initial="initial"
