@@ -1,6 +1,8 @@
+import asyncio
 from csv import DictReader
 from time import perf_counter
 
+import re
 import numpy
 from pandas import DataFrame
 
@@ -9,6 +11,9 @@ from py_core.utils.models import CardImageInfo
 from py_core.utils.vector_db import VectorDB
 from py_core.system.model import CardInfo
 
+
+def normalize_korean(text: str) -> str:
+    return re.sub(r'[^\w]|\_', '', text.strip().lower())
 
 class CardImageDBRetriever:
     def __init__(self):
@@ -22,7 +27,8 @@ class CardImageDBRetriever:
 
         self.__card_info_dict = {inf.id:inf for inf in info_list}        
 
-        self.__card_info_table = DataFrame(data=[inf.model_dump() for inf in info_list])        
+        self.__card_info_table = DataFrame(data=[inf.model_dump() for inf in info_list])
+        self.__card_info_table['name_ko_nm'] = self.__card_info_table.name_ko.apply(normalize_korean)     
 
         embedding_store = numpy.load(AACessTalkConfig.card_image_embeddings_path)
         ids = embedding_store["ids"]
@@ -66,21 +72,29 @@ class CardImageDBRetriever:
         return result
 
 
-    def query_nearest_card_image_infos(self, card_infos: list[CardInfo])->list[list[CardImageInfo]]:
+    async def query_nearest_card_image_infos(self, card_infos: list[CardInfo])->list[list[CardImageInfo]]:
         t_start = perf_counter()
 
+        names = [c.label for c in card_infos]
+        localized_nm_names = [normalize_korean(c.label_localized) for c in card_infos]
+
+        name_result_dict: dict[str, list[CardImageInfo]|None] = {name:None for name in names}
+
         #Find exact match of Korean labels.
-        localized_names = [c.label_localized for c in card_infos]
-        localized_name_match_results = self.__card_info_table[self.__card_info_table['name_ko'].isin(localized_names)]
-        print("name_ko matches: ", localized_name_match_results)
-        print(type(self.__card_info_table.name_ko.tolist()[0]))
+
+        localized_name_match_results = self.__card_info_table[self.__card_info_table['name_ko_nm'].isin(localized_nm_names)]
+        for id in localized_name_match_results['id'].tolist():
+            match = self.__card_info_dict[id]
+            if match.name_en not in name_result_dict or name_result_dict[match.name_en] is None:
+                name_result_dict[match.name_en] = [match]
+            else:
+                name_result_dict[match.name_en].append(match)
 
         #Find exact match of English labels.
-        names = [c.label for c in card_infos]
+
+        no_name_matched_card_names = [name for name in names if (name not in name_result_dict or name_result_dict[name] is None or len(name_result_dict[name]) == 0)]
         
-        name_result_dict: dict[str, list[CardImageInfo]|None] = {name:None for name in names}
-        
-        name_match_results = self.__collection_name.get(where={"name": {"$in": names}})
+        name_match_results = self.__collection_name.get(where={"name": {"$in": no_name_matched_card_names}})
 
         for id in name_match_results["ids"]:
             card_image_info = self.__card_info_dict[id]
@@ -88,18 +102,26 @@ class CardImageDBRetriever:
 
         no_name_matched_card_names = [name for name in names if (name not in name_result_dict or name_result_dict[name] is None or len(name_result_dict[name]) == 0)]
         
+        print(f"{(len(names) - len(no_name_matched_card_names))} cards directly matched corpus.")
         if len(no_name_matched_card_names) > 0:
-            name_query_results = self.__collection_name.query(
-                query_texts=no_name_matched_card_names,
-                n_results=1
-            )
+            print(f"{len(no_name_matched_card_names)} cards will be matched through vector search...")
+            
+            name_query = asyncio.to_thread(self.__collection_name.query, query_texts = no_name_matched_card_names, n_results = 1)
+            desc_query = asyncio.to_thread(self.__collection_desc.query, query_texts = no_name_matched_card_names, n_results = 1)
+            
+            name_query_results, desc_query_results = await asyncio.gather(name_query, desc_query)
+
+            #name_query_results = self.__collection_name.query(
+            #    query_texts=no_name_matched_card_names,
+            #    n_results=1
+            #)
             name_query_results = self.__query_result_to_info_list(name_query_results)
 
 
-            desc_query_results = self.__collection_desc.query(
-                query_texts=no_name_matched_card_names,
-                n_results=1
-            )
+            #desc_query_results = self.__collection_desc.query(
+            #    query_texts=no_name_matched_card_names,
+            #    n_results=1
+            #)
             desc_query_results = self.__query_result_to_info_list(desc_query_results)
 
 

@@ -1,4 +1,5 @@
 id,category,english,localized,inspected
+Bw0NV6KqyF,action,Act,연기해요,False
 RWxZ17pGwo,action,Brush,닦다,False
 -lUSHwHPs0,action,Drew,그렸어요,False
 moTvDwBqdb,action,Finished ( core ),끝났어요,False
@@ -533,8 +534,10 @@ Ld_-rx6Cgu,topic,balloons,풍선,False
 DnRVNrpHRY,topic,bathroom,화장실,False
 XXlVUHzQea,topic,beach,해변,False
 YP0FjcWKH-,topic,bed,침대,False
+RRcAxOOLbQ,topic,bed time,잠자는 시간,False
 yjIoV4ealW,topic,bedroom,침실,False
 9dBB6aKRqm,topic,bedtime,잠자는 시간,False
+FTDX8twB8a,topic,bedtime story,잠자는 이야기,False
 1qt1uoBHbO,topic,behavior,행동,False
 nGpA0VT7ce,topic,bicycle,자전거,False
 uiMaluvFvG,topic,bike,자전거,True
@@ -702,6 +705,7 @@ zwiIyYv7up,topic,laughter,웃음,False
 go_LIE6GYZ,topic,laundry,세탁,False
 cyTl48Juxm,topic,learn,배우기,True
 d1vLFZB4dR,topic,learning,배우기,True
+PkTSotJ5K3,topic,legos,레고,False
 yHMiG8vVr7,topic,lesson,수업,True
 KqMbwnuQTE,topic,lessons,수업,True
 owb2-pLJgY,topic,letter,편지,False
@@ -856,6 +860,7 @@ BXwJoIXfO-,topic,supermarket,슈퍼마켓,False
 Kfz41RM-Tn,topic,swimming,수영,False
 3L58S0C71G,topic,swing,그네,True
 yb3uK8mcyv,topic,swings,그네,False
+2DPcjtYqPt,topic,table,테이블,False
 rjRieEWi9P,topic,talk,이야기,True
 xpYRomG2S2,topic,talked,이야기,False
 g2TlurOrjX,topic,tasks,할일,False

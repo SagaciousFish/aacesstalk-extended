@@ -68,7 +68,7 @@ class CardImageMatcher:
 
         idx_to_retrive = [i for i, c in enumerate(card_info_list) if result[i] is None]
 
-        db_card_image_infos: list[list[CardImageInfo]] = await to_thread(self.__db_retriever.query_nearest_card_image_infos, [c for i, c in enumerate(card_info_list) if result[i] is None])
+        db_card_image_infos: list[list[CardImageInfo]] = await self.__db_retriever.query_nearest_card_image_infos([c for i, c in enumerate(card_info_list) if result[i] is None])
         for i, cards in enumerate(db_card_image_infos):
             result[idx_to_retrive[i]] = CardImageMatching(card_info_id=card_info_list[idx_to_retrive[i]].id, type=CardType.stock, image_id=cards[0].id)
         

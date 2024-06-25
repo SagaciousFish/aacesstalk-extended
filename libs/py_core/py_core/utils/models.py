@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from functools import cached_property
 from typing import Optional
 
+from unicodedata import normalize
+
 from nanoid import generate
 from pydantic import BaseModel, ConfigDict, Field, field_validator, computed_field
 
@@ -56,7 +58,7 @@ class CardImageInfo(BaseModelWithId):
             if len(v) == 0:
                 return None
             else:
-                return v
+                return  normalize('NFC', v)
         else:
             return v
 
