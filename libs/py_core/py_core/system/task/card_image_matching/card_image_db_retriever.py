@@ -13,7 +13,6 @@ from py_core.system.model import CardInfo
 
 
 def normalize_korean(text: str) -> str:
-    print(text)
     return re.sub(r'[^\w]|\_', '', text.strip().lower())
 
 class CardImageDBRetriever:
@@ -29,7 +28,6 @@ class CardImageDBRetriever:
         self.__card_info_dict = {inf.id:inf for inf in info_list}        
 
         self.__card_info_table = DataFrame(data=[inf.model_dump() for inf in info_list])
-        print(self.__card_info_table.head())
         self.__card_info_table['name_ko_nm'] = self.__card_info_table.name_ko.apply(normalize_korean)     
 
         embedding_store = numpy.load(AACessTalkConfig.card_image_embeddings_path)
