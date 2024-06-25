@@ -74,7 +74,5 @@ def find_default_card_by_id(id: str) -> DefaultCardInfo:
 for card in DEFAULT_CARDS:
     for image_path in card.get_all_image_paths():
         abs_path = path.join(AACessTalkConfig.card_image_directory_path, image_path)
-
-        print(abs_path)
         
         assert path.exists(abs_path), f"Default card image does not exists at {abs_path} : {card.label_localized}"

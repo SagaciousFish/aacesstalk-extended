@@ -2,14 +2,13 @@ id,category,english,localized,inspected
 Bw0NV6KqyF,action,Act,연기해요,False
 RWxZ17pGwo,action,Brush,닦다,False
 -lUSHwHPs0,action,Drew,그렸어요,False
-moTvDwBqdb,action,Finished ( core ),끝났어요,False
+moTvDwBqdb,action,Finished,끝났어요,True
 XDZ_3Pu2QH,action,Giggle,웃어요,False
 CoRFWKzILD,action,Greet,인사해요,False
 k3FZWS4huV,action,Grin,미소,False
 B-76itJNxH,action,Ignore,무시해요,False
 zZTH1bt9yp,action,Interact,소통해요,False
 NPtCO4kroC,action,Laugh,웃어요,False
-5HEsTlrO2H,action,Liked ( core ),좋아해요,False
 qn-eVMVboh,action,Met,만났어요,False
 kkrAUI__2u,action,Miss,그립게 해요,False
 6uKqIiVST0,action,Review,검토해요,False
@@ -44,6 +43,7 @@ q8F67fPvIt,action,build,지어요,False
 QYBk1Wh9mw,action,built,지었어요,True
 Bir4yNufTz,action,buy,사요,True
 gz3aF3BWwY,action,call,전화해요,False
+ZQx7RmTxx4,action,can,할 수 있어요,False
 C5rVl7i4X4,action,can do,할 수 있어요,False
 -HG-AfkaA2,action,can we,할 수 있을까요,False
 8WcAkvge62,action,carry,들어요,False
@@ -543,6 +543,7 @@ nGpA0VT7ce,topic,bicycle,자전거,False
 6dma-Mvu8F,topic,bicycle ride,자전거 타기,False
 uiMaluvFvG,topic,bike,자전거,True
 O2sjPoUIwA,topic,bike ride,자전거 타기,False
+vtfMVeoV2h,topic,bird,새,True
 iTfQW20laa,topic,birthday,생일,False
 hVf-CF8rj8,topic,biscuits,비스킷,False
 2utmg4R8Fg,topic,blanket,담요,False

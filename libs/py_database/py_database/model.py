@@ -154,8 +154,8 @@ class ChildCardRecommendationResultORM(SQLModel, IdTimestampMixin, SessionIdMixi
 
     cards: list[CardInfo] = Field(sa_column=Column(JSON), default=[])
 
-    def to_data_model(self) -> ChildCardRecommendationResult:
-        return ChildCardRecommendationResult(**self.model_dump())
+    def to_data_model(self) -> ChildCardRecommendationResult:    
+        return ChildCardRecommendationResult(**self.model_dump(exclude={"cards"}), cards=self.cards)
 
     @classmethod
     def from_data_model(cls, session_id: str,
@@ -169,7 +169,7 @@ class InterimCardSelectionORM(SQLModel, IdTimestampMixin, SessionIdMixin, TurnId
     cards: list[CardIdentity] = Field(sa_column=Column(JSON), default=[])
 
     def to_data_model(self) -> InterimCardSelection:
-        return InterimCardSelection(**self.model_dump())
+        return InterimCardSelection(**self.model_dump(exclude={"cards"}), cards=self.cards)
 
     @classmethod
     def from_data_model(cls, session_id: str, data_model: InterimCardSelection) -> 'InterimCardSelectionORM':
