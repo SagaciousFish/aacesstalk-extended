@@ -2,9 +2,9 @@ import { HillBackgroundView } from "apps/client-rn/src/components/HillBackground
 import { TailwindButton } from "apps/client-rn/src/components/tailwind-components"
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { styleTemplates } from "apps/client-rn/src/styles"
-import { useCallback, useMemo } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { StyleSheet, Text, View } from "react-native"
+import { Alert, Platform, StyleSheet, Text, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import format from 'string-template';
 import { TopicButton } from "../components/TopicButton"
@@ -17,6 +17,7 @@ import { TopicCategory, setSessionInitInfo, startNewSession } from "@aacesstalk/
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { MainRoutes } from "../../../navigation"
 import { getTimeZone } from "react-native-localize"
+import {check, checkMultiple, PERMISSIONS, PermissionStatus, request} from 'react-native-permissions'
 
 const styles = StyleSheet.create({
     topicFreeDimensions: {right: '5%', bottom: '10%', width: '70%', height: '70%'},
@@ -24,7 +25,17 @@ const styles = StyleSheet.create({
     topicRecallDimensions: {right: '16%', bottom: '18%', width: '70%', height: '70%'}
 })
 
-const FreeTopicButton = (props: {style?: any}) => {
+const REQUIRED_PERMISSIONS = []
+switch(Platform.OS){
+    case 'android':
+        REQUIRED_PERMISSIONS.push(PERMISSIONS.ANDROID.RECORD_AUDIO)
+        break;
+    case 'ios':
+        REQUIRED_PERMISSIONS.push(PERMISSIONS.IOS.MICROPHONE)
+        break;
+}
+
+const FreeTopicButton = (props: {style?: any, disabled?: boolean}) => {
 
     const {t} = useTranslation()
 
@@ -34,7 +45,7 @@ const FreeTopicButton = (props: {style?: any}) => {
         return format(t("TopicSelection.FreeTemplate"), {child_name})
     }, [child_name])
 
-    return <TopicButton style={props.style} title={label} dialogueCount={0} buttonClassName="bg-topicfree-fg" 
+    return <TopicButton style={props.style} disabled={props.disabled} title={label} dialogueCount={0} buttonClassName="bg-topicfree-fg" 
                 imageComponent={<StarImage/>}
                 imageContainerStyleDimensions={styles.topicFreeDimensions}
                 imageNormalDegree={-8}
@@ -43,6 +54,8 @@ const FreeTopicButton = (props: {style?: any}) => {
 }
 
 export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigatorParamList, "home">) => {
+
+    const [permissionsGranted, setPermissionsGranted] = useState(false)
 
     const {t} = useTranslation()
 
@@ -64,17 +77,52 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
         
     }, [])
 
+    const checkPermissionsGranted = useCallback(async () => {
+        if(REQUIRED_PERMISSIONS.length > 0){
+            const permissionStatuses = await checkMultiple(REQUIRED_PERMISSIONS)
+            const isAllGranted = REQUIRED_PERMISSIONS.map(p => permissionStatuses[p]).findIndex(s => s != 'granted') === -1
+            return isAllGranted
+        }else return true
+    }, [])
+
+    const handlePermission = useCallback(async ()=>{
+        const isGranted = await checkPermissionsGranted()
+        if(isGranted){
+            setPermissionsGranted(true)
+        }else{
+            if(REQUIRED_PERMISSIONS.length > 0){
+                let isGranted = false
+                const permissionStatuses = await checkMultiple(REQUIRED_PERMISSIONS)
+                for(const permission of REQUIRED_PERMISSIONS){
+                    console.log(permission, permissionStatuses[permission])
+                    if(permissionStatuses[permission] == 'denied'){
+                        console.log("request permission.")
+                        await request(permission)
+                    }
+                }
+                isGranted = await checkPermissionsGranted()
+                if(!isGranted){
+                    Alert.alert("Permissions", "The app may not work as intended as you did not approve all required permissions. Please approve them all in the app settings manually.")
+                }
+            }
+        }
+    }, [checkPermissionsGranted])
+
+    useEffect(()=>{
+        handlePermission().then()
+    }, [])
+
     return <HillBackgroundView containerClassName="items-center justify-center">
         <SafeAreaView className="flex-1 self-stretch items-center justify-center">
             <LogoImage width={200} height={80}/>
             <Text className="text-3xl text-slate-800 text-center" style={styleTemplates.withBoldFont}>{t("TopicSelection.Title")}</Text>
             <View className="flex-row space-x-12 mt-24 mb-20">
-                <TopicButton title={t("TopicSelection.Plan")} dialogueCount={0} buttonClassName="bg-topicplan-fg" imageComponent={<CalendarImage/>} 
+                <TopicButton disabled={!permissionsGranted} title={t("TopicSelection.Plan")} dialogueCount={0} buttonClassName="bg-topicplan-fg" imageComponent={<CalendarImage/>} 
                     imageContainerStyleDimensions={styles.topicPlanDimensions} imageNormalDegree={10} imagePressedDegree={-20} onPress={onPressPlanButton}/>
-                <TopicButton title={t("TopicSelection.Recall")} dialogueCount={0} buttonClassName="bg-topicrecall-fg" imageComponent={<HomeImage/>} 
+                <TopicButton disabled={!permissionsGranted} title={t("TopicSelection.Recall")} dialogueCount={0} buttonClassName="bg-topicrecall-fg" imageComponent={<HomeImage/>} 
                     imageContainerStyleDimensions={styles.topicRecallDimensions} 
                     imageNormalDegree={-8} imagePressedDegree={20} onPress={onPressRecallButton}/>
-                <FreeTopicButton/>
+                <FreeTopicButton disabled={!permissionsGranted}/>
             </View>
             <ProfileButton/>
             <TailwindButton containerClassName="absolute right-5 bottom-5" buttonStyleClassName="py-5 px-12" roundedClassName="rounded-full" title={t("TopicSelection.StarCount")}></TailwindButton>

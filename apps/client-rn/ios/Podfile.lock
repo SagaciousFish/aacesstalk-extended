@@ -1185,6 +1185,8 @@ PODS:
   - ReactNativeFileAccess (3.1.0):
     - React-Core
     - ZIPFoundation
+  - RNAudioRecorderPlayer (3.6.10):
+    - React-Core
   - RNGestureHandler (2.16.2):
     - DoubleConversion
     - glog
@@ -1207,6 +1209,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - Yoga
   - RNLocalize (3.1.0):
+    - React-Core
+  - RNPermissions (4.1.5):
     - React-Core
   - RNReanimated (3.11.0):
     - DoubleConversion
@@ -1341,8 +1345,10 @@ DEPENDENCIES:
   - React-utils (from `../../../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../../../node_modules/react-native/ReactCommon`)
   - ReactNativeFileAccess (from `../../../node_modules/react-native-file-access`)
+  - RNAudioRecorderPlayer (from `../../../node_modules/react-native-audio-recorder-player`)
   - RNGestureHandler (from `../../../node_modules/react-native-gesture-handler`)
   - RNLocalize (from `../../../node_modules/react-native-localize`)
+  - RNPermissions (from `../../../node_modules/react-native-permissions`)
   - RNReanimated (from `../../../node_modules/react-native-reanimated`)
   - RNScreens (from `../../../node_modules/react-native-screens`)
   - RNSoundPlayer (from `../../../node_modules/react-native-sound-player`)
@@ -1475,10 +1481,14 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native/ReactCommon"
   ReactNativeFileAccess:
     :path: "../../../node_modules/react-native-file-access"
+  RNAudioRecorderPlayer:
+    :path: "../../../node_modules/react-native-audio-recorder-player"
   RNGestureHandler:
     :path: "../../../node_modules/react-native-gesture-handler"
   RNLocalize:
     :path: "../../../node_modules/react-native-localize"
+  RNPermissions:
+    :path: "../../../node_modules/react-native-permissions"
   RNReanimated:
     :path: "../../../node_modules/react-native-reanimated"
   RNScreens:
@@ -1494,7 +1504,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
-  DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
+  DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
   FasterImage: 4563818710bcb2dc2235fab5a5b35c3fb9ac26df
   FBLazyVector: 898d14d17bf19e2435cafd9ea2a1033efe445709
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
@@ -1553,8 +1563,10 @@ SPEC CHECKSUMS:
   React-utils: 3285151c9d1e3a28a9586571fc81d521678c196d
   ReactCommon: f42444e384d82ab89184aed5d6f3142748b54768
   ReactNativeFileAccess: e3b1a0a36b919d20279947aac31c2e939827c93b
+  RNAudioRecorderPlayer: f3b4f32d5581a44be0f9eb383dc87f98f941b08b
   RNGestureHandler: 2282cfbcf86c360d29f44ace393203afd5c6cff7
   RNLocalize: e8694475db034bf601e17bd3dfa8986565e769eb
+  RNPermissions: f9a0380dad4d370b6b983acaf4f9bff07aba9a21
   RNReanimated: b4e901db1a474d80b555478ba8704714094e6979
   RNScreens: b32a9ff15bea7fcdbe5dff6477bc503f792b1208
   RNSoundPlayer: 490822518cc1d6d80495ca7e3223df5869c30851
@@ -1564,6 +1576,6 @@ SPEC CHECKSUMS:
   Yoga: 348f8b538c3ed4423eb58a8e5730feec50bce372
   ZIPFoundation: b8c29ea7ae353b309bc810586181fd073cb3312c
 
-PODFILE CHECKSUM: 4bd7db248821d77f1d92577007590de20b154ba9
+PODFILE CHECKSUM: ef6c3ed52ad0173ef8f98be3b339d8c5702209ac
 
 COCOAPODS: 1.15.2
