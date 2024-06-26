@@ -1,16 +1,22 @@
-import { createStore, AdditionalReducers } from "@aacesstalk/libs/ts-core"
-import { Store } from "@reduxjs/toolkit";
+import { createStore, CoreAction } from "@aacesstalk/libs/ts-core"
 import { MMKVLoader } from "react-native-mmkv-storage";
-
-export interface ClientReducers extends AdditionalReducers {
-
-}
+import parentAudioRecordingReducer from "../features/audio/reducer";
+import { Action, ThunkAction } from "@reduxjs/toolkit";
 
 const storage = new MMKVLoader().withEncryption().initialize();
 
-const { store, persistor } = createStore(storage, {})
+const { store, persistor } = createStore(storage, {
+    parentAudioRecording: parentAudioRecordingReducer
+})
 
 export { store, persistor }
 
 export type ClientAppState = ReturnType<typeof store.getState>
 export type ClientDispatch = typeof store.dispatch
+
+export type ClientThunk<ReturnType = void, State = ClientAppState, A extends Action = CoreAction> = ThunkAction<
+ReturnType,
+State,
+unknown,
+A
+>;

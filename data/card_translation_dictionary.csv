@@ -32,6 +32,7 @@ S5ybpAoUkJ,action,at lunch,점심 때,False
 C981hmNoSM,action,ate,먹었어요,True
 PcgcuBvG2g,action,attacked,공격했어요,False
 Rq-WS4idop,action,attend,참여해요,False
+HYSTggkfOs,action,avoid,피하다,False
 iz3c5syd8u,action,bake,굽어요,False
 Bvxy36dzfe,action,begin,시작해요,False
 WuY3NIdVc7,action,bored,지루해요,False
@@ -142,6 +143,7 @@ l2G93VaoeV,action,go to,가요,False
 RTG7JJwPC5,action,go with,같이 가요,False
 eUmRaSta5L,action,going,가는 중이에요,False
 SwTo9YVOJ-,action,going to,가는 중이에요,False
+udM4_i-M1u,action,guide,안내해요,False
 O6u0XAv7Vm,action,had,했어요,True
 Qs2940d4qY,action,had Fun with,즐거웠어요,False
 ZSTkMGFhpT,action,had fun,즐기세요,False

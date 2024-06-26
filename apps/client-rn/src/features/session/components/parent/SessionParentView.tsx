@@ -1,8 +1,8 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { styleTemplates } from "apps/client-rn/src/styles"
 import { useTranslation } from "react-i18next";
-import { Image, InteractionManager, Text, TextInput, View } from "react-native"
+import { InteractionManager, TextInput, View } from "react-native"
 import { ParentGuideElementView } from "./ParentGuideElementView";
 import { MultiTapButton } from "apps/client-rn/src/components/MultiTapButton";
 import { useCallback, useState } from "react";
@@ -15,6 +15,8 @@ import { SessionTitleRibbon } from '../SessionTitleRibbon';
 import { SessionStartingMessage } from './SessionStartingMessage';
 import { useNonNullUpdatedValue } from 'apps/client-rn/src/utils/hooks';
 import { TurnStar } from '../TurnStar';
+import { pauseRecording, resumeRecording } from '../../../audio/reducer';
+import { RecordingIndicator } from './RecordingIndicator';
 
 const ParentMessageTextInputView = (props: {
     onPopTextInput: () => void,
@@ -55,6 +57,7 @@ const ParentMessageTextInputView = (props: {
 export const SessionParentView = (props: {
     topic: SessionTopicInfo
 }) => {
+    const dispatch = useDispatch()
     
     const isProcessing = useSelector(state => state.session.isProcessingRecommendation)
     const parentGuideIds = useSelector(parentGuideSelectors.selectIds)
@@ -78,10 +81,19 @@ export const SessionParentView = (props: {
         setIsTextInputOn(false)
     },[])
 
+    useEffect(()=>{
+        if(isTextInputOn === true){
+            dispatch(pauseRecording())
+        }else{
+            dispatch(resumeRecording())
+        }
+    }, [isTextInputOn])
+
     const topic = useNonNullUpdatedValue(props.topic)
     
     return <>
         <SessionTitleRibbon containerClassName="mt-12" topic={topic} />
+        <RecordingIndicator/>
         {
             numTurns == 0 ? <SessionStartingMessage topic={topic} containerClassName='mt-14' /> : <View pointerEvents='none' className='mt-12 flex-row space-x-3'>
                 {

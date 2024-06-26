@@ -39,6 +39,9 @@ module.exports = {
             RefreshChildCards: "새로운 카드들을 준비중입니다...",
             ParentExample: "예시 문장을 만드는 중입니다...",
         },
+        ParentMessage: {
+            Recording: "녹음중..."
+        },
         EndingMessage: "멋진 대화였어요!",
         Menu: {
             NextTurn: "대화 턴 넘기기",

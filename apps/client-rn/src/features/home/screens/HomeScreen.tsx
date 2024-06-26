@@ -81,8 +81,12 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
         if(REQUIRED_PERMISSIONS.length > 0){
             const permissionStatuses = await checkMultiple(REQUIRED_PERMISSIONS)
             const isAllGranted = REQUIRED_PERMISSIONS.map(p => permissionStatuses[p]).findIndex(s => s != 'granted') === -1
+            setPermissionsGranted(isAllGranted)
             return isAllGranted
-        }else return true
+        }else{
+            setPermissionsGranted(true)
+            return true
+        }
     }, [])
 
     const handlePermission = useCallback(async ()=>{

@@ -15,7 +15,9 @@ import Animated, { Easing, SlideInDown } from 'react-native-reanimated'
 import { LoadingIndicator } from 'apps/client-rn/src/components/LoadingIndicator'
 import { SessionChildView } from '../components/child/SessionChildView'
 import { TailwindClasses } from 'apps/client-rn/src/styles'
-import { useDisableBack } from 'apps/client-rn/src/utils/hooks'
+import { useDisableBack, usePrevious } from 'apps/client-rn/src/utils/hooks'
+import { startRecording, stopRecording } from '../../audio/reducer'
+import { InteractionManager } from 'react-native'
 
 const BG_COLOR_BY_TOPIC_CATEGORY = {
     [TopicCategory.Plan]: 'bg-topicplan-bg',
@@ -38,12 +40,34 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
     const sessionId = useSelector(state => state.session.id)
 
     const currentTurn = useSelector(state => state.session.currentTurn)
+    const pTurn = usePrevious(currentTurn)
+
+    useEffect(()=>{
+        if(pTurn != currentTurn && sessionId != null && currentTurn == DialogueRole.Parent){
+            console.log("ParentTurn started.")
+            InteractionManager.runAfterInteractions(()=>{
+                dispatch(startRecording())
+            })
+        }
+
+        return () => {
+            if(pTurn != currentTurn && sessionId != null && currentTurn == DialogueRole.Parent){
+                console.log("Parent turn finished.")
+            }
+        }
+    }, [currentTurn, pTurn, sessionId])
 
     useEffect(() => {
         if (isInitializing == false && sessionId != null) {
             dispatch(startAndRetrieveInitialParentGuide())
         }
     }, [isInitializing, sessionId])
+
+    useEffect(()=>{
+        return () => {
+            dispatch(stopRecording(true))
+        }
+    }, [])
 
     let HillView
     switch (props.route.params.topic.category) {
