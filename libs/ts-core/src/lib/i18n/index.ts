@@ -1,11 +1,16 @@
 import 'intl-pluralrules';
-import i18next, { i18n } from "i18next";
+import i18next from "i18next";
+import merge from 'merge';
 
-export function initializeI18n(defaultLanguage: string = "kr", middlewares?: Array<any>) {
+export function initializeI18n(defaultLanguage: string = "kr", 
+    options: {
+        middlewares?: Array<any>,
+        resources?: {[locale: string]: any}
+    } | undefined = undefined) {
     let i18nInstance = i18next
 
-    if(middlewares != null && middlewares.length > 0){
-        for(const middleware of middlewares){
+    if(options?.middlewares != null && options.middlewares.length > 0){
+        for(const middleware of options.middlewares){
             i18nInstance = i18nInstance.use(middleware)
         }
     }
@@ -13,11 +18,11 @@ export function initializeI18n(defaultLanguage: string = "kr", middlewares?: Arr
     i18nInstance.init({
         fallbackLng: 'kr',
         lng: defaultLanguage,
-        resources: {
+        resources: merge.recursive(false, {
             kr: {
                 translation: require("./translations/kr")
             }
-        },
+        }, options?.resources),
         react: {
             useSuspense: true
         },
