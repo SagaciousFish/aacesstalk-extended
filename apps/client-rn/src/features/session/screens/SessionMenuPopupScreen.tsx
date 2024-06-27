@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
+import { stopRecording } from "../../audio/reducer";
 
 export const SessionMenuPopupScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigatorParamList, "session-menu">) => {
     
@@ -43,7 +44,7 @@ export const SessionMenuPopupScreen = (props: NativeStackScreenProps<MainRoutes.
     const onNextTurnPress = useCallback(()=>{
         switch(currentTurn){
             case DialogueRole.Parent:
-                //TODO submit parent message
+                dispatch(stopRecording(false))
                 break;
             case DialogueRole.Child:
                 if(canSubmitSelectedChildCards === true){    
@@ -55,7 +56,7 @@ export const SessionMenuPopupScreen = (props: NativeStackScreenProps<MainRoutes.
     }, [currentTurn])
     
     return <PopupMenuScreenFrame onPop={pop}>
-        <PopupMenuItemView title={t("Session.Menu.NextTurn")} onPress={onNextTurnPress} disabled={!canSubmitSelectedChildCards}/>
+        <PopupMenuItemView title={t("Session.Menu.NextTurn")} onPress={onNextTurnPress} disabled={!((currentTurn == DialogueRole.Child && canSubmitSelectedChildCards) || currentTurn == DialogueRole.Parent)}/>
         <PopupMenuItemView title={t("Session.Menu.TerminateSession")} destructive onPress={onTerminationPress}/>
     </PopupMenuScreenFrame>
 }

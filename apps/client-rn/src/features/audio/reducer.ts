@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { AudioEncoderAndroidType, AudioSet, AudioSourceAndroidType, OutputFormatAndroidType } from 'react-native-audio-recorder-player'
 import { Lazy } from "../../utils/lazy";
-import AudioRecorderPlayer from "react-native-audio-recorder-player";
+import AudioRecorderPlayer, { RecordBackType } from "react-native-audio-recorder-player";
 import { ClientThunk } from "../../redux/store";
 import { Dirs, FileSystem } from "react-native-file-access";
 
@@ -16,12 +16,16 @@ export enum RecordingStatus{
 
 export interface ParentAudioRecordingState{
     status: RecordingStatus
+    recordingStartedTimestamp?: number,
+    recordingDurationMillis: number,
     recordingMeter?: number
 }
 
 const INITIAL_STATE: ParentAudioRecordingState = {
     status: RecordingStatus.Initial,
-    recordingMeter: undefined
+    recordingMeter: undefined,
+    recordingDurationMillis: 0,
+    recordingStartedTimestamp: undefined
 }
 
 const parentAudioRecordingSlice = createSlice({
@@ -34,8 +38,13 @@ const parentAudioRecordingSlice = createSlice({
                 state.recordingMeter = undefined
             }
         },
-        setRecordingMeter: (state, action: PayloadAction<number | undefined>) => {
-            state.recordingMeter = action.payload
+        setRecordingStartTimestamp: (state, action: PayloadAction<number|undefined>) => {
+            state.recordingStartedTimestamp = action.payload
+        }, 
+
+        setRecordingArgs: (state, action: PayloadAction<RecordBackType>) => {
+            state.recordingMeter = action.payload.currentMetering
+            state.recordingDurationMillis = action.payload.currentPosition
         }
     }
 })
@@ -56,7 +65,7 @@ const recorder = new Lazy(() => {
 } )
 let isRecordingActive = false
 
-export function startRecording(): ClientThunk {
+export function startRecording(recordingStartedTimestamp: number = Date.now()): ClientThunk {
     return async (dispatch, getState) => {
         const state = getState()
         const sessionId = state.session.id
@@ -73,10 +82,10 @@ export function startRecording(): ClientThunk {
             isRecordingActive = true
             dispatch(parentAudioRecordingSlice.actions.setRecordingStatus(RecordingStatus.Preparing))
             recorder.get().addRecordBackListener((args) => {
-                dispatch(parentAudioRecordingSlice.actions.setRecordingMeter(args.currentMetering))
+                dispatch(parentAudioRecordingSlice.actions.setRecordingArgs(args))
             })
             await recorder.get().startRecorder( audioFilePath , DEFAULT_AUDIO_SETTINGS, true)
-
+            dispatch(parentAudioRecordingSlice.actions.setRecordingStartTimestamp(recordingStartedTimestamp))
             dispatch(parentAudioRecordingSlice.actions.setRecordingStatus(RecordingStatus.Recording))
         }
     }
