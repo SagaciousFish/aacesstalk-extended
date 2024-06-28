@@ -4,6 +4,8 @@ import { Lazy } from "../../utils/lazy";
 import AudioRecorderPlayer, { RecordBackType } from "react-native-audio-recorder-player";
 import { ClientThunk } from "../../redux/store";
 import { Dirs, FileSystem } from "react-native-file-access";
+import { Http } from "@aacesstalk/libs/ts-core";
+import {AxiosError} from 'axios'
 
 
 export enum RecordingStatus{
@@ -69,13 +71,14 @@ export function startRecording(recordingStartedTimestamp: number = Date.now()): 
     return async (dispatch, getState) => {
         const state = getState()
         const sessionId = state.session.id
-        console.log("session id: ", sessionId, state.session)
-        const parentTurnOrder = Math.floor(state.session.numTurns/2)
+        const turnId = state.session.currentTurnId
+        console.log("session id: ", sessionId)
+        console.log("turn id: ", turnId)
         const audioDirPath = Dirs.CacheDir + "/audio_recording"
         if(await FileSystem.exists(audioDirPath) == false){
             await FileSystem.mkdir(audioDirPath)
         }
-        const audioFilePath = audioDirPath + `/${sessionId}_${parentTurnOrder}.m4a`
+        const audioFilePath = audioDirPath + `/${sessionId}_${turnId}_${Date.now()}.mp3`
 
         if(isRecordingActive == false && state.parentAudioRecording.status == RecordingStatus.Initial){
             console.log("Recording started.")
@@ -128,6 +131,35 @@ export function stopRecording(cancel: boolean = false): ClientThunk{
                 }
             }
             dispatch(parentAudioRecordingSlice.actions.setRecordingStatus(RecordingStatus.Initial))
+
+            if(!cancel){
+                console.log("Try uploading...", uri)
+
+                //Convert file into binary string
+                //const binary = Buffer.from(b64, 'base64').toString('binary')
+
+                const formData = new FormData()
+                formData.append("session_id", state.session.id)
+                formData.append("turn_id", state.session.currentTurnId)
+
+                const pathSplit = uri.split("/")
+
+                formData.append("file", {
+                        uri,
+                        type: 'audio/mpeg',
+                        name: pathSplit[pathSplit.length - 1]
+                    } as any)
+                try{
+                    const response = await Http.axios.post(Http.ENDPOINT_DYAD_MEDIA_RECOGNIZE_SPEECH, formData, {
+                        headers: {
+                                ...(await Http.getSignedInHeaders(state.auth.jwt)),
+                                'Content-Type': 'multipart/form-data'
+                        }})
+                }catch(ex){
+                    const axiosError = ex as AxiosError
+                    console.log(axiosError.cause, axiosError.code, axiosError.message, axiosError.status, axiosError.toJSON())
+                }
+            }
         }
     }
 }

@@ -38,10 +38,10 @@ class CacheKeyParams(ClovaVoiceParams):
         params_string = self.model_dump_json()
         return hashlib.md5(params_string.encode()).hexdigest()
 
+ENDPOINT_TTS = "https://naveropenapi.apigw.ntruss.com/tts-premium/v1/tts"
 
 class ClovaVoice(IntegrationService):
 
-    ENDPOINT_TTS = "https://naveropenapi.apigw.ntruss.com/tts-premium/v1/tts"
 
     __client_id_spec = APIAuthorizationVariableSpecPresets.ApiKey
     __client_secret_spec = APIAuthorizationVariableSpecPresets.Secret

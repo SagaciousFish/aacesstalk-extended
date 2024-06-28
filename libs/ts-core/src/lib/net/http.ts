@@ -2,7 +2,7 @@ import axios, { Axios, CreateAxiosDefaults } from 'axios';
 import format = require('string-template');
 
 const DEFAULTS: CreateAxiosDefaults<any> = {
-  baseURL: (process.env["NODE_ENV"] == "development" ? "http://10.0.2.2:3000" : "") + "/api/v1"
+  baseURL: (process.env["NODE_ENV"] == "development" ? "http://192.168.2.6:3000" : "") + "/api/v1"
 }
 
 export class Http{
@@ -40,6 +40,8 @@ export class Http{
   static ENDPOINT_DYAD_MEDIA_VOICEOVER = `${Http.ENDPOINT_DYAD_MEDIA}/voiceover`
   static ENDPOINT_DYAD_MEDIA_CARD_IMAGE = `${Http.ENDPOINT_DYAD_MEDIA}/card_image`
   static ENDPOINT_DYAD_MEDIA_MATCH_CARD_IMAGES = `${Http.ENDPOINT_DYAD_MEDIA}/match_card_images`
+
+  static ENDPOINT_DYAD_MEDIA_RECOGNIZE_SPEECH = `${Http.ENDPOINT_DYAD_MEDIA}/recognize_speech`
 
 
   static getTemplateEndpoint(template: string, values: {[key:string]: string}): string {

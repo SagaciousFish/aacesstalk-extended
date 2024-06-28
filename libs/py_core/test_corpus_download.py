@@ -1,6 +1,5 @@
 import asyncio
 
-from py_core.utils.tts.clova_voice import ClovaVoice, ClovaVoiceParams
 from chatlib.global_config import GlobalConfig
 from py_core.utils.aac_corpus_downloader import AACCorpusDownloader
 

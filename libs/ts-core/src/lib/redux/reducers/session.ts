@@ -44,6 +44,7 @@ export interface SessionState {
   id: string | undefined
   topic?: SessionTopicInfo | undefined
   currentTurn: DialogueRole
+  currentTurnId?: string
   interimCards?: Array<CardInfo>
   parentGuideRecommendationId?: string
   parentGuideEntityState: typeof INITIAL_PARENT_GUIDE_STATE
@@ -70,6 +71,7 @@ export const INITIAL_SESSION_STATE: SessionState = {
   id: undefined,
   topic: undefined,
   currentTurn: DialogueRole.Parent,
+  currentTurnId: undefined,
 
   parentGuideEntityState: INITIAL_PARENT_GUIDE_STATE,
   parentGuideRecommendationId: undefined,
@@ -127,6 +129,10 @@ const sessionSlice = createSlice({
 
     _setNextTurn: (state, action: PayloadAction<DialogueRole>) => {
       state.currentTurn = action.payload
+    },
+
+    _setTurnId: (state, action: PayloadAction<string | undefined>) => {
+      state.currentTurnId = action.payload
     },
 
     _incNumTurn: (state) => {
@@ -365,8 +371,8 @@ export function startAndRetrieveInitialParentGuide(): CoreThunk {
           headers: header
         }), 0)
         console.log("Retrieved parent guides.")
-        const result: ParentGuideRecommendationResult = resp.data
-        dispatch(sessionSlice.actions._storeNewParentGuideRecommendation(result))
+        dispatch(sessionSlice.actions._setTurnId(resp.data.turn_id))
+        dispatch(sessionSlice.actions._storeNewParentGuideRecommendation(resp.data.parent_guides))
       }
     }, true
   )
@@ -413,9 +419,8 @@ export function submitParentMessage(message: string): CoreThunk {
       })
 
       console.log("Retrieved new child card recommendations.")
-
-      const cardRecommendationResult: ChildCardRecommendationResult = resp.data
-      dispatch(sessionSlice.actions._storeNewChildCardRecommendation(cardRecommendationResult))
+      dispatch(sessionSlice.actions._setTurnId(resp.data.next_turn_id))      
+      dispatch(sessionSlice.actions._storeNewChildCardRecommendation(resp.data.payload))
     },
     onError: async (ex) => {
       console.log(ex)
@@ -499,9 +504,8 @@ export function confirmSelectedCards(): CoreThunk {
         headers
       })
 
-      const new_recommendation = resp.data
-
-      dispatch(sessionSlice.actions._storeNewParentGuideRecommendation(new_recommendation))
+      dispatch(sessionSlice.actions._setTurnId(resp.data.next_turn_id))
+      dispatch(sessionSlice.actions._storeNewParentGuideRecommendation(resp.data.payload))
 
     }
   }, true)

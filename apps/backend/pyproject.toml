@@ -29,6 +29,7 @@ jose = "^1.0.0"
 python-jose = {version = "^3.3.0", extras = ["cryptography"]}
 greenlet = "^3.0.3"
 gunicorn = "^22.0.0"
+python-multipart = "^0.0.9"
 
 [tool.poetry.group.dev.dependencies]
 autopep8 = "2.0.2"

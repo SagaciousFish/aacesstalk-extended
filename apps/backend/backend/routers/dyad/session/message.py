@@ -4,13 +4,19 @@ from pydantic import BaseModel
 
 from fastapi import APIRouter, Depends
 from py_core import ModeratorSession
-from py_core.system.model import Dialogue, ParentGuideRecommendationResult, CardIdentity, ChildCardRecommendationResult, \
+from py_core.system.model import Dialogue, DialogueTurn, ParentGuideRecommendationResult, CardIdentity, ChildCardRecommendationResult, \
     CardInfo, ParentExampleMessage, InterimCardSelection
 
 from py_database.model import DyadORM
 
 from backend.routers.dyad.common import get_signed_in_dyad_orm, retrieve_moderator_session
 
+from typing import TypeVar, Generic
+T = TypeVar('T')
+
+class ResponseWithTurnId(BaseModel, Generic[T]):
+    payload: T
+    next_turn_id: str
 
 router = APIRouter()
 
@@ -27,10 +33,11 @@ async def get_dialogue(dyad: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)]
 class SendParentMessageArgs(BaseModel):
     message: str
 
-@router.post("/parent/message", response_model=ChildCardRecommendationResult)
+@router.post("/parent/message", response_model=ResponseWithTurnId[ChildCardRecommendationResult])
 async def send_parent_message(args: SendParentMessageArgs,
-                              session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]):
-    return await session.submit_parent_message(parent_message=args.message)
+                              session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]) -> ResponseWithTurnId[ChildCardRecommendationResult]:
+    turn, recommendation = await session.submit_parent_message(parent_message=args.message)
+    return ResponseWithTurnId(payload=recommendation, next_turn_id=turn.id)
 
 class RequestExampleArgs(BaseModel):
     recommendation_id: str
@@ -71,7 +78,8 @@ async def _pop_last_child_card(
     return CardSelectionResult(interim_cards=interim_cards, new_recommendation=recommendation)
 
 
-@router.post("/child/confirm_cards", response_model=ParentGuideRecommendationResult)
+@router.post("/child/confirm_cards", response_model=ResponseWithTurnId[ParentGuideRecommendationResult])
 async def confirm_child_card_selection(
-        session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]) -> ParentGuideRecommendationResult:
-    return await session.confirm_child_card_selection()
+        session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]) -> ResponseWithTurnId[ParentGuideRecommendationResult]:
+    turn, recommendation = await session.confirm_child_card_selection()
+    return ResponseWithTurnId[ParentGuideRecommendationResult](next_turn_id=turn.id, payload=recommendation)

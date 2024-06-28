@@ -36,14 +36,16 @@ async def _initiate_session(req: Request, dyad: Annotated[DyadORM, Depends(get_s
     new_session = await create_moderator_session(dyad.to_data_model(), args.topic, args.timezone)
     return new_session.storage.session_id
 
+class SessionStartResult(BaseModel):
+    parent_guides: ParentGuideRecommendationResult
+    turn_id: str
 
-@router.post("/{session_id}/start", response_model=ParentGuideRecommendationResult)
+@router.post("/{session_id}/start", response_model=SessionStartResult)
 async def _start_session(
-    session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]):
+    session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)])->SessionStartResult:
 
     turn, guides = await session.start()
-    print(guides)
-    return guides
+    return SessionStartResult(parent_guides=guides, turn_id=turn.id)
 
 @router.delete("/{session_id}/abort")
 async def _abort_session(session_id: str, session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)],

@@ -42,8 +42,10 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
     const currentTurn = useSelector(state => state.session.currentTurn)
     const pTurn = usePrevious(currentTurn)
 
+    const turnId = useSelector(state => state.session.currentTurnId)
+
     useEffect(()=>{
-        if(pTurn != currentTurn && sessionId != null && currentTurn == DialogueRole.Parent){
+        if(pTurn != currentTurn && sessionId != null && turnId != null && currentTurn == DialogueRole.Parent){
             console.log("ParentTurn started.")
             InteractionManager.runAfterInteractions(()=>{
                 dispatch(startRecording())
@@ -51,11 +53,11 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
         }
 
         return () => {
-            if(pTurn != currentTurn && sessionId != null && currentTurn == DialogueRole.Parent){
+            if(pTurn != currentTurn && sessionId != null && turnId != null && currentTurn == DialogueRole.Parent){
                 console.log("Parent turn finished.")
             }
         }
-    }, [currentTurn, pTurn, sessionId])
+    }, [currentTurn, sessionId, turnId])
 
     useEffect(() => {
         if (isInitializing == false && sessionId != null) {

@@ -21,7 +21,8 @@ from py_core.utils.deepl_translator import DeepLTranslator
 from py_core.utils.models import AsyncTaskInfo
 from chatlib.llm.integration import GPTChatCompletionAPI
 
-from py_core.utils.tts.clova_voice import ClovaVoice
+from py_core.utils.speech import ClovaVoice, ClovaSpeech
+
 from py_core.utils.vector_db import VectorDB
 
 class WrongSessionStatusError(BaseException):
@@ -103,6 +104,7 @@ class ModeratorSession:
         GPTChatCompletionAPI.assert_authorize()
         DeepLTranslator.assert_authorize()
         ClovaVoice.assert_authorize()
+        ClovaSpeech.assert_authorize()
 
     @classmethod
     async def create(cls, dyad: Dyad, topic: SessionTopicInfo,
@@ -149,6 +151,7 @@ class ModeratorSession:
                 new_turn = DialogueTurn(session_id=self.storage.session_id, role=DialogueRole.Parent)
                 await self.__storage.upsert_dialogue_turn(new_turn)
                 print(f"Initiate new turn. Turn id: {new_turn.id}, SessionInfo id: {self.storage.session_id}")
+                current_turn = new_turn
             else:
                 print(f"This session has already started. SessionInfo Id: {self.storage.session_id}")
 
@@ -252,7 +255,7 @@ class ModeratorSession:
         return recommendation
 
     @speaker(DialogueRole.Parent)
-    async def submit_parent_message(self, parent_message: str) -> ChildCardRecommendationResult:
+    async def submit_parent_message(self, parent_message: str) -> tuple[DialogueTurn, ChildCardRecommendationResult]:
 
         try:
 
@@ -318,7 +321,7 @@ class ModeratorSession:
                     child_recommendation_id=recommendation.id
                 )))
 
-            return recommendation
+            return next_turn, recommendation
         except Exception as e:
             raise e
 
@@ -415,7 +418,7 @@ class ModeratorSession:
             raise e
 
     @speaker(DialogueRole.Child)
-    async def confirm_child_card_selection(self) -> ParentGuideRecommendationResult:
+    async def confirm_child_card_selection(self) -> tuple[DialogueTurn, ParentGuideRecommendationResult]:
         try:
             current_turn = await self.storage.get_latest_turn()
             interim_card_selection = await self.storage.get_latest_card_selection(turn_id=current_turn.id)
