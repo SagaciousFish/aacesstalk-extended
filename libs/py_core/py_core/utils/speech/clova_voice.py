@@ -3,6 +3,7 @@ from os import path
 from time import perf_counter
 from typing import Any, Literal, Union
 from chatlib.utils.integration import APIAuthorizationVariableSpec, APIAuthorizationVariableSpecPresets, APIAuthorizationVariableType, IntegrationService
+import httpx
 import pendulum
 from pydantic import BaseModel, ConfigDict, Field
 import requests
@@ -89,7 +90,8 @@ class ClovaVoice(IntegrationService):
 
             t_s = perf_counter()
 
-            response = await to_thread(requests.post, url=self.ENDPOINT_TTS, data=body, headers=headers)
+            async with httpx.AsyncClient() as client:
+                response = await client.post(url=ENDPOINT_TTS, data=body, headers=headers)
 
             t_end = perf_counter()
 

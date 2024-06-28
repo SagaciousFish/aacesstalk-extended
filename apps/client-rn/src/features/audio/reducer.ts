@@ -78,7 +78,7 @@ export function startRecording(recordingStartedTimestamp: number = Date.now()): 
         if(await FileSystem.exists(audioDirPath) == false){
             await FileSystem.mkdir(audioDirPath)
         }
-        const audioFilePath = audioDirPath + `/${sessionId}_${turnId}_${Date.now()}.mp3`
+        const audioFilePath = audioDirPath + `/${sessionId}_${turnId}_${Date.now()}.m4a`
 
         if(isRecordingActive == false && state.parentAudioRecording.status == RecordingStatus.Initial){
             console.log("Recording started.")

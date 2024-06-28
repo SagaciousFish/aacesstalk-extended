@@ -21,7 +21,7 @@ class ClovaSpeech(IntegrationService):
     def _authorize_impl(cls, variables: dict[APIAuthorizationVariableSpec, Any]) -> bool:
         return True
     
-    async def recognize_speech(self, audioFile) -> str:
+    async def recognize_speech(self, file_name: str, file, content_type: str) -> str:
         self.assert_authorize()
         
         invoke_url = self.get_auth_variable_for_spec(self.__url_spec)
@@ -35,10 +35,8 @@ class ClovaSpeech(IntegrationService):
 
             t_s = perf_counter()
 
-            print(audioFile.filename)
-
             async with httpx.AsyncClient() as client:
-                response = await client.post(url=invoke_url + "?lang=Kor", files = {"file": (audioFile.filename, audioFile.file, audioFile.content_type)}, headers=headers)
+                response = await client.post(url=invoke_url + "?lang=Kor", files = {"file": (file_name, file, content_type)}, headers=headers)
 
             t_end = perf_counter()
 
