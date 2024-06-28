@@ -4,8 +4,9 @@ import { Lazy } from "../../utils/lazy";
 import AudioRecorderPlayer, { RecordBackType } from "react-native-audio-recorder-player";
 import { ClientThunk } from "../../redux/store";
 import { Dirs, FileSystem } from "react-native-file-access";
-import { Http } from "@aacesstalk/libs/ts-core";
+import { CoreThunk, Http, makeSubmitParentMessageThunk } from "@aacesstalk/libs/ts-core";
 import {AxiosError} from 'axios'
+import ReactNativeBlobUtil from 'react-native-blob-util';
 
 
 export enum RecordingStatus{
@@ -115,7 +116,7 @@ export function resumeRecording(){
 }
 
 export function stopRecording(cancel: boolean = false): ClientThunk{
-    return async (dispatch, getState) => {
+    return async (dispatch, getState, extraArgument) => {
         const state = getState()
         if(isRecordingActive == true && (state.parentAudioRecording.status == RecordingStatus.RecordingPause || state.parentAudioRecording.status == RecordingStatus.Recording)){
             console.log("Recording stopped.")
@@ -123,6 +124,7 @@ export function stopRecording(cancel: boolean = false): ClientThunk{
             dispatch(parentAudioRecordingSlice.actions.setRecordingStatus(RecordingStatus.Stopping))
             const uri = await recorder.get().stopRecorder()
             recorder.get().removeRecordBackListener()
+            recorder.delete()
             console.log("audio file recorded at: ", uri)
             if(cancel){
                 console.log("recording was canceled. remove audio file")
@@ -133,33 +135,49 @@ export function stopRecording(cancel: boolean = false): ClientThunk{
             dispatch(parentAudioRecordingSlice.actions.setRecordingStatus(RecordingStatus.Initial))
 
             if(!cancel){
-                console.log("Try uploading...", uri)
-
-                //Convert file into binary string
-                //const binary = Buffer.from(b64, 'base64').toString('binary')
-
-                const formData = new FormData()
-                formData.append("session_id", state.session.id)
-                formData.append("turn_id", state.session.currentTurnId)
-
-                const pathSplit = uri.split("/")
-
-                formData.append("file", {
-                        uri,
-                        type: 'audio/mpeg',
-                        name: pathSplit[pathSplit.length - 1]
-                    } as any)
-                try{
-                    const response = await Http.axios.post(Http.ENDPOINT_DYAD_MEDIA_RECOGNIZE_SPEECH, formData, {
-                        headers: {
-                                ...(await Http.getSignedInHeaders(state.auth.jwt)),
-                                'Content-Type': 'multipart/form-data'
-                        }})
-                }catch(ex){
-                    const axiosError = ex as AxiosError
-                    console.log(axiosError.cause, axiosError.code, axiosError.message, axiosError.status, axiosError.toJSON())
-                }
+                submitParentMessageFromAudio(uri)(dispatch, getState, extraArgument)
             }
         }
     }
+}
+
+export function submitParentMessageFromAudio(uri: string): CoreThunk {
+    return makeSubmitParentMessageThunk(async (dispatch, getState) => {
+            const state = getState()
+        
+            console.log("Try uploading...", uri)
+
+            //Convert file into binary string
+            //const binary = Buffer.from(b64, 'base64').toString('binary')
+
+            const pathSplit = uri.split("/")
+            const fileName = pathSplit[pathSplit.length - 1]
+
+            try{
+                const headers = {
+                    ...(await Http.getSignedInHeaders(state.auth.jwt)),
+                    'Content-Type': 'multipart/form-data'
+                }
+
+                const response = await ReactNativeBlobUtil.fetch('POST', Http.axios.defaults.baseURL + Http.ENDPOINT_DYAD_MEDIA_RECOGNIZE_SPEECH,
+                    headers,
+                    [
+                        {name: 'session_id', data: state.session.id},
+                        {name: 'turn_id', data: state.session.currentTurnId},
+                        {name: 'file', filename: fileName, type: 'audio/m4a', data: ReactNativeBlobUtil.wrap(uri)}
+                    ])
+
+                if(response.info().status == 200){
+                    const dictatedText: string = response.data
+                    console.log("Dictated text: ", dictatedText)
+                    return dictatedText
+                }else{
+                    throw response.data
+                }
+
+            }catch(ex){
+                console.log(ex)
+                return null
+            }
+    })
 }

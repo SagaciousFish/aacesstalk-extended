@@ -443,7 +443,7 @@ class ModeratorSession:
                         )
                 ))
 
-                return parent_recommendation
+                return next_turn, parent_recommendation
             else:
                 raise ValueError("No interim card selection.")
 

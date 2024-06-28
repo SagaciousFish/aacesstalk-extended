@@ -62,6 +62,6 @@ async def get_card_image(card_type: CardType, image_id: str, dyad_orm: Annotated
 @router.post('/recognize_speech')
 async def recognize_speech(file: Annotated[UploadFile, File()], session_id: Annotated[str, Form()], turn_id: Annotated[str, Form()]):
     print(f"Received audio recording of Session {session_id} & Turn {turn_id}, Audio file size: {file.size}")
-    text = await asr_engine.recognize_speech(file)
+    text = await asr_engine.recognize_speech(file.filename, file.file, file.content_type)
     print(text)
     return text

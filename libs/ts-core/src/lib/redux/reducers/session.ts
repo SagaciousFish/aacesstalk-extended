@@ -400,7 +400,8 @@ export function requestParentGuideExampleMessage(guideId: string, onComplete?: (
   }, true)
 }
 
-export function submitParentMessage(message: string): CoreThunk {
+
+export function makeSubmitParentMessageThunk(retrieveMessage: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: () => CoreState) => Promise<string>): CoreThunk {
   return makeSignedInThunk({
     loadingFlagKey: 'isProcessingRecommendation',
     runIfSignedIn: async (dispatch, getState, signedInHeader) => {
@@ -410,6 +411,8 @@ export function submitParentMessage(message: string): CoreThunk {
 
       dispatch(sessionSlice.actions._incNumTurn())
       dispatch(sessionSlice.actions._setNextTurn(DialogueRole.Child))
+
+      const message = await retrieveMessage(dispatch, getState)
 
       const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE, { session_id: state.session.id!! }), {
         message,
@@ -426,6 +429,12 @@ export function submitParentMessage(message: string): CoreThunk {
       console.log(ex)
     }
   }, true)
+}
+
+export function submitParentMessageWithText(message: string): CoreThunk {
+  return makeSubmitParentMessageThunk(async () => {
+    return message
+  })
 }
 
 export function appendCard(cardInfo: CardInfo): CoreThunk {

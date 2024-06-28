@@ -45,6 +45,7 @@ export const SessionMenuPopupScreen = (props: NativeStackScreenProps<MainRoutes.
         switch(currentTurn){
             case DialogueRole.Parent:
                 dispatch(stopRecording(false))
+                props.navigation.pop()
                 break;
             case DialogueRole.Child:
                 if(canSubmitSelectedChildCards === true){    

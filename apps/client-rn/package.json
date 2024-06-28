@@ -23,6 +23,7 @@
     "jwt-decode": "*",
     "@react-navigation/native": "*",
     "@react-navigation/native-stack": "*",
+    "react-native-blob-util": "*",
     "react-native-permissions": "*",
     "react-native-safe-area-context": "*",
     "react-native-reanimated": "*",
@@ -46,7 +47,8 @@
     "group-array": "*",
     "react-native-progress": "*",
     "react-native-file-access": "*",
-    "rxjs": "*"
+    "rxjs": "*",
+    "merge": "*"
   },
   "devDependencies": {}
 }

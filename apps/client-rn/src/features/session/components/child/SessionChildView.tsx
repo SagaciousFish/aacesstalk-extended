@@ -60,11 +60,14 @@ export const SessionChildView = () => {
     }, [latestChildCardRecommendationId])
 
     useEffect(()=>{
-        const subscription = CardImageManager.instance.registerImageMatchingTask(latestChildCardRecommendationId, token)
-
-        return () => {
-            subscription.cancel()
-        }
+        if(latestChildCardRecommendationId){
+            const subscription = CardImageManager.instance.registerImageMatchingTask(latestChildCardRecommendationId, token)
+            return () => {
+                subscription?.cancel()
+            }
+        }else{
+            return
+        }        
     },[latestChildCardRecommendationId, token])
 
     useEffect(()=>{

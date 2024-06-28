@@ -11,4 +11,8 @@ export class Lazy<T>{
 
         return this.instance!!
     }
+
+    delete(){
+        this.instance = null
+    }
 }
