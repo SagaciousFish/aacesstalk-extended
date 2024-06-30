@@ -196,9 +196,11 @@ class DialogueRole(StrEnum):
 class DialogueTurn(ModelWithId):
     model_config = ConfigDict(use_enum_values=True)
 
-    role: DialogueRole
+    role: DialogueRole = Field(frozen=True)
 
-    started_timestamp: int = Field(default_factory=get_timestamp, index=True)
+    audio_filename: str | None = Field(default=None)
+
+    started_timestamp: int = Field(default_factory=get_timestamp, index=True, frozen=True)
     ended_timestamp: int | None = Field(default=None, index=True)
 
 class DialogueMessage(ModelWithIdAndTimestamp, ModelWithTurnId):

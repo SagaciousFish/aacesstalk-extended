@@ -78,7 +78,7 @@ class CardImageMatcher:
     async def get_card_image_filepath(self, type: CardType, image_id: str, parent_type: ParentType, child_gender: ChildGender)->str:
         if type is CardType.custom:
             info = await self.__user_storage.get_user_defined_card(image_id)
-            return path.join(self.__user_storage.get_user_custom_card_dir_path(), info.image_filename)
+            return path.join(AACessTalkConfig.get_user_defined_card_dir_path(self.__user_storage.user_id), info.image_filename)
         elif type is CardType.stock:
             return path.join(AACessTalkConfig.card_image_directory_path, self.__db_retriever.get_card_image_info(image_id).filename)
         elif type is CardType.static:

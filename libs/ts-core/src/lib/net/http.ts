@@ -28,7 +28,8 @@ export class Http{
   static ENDPOINT_DYAD_MESSAGE = `${Http.ENDPOINT_DYAD_SESSION_ID}/message`
 
   static ENDPOINT_DYAD_MESSAGE_PARENT_GUIDE = `${Http.ENDPOINT_DYAD_MESSAGE}/parent/guide`
-  static ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE = `${Http.ENDPOINT_DYAD_MESSAGE}/parent/message`
+  static ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE_TEXT = `${Http.ENDPOINT_DYAD_MESSAGE}/parent/message/text`
+  static ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE_AUDIO = `${Http.ENDPOINT_DYAD_MESSAGE}/parent/message/audio`
   static ENDPOINT_DYAD_MESSAGE_PARENT_EXAMPLE = `${Http.ENDPOINT_DYAD_MESSAGE}/parent/example`
   
   static ENDPOINT_DYAD_MESSAGE_CHILD_APPEND_CARD = `${Http.ENDPOINT_DYAD_MESSAGE}/child/add_card`
@@ -40,8 +41,6 @@ export class Http{
   static ENDPOINT_DYAD_MEDIA_VOICEOVER = `${Http.ENDPOINT_DYAD_MEDIA}/voiceover`
   static ENDPOINT_DYAD_MEDIA_CARD_IMAGE = `${Http.ENDPOINT_DYAD_MEDIA}/card_image`
   static ENDPOINT_DYAD_MEDIA_MATCH_CARD_IMAGES = `${Http.ENDPOINT_DYAD_MEDIA}/match_card_images`
-
-  static ENDPOINT_DYAD_MEDIA_RECOGNIZE_SPEECH = `${Http.ENDPOINT_DYAD_MEDIA}/recognize_speech`
 
 
   static getTemplateEndpoint(template: string, values: {[key:string]: string}): string {

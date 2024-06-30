@@ -99,11 +99,11 @@ class TimestampColumnMixin(BaseModel):
 class DialogueTurnORM(SQLModel, IdTimestampMixin, SessionIdMixin, table=True):
     __tablename__: str = "dialogue_turn"
 
-    session_id: str
+    role: DialogueRole = Field(allow_mutation=False)
 
-    role: DialogueRole
+    audio_filename: str | None = Field(default=None)
 
-    started_timestamp: int = Field(default_factory=get_timestamp, index=True)
+    started_timestamp: int = Field(default_factory=get_timestamp, index=True, allow_mutation=False)
     ended_timestamp: int | None = Field(default=None, index=True)
 
     @classmethod

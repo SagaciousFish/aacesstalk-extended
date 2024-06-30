@@ -6,6 +6,8 @@ from backend.crud.dyad import account
 from backend.database import with_db_session
 from py_database.database import AsyncSession
 
+from backend.routers.errors import ErrorType
+
 router = APIRouter()
 
 
@@ -25,4 +27,4 @@ async def login_with_code(credential: LoginCodeCredential, session: Annotated[As
         jwt = await account.login_with_code(credential.code, session)
         return AuthenticationResult(jwt=jwt)
     except ValueError:
-        raise HTTPException(status_code=400, detail="NoSuchUser")
+        raise HTTPException(status_code=400, default=ErrorType.NoSuchUser)

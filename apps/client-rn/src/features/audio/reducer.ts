@@ -4,8 +4,7 @@ import { Lazy } from "../../utils/lazy";
 import AudioRecorderPlayer, { RecordBackType } from "react-native-audio-recorder-player";
 import { ClientThunk } from "../../redux/store";
 import { Dirs, FileSystem } from "react-native-file-access";
-import { CoreThunk, Http, makeSubmitParentMessageThunk } from "@aacesstalk/libs/ts-core";
-import {AxiosError} from 'axios'
+import { CoreThunk, Http, makeSubmitParentMessageAudioThunk } from "@aacesstalk/libs/ts-core";
 import ReactNativeBlobUtil from 'react-native-blob-util';
 
 
@@ -142,42 +141,38 @@ export function stopRecording(cancel: boolean = false): ClientThunk{
 }
 
 export function submitParentMessageFromAudio(uri: string): CoreThunk {
-    return makeSubmitParentMessageThunk(async (dispatch, getState) => {
-            const state = getState()
-        
-            console.log("Try uploading...", uri)
 
-            //Convert file into binary string
-            //const binary = Buffer.from(b64, 'base64').toString('binary')
+    return makeSubmitParentMessageAudioThunk(async (signedInHeader, url, dispatch, getState) => {
+        try{
+
+            console.log(url)
+
+            const state = getState()
 
             const pathSplit = uri.split("/")
             const fileName = pathSplit[pathSplit.length - 1]
 
-            try{
-                const headers = {
-                    ...(await Http.getSignedInHeaders(state.auth.jwt)),
-                    'Content-Type': 'multipart/form-data'
-                }
-
-                const response = await ReactNativeBlobUtil.fetch('POST', Http.axios.defaults.baseURL + Http.ENDPOINT_DYAD_MEDIA_RECOGNIZE_SPEECH,
-                    headers,
-                    [
-                        {name: 'session_id', data: state.session.id},
-                        {name: 'turn_id', data: state.session.currentTurnId},
-                        {name: 'file', filename: fileName, type: 'audio/m4a', data: ReactNativeBlobUtil.wrap(uri)}
-                    ])
-
-                if(response.info().status == 200){
-                    const dictatedText: string = response.data
-                    console.log("Dictated text: ", dictatedText)
-                    return dictatedText
-                }else{
-                    throw response.data
-                }
-
-            }catch(ex){
-                console.log(ex)
-                return null
+            const headers = {
+                ...signedInHeader,
+                'Content-Type': 'multipart/form-data'
             }
+
+            const response = await ReactNativeBlobUtil.fetch('POST', url,
+                headers,
+                [
+                    {name: 'turn_id', data: state.session.currentTurnId},
+                    {name: 'file', filename: fileName, type: 'audio/m4a', data: ReactNativeBlobUtil.wrap(uri)}
+                ])
+
+            if(response.info().status == 200){
+                return response.json()
+            }else{
+                throw response.data
+            }
+
+        }catch(ex){
+            console.log(ex)
+            throw ex
+        }
     })
 }

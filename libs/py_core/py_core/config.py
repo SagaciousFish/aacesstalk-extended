@@ -1,4 +1,4 @@
-from os import path, getcwd
+from os import path, getcwd, makedirs
 
 
 class AACessTalkConfig:
@@ -13,9 +13,25 @@ class AACessTalkConfig:
     initial_parent_guides_path: str = path.join(dataset_dir_path, "initial_parent_guides.yml")
     card_image_embeddings_path: str = path.join(dataset_dir_path, "cards_image_desc_embeddings.npz")
 
-    user_data_dir_path: str = path.join(dataset_dir_path, 'user_data')
 
     database_dir_path: str = path.join(getcwd(), "../../database")
+
+    user_data_dir_path: str = path.join(database_dir_path, 'user_data/')
+
+    @classmethod
+    def get_user_defined_card_dir_path(cls, user_id: str, make_if_not_exist: bool = False) -> str:
+        p = path.join(cls.user_data_dir_path, user_id, "cards")
+        if not path.exists(p) and make_if_not_exist is True:
+            makedirs(p)
+        return p
+
+    @classmethod
+    def get_turn_audio_recording_dir_path(cls, user_id: str, make_if_not_exist: bool = False) -> str:
+        p = path.join(cls.user_data_dir_path, user_id, "audio")
+        if not path.exists(p) and make_if_not_exist is True:
+            makedirs(p)
+        return p
+    
 
     cache_dir_path: str = path.join(database_dir_path, "cache")
 

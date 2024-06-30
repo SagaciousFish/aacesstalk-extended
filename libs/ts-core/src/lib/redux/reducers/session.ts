@@ -6,7 +6,8 @@ import {
   ParentExampleMessage,
   ParentGuideElement,
   ParentGuideRecommendationResult,
-  SessionTopicInfo
+  SessionTopicInfo,
+  TurnIdWithPayload
 } from '../../model-types';
 import { Action, createEntityAdapter, createSelector, createSlice, EntityAdapter, EntitySelectors, EntityState, PayloadAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { CoreState, CoreThunk } from '../store';
@@ -401,7 +402,7 @@ export function requestParentGuideExampleMessage(guideId: string, onComplete?: (
 }
 
 
-export function makeSubmitParentMessageThunk(retrieveMessage: (dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: () => CoreState) => Promise<string>): CoreThunk {
+export function makeSubmitParentMessageAudioThunk(fetchAPI:(signedInHeader: {[key:string]:string}, url: string, dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: () => CoreState) => Promise<TurnIdWithPayload<ChildCardRecommendationResult>>): CoreThunk {
   return makeSignedInThunk({
     loadingFlagKey: 'isProcessingRecommendation',
     runIfSignedIn: async (dispatch, getState, signedInHeader) => {
@@ -412,12 +413,33 @@ export function makeSubmitParentMessageThunk(retrieveMessage: (dispatch: ThunkDi
       dispatch(sessionSlice.actions._incNumTurn())
       dispatch(sessionSlice.actions._setNextTurn(DialogueRole.Child))
 
-      const message = await retrieveMessage(dispatch, getState)
+      const resp = await fetchAPI(signedInHeader, 
+        Http.axios.defaults.baseURL + Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE_AUDIO, { session_id: state.session.id!! }), 
+        dispatch, getState)
 
-      const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE, { session_id: state.session.id!! }), {
-        message,
-        //recommendation_id: state.session.parentGuideRecommendationId
-      }, {
+      console.log("Retrieved new child card recommendations.")
+      dispatch(sessionSlice.actions._setTurnId(resp.next_turn_id))      
+      dispatch(sessionSlice.actions._storeNewChildCardRecommendation(resp.payload))
+    },
+    onError: async (ex) => {
+      console.log(ex)
+    }
+  }, true)
+}
+
+export function submitParentMessageText(message: string): CoreThunk {
+  return makeSignedInThunk({
+    loadingFlagKey: 'isProcessingRecommendation',
+    runIfSignedIn: async (dispatch, getState, signedInHeader) => {
+      const state = getState()
+
+      console.log("Send parent message and retrieve child card recommendation...")
+
+      dispatch(sessionSlice.actions._incNumTurn())
+      dispatch(sessionSlice.actions._setNextTurn(DialogueRole.Child))
+
+      const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE_TEXT, { session_id: state.session.id!! }), 
+        { message }, {
         headers: signedInHeader
       })
 
@@ -429,12 +451,6 @@ export function makeSubmitParentMessageThunk(retrieveMessage: (dispatch: ThunkDi
       console.log(ex)
     }
   }, true)
-}
-
-export function submitParentMessageWithText(message: string): CoreThunk {
-  return makeSubmitParentMessageThunk(async () => {
-    return message
-  })
 }
 
 export function appendCard(cardInfo: CardInfo): CoreThunk {

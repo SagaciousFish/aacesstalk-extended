@@ -2,16 +2,20 @@ from typing import Annotated
 
 from pydantic import BaseModel
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from py_core import ModeratorSession
 from py_core.system.model import Dialogue, DialogueTurn, ParentGuideRecommendationResult, CardIdentity, ChildCardRecommendationResult, \
     CardInfo, ParentExampleMessage, InterimCardSelection
+
+from py_core.utils.speech import ClovaSpeech
 
 from py_database.model import DyadORM
 
 from backend.routers.dyad.common import get_signed_in_dyad_orm, retrieve_moderator_session
 
 from typing import TypeVar, Generic
+
+from backend.routers.errors import ErrorType
 T = TypeVar('T')
 
 class ResponseWithTurnId(BaseModel, Generic[T]):
@@ -19,6 +23,9 @@ class ResponseWithTurnId(BaseModel, Generic[T]):
     next_turn_id: str
 
 router = APIRouter()
+
+
+asr_engine = ClovaSpeech()
 
 class DialogueResponse(BaseModel):
     dyad_id: str
@@ -33,11 +40,26 @@ async def get_dialogue(dyad: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)]
 class SendParentMessageArgs(BaseModel):
     message: str
 
-@router.post("/parent/message", response_model=ResponseWithTurnId[ChildCardRecommendationResult])
-async def send_parent_message(args: SendParentMessageArgs,
+@router.post("/parent/message/text", response_model=ResponseWithTurnId[ChildCardRecommendationResult])
+async def send_parent_message_text(args: SendParentMessageArgs,
                               session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]) -> ResponseWithTurnId[ChildCardRecommendationResult]:
     turn, recommendation = await session.submit_parent_message(parent_message=args.message)
     return ResponseWithTurnId(payload=recommendation, next_turn_id=turn.id)
+
+
+
+@router.post('/parent/message/audio')
+async def send_parent_message_audio(file: Annotated[UploadFile, File()], turn_id: Annotated[str, Form()], session_id: str, session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]) -> ResponseWithTurnId[ChildCardRecommendationResult]:
+    try:
+        print("Dictate parent turn audio...")
+        text = await asr_engine.recognize_speech(file.filename, file.file, file.content_type)
+        if len(text) > 0:
+            turn, recommendation = await session.submit_parent_message(parent_message=text)
+            return ResponseWithTurnId(payload=recommendation, next_turn_id=turn.id)
+        else:
+            raise HTTPException(status_code=500, detail=ErrorType.EmptyDictation)
+    except Exception as ex:
+        raise HTTPException(status_code=500, detail=ex.__str__) from ex
 
 class RequestExampleArgs(BaseModel):
     recommendation_id: str

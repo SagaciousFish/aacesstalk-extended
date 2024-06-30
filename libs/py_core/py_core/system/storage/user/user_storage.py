@@ -14,14 +14,6 @@ class UserStorage(ABC):
     def user_id(self) -> str:
         return self.__user_id
 
-    def get_user_custom_card_dir_path(self)->str:
-        p = path.join(AACessTalkConfig.user_data_dir_path, self.user_id, "cards")
-
-        if not path.exists(p):
-            makedirs(p)
-        
-        return p
-
     @abstractmethod
     async def register_user_defined_card(self, info: UserDefinedCardInfo):
         pass

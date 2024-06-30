@@ -9,7 +9,7 @@ from backend.database import with_db_session
 from py_database.database import AsyncSession
 from py_database.model import DyadORM, ChildCardRecommendationResultORM
 from sqlmodel import select
-from py_core.utils.speech import ClovaSpeech, ClovaVoice, ClovaVoiceParams
+from py_core.utils.speech import ClovaVoice, ClovaVoiceParams
 from py_core.system.task.card_image_matching import CardType, CardImageMatcher, CardImageMatching
 
 from backend.routers.dyad.common import get_card_image_matcher, get_signed_in_dyad_orm
@@ -18,7 +18,6 @@ from backend.routers.dyad.common import get_card_image_matcher, get_signed_in_dy
 router = APIRouter()
 
 voice_engine = ClovaVoice()
-asr_engine = ClovaSpeech()
 
 voice_default_params = ClovaVoiceParams()
 
@@ -56,12 +55,3 @@ async def get_card_image(card_type: CardType, image_id: str, dyad_orm: Annotated
     image_path = await image_matcher.get_card_image_filepath(card_type, image_id, dyad_orm.parent_type, dyad_orm.child_gender)
     if path.exists(image_path):
         return FileResponse(image_path)
-    
-
-
-@router.post('/recognize_speech')
-async def recognize_speech(file: Annotated[UploadFile, File()], session_id: Annotated[str, Form()], turn_id: Annotated[str, Form()]):
-    print(f"Received audio recording of Session {session_id} & Turn {turn_id}, Audio file size: {file.size}")
-    text = await asr_engine.recognize_speech(file.filename, file.file, file.content_type)
-    print(text)
-    return text

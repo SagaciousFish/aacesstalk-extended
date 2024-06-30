@@ -10,7 +10,7 @@ import { LoadingIndicator } from "apps/client-rn/src/components/LoadingIndicator
 import { PopupMenuScreenFrame } from "apps/client-rn/src/components/PopupMenuScreenFrame";
 import { TailwindButton } from "apps/client-rn/src/components/tailwind-components";
 import { useController, useForm } from "react-hook-form";
-import { SessionTopicInfo, parentGuideSelectors, submitParentMessage } from '@aacesstalk/libs/ts-core';
+import { SessionTopicInfo, parentGuideSelectors, submitParentMessageText } from '@aacesstalk/libs/ts-core';
 import { SessionTitleRibbon } from '../SessionTitleRibbon';
 import { SessionStartingMessage } from './SessionStartingMessage';
 import { useNonNullUpdatedValue } from 'apps/client-rn/src/utils/hooks';
@@ -33,7 +33,7 @@ const ParentMessageTextInputView = (props: {
     const onSubmit = useMemo(()=> handleSubmit((values)=>{
         InteractionManager.runAfterInteractions(()=>{
             props.onPopTextInput()
-            dispatch(submitParentMessage(values.message))
+            dispatch(submitParentMessageText(values.message))
         })
     }), [])
 

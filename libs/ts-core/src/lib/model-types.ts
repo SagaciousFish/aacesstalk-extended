@@ -115,3 +115,8 @@ export interface SessionTopicInfo{
     subtopic?: string
     subdescription?: string 
 }
+
+export interface TurnIdWithPayload<T>{
+    payload: T
+    next_turn_id: string
+}
