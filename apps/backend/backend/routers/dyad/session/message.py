@@ -1,11 +1,17 @@
+import asyncio
 from typing import Annotated
 
+import aiofiles
 from pydantic import BaseModel
+from os import path
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from py_core import ModeratorSession
+from chatlib.utils.time import get_timestamp
 from py_core.system.model import Dialogue, DialogueTurn, ParentGuideRecommendationResult, CardIdentity, ChildCardRecommendationResult, \
     CardInfo, ParentExampleMessage, InterimCardSelection
+
+from py_core.config import AACessTalkConfig
 
 from py_core.utils.speech import ClovaSpeech
 
@@ -49,10 +55,32 @@ async def send_parent_message_text(args: SendParentMessageArgs,
 
 
 @router.post('/parent/message/audio')
-async def send_parent_message_audio(file: Annotated[UploadFile, File()], turn_id: Annotated[str, Form()], session_id: str, session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]) -> ResponseWithTurnId[ChildCardRecommendationResult]:
+async def send_parent_message_audio(file: Annotated[UploadFile, File()], turn_id: Annotated[str, Form()], 
+                                    dyad: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)],
+                                    session_id: str, session: Annotated[ModeratorSession, Depends(retrieve_moderator_session)]) -> ResponseWithTurnId[ChildCardRecommendationResult]:
     try:
         print("Dictate parent turn audio...")
-        text = await asr_engine.recognize_speech(file.filename, file.file, file.content_type)
+
+        extension = file.filename.split(".")[-1]
+        target_filename = f"{session_id}__{turn_id}__{get_timestamp()}.{extension}"
+        target_file_path = path.join(AACessTalkConfig.get_turn_audio_recording_dir_path(dyad.id, make_if_not_exist=True), 
+                                         target_filename)
+
+        async def write_file_task():
+            
+            async with aiofiles.open(target_file_path, 'wb') as tf:
+                while content := await file.read(1024):
+                    await tf.write(content)
+
+        async def write_turn_info():
+            turn_info = await session.storage.get_latest_turn()
+            turn_info.audio_filename = target_filename
+            await session.storage.upsert_dialogue_turn(turn_info)
+
+        
+        await asyncio.gather(write_file_task(), write_turn_info())
+
+        text = await asr_engine.recognize_speech(file.filename, open(target_file_path, 'rb'), file.content_type)
         if len(text) > 0:
             turn, recommendation = await session.submit_parent_message(parent_message=text)
             return ResponseWithTurnId(payload=recommendation, next_turn_id=turn.id)
