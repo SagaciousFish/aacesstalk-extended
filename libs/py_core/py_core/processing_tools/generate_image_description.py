@@ -4,6 +4,7 @@ import csv
 import math
 from io import BytesIO
 from os import DirEntry, listdir, scandir, path, remove
+import shutil
 import unicodedata
 
 from pydantic import BaseModel
@@ -423,6 +424,18 @@ def cache_description_embeddings_all(client: OpenAI):
                                emb_desc=array(description_brief_embeddings))
         print("Serialized embeddings to file.")
 
+def rename_card_filenames_to_ascii():
+    rows = _load_card_descriptions()
+    for row in rows:
+        src_path = path.join(AACessTalkConfig.card_image_directory_path, row.filename)
+        if path.exists(src_path):
+
+            new_filename = path.join(path.dirname(row.filename), f"{row.id}.png")
+            shutil.move(src_path, path.join(AACessTalkConfig.card_image_directory_path, new_filename))
+            row.filename = new_filename
+
+    _save_card_descriptions(rows)        
+
 
 if __name__ == "__main__":
     if not path.exists(AACessTalkConfig.card_image_table_path):
@@ -446,4 +459,5 @@ if __name__ == "__main__":
 
     # sync_file_to_info_list(delete=True)
     
-    cache_description_embeddings_all(openai_client)
+    # cache_description_embeddings_all(openai_client)
+    rename_card_filenames_to_ascii()
