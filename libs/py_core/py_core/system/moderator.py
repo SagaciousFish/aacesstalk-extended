@@ -23,6 +23,7 @@ from chatlib.llm.integration import GPTChatCompletionAPI
 
 from py_core.utils.speech import ClovaVoice, ClovaSpeech
 
+from py_core.utils.speech.clova_speech_long import ClovaLongSpeech
 from py_core.utils.vector_db import VectorDB
 
 class WrongSessionStatusError(BaseException):
@@ -104,7 +105,8 @@ class ModeratorSession:
         GPTChatCompletionAPI.assert_authorize()
         DeepLTranslator.assert_authorize()
         ClovaVoice.assert_authorize()
-        ClovaSpeech.assert_authorize()
+        #ClovaSpeech.assert_authorize()
+        ClovaLongSpeech.assert_authorize()
 
     @classmethod
     async def create(cls, dyad: Dyad, topic: SessionTopicInfo,

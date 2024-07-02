@@ -13,7 +13,7 @@ from py_core.system.model import Dialogue, DialogueTurn, ParentGuideRecommendati
 
 from py_core.config import AACessTalkConfig
 
-from py_core.utils.speech import ClovaSpeech
+from py_core.utils.speech import ClovaLongSpeech
 
 from py_database.model import DyadORM
 
@@ -31,7 +31,7 @@ class ResponseWithTurnId(BaseModel, Generic[T]):
 router = APIRouter()
 
 
-asr_engine = ClovaSpeech()
+asr_engine = ClovaLongSpeech()
 
 class DialogueResponse(BaseModel):
     dyad_id: str
