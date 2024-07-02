@@ -114,7 +114,7 @@ export function resumeRecording(){
     }
 }
 
-export function stopRecording(cancel: boolean = false): ClientThunk{
+export function stopRecording(cancel: boolean = false, onParentMessageError?:(error: string)=>void): ClientThunk{
     return async (dispatch, getState, extraArgument) => {
         const state = getState()
         if(isRecordingActive == true && (state.parentAudioRecording.status == RecordingStatus.RecordingPause || state.parentAudioRecording.status == RecordingStatus.Recording)){
@@ -134,13 +134,13 @@ export function stopRecording(cancel: boolean = false): ClientThunk{
             dispatch(parentAudioRecordingSlice.actions.setRecordingStatus(RecordingStatus.Initial))
 
             if(!cancel){
-                submitParentMessageFromAudio(uri)(dispatch, getState, extraArgument)
+                submitParentMessageFromAudio(uri, onParentMessageError)(dispatch, getState, extraArgument)
             }
         }
     }
 }
 
-export function submitParentMessageFromAudio(uri: string): CoreThunk {
+function submitParentMessageFromAudio(uri: string, onParentMessageError?:(error: string)=>void): CoreThunk {
 
     return makeSubmitParentMessageAudioThunk(async (signedInHeader, url, dispatch, getState) => {
         try{
@@ -172,6 +172,7 @@ export function submitParentMessageFromAudio(uri: string): CoreThunk {
 
         }catch(ex){
             console.log(ex)
+            onParentMessageError?.(ex)
             throw ex
         }
     })

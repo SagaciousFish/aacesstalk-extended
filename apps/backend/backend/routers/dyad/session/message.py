@@ -5,7 +5,7 @@ import aiofiles
 from pydantic import BaseModel
 from os import path
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, Response
 from py_core import ModeratorSession
 from chatlib.utils.time import get_timestamp
 from py_core.system.model import Dialogue, DialogueTurn, ParentGuideRecommendationResult, CardIdentity, ChildCardRecommendationResult, \
@@ -85,7 +85,7 @@ async def send_parent_message_audio(file: Annotated[UploadFile, File()], turn_id
             turn, recommendation = await session.submit_parent_message(parent_message=text)
             return ResponseWithTurnId(payload=recommendation, next_turn_id=turn.id)
         else:
-            raise HTTPException(status_code=500, detail=ErrorType.EmptyDictation)
+            return Response(status_code=500, content=ErrorType.EmptyDictation)
     except Exception as ex:
         raise HTTPException(status_code=500, detail=ex.__str__()) from ex
 

@@ -23,19 +23,19 @@ const INITIAL_SELECTED_CARD_STATE = selectedCardAdapter.getInitialState()
 
 const CARD_CATEGORIES = [CardCategory.Action, CardCategory.Emotion, CardCategory.Topic, CardCategory.Core]
 
-type ChildCardTypeAdapters = {[key in CardCategory | string]: {
+type ChildCardTypeAdapters = { [key in CardCategory | string]: {
   adapter: EntityAdapter<CardInfo, string>,
-  initialState: EntityState<CardInfo, string> 
-}}
+  initialState: EntityState<CardInfo, string>
+} }
 
 const childCardAdapters: ChildCardTypeAdapters = Object.fromEntries(CARD_CATEGORIES.map(category => {
   const adapter = createEntityAdapter<CardInfo>()
   return [category, {
-    adapter, initialState: adapter.getInitialState() 
+    adapter, initialState: adapter.getInitialState()
   }]
 })) as ChildCardTypeAdapters
 
-function forEachChildCardAdapters(handler:(category: CardCategory, adapter: EntityAdapter<CardInfo, string>) => void){
+function forEachChildCardAdapters(handler: (category: CardCategory, adapter: EntityAdapter<CardInfo, string>) => void) {
   Object.keys(childCardAdapters).forEach(category => {
     handler(category as CardCategory, childCardAdapters[category].adapter)
   })
@@ -56,7 +56,7 @@ export interface SessionState {
 
   parentExampleMessageLoadingFlags: { [key: string]: boolean }
 
-  childCardEntityStateByCategory: {[key in CardCategory]: EntityState<CardInfo, string> },
+  childCardEntityStateByCategory: { [key in CardCategory]: EntityState<CardInfo, string> },
   childCardRecommendationId?: string
 
   selectedChildCardEntityState: typeof INITIAL_SELECTED_CARD_STATE
@@ -99,7 +99,7 @@ const sessionSlice = createSlice({
     initialize: () => { return { ...INITIAL_SESSION_STATE } },
     setSessionInitInfo: (state, action: PayloadAction<{ topic: SessionTopicInfo }>) => {
       state.topic = action.payload.topic
-      state.currentTurn = DialogueRole.Parent 
+      state.currentTurn = DialogueRole.Parent
     },
     _mountNewSession: (state, action: PayloadAction<{ id: string, topic: SessionTopicInfo }>) => {
 
@@ -109,7 +109,7 @@ const sessionSlice = createSlice({
 
       state.id = action.payload.id
       state.topic = action.payload.topic
-      state.currentTurn = DialogueRole.Parent      
+      state.currentTurn = DialogueRole.Parent
     },
 
     _setInitializingFlag: (state, action: PayloadAction<boolean>) => {
@@ -140,6 +140,10 @@ const sessionSlice = createSlice({
       state.numTurns++
     },
 
+    _decNumTurn: (state) => {
+      state.numTurns--
+    },
+
     _storeNewParentGuideRecommendation: (state, action: PayloadAction<ParentGuideRecommendationResult>) => {
       parentGuideAdapter.removeAll(state.parentGuideEntityState)
       parentGuideAdapter.addMany(state.parentGuideEntityState, action.payload.guides)
@@ -160,7 +164,7 @@ const sessionSlice = createSlice({
     },
 
     _storeNewChildCardRecommendation: (state, action: PayloadAction<ChildCardRecommendationResult>) => {
-      
+
       const cardGroupByCategory = group(action.payload.cards, "category")
 
       forEachChildCardAdapters((category, adapter) => {
@@ -179,19 +183,19 @@ const sessionSlice = createSlice({
         })
 
         newCardInfos.forEach((cardInfo) => {
-          if(indexMap.has(cardInfo.label_localized)){
+          if (indexMap.has(cardInfo.label_localized)) {
             reorderedNewCardInfos[indexMap.get(cardInfo.label_localized)!!] = cardInfo
-          }else{
+          } else {
             unmatchedElements.push(cardInfo)
           }
         })
 
-        let fillIndex=  0;
+        let fillIndex = 0;
         unmatchedElements.forEach(cardInfo => {
-          while(reorderedNewCardInfos[fillIndex] !== null && fillIndex < reorderedNewCardInfos.length){
+          while (reorderedNewCardInfos[fillIndex] !== null && fillIndex < reorderedNewCardInfos.length) {
             fillIndex++;
           }
-          if(fillIndex < reorderedNewCardInfos.length){
+          if (fillIndex < reorderedNewCardInfos.length) {
             reorderedNewCardInfos[fillIndex] = cardInfo
           }
         })
@@ -205,13 +209,13 @@ const sessionSlice = createSlice({
     },
 
     _appendSelectedCard: (state, action: PayloadAction<CardInfo>) => {
-      selectedCardAdapter.addOne(state.selectedChildCardEntityState, action.payload) 
+      selectedCardAdapter.addOne(state.selectedChildCardEntityState, action.payload)
     },
 
     _popLastSelectedCard: (state) => {
       const numSelectedCards = state.selectedChildCardEntityState.ids.length
-      if(numSelectedCards > 0){
-        selectedCardAdapter.removeOne(state.selectedChildCardEntityState, state.selectedChildCardEntityState.ids[numSelectedCards - 1]) 
+      if (numSelectedCards > 0) {
+        selectedCardAdapter.removeOne(state.selectedChildCardEntityState, state.selectedChildCardEntityState.ids[numSelectedCards - 1])
       }
     },
 
@@ -243,7 +247,7 @@ export const isChildCardConfirmValidSelector = createSelector(
   [selectedChildCardSelectors.selectIds],
   (ids) => {
     return ids.length > 0
-  } 
+  }
 )
 
 function makeSignedInThunk(
@@ -266,7 +270,7 @@ function makeSignedInThunk(
       try {
         const header = await Http.getSignedInHeaders(state.auth.jwt)
         await options.runIfSignedIn(dispatch, getState, header)
-        
+
       } catch (ex: any) {
         if (options.onError) {
           await options.onError(ex, dispatch, getState)
@@ -330,7 +334,7 @@ export function endSession(onComplete?: (success: boolean) => Promise<void>): Co
       onFinally: async (dispatch, _, error) => {
         dispatch(sessionSlice.actions._setClosingFlag(false))
         dispatch(sessionSlice.actions.initialize())
-        if(onComplete){
+        if (onComplete) {
           await onComplete(error == null)
         }
       }
@@ -402,7 +406,7 @@ export function requestParentGuideExampleMessage(guideId: string, onComplete?: (
 }
 
 
-export function makeSubmitParentMessageAudioThunk(fetchAPI:(signedInHeader: {[key:string]:string}, url: string, dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: () => CoreState) => Promise<TurnIdWithPayload<ChildCardRecommendationResult>>): CoreThunk {
+export function makeSubmitParentMessageAudioThunk(fetchAPI: (signedInHeader: { [key: string]: string }, url: string, dispatch: ThunkDispatch<CoreState, unknown, Action<string>>, getState: () => CoreState) => Promise<TurnIdWithPayload<ChildCardRecommendationResult>>): CoreThunk {
   return makeSignedInThunk({
     loadingFlagKey: 'isProcessingRecommendation',
     runIfSignedIn: async (dispatch, getState, signedInHeader) => {
@@ -413,16 +417,16 @@ export function makeSubmitParentMessageAudioThunk(fetchAPI:(signedInHeader: {[ke
       dispatch(sessionSlice.actions._incNumTurn())
       dispatch(sessionSlice.actions._setNextTurn(DialogueRole.Child))
 
-      const resp = await fetchAPI(signedInHeader, 
-        Http.axios.defaults.baseURL + Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE_AUDIO, { session_id: state.session.id!! }), 
+      const resp = await fetchAPI(signedInHeader,
+        Http.axios.defaults.baseURL + Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE_AUDIO, { session_id: state.session.id!! }),
         dispatch, getState)
-
       console.log("Retrieved new child card recommendations.")
-      dispatch(sessionSlice.actions._setTurnId(resp.next_turn_id))      
+      dispatch(sessionSlice.actions._setTurnId(resp.next_turn_id))
       dispatch(sessionSlice.actions._storeNewChildCardRecommendation(resp.payload))
     },
-    onError: async (ex) => {
-      console.log(ex)
+    onError: async (ex, dispatch) => {
+      dispatch(sessionSlice.actions._decNumTurn())
+      dispatch(sessionSlice.actions._setNextTurn(DialogueRole.Parent))
     }
   }, true)
 }
@@ -438,13 +442,13 @@ export function submitParentMessageText(message: string): CoreThunk {
       dispatch(sessionSlice.actions._incNumTurn())
       dispatch(sessionSlice.actions._setNextTurn(DialogueRole.Child))
 
-      const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE_TEXT, { session_id: state.session.id!! }), 
+      const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_PARENT_SEND_MESSAGE_TEXT, { session_id: state.session.id!! }),
         { message }, {
         headers: signedInHeader
       })
 
       console.log("Retrieved new child card recommendations.")
-      dispatch(sessionSlice.actions._setTurnId(resp.data.next_turn_id))      
+      dispatch(sessionSlice.actions._setTurnId(resp.data.next_turn_id))
       dispatch(sessionSlice.actions._storeNewChildCardRecommendation(resp.data.payload))
     },
     onError: async (ex) => {
@@ -461,8 +465,8 @@ export function appendCard(cardInfo: CardInfo): CoreThunk {
 
       dispatch(sessionSlice.actions._appendSelectedCard(cardInfo))
 
-      const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_CHILD_APPEND_CARD, { session_id: state.session.id!! }), 
-        { id: cardInfo.id, recommendation_id: cardInfo.recommendation_id }, 
+      const resp = await Http.axios.post(Http.getTemplateEndpoint(Http.ENDPOINT_DYAD_MESSAGE_CHILD_APPEND_CARD, { session_id: state.session.id!! }),
+        { id: cardInfo.id, recommendation_id: cardInfo.recommendation_id },
         { headers })
 
       const { new_recommendation } = resp.data
@@ -473,7 +477,7 @@ export function appendCard(cardInfo: CardInfo): CoreThunk {
     onError: async (ex) => {
       console.log(ex)
     }
-    
+
   }, true)
 }
 
@@ -521,7 +525,6 @@ export function confirmSelectedCards(): CoreThunk {
     loadingFlagKey: "isProcessingRecommendation",
     runIfSignedIn: async (dispatch, getState, headers) => {
       const state = getState()
-      dispatch(sessionSlice.actions._claerCardRecommendation())
       dispatch(sessionSlice.actions._incNumTurn())
       dispatch(sessionSlice.actions._setNextTurn(DialogueRole.Parent))
 
@@ -529,6 +532,7 @@ export function confirmSelectedCards(): CoreThunk {
         headers
       })
 
+      dispatch(sessionSlice.actions._claerCardRecommendation())
       dispatch(sessionSlice.actions._setTurnId(resp.data.next_turn_id))
       dispatch(sessionSlice.actions._storeNewParentGuideRecommendation(resp.data.payload))
 

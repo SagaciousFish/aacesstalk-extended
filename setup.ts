@@ -46,7 +46,14 @@ async function setup(){
         .join('\n');
 
     fs.writeFileSync(envPath, envFileContent, {encoding:'utf-8'})
-    fs.writeJsonSync(path.resolve(process.cwd(), "/libs/ts-core/src/lib/", "env.json"), newObj)
+    const jsonEnvPath = path.join(process.cwd(), "/libs/ts-core/src/lib/", "env.json")
+
+
+    if(fs.existsSync(jsonEnvPath) == false){
+        fs.createFileSync(jsonEnvPath)
+    }
+
+    fs.writeJsonSync(jsonEnvPath, newObj)
 }
 
 setup().then()

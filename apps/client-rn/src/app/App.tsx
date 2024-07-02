@@ -14,6 +14,8 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Http } from '@aacesstalk/libs/ts-core';
 import { getTimeZone } from 'react-native-localize';
 import { useKeepAwake } from '@sayem314/react-native-keep-awake';
+import Toast from 'react-native-toast-message';
+import { toastConfig } from '../components/toast';
 
 const Stack = createNativeStackNavigator()
 
@@ -48,10 +50,11 @@ export const App = () => {
     <PersistGate persistor={persistor}>
       <SafeAreaProvider>
         <GestureHandlerRootView className="flex-1">
-        <NavigationContainer>
-            <GlobalNavigator/>
-        </NavigationContainer>
+          <NavigationContainer>
+              <GlobalNavigator/>
+          </NavigationContainer>
         </GestureHandlerRootView>
+        <Toast config={toastConfig}/>
       </SafeAreaProvider>
     </PersistGate>
   </Provider>
