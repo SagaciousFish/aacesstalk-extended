@@ -73,4 +73,5 @@ class ClovaSpeech(IntegrationService):
                 print(result)
                 return result["text"]
             else:
-                raise Exception("Clova speech error - ", response.status_code, response.json())
+                print(response.json())
+                raise Exception("Clova speech error - ", response.status_code)
