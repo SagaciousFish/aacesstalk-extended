@@ -9,6 +9,8 @@ const DEFAULTS: CreateAxiosDefaults<any> = {
 
 export class Http{
 
+  static ENDPOINT_PING = "/ping"
+
   static ENDPOINT_DYAD = "/dyad"
   static ENDPOINT_DYAD_ACCOUNT = `${Http.ENDPOINT_DYAD}/account`
 

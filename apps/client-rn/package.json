@@ -48,7 +48,8 @@
     "react-native-progress": "*",
     "react-native-file-access": "*",
     "rxjs": "*",
-    "merge": "*"
+    "merge": "*",
+    "@react-native-community/netinfo": "*"
   },
   "devDependencies": {}
 }

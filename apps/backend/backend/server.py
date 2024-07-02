@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from time import perf_counter
 
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request, status, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, PlainTextResponse
@@ -75,6 +75,6 @@ async def pass_request_ids_header(request: Request, call_next):
 
     return response
 
-@app.get("/ping")
-def ping()->str:
-    return "Server is working."
+@app.head("/api/v1/ping")
+def ping():
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

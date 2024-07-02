@@ -953,6 +953,8 @@ PODS:
   - react-native-mmkv-storage (0.9.1):
     - MMKV (= 1.2.13)
     - React-Core
+  - react-native-netinfo (11.3.2):
+    - React-Core
   - react-native-safe-area-context (4.10.1):
     - React-Core
   - React-nativeconfig (0.74.1)
@@ -1323,6 +1325,7 @@ DEPENDENCIES:
   - react-native-blob-util (from `../../../node_modules/react-native-blob-util`)
   - "react-native-keep-awake (from `../../../node_modules/@sayem314/react-native-keep-awake`)"
   - react-native-mmkv-storage (from `../../../node_modules/react-native-mmkv-storage`)
+  - "react-native-netinfo (from `../../../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area-context (from `../../../node_modules/react-native-safe-area-context`)
   - React-nativeconfig (from `../../../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../../../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
@@ -1436,6 +1439,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/@sayem314/react-native-keep-awake"
   react-native-mmkv-storage:
     :path: "../../../node_modules/react-native-mmkv-storage"
+  react-native-netinfo:
+    :path: "../../../node_modules/@react-native-community/netinfo"
   react-native-safe-area-context:
     :path: "../../../node_modules/react-native-safe-area-context"
   React-nativeconfig:
@@ -1509,7 +1514,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
-  DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
+  DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
   FasterImage: 4563818710bcb2dc2235fab5a5b35c3fb9ac26df
   FBLazyVector: 898d14d17bf19e2435cafd9ea2a1033efe445709
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
@@ -1544,6 +1549,7 @@ SPEC CHECKSUMS:
   react-native-blob-util: 18b510205c080a453574a7d2344d64673d0ad9af
   react-native-keep-awake: 5cfb49d1b2ee4321b2ffbc651e2d6d64d6f66772
   react-native-mmkv-storage: cfb6854594cfdc5f7383a9e464bb025417d1721c
+  react-native-netinfo: 076df4f9b07f6670acf4ce9a75aac8d34c2e2ccc
   react-native-safe-area-context: dcab599c527c2d7de2d76507a523d20a0b83823d
   React-nativeconfig: b0073a590774e8b35192fead188a36d1dca23dec
   React-NativeModulesApple: df46ff3e3de5b842b30b4ca8a6caae6d7c8ab09f

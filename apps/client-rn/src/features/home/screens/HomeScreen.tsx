@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { styleTemplates } from "apps/client-rn/src/styles"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { Alert, Platform, StyleSheet, Text, View } from "react-native"
+import { Alert, InteractionManager, Platform, StyleSheet, Text, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import format from 'string-template';
 import { TopicButton } from "../components/TopicButton"
@@ -18,6 +18,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { MainRoutes } from "../../../navigation"
 import { getTimeZone } from "react-native-localize"
 import {check, checkMultiple, PERMISSIONS, PermissionStatus, request} from 'react-native-permissions'
+import NetInfo, { useNetInfo, useNetInfoInstance } from "@react-native-community/netinfo"
 
 const styles = StyleSheet.create({
     topicFreeDimensions: {right: '5%', bottom: '10%', width: '70%', height: '70%'},
@@ -53,6 +54,27 @@ const FreeTopicButton = (props: {style?: any, disabled?: boolean}) => {
                 />
 }
 
+const BackendConnectionCheckerOverlay = () => {
+    const netInfo = useNetInfo()
+    console.log(netInfo)
+    
+    const onPressRefresh = useCallback(()=>{
+        InteractionManager.runAfterInteractions(async ()=>{
+            console.log("Refresh connection")
+            await NetInfo.refresh()
+        })
+    }, [])
+
+    const [t] = useTranslation()
+    
+    return netInfo.isInternetReachable ? null : <View className="absolute top-0 left-0 right-0 bottom-0 bg-white/40 items-center justify-center">
+        <View className="max-w-[40vw] bg-white p-3 px-6 rounded-xl shadow-lg border-red-400 border-4">
+            <Text style={styleTemplates.withBoldFont} className="text-lg">{t("ERRORS.NETWORK_CONNECTION")}</Text>
+            <TailwindButton title={t('ERRORS.NETWORK_CONNECTION_REFRESH')} onPress={onPressRefresh}/>
+        </View>
+        </View>
+}
+
 export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigatorParamList, "home">) => {
 
     const [permissionsGranted, setPermissionsGranted] = useState(false)
@@ -61,21 +83,37 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
 
     const dispatch = useDispatch()
 
-    const onPressPlanButton = useCallback(()=>{
-        const topic = { category: TopicCategory.Plan }
-        dispatch(startNewSession(topic, getTimeZone()))
-        props.navigation.navigate(MainRoutes.ROUTE_SESSION, { topic })
+    const checkBackendConnection = useCallback(async ()=>{
+        const netInfo = await NetInfo.refresh()
     }, [])
 
-    const onPressRecallButton = useCallback(()=>{
-        const topic = { category: TopicCategory.Recall }
-        dispatch(setSessionInitInfo({topic}))
-        dispatch(startNewSession(topic, getTimeZone()))
-        requestAnimationFrame(()=>{
-            props.navigation.navigate(MainRoutes.ROUTE_SESSION, { topic })
+    const onPressPlanButton = useCallback(async ()=>{
+        await checkBackendConnection()
+        requestAnimationFrame(async ()=>{
+            const netInfo = await NetInfo.fetch()
+            if(netInfo.isInternetReachable){
+                const topic = { category: TopicCategory.Plan }
+                dispatch(startNewSession(topic, getTimeZone()))
+                props.navigation.navigate(MainRoutes.ROUTE_SESSION, { topic })
+            }
         })
         
-    }, [])
+    }, [checkBackendConnection])
+
+    const onPressRecallButton = useCallback(async ()=>{
+        await checkBackendConnection()
+        requestAnimationFrame(async ()=>{
+            const netInfo = await NetInfo.fetch()
+            if(netInfo.isInternetReachable){
+                const topic = { category: TopicCategory.Recall }
+                dispatch(setSessionInitInfo({topic}))
+                dispatch(startNewSession(topic, getTimeZone()))
+                requestAnimationFrame(()=>{
+                    props.navigation.navigate(MainRoutes.ROUTE_SESSION, { topic })
+                })
+            }
+        })
+    }, [checkBackendConnection])
 
     const checkPermissionsGranted = useCallback(async () => {
         if(REQUIRED_PERMISSIONS.length > 0){
@@ -130,6 +168,7 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
             </View>
             <ProfileButton/>
             <TailwindButton containerClassName="absolute right-5 bottom-5" buttonStyleClassName="py-5 px-12" roundedClassName="rounded-full" title={t("TopicSelection.StarCount")}></TailwindButton>
-        </SafeAreaView>
+        </SafeAreaView>       
+        <BackendConnectionCheckerOverlay/> 
         </HillBackgroundView>
 }
