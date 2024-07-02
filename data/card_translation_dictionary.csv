@@ -193,6 +193,7 @@ zqOJNzjf6U,action,leave,떠나다,False
 Hb6_GV5J9o,action,like,좋아해요,True
 A5BihMEWDc,action,like to,좋아해요,False
 F3nPejvVfa,action,liked,좋았어요,True
+QwlrDvyY2B,action,list,나열해요,False
 W36kb3y-0g,action,listen,들어요,True
 y3HnSIkPc3,action,listen to,들어요,False
 FKx7TtcCcr,action,listened,들었어요,True
@@ -897,6 +898,7 @@ bEMVGp6vdz,topic,therapy,치료,False
 AMdyvxe2Qz,topic,there,거기,False
 fwevuioC5m,topic,tickets,티켓,True
 Cvu5PkRqny,topic,time,시간,False
+3xeqn30X8m,topic,to - do list,할일 목록,False
 DTobD2zH-f,topic,today,오늘,False
 9UMfiB_gG7,topic,todo,할일,False
 UhU29qrEDh,topic,together,함께,True

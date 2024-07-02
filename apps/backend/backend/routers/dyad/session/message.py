@@ -8,8 +8,10 @@ from os import path
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, Response
 from py_core import ModeratorSession
 from chatlib.utils.time import get_timestamp
-from py_core.system.model import Dialogue, DialogueTurn, ParentGuideRecommendationResult, CardIdentity, ChildCardRecommendationResult, \
-    CardInfo, ParentExampleMessage, InterimCardSelection
+from py_core.system.model import Dialogue, ParentGuideRecommendationResult, CardIdentity, ChildCardRecommendationResult, \
+    CardInfo, ParentExampleMessage
+
+from py_core.system.task.parent_guide_recommendation.punctuator import Punctuator
 
 from py_core.config import AACessTalkConfig
 
@@ -32,6 +34,8 @@ router = APIRouter()
 
 
 asr_engine = ClovaLongSpeech()
+
+punctuator = Punctuator()
 
 class DialogueResponse(BaseModel):
     dyad_id: str
@@ -82,7 +86,10 @@ async def send_parent_message_audio(file: Annotated[UploadFile, File()], turn_id
 
         text = await asr_engine.recognize_speech(file.filename, open(target_file_path, 'rb'), file.content_type)
         if len(text) > 0:
-            turn, recommendation = await session.submit_parent_message(parent_message=text)
+            processed_text = await punctuator.punctuate(text)
+            print(text, processed_text)
+            # Generate recommendation
+            turn, recommendation = await session.submit_parent_message(parent_message=processed_text)
             return ResponseWithTurnId(payload=recommendation, next_turn_id=turn.id)
         else:
             return Response(status_code=500, content=ErrorType.EmptyDictation)
