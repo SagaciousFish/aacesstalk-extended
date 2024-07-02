@@ -87,7 +87,7 @@ async def send_parent_message_audio(file: Annotated[UploadFile, File()], turn_id
         else:
             raise HTTPException(status_code=500, detail=ErrorType.EmptyDictation)
     except Exception as ex:
-        raise HTTPException(status_code=500, detail=ex.__str__) from ex
+        raise HTTPException(status_code=500, detail=ex.__str__()) from ex
 
 class RequestExampleArgs(BaseModel):
     recommendation_id: str

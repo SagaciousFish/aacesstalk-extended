@@ -1,8 +1,10 @@
 import axios, { Axios, CreateAxiosDefaults } from 'axios';
 import format = require('string-template');
+import { Env } from '../utils/env';
+
 
 const DEFAULTS: CreateAxiosDefaults<any> = {
-  baseURL: (process.env["NODE_ENV"] == "development" ? "http://192.168.2.6:3000" : "") + "/api/v1"
+  baseURL: Env.instance.getVariable(Env.KEY_BACKEND_ADDRESS) + "/api/v1"
 }
 
 export class Http{
