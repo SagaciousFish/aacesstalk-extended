@@ -130,7 +130,7 @@ export const ChildCardView = React.memo((props:{
         }
     }, [props.imageQueryId, applyCardImage])
 
-    return <Pressable disabled={props.disabled} onPressIn={onPressIn} onPressOut={onPressOut} onPress={onPress}><Animated.View
+    return <Pressable accessible={false} disabled={props.disabled} onPressIn={onPressIn} onPressOut={onPressOut} onPress={onPress}><Animated.View
         style={containerAnimStyle} className={`rounded-xl shadow-lg shadow-black/80 border-2 border-slate-200 p-2 bg-white w-[11vw] h-[11vw] m-2 ${props.cardClassName}`}>
         <FasterImageView style={styles.imageView} source={imageSource}/>
         <Text className="self-center mt-2 text-black/80" style={styleTemplates.withBoldFont}>{props.label}</Text>

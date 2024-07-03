@@ -68,14 +68,14 @@ export const SelectedCardDeck = (props: {
         }
     }, [previousSelectedCardCount, selectedCardIds.length])
 
-    return <View className={`self-stretch h-[14vw] ${lightTopicColorClassName} flex-row items-stretch relative`}>
-        <LayoutAnimationConfig skipExiting={true}><ScrollView ref={scrollViewRef} nestedScrollEnabled={false} horizontal className='flex-1' 
+    return <View className={`self-stretch h-[14vw] ${lightTopicColorClassName} flex-row items-stretch relative`} accessible={false}>
+        <LayoutAnimationConfig skipExiting={true}><ScrollView accessibilityRole='none' ref={scrollViewRef} accessible={false} accessibilityElementsHidden={true} nestedScrollEnabled={false} horizontal className='flex-1' 
             contentContainerStyle={styles.cardScrollViewContentContainerStyle}
             endFillColor={panelBackgroundColor}
             fadingEdgeLength={200}
             >
         {
-            selectedCardIds.map(id => <Animated.View entering={selectedCardEnteringAnim} exiting={selectedCardExitingAnim} layout={LinearTransition.duration(300)} key={id}>
+            selectedCardIds.map(id => <Animated.View accessible={false} entering={selectedCardEnteringAnim} exiting={selectedCardExitingAnim} layout={LinearTransition.duration(300)} key={id}>
                 <SelectedCardView id={id} disabled={!isInteractionEnabled}/>
                 </Animated.View>)
         }

@@ -95,6 +95,7 @@ qztJWM4PBi,action,disliked,싫어요,False
 hGuXhKudjg,action,disobey,반항해요,False
 o5KmEGtJjx,action,do,해요,True
 9vqnNR5W-U,action,do n't want,원하지 않아요,False
+2Lxgyiqw7L,action,doing,하고 있어요,False
 gDBX_FfZB6,action,done,끝났어요,True
 kxSN7eriBw,action,doodle,그림을 그려요,False
 DkB3fWFsS0,action,download,다운로드해요,False
@@ -269,6 +270,7 @@ fWlM9xYliY,action,ready,준비해요,False
 eg2R6dCzbO,action,ready for,준비해요,False
 DRC2eMf1zA,action,recommend,추천해요,False
 AZvi7NcV3X,action,remember,기억해요,True
+9AzeGqGOsN,action,reply,대답해요,False
 vZp5A9TE6g,action,rest,쉬어요,True
 fbk0Eqeeuo,action,return,돌아가다,False
 Y2hnmAeTh5,action,ride,타요,True
@@ -299,6 +301,7 @@ IUOlmc_znM,action,slide,미끄러져요,True
 oqU0MEdhU1,action,smile,웃음,False
 d_gFHi0Rn9,action,solve,해결해요,True
 YuOIGXfzvq,action,solved,해결했어요,True
+F-Wtsq-GAm,action,sort,정렬해요,False
 LafJITqEu9,action,speak,말해요,True
 6Gy0djLU2E,action,spend,쓰다,False
 i6ViejcBeN,action,spend time,시간을 보아요,False
@@ -340,6 +343,7 @@ SVk91PDyct,action,tell,이야기해요,True
 i1K1S9aLE5,action,thinking about,생각해요,False
 eQZL7MHvE9,action,threw,던졌어요,True
 7iZI-C4C66,action,throw,던져요,True
+YZ5w1wkIYH,action,tidy,정돈해요,False
 5M-KuPT-LW,action,tired,피곤해요,False
 9ILQPBaUyL,action,today,오늘,False
 eLOs9GdlMn,action,told,이야기해요,False
@@ -492,6 +496,7 @@ hwas5Rok7r,topic,Dream,꿈,False
 ij7TQkFJ_B,topic,English,영어,True
 Vf0OZQ_IP1,topic,Father,아빠,False
 lPMB71_A--,topic,Ferris Wheel,관람차,False
+VLjaYrJUGt,topic,Friend 's house,친구의 집,False
 02AFrNPPuz,topic,Giggle,꼬옥,False
 UCp9JC3kLj,topic,Grandfather,할아버지,False
 j_zsujllMa,topic,Grandma 's Day,할머니의 날,False
@@ -592,6 +597,7 @@ ucBETq0Hhp,topic,cartoons,만화,True
 VEdyWQtGuq,topic,celebration,축하,False
 6nbW3Iqrfb,topic,center,센터,False
 AQ8esoMp_0,topic,chair,의자,False
+mBHDGnrtnw,topic,chore,일,False
 mrNM91WYuJ,topic,chores,일,False
 IC2VKwEWbF,topic,chuckling,꼬옥,False
 QZg5_V3fHz,topic,cinema,영화관,True
@@ -697,6 +703,7 @@ LM0bXfB2BD,topic,go outside,밖 가요,False
 KMU5S5yP36,topic,going,가는,False
 o155HdxDwa,topic,grandma,할머니,True
 DGTakTQt9D,topic,grandpa,할아버지,False
+AY8egiZkL-,topic,greeting,인사,False
 W1V5Z997A6,topic,grocery,식료품,False
 Vl937VqDo2,topic,grocery shopping,식료품 쇼핑,False
 FkJKHidooM,topic,gym,체육관,False
@@ -734,7 +741,9 @@ Yr4ahWlSAA,topic,library,도서관,False
 7HjNTrqSKY,topic,listen,듣기,True
 thb-xxVWGc,topic,listening,듣기,False
 pTo8nkxVXx,topic,listening music,음악 청취,False
+RltWF5ZdK3,topic,living room,거실,False
 Ro7zGl_2ZO,topic,long time,오랜 시간,False
+3fY2lU3-Z2,topic,love,사랑,False
 4PgUQB51Ht,topic,lunch,점심,True
 _0hjBhSJwK,topic,lunchtime,점심 시간,False
 WtBG1qiU3i,topic,magazine,잡지,False
@@ -756,6 +765,7 @@ vP_-1EBC-y,topic,museums,박물관,False
 AMFNW_Hop-,topic,music,음악,True
 ZGrPFV4a94,topic,music class,음악 수업,False
 yQeyojCCSs,topic,music lesson,음악 수업,False
+EHM7JYQ_p1,topic,name,이름,False
 E8ycSIDikj,topic,nap,숙면,False
 QTo9sTwGbp,topic,napping,낮잠,False
 __wM5lb9Pe,topic,navigation,내비게이션,False
@@ -900,7 +910,9 @@ fwevuioC5m,topic,tickets,티켓,True
 Cvu5PkRqny,topic,time,시간,False
 3xeqn30X8m,topic,to - do list,할일 목록,False
 DTobD2zH-f,topic,today,오늘,False
+E_18FI6t6S,topic,todays plan,오늘 계획,False
 9UMfiB_gG7,topic,todo,할일,False
+9Cph_SxXNJ,topic,todos,할일,False
 UhU29qrEDh,topic,together,함께,True
 wkpLfQFBhQ,topic,toothbrush,칫솔,False
 05joagL419,topic,toy,장난감,True

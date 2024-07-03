@@ -43,15 +43,23 @@ export function useMoveNextTurn(
                 onGoNext?.(currentTurn)
                 break;
             case DialogueRole.Child:
-                if(canSubmitSelectedChildCards === true){    
+                if(canSubmitSelectedChildCards === true){  
+                    Toast.hide()  
                     dispatch(confirmSelectedCards())
                     onGoNext?.(currentTurn)
                 }else{
+                    Toast.show({
+                        type: 'warning',
+                        position: 'bottom',
+                        bottomOffset: 100,
+                        visibilityTime: 6000,
+                        text1: "카드를 선택해야 다음으로 넘어갈 수 있어요!"
+                    })
                     onGoNextFail?.(currentTurn)
                 }
                 break;
         }
-    }, [currentTurn, t])
+    }, [currentTurn, t, canSubmitSelectedChildCards])
 }
 
 export function useEnterKeyEvent(listening: boolean=true, onKeyPress?: ()=>boolean) {
@@ -61,7 +69,9 @@ export function useEnterKeyEvent(listening: boolean=true, onKeyPress?: ()=>boole
     const isKeyInputConsumed = useRef(false)
 
     useEffect(()=>{
-        isKeyInputConsumed.current = false
+        if(isInteractionEnabled === true){
+            isKeyInputConsumed.current = false
+        }
     }, [isInteractionEnabled])
 
     useEffect(()=>{
@@ -72,6 +82,7 @@ export function useEnterKeyEvent(listening: boolean=true, onKeyPress?: ()=>boole
         })*/
         
         const upListener = KeyEvent.addKeyUpListener((event) => {
+            console.log("Key up event - ", listening, isInteractionEnabled, isKeyInputConsumed.current)
             if(event.keyCode == 66 && listening == true && isInteractionEnabled){
                 if(isKeyInputConsumed.current == false){
                     isKeyInputConsumed.current = onKeyPress?.() || false
