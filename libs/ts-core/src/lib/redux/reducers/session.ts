@@ -236,6 +236,11 @@ export const childCardSessionSelectors = Object.fromEntries(CARD_CATEGORIES.map(
 
 export const parentGuideSelectors = parentGuideAdapter.getSelectors<CoreState>(state => state.session.parentGuideEntityState)
 
+export function isInteractionEnabledSelector(state: CoreState){
+  return state.session.currentTurnId != null && state.session.id != null && state.session.isInitializing == false
+    && state.session.isProcessingRecommendation == false
+}
+
 export const parentGuideMessageSelector = createSelector(
   [parentGuideSelectors.selectById],
   (guide) => {

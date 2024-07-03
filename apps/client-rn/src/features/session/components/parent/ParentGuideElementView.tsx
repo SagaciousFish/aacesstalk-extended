@@ -131,7 +131,7 @@ const ParentMessageGuideElementView = (props: Props) => {
     }, [topicCategory])
     
     return <Animated.View entering={enteringAnim}>
-            <Pressable onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut} >
+            <Pressable accessible={false} onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut} >
                 <Animated.View style={containerAnimStyle} className={`${GUIDE_FRAME_DIMENSION_CLASSNAME}`}>
                     <Animated.View style={[styles.guideFrame, guideMessageAnimStyle]} className={`${GUIDE_FRAME_CLASSNAME} ${guideMessageFrameBackgroundClassName}`}>
                         <Animated.Text style={[styleTemplates.withSemiboldFont, guideMessageTextAnimStyle]} className={`${TEXT_MESSAGE_CLASSNAME}`}>{guideMessage}</Animated.Text>

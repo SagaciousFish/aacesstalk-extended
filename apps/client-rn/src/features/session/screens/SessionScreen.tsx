@@ -7,7 +7,7 @@ import HillFreeImage from '../../../assets/images/hill_free.svg'
 import { HillBackgroundView } from 'apps/client-rn/src/components/HillBackgroundView'
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'apps/client-rn/src/redux/hooks'
-import { Fragment, useCallback, useEffect } from 'react'
+import { Fragment, useCallback, useEffect, useState } from 'react'
 import { SessionParentView } from '../components/parent/SessionParentView'
 import { TailwindButton } from 'apps/client-rn/src/components/tailwind-components'
 import { MenuIcon } from 'apps/client-rn/src/components/vector-icons'
@@ -17,7 +17,8 @@ import { SessionChildView } from '../components/child/SessionChildView'
 import { TailwindClasses } from 'apps/client-rn/src/styles'
 import { useDisableBack, usePrevious } from 'apps/client-rn/src/utils/hooks'
 import { startRecording, stopRecording } from '../../audio/reducer'
-import { InteractionManager } from 'react-native'
+import { InteractionManager, Text } from 'react-native'
+import { useEnterKeyEvent, useMoveNextTurn } from '../hooks'
 
 const BG_COLOR_BY_TOPIC_CATEGORY = {
     [TopicCategory.Plan]: 'bg-topicplan-bg',
@@ -71,6 +72,13 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
         }
     }, [])
 
+    const onNextTurnPress = useMoveNextTurn()
+
+    useEnterKeyEvent(true, useCallback(()=>{
+        onNextTurnPress()
+        return true
+    }, [onNextTurnPress]))
+
     let HillView
     switch (props.route.params.topic.category) {
         case TopicCategory.Plan:
@@ -105,7 +113,7 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
             <Animated.View className='absolute left-5 bottom-5' entering={menuButtonEnteringAnim}>
                 <TailwindButton onPress={onMenuButtonPress} roundedClassName='rounded-xl' buttonStyleClassName={`p-3 ${TailwindClasses.ICON_BUTTON_SIZES}`}><MenuIcon width={32} height={32} fill={"#575757"} /></TailwindButton>
             </Animated.View> : null
-        }
+        } 
         
     </HillBackgroundView>
 }

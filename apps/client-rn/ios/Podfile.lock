@@ -1212,6 +1212,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNGlobalKeyEvent (0.1.4):
+    - React-Core
   - RNLocalize (3.1.0):
     - React-Core
   - RNPermissions (4.1.5):
@@ -1353,6 +1355,7 @@ DEPENDENCIES:
   - ReactNativeFileAccess (from `../../../node_modules/react-native-file-access`)
   - RNAudioRecorderPlayer (from `../../../node_modules/react-native-audio-recorder-player`)
   - RNGestureHandler (from `../../../node_modules/react-native-gesture-handler`)
+  - RNGlobalKeyEvent (from `../../../node_modules/react-native-global-keyevent`)
   - RNLocalize (from `../../../node_modules/react-native-localize`)
   - RNPermissions (from `../../../node_modules/react-native-permissions`)
   - RNReanimated (from `../../../node_modules/react-native-reanimated`)
@@ -1495,6 +1498,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native-audio-recorder-player"
   RNGestureHandler:
     :path: "../../../node_modules/react-native-gesture-handler"
+  RNGlobalKeyEvent:
+    :path: "../../../node_modules/react-native-global-keyevent"
   RNLocalize:
     :path: "../../../node_modules/react-native-localize"
   RNPermissions:
@@ -1514,7 +1519,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
-  DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
+  DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
   FasterImage: 4563818710bcb2dc2235fab5a5b35c3fb9ac26df
   FBLazyVector: 898d14d17bf19e2435cafd9ea2a1033efe445709
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
@@ -1577,6 +1582,7 @@ SPEC CHECKSUMS:
   ReactNativeFileAccess: e3b1a0a36b919d20279947aac31c2e939827c93b
   RNAudioRecorderPlayer: f3b4f32d5581a44be0f9eb383dc87f98f941b08b
   RNGestureHandler: 2282cfbcf86c360d29f44ace393203afd5c6cff7
+  RNGlobalKeyEvent: 4d00fca68d008762eaaba3b4afff4a0b3d1592b5
   RNLocalize: e8694475db034bf601e17bd3dfa8986565e769eb
   RNPermissions: f9a0380dad4d370b6b983acaf4f9bff07aba9a21
   RNReanimated: b4e901db1a474d80b555478ba8704714094e6979

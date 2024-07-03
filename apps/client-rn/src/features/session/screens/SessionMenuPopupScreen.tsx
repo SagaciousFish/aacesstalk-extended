@@ -1,4 +1,4 @@
-import { AACessTalkErrors, DialogueRole, cancelSession, confirmSelectedCards, endSession, isChildCardConfirmValidSelector } from "@aacesstalk/libs/ts-core";
+import { DialogueRole, cancelSession, isChildCardConfirmValidSelector } from "@aacesstalk/libs/ts-core";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { PopupMenuItemView } from "apps/client-rn/src/components/PopupMenuItemView";
 import { PopupMenuScreenFrame } from "apps/client-rn/src/components/PopupMenuScreenFrame";
@@ -7,8 +7,7 @@ import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert } from "react-native";
-import { stopRecording } from "../../audio/reducer";
-import Toast from "react-native-toast-message";
+import { useMoveNextTurn } from "../hooks";
 
 export const SessionMenuPopupScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigatorParamList, "session-menu">) => {
     
@@ -42,36 +41,9 @@ export const SessionMenuPopupScreen = (props: NativeStackScreenProps<MainRoutes.
         }
     }, [t, numTurns, sessionId])
 
-    const onNextTurnPress = useCallback(()=>{
-        switch(currentTurn){
-            case DialogueRole.Parent:
-                dispatch(stopRecording(false, err => {
-                    if(err == AACessTalkErrors.EmptyDictation){
-                        Toast.show({
-                            type: 'warning',
-                            text1: t("ERRORS.EMPTY_DICTATION"),
-                            topOffset: 60,
-                            visibilityTime: 6000                             
-                        })
-                    }else{
-                        Toast.show({
-                            type: 'warning',
-                            text1: t("ERRORS.SPEECH_ERROR_GENERAL"),
-                            topOffset: 60,
-                            visibilityTime: 6000
-                        })
-                    }
-                }))
-                props.navigation.pop()
-                break;
-            case DialogueRole.Child:
-                if(canSubmitSelectedChildCards === true){    
-                    dispatch(confirmSelectedCards())
-                    props.navigation.pop()
-                }
-                break;
-        }
-    }, [currentTurn, t])
+    const onNextTurnPress = useMoveNextTurn(useCallback((turn: DialogueRole)=>{
+        props.navigation.pop()
+        }, [props.navigation]))
     
     return <PopupMenuScreenFrame onPop={pop}>
         <PopupMenuItemView title={t("Session.Menu.NextTurn")} onPress={onNextTurnPress} disabled={!((currentTurn == DialogueRole.Child && canSubmitSelectedChildCards) || currentTurn == DialogueRole.Parent)}/>

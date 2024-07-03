@@ -167,7 +167,7 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
                 <FreeTopicButton disabled={!permissionsGranted}/>
             </View>
             <ProfileButton/>
-            <TailwindButton containerClassName="absolute right-5 bottom-5" buttonStyleClassName="py-5 px-12" roundedClassName="rounded-full" title={t("TopicSelection.StarCount")}></TailwindButton>
+            <TailwindButton containerClassName="absolute right-5 bottom-5" buttonStyleClassName="py-5 px-12" roundedClassName="rounded-full" title={t("TopicSelection.StarCount")}/>
         </SafeAreaView>       
         <BackendConnectionCheckerOverlay/> 
         </HillBackgroundView>

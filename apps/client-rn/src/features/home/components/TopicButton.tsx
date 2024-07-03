@@ -53,7 +53,7 @@ export const TopicButton = (props: {
         }
     }, [props.imageContainerStyleDimensions, props.imageNormalDegree, props.imagePressedDegree])
 
-    return <Pressable style={props.style} onPressIn={onPressIn} onPressOut={onPressOut} onPress={props.onPress} disabled={props.disabled}>
+    return <Pressable accessible={false} style={props.style} onPressIn={onPressIn} onPressOut={onPressOut} onPress={props.onPress} disabled={props.disabled}>
             <Animated.View className={`w-[32vh] h-[32vh] rounded-[28px] border-[5px] border-white shadow-2xl shadow-slate-600 bg-teal-400 block ${props.buttonClassName} relative px-5 py-6 pb-4 overflow-hidden ${props.disabled === true ? 'opacity-50' : ''}`} style={containerAnimStyle}>
             <Text style={styleTemplates.withExtraboldFont} className="text-white text-2xl">{props.title}</Text>
             <Animated.View style={imageContainerStyle} className="bottom-[25%]">
