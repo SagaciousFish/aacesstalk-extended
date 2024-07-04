@@ -8,7 +8,7 @@ from backend import env_variables
 from backend.crud.dyad.account import get_dyad_by_id
 from backend.database import with_db_session, AsyncSession, db_sessionmaker
 from py_database.model import DyadORM, SessionORM as SessionORM
-from jose import JWTError, jwt
+import jwt
 from chatlib.utils.env_helper import get_env_variable
 
 
@@ -31,12 +31,12 @@ async def get_signed_in_dyad_orm(token: Annotated[str, Depends(oauth2_scheme)], 
     )
     
     try:
-        payload = jwt.decode(token, get_env_variable(env_variables.AUTH_SECRET))
+        payload = jwt.decode(token, get_env_variable(env_variables.AUTH_SECRET), algorithms=['HS256'])
         dyad_id: str = payload.get("sub")
         if dyad_id is None:
             raise credentials_exception
 
-    except JWTError as ex:
+    except jwt.exceptions.DecodeError as ex:
         print(ex)
         raise credentials_exception
 

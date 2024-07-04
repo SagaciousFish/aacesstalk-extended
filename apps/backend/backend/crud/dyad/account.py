@@ -1,7 +1,6 @@
-import sqlalchemy.exc
 from chatlib.utils import env_helper
 from chatlib.utils.time import get_timestamp
-from jose import jwt
+import jwt
 from sqlmodel import select
 
 from backend import env_variables
@@ -57,11 +56,11 @@ async def login_with_code(login_code: str, session: AsyncSession) -> str:
             "alias": dyad.alias,
             "child_name": dyad.child_name,
             "parent_type": dyad.parent_type,
-            "iat": issued_at,
-            "exp": issued_at + (365 * 24 * 3600 * 1000)  # 1 year
+            "iat": issued_at/1000,
+            "exp": (issued_at + (365 * 24 * 3600 * 1000))/1000  # 1 year
         }
         print(env_helper.get_env_variable(env_variables.AUTH_SECRET))
-        access_token = jwt.encode(to_encode, env_helper.get_env_variable(env_variables.AUTH_SECRET))
+        access_token = jwt.encode(to_encode, env_helper.get_env_variable(env_variables.AUTH_SECRET), algorithm='HS256')
         return access_token
     else:
         raise ValueError("No such dyadic user with the code.")
