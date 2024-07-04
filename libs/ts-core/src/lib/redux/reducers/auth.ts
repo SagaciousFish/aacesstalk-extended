@@ -5,6 +5,7 @@ import { Http } from '../../net/http';
 import { jwtDecode } from "jwt-decode";
 import { Axios, AxiosError } from 'axios';
 import { AACessTalkErrors } from '../../errors';
+import { initializeDyadStatus } from './dyad-status';
 
 export interface AuthState {
   isAuthorizing: boolean;
@@ -100,6 +101,7 @@ export function loginDyadThunk(code: string): CoreThunk {
 export function signOutDyadThunk(): CoreThunk {
   return async (dispatch, getState) => {
     dispatch(authSlice.actions.initialize())
+    dispatch(initializeDyadStatus())
   }
 }
 

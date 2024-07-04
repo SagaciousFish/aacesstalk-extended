@@ -1,11 +1,12 @@
 import { styleTemplates } from "apps/client-rn/src/styles"
-import { useCallback } from "react"
-import { Pressable, Text, ViewStyle } from "react-native"
+import { useCallback, useMemo } from "react"
+import { useTranslation } from "react-i18next"
+import { Pressable, Text, View, ViewStyle } from "react-native"
 import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated"
+import stringFormat from 'string-template'
 
 export const TopicButton = (props: {
     title: string,
-    dialogueCount: number,
     imageComponent: JSX.Element,
     buttonClassName?: string,
     disabled?: boolean,
@@ -13,8 +14,12 @@ export const TopicButton = (props: {
     imageContainerStyleDimensions: Pick<ViewStyle, "width"|"height"|"left"|"top"|"right"|"bottom">
     imageNormalDegree: number,
     imagePressedDegree: number,
-    onPress?: () => void
+    numSessionsToday?: number,
+    numSessionsTotal?: number,
+    onPress?: () => void,
 }) => {
+
+    const [t] = useTranslation()
 
     const pressAnimProgress = useSharedValue(0)
     const pressAnimImageProgress = useSharedValue(0)
@@ -53,12 +58,35 @@ export const TopicButton = (props: {
         }
     }, [props.imageContainerStyleDimensions, props.imageNormalDegree, props.imagePressedDegree])
 
+    const todayCountText = useMemo(()=>{
+        if(props.numSessionsToday != null && props.numSessionsToday > 0){
+            return stringFormat(t("Session.DialogueCountTodayTemplate"), {count: props.numSessionsToday})
+        }else{
+            return t("Session.DialogueCountTodayNone")
+        }
+    }, [t, props.numSessionsToday])
+
+    const totalCountText = useMemo(()=>{
+        if(props.numSessionsTotal != null && props.numSessionsTotal > 0){
+            return stringFormat(t("Session.DialogueCountTotalTemplate"), {count: props.numSessionsTotal})
+        }else{
+            return t("Session.DialogueCountTotalNone")
+        }
+    }, [t, props.numSessionsTotal])
+
     return <Pressable accessible={false} style={props.style} onPressIn={onPressIn} onPressOut={onPressOut} onPress={props.onPress} disabled={props.disabled}>
             <Animated.View className={`w-[32vh] h-[32vh] rounded-[28px] border-[5px] border-white shadow-2xl shadow-slate-600 bg-teal-400 block ${props.buttonClassName} relative px-5 py-6 pb-4 overflow-hidden ${props.disabled === true ? 'opacity-50' : ''}`} style={containerAnimStyle}>
-            <Text style={styleTemplates.withExtraboldFont} className="text-white text-2xl">{props.title}</Text>
-            <Animated.View style={imageContainerStyle} className="bottom-[25%]">
-                {props.imageComponent}
+                <Text style={styleTemplates.withExtraboldFont} className="text-white text-2xl">{props.title}</Text>
+                <Animated.View style={imageContainerStyle} className="bottom-[25%]">
+                    {props.imageComponent}
+                </Animated.View>
+                {
+                    (props.numSessionsToday != null || props.numSessionsTotal != null) ? <View className="absolute bottom-4 left-4">
+                        { props.numSessionsToday != null && (props.numSessionsTotal != null && props.numSessionsTotal > 0) ? <Text style={styleTemplates.withSemiboldFont} className="text-white text-md">{todayCountText}</Text> : null}
+                        { props.numSessionsTotal != null ? <Text style={styleTemplates.withSemiboldFont} className="text-white text-md mt-1">{totalCountText}</Text> : null}
+                        
+                    </View> : null
+                }
             </Animated.View>
-        </Animated.View>
         </Pressable>
 }

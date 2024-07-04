@@ -21,6 +21,8 @@ export class Http{
   static ENDPOINT_DYAD_SESSION = `${Http.ENDPOINT_DYAD}/session`
   static ENDPOINT_DYAD_SESSION_NEW = `${Http.ENDPOINT_DYAD_SESSION}/new`
 
+  static ENDPOINT_DYAD_SESSION_LIST = `${Http.ENDPOINT_DYAD_SESSION}/list`
+
   static ENDPOINT_DYAD_SESSION_ID = `${Http.ENDPOINT_DYAD_SESSION}/{session_id}`
 
 
@@ -55,7 +57,10 @@ export class Http{
     ...DEFAULTS
   })
 
-  private static getTimezone: () => Promise<string>
+  private static _getTimezone: () => Promise<string>
+  static getTimezone(): Promise<string>{
+    return this._getTimezone()
+  }
   private static isInitialized = false
 
   static get axios(): Axios {
@@ -81,7 +86,7 @@ export class Http{
   }
 
   static initialize(getTimezone: () => Promise<string>){
-    Http.getTimezone = getTimezone
+    Http._getTimezone = getTimezone
     Http.isInitialized = true
   }
 }

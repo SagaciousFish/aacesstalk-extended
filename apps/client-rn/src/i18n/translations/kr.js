@@ -3,6 +3,10 @@ module.exports = {
         ParentMessage: {
             Recording: "녹음중..."
         },
+        DialogueCountTotalTemplate: "누적 대화 {count}회",
+        DialogueCountTodayTemplate: "오늘 대화 {count}회",
+        DialogueCountTotalNone: "이 주제로 대화한 적 없음",
+        DialogueCountTodayNone: "오늘 대화 없음"
     },
     ERRORS: {
         NETWORK_CONNECTION: "현재 서버가 응답하지 않습니다. 다시 연결되면 자동으로 이 창이 사라집니다. 이런 현상이 지속될 경우 연구자에게 문의해 주세요.",

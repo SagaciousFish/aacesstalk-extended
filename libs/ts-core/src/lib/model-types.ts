@@ -110,6 +110,8 @@ export enum TopicCategory{
     Free="free"
 }
 
+export const TOPIC_CATEGORIES = [TopicCategory.Plan, TopicCategory.Recall, TopicCategory.Free]
+
 export interface SessionTopicInfo{
     category: TopicCategory
     subtopic?: string
@@ -119,4 +121,25 @@ export interface SessionTopicInfo{
 export interface TurnIdWithPayload<T>{
     payload: T
     next_turn_id: string
+}
+
+export enum SessionStatus {
+    Initial="initial",
+    Started="started",
+    Conversation="conversation",
+    Terminated="terminated"
+}
+
+export interface ExtendedSessionInfo{
+    id: string
+
+    dyad_id: string
+    topic: SessionTopicInfo
+    status: SessionStatus
+    local_timezone: string
+    started_timestamp: number
+
+    ended_timestamp: number
+    
+    num_turns: number
 }

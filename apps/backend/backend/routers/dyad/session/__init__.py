@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
 from pydantic import BaseModel
 from backend.database import with_db_session, AsyncSession
 from backend.routers.dyad.common import create_moderator_session, dispose_session_instance, get_signed_in_dyad_orm, retrieve_moderator_session
-from backend.crud.dyad.session import find_session_orm
+from backend.crud.dyad.session import find_session_orm, get_session_summaries, ExtendedSessionInfo
 from py_database.model import DyadORM, SessionORM as SessionORM
 from py_core.system.session_topic import SessionTopicInfo
 from py_core.system import ModeratorSession
@@ -26,14 +26,26 @@ async def _get_session_info(session_id: str, dyad: Annotated[DyadORM, Depends(ge
     else:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "No session with the id and the corresponding dyad.")
 
+class SessionInfoListResponse(BaseModel):
+    dyad_id: str
+    sessions: list[ExtendedSessionInfo]
+
+@router.get("/list", response_model=SessionInfoListResponse)
+async def _get_session_summaries(dyad: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)], db: Annotated[AsyncSession, Depends(with_db_session)]):
+    summaries = await get_session_summaries(dyad.id, db)
+    return SessionInfoListResponse(dyad_id=dyad.id, sessions=summaries)
+
+
 class SessionInitiationArgs(BaseModel):
     topic: SessionTopicInfo
     timezone: str
+
 
 @router.post("/new")
 async def _initiate_session(req: Request, dyad: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)]) -> str:
     args = SessionInitiationArgs(**(await req.json()))
     new_session = await create_moderator_session(dyad.to_data_model(), args.topic, args.timezone)
+
     return new_session.storage.session_id
 
 class SessionStartResult(BaseModel):

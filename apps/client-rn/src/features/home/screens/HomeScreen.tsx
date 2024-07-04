@@ -19,6 +19,8 @@ import { MainRoutes } from "../../../navigation"
 import { getTimeZone } from "react-native-localize"
 import {check, checkMultiple, PERMISSIONS, PermissionStatus, request} from 'react-native-permissions'
 import NetInfo, { useNetInfo, useNetInfoInstance } from "@react-native-community/netinfo"
+import { useFocusEffect } from "@react-navigation/native"
+import { fetchSessionInfoSummaries } from "libs/ts-core/src/lib/redux/reducers/dyad-status"
 
 const styles = StyleSheet.create({
     topicFreeDimensions: {right: '5%', bottom: '10%', width: '70%', height: '70%'},
@@ -36,22 +38,60 @@ switch(Platform.OS){
         break;
 }
 
+function useSessionCounts(topicCategory: TopicCategory): {today: number, total: number}{
+    const counts = useSelector(state => state.dyadStatus.numSessionsByTopicCategory[topicCategory])
+    return {
+        today: counts?.today || 0,
+        total: counts?.total || 0
+    }
+}
+
 const FreeTopicButton = (props: {style?: any, disabled?: boolean}) => {
 
     const {t} = useTranslation()
 
     const child_name = useSelector(state => state.auth.dyadInfo?.child_name)
+
+    const sessionCounts = useSessionCounts(TopicCategory.Free)
     
     const label = useMemo(()=>{
         return format(t("TopicSelection.FreeTemplate"), {child_name})
     }, [child_name])
 
-    return <TopicButton style={props.style} disabled={props.disabled} title={label} dialogueCount={0} buttonClassName="bg-topicfree-fg" 
+    return <TopicButton style={props.style} disabled={props.disabled} title={label} buttonClassName="bg-topicfree-fg" 
                 imageComponent={<StarImage/>}
                 imageContainerStyleDimensions={styles.topicFreeDimensions}
                 imageNormalDegree={-8}
                 imagePressedDegree={20}
+                numSessionsToday={sessionCounts.today}
+                numSessionsTotal={sessionCounts.total}
                 />
+}
+
+const PlanTopicButton = (props: {style?: any, disabled?: boolean, onPress}) => {
+
+    const {t} = useTranslation()
+
+    const sessionCounts = useSessionCounts(TopicCategory.Plan)
+
+    return <TopicButton style={props.style} disabled={props.disabled} title={t("TopicSelection.Plan")} buttonClassName="bg-topicplan-fg" imageComponent={<CalendarImage/>} 
+    imageContainerStyleDimensions={styles.topicPlanDimensions} imageNormalDegree={10} imagePressedDegree={-20} onPress={props.onPress}
+    numSessionsToday={sessionCounts.today}
+    numSessionsTotal={sessionCounts.total}
+    />
+}
+
+const RecallTopicButton = (props: {style?: any, disabled?: boolean, onPress}) => {
+
+
+    const {t} = useTranslation()
+
+    const sessionCounts = useSessionCounts(TopicCategory.Recall)
+
+    return <TopicButton style={props.style} disabled={props.disabled} title={t("TopicSelection.Recall")} buttonClassName="bg-topicrecall-fg" imageComponent={<HomeImage/>} 
+    imageContainerStyleDimensions={styles.topicRecallDimensions} 
+    imageNormalDegree={-8} imagePressedDegree={20} onPress={props.onPress} numSessionsToday={sessionCounts.today}
+    numSessionsTotal={sessionCounts.total}/>
 }
 
 const BackendConnectionCheckerOverlay = () => {
@@ -154,16 +194,18 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
         handlePermission().then()
     }, [])
 
+    useFocusEffect(useCallback(()=>{
+        dispatch(fetchSessionInfoSummaries())
+    }, []))
+
     return <HillBackgroundView containerClassName="items-center justify-center">
         <SafeAreaView className="flex-1 self-stretch items-center justify-center">
             <LogoImage width={200} height={80}/>
             <Text className="text-3xl text-slate-800 text-center" style={styleTemplates.withBoldFont}>{t("TopicSelection.Title")}</Text>
             <View className="flex-row space-x-12 mt-24 mb-20">
-                <TopicButton disabled={!permissionsGranted} title={t("TopicSelection.Plan")} dialogueCount={0} buttonClassName="bg-topicplan-fg" imageComponent={<CalendarImage/>} 
-                    imageContainerStyleDimensions={styles.topicPlanDimensions} imageNormalDegree={10} imagePressedDegree={-20} onPress={onPressPlanButton}/>
-                <TopicButton disabled={!permissionsGranted} title={t("TopicSelection.Recall")} dialogueCount={0} buttonClassName="bg-topicrecall-fg" imageComponent={<HomeImage/>} 
-                    imageContainerStyleDimensions={styles.topicRecallDimensions} 
-                    imageNormalDegree={-8} imagePressedDegree={20} onPress={onPressRecallButton}/>
+               
+                <PlanTopicButton disabled={!permissionsGranted} onPress={onPressPlanButton}/>
+                <RecallTopicButton disabled={!permissionsGranted} onPress={onPressRecallButton}/>
                 <FreeTopicButton disabled={!permissionsGranted}/>
             </View>
             <ProfileButton/>

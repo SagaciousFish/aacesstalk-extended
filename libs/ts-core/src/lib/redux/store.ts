@@ -1,11 +1,13 @@
 import authReducer from './reducers/auth'
 import sessionReducer from './reducers/session'
-import { Action, EnhancedStore, Reducer, Store, ThunkAction, ThunkDispatch, combineReducers, configureStore } from '@reduxjs/toolkit';
+import dyadStatusReducer from './reducers/dyad-status'
+import { Action, Reducer, Store, ThunkAction, ThunkDispatch, combineReducers, configureStore } from '@reduxjs/toolkit';
 import {FLUSH, PAUSE, PERSIST, PURGE, Persistor, REGISTER, REHYDRATE, persistReducer, persistStore} from 'redux-persist'
 
 export type CoreState = {
   auth: ReturnType<typeof authReducer>,
-  session: ReturnType<typeof sessionReducer>
+  session: ReturnType<typeof sessionReducer>,
+  dyadStatus: ReturnType<typeof dyadStatusReducer>
 }
 
 export type CoreAction = Action<string>;
@@ -37,6 +39,7 @@ export function createStore<Additional extends AdditionalReducers, A extends Act
       whitelist: ['jwt', 'dyadInfo']
     }, authReducer),
     session: sessionReducer,
+    dyadStatus: dyadStatusReducer,
     ...additionalReducers
   } as any) as any
   
