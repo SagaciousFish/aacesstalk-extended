@@ -155,6 +155,10 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
         })
     }, [checkBackendConnection])
 
+    const onPressStarsButton = useCallback(()=>{
+        props.navigation.navigate('stars')
+    }, [props.navigation])
+
     const checkPermissionsGranted = useCallback(async () => {
         if(REQUIRED_PERMISSIONS.length > 0){
             const permissionStatuses = await checkMultiple(REQUIRED_PERMISSIONS)
@@ -209,7 +213,8 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
                 <FreeTopicButton disabled={!permissionsGranted}/>
             </View>
             <ProfileButton/>
-            <TailwindButton containerClassName="absolute right-5 bottom-5" buttonStyleClassName="py-5 px-12" roundedClassName="rounded-full" title={t("TopicSelection.StarCount")}/>
+            <TailwindButton containerClassName="absolute right-5 bottom-5" buttonStyleClassName="py-5 px-12" roundedClassName="rounded-full" 
+                title={t("TopicSelection.StarCount")} onPress={onPressStarsButton}/>
         </SafeAreaView>       
         <BackendConnectionCheckerOverlay/> 
         </HillBackgroundView>

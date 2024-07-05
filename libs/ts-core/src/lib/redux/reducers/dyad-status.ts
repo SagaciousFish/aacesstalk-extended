@@ -1,6 +1,6 @@
 import { PayloadAction, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 import { ExtendedSessionInfo, TOPIC_CATEGORIES, TopicCategory } from "../../model-types";
-import { CoreThunk } from "../store";
+import { CoreState, CoreThunk } from "../store";
 import { Http } from "../../net/http";
 const group = require('group-array')
 const moment = require('moment-timezone')
@@ -58,7 +58,6 @@ const dyadStatusSlice = createSlice({
 
             for(const category of TOPIC_CATEGORIES){
                 if(grouped[category] != null){
-                    console.log(grouped[category])
                     numSessionsByTopicCategory[category] = {today: grouped[category].filter((session: ExtendedSessionInfo) => {
                         const zonedSessionTime = moment.tz(session.started_timestamp, session.local_timezone)
                         return zonedSessionTime.isSame(refTime, 'day')
@@ -74,6 +73,8 @@ const dyadStatusSlice = createSlice({
         }
     }
 })
+
+export const sessionInfoEntitySelectors = sessionInfoEntityAdapter.getSelectors<CoreState>(state => state.dyadStatus.sessionInfoEntityState)
 
 export function fetchSessionInfoSummaries(): CoreThunk{
     return async (dispatch, getState) => {

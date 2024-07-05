@@ -38,8 +38,6 @@ async function setup(){
         const answers = await inquirer.prompt(questions)
         newObj[Env.KEY_BACKEND_ADDRESS] = answers["hostname"]
     }
-    
-    console.log(newObj)
 
     const envFileContent = Object.entries(newObj)
         .map(([key, value]) => `${key}=${value}`)

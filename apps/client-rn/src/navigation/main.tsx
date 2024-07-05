@@ -4,6 +4,7 @@ import { SessionScreen } from "../features/session/screens/SessionScreen";
 import { MainRoutes } from ".";
 import { SessionMenuPopupScreen } from "../features/session/screens/SessionMenuPopupScreen";
 import { SessionClosingScreen } from "../features/session/screens/SessionClosingScreen";
+import { StarListScreen } from "../features/home/screens/StarListScreen";
 
 const screenOptions = {headerShown: false, gestureEnabled: false}
 
@@ -18,6 +19,7 @@ const Stack = createNativeStackNavigator<MainRoutes.MainNavigatorParamList>()
 export const MainNavigator = () => {
     return <Stack.Navigator screenOptions={screenOptions} initialRouteName={MainRoutes.ROUTE_HOME}>
         <Stack.Screen name={MainRoutes.ROUTE_HOME} component={HomeScreen} options={sharedScreenOptions}/>
+        <Stack.Screen name={MainRoutes.ROUTE_STAR_LIST} component={StarListScreen} options={sessionMenuScreenOptions}/>
         <Stack.Screen name={MainRoutes.ROUTE_SESSION} component={SessionScreen} options={sessionScreenOptions}/>
         <Stack.Screen name={MainRoutes.ROUTE_SESSION_CLOSING} component={SessionClosingScreen} options={sessionClosingScreenOptions}/>
         <Stack.Screen name={MainRoutes.ROUTE_SESSION_MENU} component={SessionMenuPopupScreen} options={sessionMenuScreenOptions}/>

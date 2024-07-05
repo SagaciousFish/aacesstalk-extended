@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from sqlalchemy import func
+from sqlalchemy import func, desc
 from backend.database import AsyncSession
 from py_core.system.model import SessionInfo
 from py_database.model import SessionORM, DialogueMessageORM, SessionStatus
@@ -23,6 +23,7 @@ async def get_session_summaries(dyad_id: str, db: AsyncSession) -> list[Extended
         .where(SessionORM.dyad_id == dyad_id)
         .where(SessionORM.status == SessionStatus.Terminated)
         .group_by(SessionORM.id)
+        .order_by(desc(SessionORM.started_timestamp))
         )
     
     result = await db.exec(statement)
