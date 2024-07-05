@@ -1,12 +1,14 @@
 import { createStore, CoreAction } from "@aacesstalk/libs/ts-core"
 import { MMKVLoader } from "react-native-mmkv-storage";
 import parentAudioRecordingReducer from "../features/audio/reducer";
+import systemStatusReducer from '../features/system-status/reducer';
 import { Action, ThunkAction } from "@reduxjs/toolkit";
 
 const storage = new MMKVLoader().withEncryption().initialize();
 
 const { store, persistor } = createStore(storage, {
-    parentAudioRecording: parentAudioRecordingReducer
+    parentAudioRecording: parentAudioRecordingReducer,
+    systemStatus: systemStatusReducer
 })
 
 export { store, persistor }

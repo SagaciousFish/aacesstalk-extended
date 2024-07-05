@@ -49,9 +49,9 @@
     "react-native-file-access": "*",
     "rxjs": "*",
     "merge": "*",
-    "@react-native-community/netinfo": "*",
     "react-native-toast-message": "*",
-    "react-native-global-keyevent": "*"
+    "react-native-global-keyevent": "*",
+    "moment-timezone": "*"
   },
   "devDependencies": {}
 }

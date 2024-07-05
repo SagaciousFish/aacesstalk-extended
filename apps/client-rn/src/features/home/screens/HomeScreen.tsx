@@ -17,10 +17,10 @@ import { TopicCategory, setSessionInitInfo, startNewSession } from "@aacesstalk/
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { MainRoutes } from "../../../navigation"
 import { getTimeZone } from "react-native-localize"
-import {check, checkMultiple, PERMISSIONS, PermissionStatus, request} from 'react-native-permissions'
-import NetInfo, { useNetInfo, useNetInfoInstance } from "@react-native-community/netinfo"
+import {checkMultiple, PERMISSIONS, request} from 'react-native-permissions'
 import { useFocusEffect } from "@react-navigation/native"
 import { fetchSessionInfoSummaries } from "libs/ts-core/src/lib/redux/reducers/dyad-status"
+import { checkBackendStatus, useBackendResponsiveCheck } from "../../system-status/reducer"
 
 const styles = StyleSheet.create({
     topicFreeDimensions: {right: '5%', bottom: '10%', width: '70%', height: '70%'},
@@ -95,19 +95,16 @@ const RecallTopicButton = (props: {style?: any, disabled?: boolean, onPress}) =>
 }
 
 const BackendConnectionCheckerOverlay = () => {
-    const netInfo = useNetInfo()
-    console.log(netInfo)
+    const dispatch = useDispatch()
+    const isServerResponsive = useSelector(state => state.systemStatus.isServerResponsive)
     
     const onPressRefresh = useCallback(()=>{
-        InteractionManager.runAfterInteractions(async ()=>{
-            console.log("Refresh connection")
-            await NetInfo.refresh()
-        })
+        dispatch(checkBackendStatus())
     }, [])
 
     const [t] = useTranslation()
     
-    return netInfo.isInternetReachable ? null : <View className="absolute top-0 left-0 right-0 bottom-0 bg-white/40 items-center justify-center">
+    return isServerResponsive ? null : <View className="absolute top-0 left-0 right-0 bottom-0 bg-white/40 items-center justify-center">
         <View className="max-w-[40vw] bg-white p-3 px-6 rounded-xl shadow-lg border-red-400 border-4">
             <Text style={styleTemplates.withBoldFont} className="text-lg">{t("ERRORS.NETWORK_CONNECTION")}</Text>
             <TailwindButton title={t('ERRORS.NETWORK_CONNECTION_REFRESH')} onPress={onPressRefresh}/>
@@ -117,34 +114,33 @@ const BackendConnectionCheckerOverlay = () => {
 
 export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigatorParamList, "home">) => {
 
+    useBackendResponsiveCheck()
+
     const [permissionsGranted, setPermissionsGranted] = useState(false)
 
     const {t} = useTranslation()
 
     const dispatch = useDispatch()
 
-    const checkBackendConnection = useCallback(async ()=>{
-        const netInfo = await NetInfo.refresh()
-    }, [])
+    const isServerResponsive = useSelector(state => state.systemStatus.isServerResponsive)
 
     const onPressPlanButton = useCallback(async ()=>{
-        await checkBackendConnection()
+        dispatch(checkBackendStatus())
         requestAnimationFrame(async ()=>{
-            const netInfo = await NetInfo.fetch()
-            if(netInfo.isInternetReachable){
+
+            if(isServerResponsive){
                 const topic = { category: TopicCategory.Plan }
                 dispatch(startNewSession(topic, getTimeZone()))
                 props.navigation.navigate(MainRoutes.ROUTE_SESSION, { topic })
             }
         })
         
-    }, [checkBackendConnection])
+    }, [isServerResponsive])
 
     const onPressRecallButton = useCallback(async ()=>{
-        await checkBackendConnection()
+        dispatch(checkBackendStatus())
         requestAnimationFrame(async ()=>{
-            const netInfo = await NetInfo.fetch()
-            if(netInfo.isInternetReachable){
+            if(isServerResponsive){
                 const topic = { category: TopicCategory.Recall }
                 dispatch(setSessionInitInfo({topic}))
                 dispatch(startNewSession(topic, getTimeZone()))
@@ -153,7 +149,7 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
                 })
             }
         })
-    }, [checkBackendConnection])
+    }, [isServerResponsive])
 
     const onPressStarsButton = useCallback(()=>{
         props.navigation.navigate('stars')
