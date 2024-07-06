@@ -145,6 +145,9 @@ const sessionSlice = createSlice({
     },
 
     _storeNewParentGuideRecommendation: (state, action: PayloadAction<ParentGuideRecommendationResult>) => {
+
+      console.log(action.payload)
+
       parentGuideAdapter.removeAll(state.parentGuideEntityState)
       parentGuideAdapter.addMany(state.parentGuideEntityState, action.payload.guides)
       state.parentGuideRecommendationId = action.payload.id

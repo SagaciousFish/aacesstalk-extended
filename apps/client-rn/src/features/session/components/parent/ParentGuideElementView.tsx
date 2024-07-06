@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { getTopicColorClassNames, styleTemplates } from "apps/client-rn/src/styles"
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import FeedbackLegImage from '../../../../assets/images/feedback-leg.svg'
 import { Pressable, Text, View, StyleSheet } from "react-native"
 import Animated ,{ Easing, ZoomIn, interpolate, interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 
@@ -13,6 +14,14 @@ const styles = StyleSheet.create({
         shadowOffset: {width: 10, height: 10},
         shadowRadius: 10,
         elevation: 10
+    },
+
+    feedbackLegLeft: {
+        position: 'absolute', top: -15, left: 20
+    },
+
+    feedbackLegRight: {
+        position: 'absolute', top: -15, right: 20
     }
 })
 
@@ -147,9 +156,14 @@ const ParentMessageGuideElementView = (props: Props) => {
 
 const ParentFeedbackElementView = (props: Props) => {
 
+
     const guideMessage = useSelector(state => state.session.parentGuideEntityState.entities[props.id].guide_localized || state.session.parentGuideEntityState.entities[props.id].guide)
     
-    return <View key="message-view" className={`bg-white ${GUIDE_FRAME_CLASSNAME}`}>
-            <Text style={styleTemplates.withSemiboldFont} className={TEXT_MESSAGE_CLASSNAME}>{guideMessage}</Text>
-        </View>
+    return <View>
+        <FeedbackLegImage style={styles.feedbackLegLeft}/> 
+        <FeedbackLegImage style={styles.feedbackLegRight}/>   
+        <View className={`bg-[#f2d359] rounded-2xl border-[#daba3e] border-2 border-b-[7px] justify-center ${GUIDE_FRAME_DIMENSION_CLASSNAME} shadow-lg shadow-black`}>
+            <Text style={styleTemplates.withSemiboldFont} className={`${TEXT_MESSAGE_CLASSNAME} text-black`}>{guideMessage}</Text>
+        </View>    
+    </View>
 }

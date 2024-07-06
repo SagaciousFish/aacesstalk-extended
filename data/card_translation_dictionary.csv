@@ -121,6 +121,7 @@ G3Wswt5Vb0,action,experiment,실험해요,False
 eM3DY40FFi,action,explain,설명해요,True
 H42eAnFeTf,action,explained,설명해요,False
 lnHBypcdND,action,explore,탐험해요,False
+yVimENyf37,action,express,표현해요,False
 QJwuj26XHV,action,feed,먹이 주어요,False
 a3KelxlGJh,action,feel,느껴요,True
 JJ1sDRIr5m,action,feel like,느낌이 들어요,False
@@ -483,7 +484,7 @@ lEmJ6br9eG,topic,Bag,가방,False
 Ij3qOmgn36,topic,Bakery,빵집,False
 w2eNoueL1U,topic,Board Games,보드 게임,False
 EVm_PduPEj,topic,Brachiosaurus,브라키오사우루스,False
-pD2EwLvYMu,topic,Brother,"형",False
+pD2EwLvYMu,topic,Brother,"형 (topic, noun)",False
 vkQDxIH4fx,topic,Cafeteria,학교 식당,False
 JR8IlODnHP,topic,Carousel,회전 목마,False
 w8qo2ggJoN,topic,Classmate,친구,False
@@ -726,6 +727,7 @@ uhYjqzqcaU,topic,instruments,악기,False
 ypmOPTailK,topic,internet,인터넷,False
 VvTPZQHASE,topic,jacket,재킷,False
 pv8iA23Lew,topic,joke,농담,False
+7IpPdEkinL,topic,jokes,농담,False
 vIWdAkMt4o,topic,joy,기쁨,False
 9SnQ_gxiJr,topic,juice,주스,False
 hpJHwr38Sk,topic,keys,열쇠,False
@@ -862,7 +864,7 @@ q_hYE0lLKz,topic,shopping,쇼핑,True
 hRnYLaKVu9,topic,show,쇼,False
 Msw_kz72pO,topic,sing,노래,True
 g1Q1d8pbGe,topic,singing,노래,False
-jF25ipa8Mu,topic,sister,"언니",False
+jF25ipa8Mu,topic,sister,"언니 (topic, noun)",False
 sXSvfHDI4h,topic,size,크기,False
 LDNDyEmQql,topic,sketch,스케치,False
 74ZjcTaESH,topic,sketchbook,스케치북,False

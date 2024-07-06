@@ -10,13 +10,14 @@ import { LoadingIndicator } from "apps/client-rn/src/components/LoadingIndicator
 import { PopupMenuScreenFrame } from "apps/client-rn/src/components/PopupMenuScreenFrame";
 import { TailwindButton } from "apps/client-rn/src/components/tailwind-components";
 import { useController, useForm } from "react-hook-form";
-import { SessionTopicInfo, parentGuideSelectors, submitParentMessageText } from '@aacesstalk/libs/ts-core';
+import { ParentGuideCategory, ParentGuideType, SessionTopicInfo, parentGuideSelectors, submitParentMessageText } from '@aacesstalk/libs/ts-core';
 import { SessionTitleRibbon } from '../SessionTitleRibbon';
 import { SessionStartingMessage } from './SessionStartingMessage';
 import { useNonNullUpdatedValue } from 'apps/client-rn/src/utils/hooks';
 import { TurnStar } from '../TurnStar';
 import { pauseRecording, resumeRecording } from '../../../audio/reducer';
 import { RecordingIndicator } from './RecordingIndicator';
+import { createSelector } from '@reduxjs/toolkit';
 
 const ParentMessageTextInputView = (props: {
     onPopTextInput: () => void,
@@ -54,13 +55,28 @@ const ParentMessageTextInputView = (props: {
     </PopupMenuScreenFrame>
 }
 
+const selectParentGuideIdsWithFeedbackToEnd = createSelector([parentGuideSelectors.selectAll, parentGuideSelectors.selectIds], (guides, ids) => {
+    if(guides.length > 0){
+        const feedbackIndex = guides.findIndex(elm => elm.type == ParentGuideType.Feedback)
+        if(feedbackIndex >= 0 && feedbackIndex != guides.length - 1){
+            const newIds = ids.slice()
+            const feedbackId = ids[feedbackIndex]
+            newIds.splice(feedbackIndex, 1)
+            newIds.push(feedbackId)
+            return newIds
+        }
+    }
+
+    return ids
+}) 
+
 export const SessionParentView = (props: {
     topic: SessionTopicInfo
 }) => {
     const dispatch = useDispatch()
     
     const isProcessing = useSelector(state => state.session.isProcessingRecommendation)
-    const parentGuideIds = useSelector(parentGuideSelectors.selectIds)
+    const parentGuideIds = useSelector(selectParentGuideIdsWithFeedbackToEnd)
 
     const numTurns = useSelector(state => state.session.numTurns)
 
