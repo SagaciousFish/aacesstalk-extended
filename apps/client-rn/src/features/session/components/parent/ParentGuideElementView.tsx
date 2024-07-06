@@ -163,7 +163,7 @@ const ParentFeedbackElementView = (props: Props) => {
         <FeedbackLegImage style={styles.feedbackLegLeft}/> 
         <FeedbackLegImage style={styles.feedbackLegRight}/>   
         <View className={`bg-[#f2d359] rounded-2xl border-[#daba3e] border-2 border-b-[7px] justify-center ${GUIDE_FRAME_DIMENSION_CLASSNAME} shadow-lg shadow-black`}>
-            <Text style={styleTemplates.withSemiboldFont} className={`${TEXT_MESSAGE_CLASSNAME} text-black`}>{guideMessage}</Text>
+            <Text style={styleTemplates.withSemiboldFont} className={`${TEXT_MESSAGE_CLASSNAME} text-black px-6`}>{guideMessage}</Text>
         </View>    
     </View>
 }

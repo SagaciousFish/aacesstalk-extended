@@ -44,6 +44,7 @@ q8F67fPvIt,action,build,지어요,False
 QYBk1Wh9mw,action,built,지었어요,True
 Bir4yNufTz,action,buy,사요,True
 gz3aF3BWwY,action,call,전화해요,False
+dLZOyrZ0EJ,action,calm down,진정해요,False
 ZQx7RmTxx4,action,can,할 수 있어요,False
 C5rVl7i4X4,action,can do,할 수 있어요,False
 -HG-AfkaA2,action,can we,할 수 있을까요,False
@@ -56,6 +57,7 @@ tCQSoOhVWH,action,cheer,힘내요,False
 IsLwcliTff,action,chew,씹어요,False
 Z6-RUtuXwp,action,choose,선택해요,True
 cF5BalJBSG,action,clapped,박수쳤어요,False
+cbw22uIWzr,action,clarify,명확히해요,False
 FFp5dgF61U,action,clean,청소해요,False
 Y8B-lSXI_c,action,climb,올라가요,False
 r35xvR3VnP,action,climbed,올라갔어요,True
@@ -74,6 +76,7 @@ ZpDnU8cjbb,action,consider,고려해요,True
 yKC4VLeixs,action,continue,계속해요,False
 l7VZUho5JC,action,cook,요리해요,False
 RnOviC3z8h,action,cooked,요리했어요,True
+9DrjJvvluH,action,correct,고쳐요,False
 gke9fcBIVb,action,count,세어요,False
 c9nrRATbZC,action,create,만들어요,True
 3xqmUR6WRo,action,created,만들었어요,True
@@ -534,6 +537,7 @@ FDbAI6vzG5,topic,Tuesday,화요일,False
 iQRL-gQRCe,topic,Video Games,비디오 게임,False
 do4YxTSu43,topic,Wednesday,수요일,False
 y4Z4dPffFA,topic,Zoo,동물원,False
+lwhkGlT57w,topic,accident,사고,False
 xvU29NPrLj,topic,activities,활동,True
 0swTtsJpkt,topic,activity,활동,True
 yTHHMmFuVB,topic,after school,방과 후,False
@@ -623,13 +627,16 @@ r57QJmaDol,topic,clowns,광대,False
 Mv0qUUpOV1,topic,coloring,색칠하기,False
 CGMa4tcedr,topic,coloring book,컬러링북,False
 ZMzrVSxPQy,topic,colors,색깔,True
+6kQ2nroud2,topic,comfort,편안함,False
 qZBdz6A-UZ,topic,computer,컴퓨터,False
 q_GQdjMLWU,topic,computer games,컴퓨터 게임,False
 4un0D5TP78,topic,cone,콘,False
+hsI4VRuVvD,topic,confusion,혼란,False
 ZqQmq0jgXj,topic,conversation,대화,True
 hyrWpizg14,topic,cook,요리,False
 3WA8c-FPkI,topic,cookies,쿠키,False
 zqVEMisZNk,topic,cooking,요리,True
+hn6ebqBr0c,topic,correction,교정,False
 xYJeS2MtF5,topic,cotton candy,솜사탕,False
 65l6pUb9AS,topic,craft,공예,False
 Nffft4shNo,topic,crafts,공예,True
@@ -760,6 +767,7 @@ IdZZnS1JYW,topic,math problems,수학 문제,False
 nMI7jhboBK,topic,mathematics,수학,False
 vMmv5GwdN7,topic,meal,식사,True
 GKOshDWEOH,topic,meals,식사,False
+cfLseH912n,topic,misunderstanding,오해,False
 92wk3FeCUg,topic,mom,엄마,True
 PmfBMP7ROu,topic,money,돈,False
 kEL-CvSGNY,topic,morning,아침,False
@@ -826,6 +834,7 @@ bdoCOQ7sIi,topic,puppet show,인형극,False
 C7wG2s7cKo,topic,push button,버튼 누르기,False
 29KrNnXxhw,topic,puzzle,퍼즐,True
 J_fpsBQvUG,topic,puzzles,퍼즐,True
+DIqbvkrQ8K,topic,question,질문,False
 1z_fyn0F2U,topic,read,읽기,True
 nZgAiNOnPJ,topic,read book,책 읽기,False
 xSUB5MbEYf,topic,reading,읽기,True
