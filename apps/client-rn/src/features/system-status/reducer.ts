@@ -30,7 +30,7 @@ const systemStatusSlice = createSlice({
 
 export default systemStatusSlice.reducer
 
-export function checkBackendStatus(): ClientThunk {
+export function checkBackendStatus(onChecked?: (isResponsive: boolean) => void): ClientThunk {
     return async (dispatch, getState) => {
         const state = getState()
         if(state.systemStatus.checkingBackendStatus !== true){
@@ -38,8 +38,10 @@ export function checkBackendStatus(): ClientThunk {
                 dispatch(systemStatusSlice.actions.setCheckingBackendStatusFlag(true))
                 const resp = await Http.axios.head(Http.ENDPOINT_PING)
                 dispatch(systemStatusSlice.actions.setServerStatus(resp.status === 204))
+                onChecked?.(true)
             }catch(ex){
                 dispatch(systemStatusSlice.actions.setServerStatus(false))
+                onChecked?.(false)
             }finally{
                 dispatch(systemStatusSlice.actions.setCheckingBackendStatusFlag(false))
             }

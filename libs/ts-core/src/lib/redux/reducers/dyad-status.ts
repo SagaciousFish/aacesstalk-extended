@@ -79,7 +79,7 @@ export const sessionInfoEntitySelectors = sessionInfoEntityAdapter.getSelectors<
 export function fetchSessionInfoSummaries(): CoreThunk{
     return async (dispatch, getState) => {
         const state= getState()
-        if(state.auth.jwt != null){
+        if(state.auth.jwt != null && state.dyadStatus.isFetchingSessionInfo == false){
             dispatch(dyadStatusSlice.actions._setFetchingFlag(true))
             try{
                 const response = await Http.axios.get(Http.ENDPOINT_DYAD_SESSION_LIST, {

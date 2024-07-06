@@ -122,25 +122,20 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
 
     const dispatch = useDispatch()
 
-    const isServerResponsive = useSelector(state => state.systemStatus.isServerResponsive)
-
     const onPressPlanButton = useCallback(async ()=>{
-        dispatch(checkBackendStatus())
-        requestAnimationFrame(async ()=>{
-
-            if(isServerResponsive){
+        dispatch(checkBackendStatus((isResponsive) => {
+            if(isResponsive){
                 const topic = { category: TopicCategory.Plan }
                 dispatch(startNewSession(topic, getTimeZone()))
                 props.navigation.navigate(MainRoutes.ROUTE_SESSION, { topic })
             }
-        })
+        }))
         
-    }, [isServerResponsive])
+    }, [])
 
     const onPressRecallButton = useCallback(async ()=>{
-        dispatch(checkBackendStatus())
-        requestAnimationFrame(async ()=>{
-            if(isServerResponsive){
+        dispatch(checkBackendStatus((isResponsive) => {
+            if(isResponsive){
                 const topic = { category: TopicCategory.Recall }
                 dispatch(setSessionInitInfo({topic}))
                 dispatch(startNewSession(topic, getTimeZone()))
@@ -148,8 +143,8 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
                     props.navigation.navigate(MainRoutes.ROUTE_SESSION, { topic })
                 })
             }
-        })
-    }, [isServerResponsive])
+        }))
+    }, [])
 
     const onPressStarsButton = useCallback(()=>{
         props.navigation.navigate('stars')
@@ -194,9 +189,20 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
         handlePermission().then()
     }, [])
 
-    useFocusEffect(useCallback(()=>{
+    const fetchSessionSummaries = useCallback(()=>{
         dispatch(fetchSessionInfoSummaries())
-    }, []))
+    }, [])
+
+    useFocusEffect(fetchSessionSummaries)
+
+    const isServerResponsive = useSelector(state => state.systemStatus.isServerResponsive)
+
+    useEffect(()=>{
+        if(isServerResponsive === true){
+            // Server was connected.
+            fetchSessionSummaries()
+        }
+    }, [isServerResponsive, fetchSessionSummaries])
 
     return <HillBackgroundView containerClassName="items-center justify-center">
         <SafeAreaView className="flex-1 self-stretch items-center justify-center">
