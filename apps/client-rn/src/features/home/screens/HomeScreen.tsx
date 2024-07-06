@@ -46,7 +46,7 @@ function useSessionCounts(topicCategory: TopicCategory): {today: number, total: 
     }
 }
 
-const FreeTopicButton = (props: {style?: any, disabled?: boolean}) => {
+const FreeTopicButton = (props: {style?: any, disabled?: boolean, onPress}) => {
 
     const {t} = useTranslation()
 
@@ -65,6 +65,7 @@ const FreeTopicButton = (props: {style?: any, disabled?: boolean}) => {
                 imagePressedDegree={20}
                 numSessionsToday={sessionCounts.today}
                 numSessionsTotal={sessionCounts.total}
+                onPress={props.onPress}
                 />
 }
 
@@ -146,6 +147,16 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
         }))
     }, [])
 
+    const onPressFreeTopicButton = useCallback(async ()=>{
+        dispatch(checkBackendStatus((isResponsive) => {
+            if(isResponsive){
+                requestAnimationFrame(()=>{
+                    props.navigation.navigate(MainRoutes.ROUTE_FREE_TOPIC_SELECTION)
+                })
+            }
+        }))
+    }, [])
+
     const onPressStarsButton = useCallback(()=>{
         props.navigation.navigate('stars')
     }, [props.navigation])
@@ -212,7 +223,7 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
                
                 <PlanTopicButton disabled={!permissionsGranted} onPress={onPressPlanButton}/>
                 <RecallTopicButton disabled={!permissionsGranted} onPress={onPressRecallButton}/>
-                <FreeTopicButton disabled={!permissionsGranted}/>
+                <FreeTopicButton disabled={!permissionsGranted} onPress={onPressFreeTopicButton}/>
             </View>
             <ProfileButton/>
             <TailwindButton containerClassName="absolute right-5 bottom-5" buttonStyleClassName="py-5 px-12" roundedClassName="rounded-full" 

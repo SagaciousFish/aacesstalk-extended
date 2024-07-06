@@ -1,9 +1,10 @@
-from py_core.system.model import CardCategory, UserDefinedCardInfo
+from py_core.system.model import CardCategory, FreeTopicDetail, UserDefinedCardInfo
 from py_core.system.storage import UserStorage
 
-from py_database.model import UserDefinedCardInfoORM
+from py_database.model import UserDefinedCardInfoORM, FreeTopicDetailORM
 from py_database.storage_base import SQLStorageBase
-from sqlalchemy import select, func
+from sqlmodel import select, func
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 class SQLUserStorage(UserStorage, SQLStorageBase):
 
@@ -46,4 +47,50 @@ class SQLUserStorage(UserStorage, SQLStorageBase):
             statement = select(UserDefinedCardInfoORM).where(UserDefinedCardInfoORM.dyad_id == self.user_id, UserDefinedCardInfoORM.id == id).limit(1)
 
             result = await db.exec(statement)
-            return result.first()
+            first_orm: UserDefinedCardInfoORM = result.first()
+            
+            return first_orm.to_data_model() if first_orm is not None else None
+
+    async def upsert_free_topic_detail(self, detail: FreeTopicDetail):
+        async with self.get_sessionmaker() as db:
+            db: AsyncSession = db
+            statement = select(FreeTopicDetailORM).where(FreeTopicDetailORM.dyad_id == self.user_id, FreeTopicDetailORM.id == detail.id).limit(1)
+            result = await db.exec(statement)
+            orm: FreeTopicDetailORM = result.one()
+            async with db.begin():
+                if orm is not None:
+                    updated = orm.sqlmodel_update(detail.model_dump(exclude={"id"}))
+                    db.add(updated)
+                else:
+                    db.add(detail)
+                
+                await db.commit()
+
+
+    async def get_free_topic_details(self) -> list[FreeTopicDetail]:
+        async with self.get_sessionmaker() as db:
+            db: AsyncSession = db
+            statement = select(FreeTopicDetailORM).where(FreeTopicDetailORM.dyad_id == self.user_id)
+
+            result = await db.exec(statement)
+
+            return [orm.to_data_model() for orm in result]
+
+    async def remove_free_topic_detail(self, id: str):
+        async with self.get_sessionmaker() as db:
+            db: AsyncSession = db
+            orm = await db.get(FreeTopicDetailORM, id)
+            if orm is not None:
+                async with db.begin():
+                    db.delete(orm)
+
+    async def get_free_topic_detail(self, id: str) -> FreeTopicDetail | None:
+        async with self.get_sessionmaker() as db:
+            db: AsyncSession = db
+            orm = await db.get(FreeTopicDetailORM, id)
+            if orm is not None:
+                return orm.to_data_model()
+            else:
+                return None
+
+

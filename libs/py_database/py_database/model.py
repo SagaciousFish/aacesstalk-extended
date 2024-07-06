@@ -21,7 +21,8 @@ from py_core.system.model import (id_generator, DialogueRole, DialogueMessage,
                                   Interaction,
                                   CardCategory,
                                   UserDefinedCardInfo,
-                                  ChildGender
+                                  ChildGender,
+                                  FreeTopicDetail
                                   )
 from py_core.system.session_topic import SessionTopicCategory, SessionTopicInfo
 from chatlib.utils.time import get_timestamp
@@ -236,3 +237,18 @@ class UserDefinedCardInfoORM(SQLModel, IdTimestampMixin, TimestampColumnMixin, D
 
     def to_data_model(self) -> UserDefinedCardInfo:
         return UserDefinedCardInfo(**self.model_dump(exclude={'dyad_id'}))
+    
+
+class FreeTopicDetailORM(SQLModel, IdTimestampMixin, DyadIdMixin, table=True):
+    __tablename__:str = "free_topic_detail"
+
+    subtopic: str
+    subtopic_description: str
+    topic_image_filename: Optional[str]
+
+    @classmethod
+    def from_data_model(cls, detail: FreeTopicDetail, dyad_id: str) -> 'FreeTopicDetailORM':
+        return FreeTopicDetailORM(**detail.model_dump(), dyad_id=dyad_id)
+    
+    def to_data_model(self) -> FreeTopicDetail:
+        return FreeTopicDetail(**self.model_dump(exclude={'dyad_id'}))

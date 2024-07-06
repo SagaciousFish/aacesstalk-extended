@@ -14,9 +14,13 @@ export class Http{
   static ENDPOINT_DYAD = "/dyad"
   static ENDPOINT_DYAD_ACCOUNT = `${Http.ENDPOINT_DYAD}/account`
 
+  static ENDPOINT_DYAD_DATA = `${Http.ENDPOINT_DYAD}/data`
+
   static ENDPOINT_DYAD_ACCOUNT_LOGIN = `${Http.ENDPOINT_DYAD_ACCOUNT}/login`
 
   static ENDPOINT_DYAD_MEDIA = `${Http.ENDPOINT_DYAD}/media`
+
+  static ENDPOINT_DYAD_DATA_FREE_TOPICS = `${Http.ENDPOINT_DYAD_DATA}/freetopics`
 
   static ENDPOINT_DYAD_SESSION = `${Http.ENDPOINT_DYAD}/session`
   static ENDPOINT_DYAD_SESSION_NEW = `${Http.ENDPOINT_DYAD_SESSION}/new`
@@ -47,6 +51,8 @@ export class Http{
   static ENDPOINT_DYAD_MEDIA_VOICEOVER = `${Http.ENDPOINT_DYAD_MEDIA}/voiceover`
   static ENDPOINT_DYAD_MEDIA_CARD_IMAGE = `${Http.ENDPOINT_DYAD_MEDIA}/card_image`
   static ENDPOINT_DYAD_MEDIA_MATCH_CARD_IMAGES = `${Http.ENDPOINT_DYAD_MEDIA}/match_card_images`
+
+  static ENDPOINT_DYAD_MEDIA_FREE_TOPIC_IMAGE = `${Http.ENDPOINT_DYAD_MEDIA}/freetopic`
 
 
   static getTemplateEndpoint(template: string, values: {[key:string]: string}): string {

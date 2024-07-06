@@ -3,6 +3,7 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel
 
 from backend import env_variables
 from backend.crud.dyad.account import get_dyad_by_id
@@ -22,6 +23,10 @@ from py_core.system.model import Dyad, SessionTopicInfo, id_generator
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
+class FreeTopicDetailInfo(BaseModel):
+    id: str
+    subtopic: str
+    subtopic_description: str
 
 async def get_signed_in_dyad_orm(token: Annotated[str, Depends(oauth2_scheme)], db: Annotated[AsyncSession, Depends(with_db_session)]) -> DyadORM:
     credentials_exception = HTTPException(
@@ -63,6 +68,9 @@ def _get_card_image_matcher(dyad_id: str) -> CardImageMatcher:
 
 def get_card_image_matcher(dyad_orm: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)]) -> CardImageMatcher:
     return _get_card_image_matcher(dyad_orm.id)
+
+def get_user_storage(dyad_orm: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)]) -> UserStorage:
+    return _get_user_storage(dyad_orm.id)
             
 async def create_moderator_session(dyad: Dyad, topic: SessionTopicInfo, timezone: str) -> ModeratorSession:
     return await ModeratorSession.create(dyad, topic, timezone, SQLSessionStorage(id_generator()))

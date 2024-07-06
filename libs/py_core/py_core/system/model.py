@@ -185,6 +185,12 @@ class ParentExampleMessage(ModelWithIdAndTimestamp):
     message: str
     message_localized: str | None = None
 
+class FreeTopicDetail(ModelWithId):
+
+    subtopic: str
+    subtopic_description: str
+    topic_image_filename: Optional[str]
+
 
 # Dialogue Models =======================================
 

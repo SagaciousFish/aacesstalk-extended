@@ -36,7 +36,7 @@ export function createStore<Additional extends AdditionalReducers, A extends Act
     auth: persistReducer({
       key: 'root',
       storage: persistStorage,
-      whitelist: ['jwt', 'dyadInfo']
+      whitelist: ['jwt', 'dyadInfo', 'freeTopicDetailEntityState']
     }, authReducer),
     session: sessionReducer,
     dyadStatus: dyadStatusReducer,

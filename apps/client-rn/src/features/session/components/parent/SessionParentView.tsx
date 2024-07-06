@@ -108,7 +108,7 @@ export const SessionParentView = (props: {
     const topic = useNonNullUpdatedValue(props.topic)
     
     return <>
-        <SessionTitleRibbon containerClassName="mt-12" topic={topic} />
+        <SessionTitleRibbon containerClassName="mt-12" category={topic?.category} />
         <RecordingIndicator/>
         {
             numTurns == 0 ? <SessionStartingMessage topic={topic} containerClassName='mt-14' /> : <View pointerEvents='none' className='mt-12 flex-row space-x-3'>

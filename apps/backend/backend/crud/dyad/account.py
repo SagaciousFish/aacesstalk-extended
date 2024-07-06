@@ -36,14 +36,13 @@ async def create_dyad(alias: str, child_name: str, parent_type: ParentType, chil
     return dyad, dyad_code
 
 
-async def login_with_code(login_code: str, session: AsyncSession) -> str:
+async def login_with_code(login_code: str, session: AsyncSession) -> tuple[str, DyadORM]:
     statement = (select(DyadLoginCode, DyadORM)
                  .where(DyadLoginCode.code == login_code)
                  .where(DyadLoginCode.active == True)
                  .where(DyadLoginCode.dyad_id == DyadORM.id)
                  .limit(1))
     results = await session.exec(statement)
-    print(results.closed)
     first_row = results.first()
     if first_row is not None:
         _, dyad = first_row
@@ -59,9 +58,8 @@ async def login_with_code(login_code: str, session: AsyncSession) -> str:
             "iat": issued_at/1000,
             "exp": (issued_at + (365 * 24 * 3600 * 1000))/1000  # 1 year
         }
-        print(env_helper.get_env_variable(env_variables.AUTH_SECRET))
         access_token = jwt.encode(to_encode, env_helper.get_env_variable(env_variables.AUTH_SECRET), algorithm='HS256')
-        return access_token
+        return access_token, dyad
     else:
         raise ValueError("No such dyadic user with the code.")
 

@@ -6,7 +6,8 @@ module.exports = {
         DialogueCountTotalTemplate: "누적 대화 {count}회",
         DialogueCountTodayTemplate: "오늘 대화 {count}회",
         DialogueCountTotalNone: "이 주제로 대화한 적 없음",
-        DialogueCountTodayNone: "오늘 대화 없음"
+        DialogueCountTodayNone: "오늘 대화 없음",
+        FreeTopicSelectCard: "이야기하고 싶은 카드를 선택해 보세요."
     },
     Summary: {
         StarsTitle: "대화로 얻은 별을 확인해 보아요",

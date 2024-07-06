@@ -90,7 +90,7 @@ function RibbonEnd(props:{svgClassName?:string, fgColor?: string, direction: "le
 
 
 export const SessionTitleRibbon = (props: {
-    topic: SessionTopicInfo,
+    category: TopicCategory,
     titleClassName?: string,
     containerClassName?: string
 }) => {
@@ -100,7 +100,7 @@ export const SessionTitleRibbon = (props: {
     const child_name = useSelector(state => state.auth.dyadInfo?.child_name)
     
     const label = useMemo(()=>{
-        switch(props.topic.category){
+        switch(props.category){
             case TopicCategory.Plan:
                 return t("TopicSelection.Plan")
             case TopicCategory.Recall:
@@ -108,13 +108,13 @@ export const SessionTitleRibbon = (props: {
             case TopicCategory.Free:
                 return format(t("TopicSelection.FreeTemplate"), {child_name})
         }
-    }, [t, child_name, props.topic.category])
+    }, [t, child_name, props.category])
 
     return <View className={`${props.containerClassName}`}>
-        <View id='ribbon-body' className={`rounded-lg h-14 justify-center px-7 shadow-lg shadow-slate-700 bg-topic${props.topic.category.toLowerCase()}-fg`}>
+        <View id='ribbon-body' className={`rounded-lg h-14 justify-center px-7 shadow-lg shadow-slate-700 bg-topic${props.category.toLowerCase()}-fg`}>
             <Text style={styleTemplates.withBoldFont} className={`text-white text-lg ${props.titleClassName}`}>{label}</Text>
         </View>
-        <RibbonEnd direction='left' svgClassName='absolute z-[-1] left-[-40px]' fgColor={colors[`topic${props.topic.category}`].ribbon}/>
-        <RibbonEnd direction='right' svgClassName='absolute z-[-1] right-[-40px]' fgColor={colors[`topic${props.topic.category}`].ribbon}/>
+        <RibbonEnd direction='left' svgClassName='absolute z-[-1] left-[-40px]' fgColor={colors[`topic${props.category}`].ribbon}/>
+        <RibbonEnd direction='right' svgClassName='absolute z-[-1] right-[-40px]' fgColor={colors[`topic${props.category}`].ribbon}/>
     </View>
 }

@@ -54,7 +54,7 @@ export const SessionClosingScreen = (props: NativeStackScreenProps<MainRoutes.Ma
     }, [props.navigation])
     
     return <View className="flex-1 items-center my-14">
-        <SessionTitleRibbon topic={topic} containerClassName=""/>
+        <SessionTitleRibbon category={topic?.category} containerClassName=""/>
         <View className="flex-1 self-stretch items-center justify-center mb-20">
             <Text style={styleTemplates.withBoldFont} className={`text-3xl text-slate-700 mt-20 mb-8`}>{t("Session.EndingMessage")}</Text>
             <View className="flex-row flex-wrap gap-10">

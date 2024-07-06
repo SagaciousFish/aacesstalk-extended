@@ -1,5 +1,5 @@
-import { Dyad, ParentType } from '../../model-types';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Dyad, FreeTopicDetail, ParentType } from '../../model-types';
+import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CoreState, CoreThunk } from '../store';
 import { Http } from '../../net/http';
 import { jwtDecode } from "jwt-decode";
@@ -7,15 +7,22 @@ import { Axios, AxiosError } from 'axios';
 import { AACessTalkErrors } from '../../errors';
 import { initializeDyadStatus } from './dyad-status';
 
+const freeTopicDetailEntityAdapter = createEntityAdapter<FreeTopicDetail>()
+const INITIAL_FREE_TOPIC_DETAIL_STATE = freeTopicDetailEntityAdapter.getInitialState()
+
 export interface AuthState {
   isAuthorizing: boolean;
   jwt?: string;
   dyadInfo?: Dyad;
+  isLoadingFreeTopicDetails: boolean
+  freeTopicDetailEntityState: typeof INITIAL_FREE_TOPIC_DETAIL_STATE,
   error?: string;
 }
 
 const INITIAL_AUTH_STATE: AuthState = {
-  isAuthorizing: false
+  isAuthorizing: false,
+  isLoadingFreeTopicDetails: false,
+  freeTopicDetailEntityState: INITIAL_FREE_TOPIC_DETAIL_STATE
 };
 
 const authSlice = createSlice({
@@ -45,9 +52,19 @@ const authSlice = createSlice({
       state.dyadInfo = action.payload.dyad;
       state.jwt = action.payload.token;
       state.error = undefined;
+    },
+
+    _setFreeTopicDetailLoadingFlag: (state, action: PayloadAction<boolean>) => {
+      state.isLoadingFreeTopicDetails = action.payload
+    },
+
+    _setFreeTopicDetails: (state, action: PayloadAction<Array<FreeTopicDetail>>) => {
+      freeTopicDetailEntityAdapter.setAll(state.freeTopicDetailEntityState, action.payload)
     }
   }
 });
+
+export const freeTopicDetailSelectors = freeTopicDetailEntityAdapter.getSelectors((state: CoreState) => state.auth.freeTopicDetailEntityState)
 
 export function loginDyadThunk(code: string): CoreThunk {
   return async (dispatch, getState) => {
@@ -61,7 +78,7 @@ export function loginDyadThunk(code: string): CoreThunk {
           }
         });
 
-      const { jwt } = tokenResponse.data
+      const { jwt, free_topics } = tokenResponse.data
 
       const decoded = jwtDecode<{
         sub: string,
@@ -71,6 +88,7 @@ export function loginDyadThunk(code: string): CoreThunk {
         iat: number,
         exp: number}>(jwt)
 
+      console.log(free_topics)
 
       dispatch(authSlice.actions._setSignedInUser({
         dyad: {
@@ -81,6 +99,12 @@ export function loginDyadThunk(code: string): CoreThunk {
         },
         token: jwt
       }));
+
+      if(free_topics != null){
+        dispatch(authSlice.actions._setFreeTopicDetails(free_topics))
+      }else{
+        dispatch(authSlice.actions._setFreeTopicDetails([]))
+      }
 
     } catch (ex) {
       let error = AACessTalkErrors.UnknownError 
@@ -93,6 +117,7 @@ export function loginDyadThunk(code: string): CoreThunk {
       }
       dispatch(authSlice.actions._setError(error))
     } finally {
+      dispatch(authSlice.actions._setFreeTopicDetailLoadingFlag(false))
       dispatch(authSlice.actions._authorizingFlagOff())
     }
   };
@@ -102,6 +127,29 @@ export function signOutDyadThunk(): CoreThunk {
   return async (dispatch, getState) => {
     dispatch(authSlice.actions.initialize())
     dispatch(initializeDyadStatus())
+  }
+}
+
+export function fetchFreeTopicDetails(): CoreThunk {
+  return async (dispatch, getState) => {
+    const state = getState()
+    if(state.auth.jwt != null && state.auth.isLoadingFreeTopicDetails === false) {
+      dispatch(authSlice.actions._setFreeTopicDetailLoadingFlag(true))
+      try{
+        const resp = await Http.axios.get(Http.ENDPOINT_DYAD_DATA_FREE_TOPICS, {
+          headers: await Http.getSignedInHeaders(state.auth.jwt)
+        })
+        if(resp.status == 200){
+          if(resp.data.dyad_id === state.auth.dyadInfo?.id){
+            dispatch(authSlice.actions._setFreeTopicDetails(resp.data.details)) 
+          }
+        }
+      }catch(ex){
+        console.log(ex)
+      }finally{
+        dispatch(authSlice.actions._setFreeTopicDetailLoadingFlag(false))
+      }
+    }
   }
 }
 

@@ -118,6 +118,12 @@ export interface SessionTopicInfo{
     subdescription?: string 
 }
 
+export interface FreeTopicDetail{
+    id: string
+    subtopic: string
+    subtopic_description: string
+}
+
 export interface TurnIdWithPayload<T>{
     payload: T
     next_turn_id: string

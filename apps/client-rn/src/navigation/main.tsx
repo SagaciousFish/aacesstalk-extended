@@ -5,6 +5,7 @@ import { MainRoutes } from ".";
 import { SessionMenuPopupScreen } from "../features/session/screens/SessionMenuPopupScreen";
 import { SessionClosingScreen } from "../features/session/screens/SessionClosingScreen";
 import { StarListScreen } from "../features/home/screens/StarListScreen";
+import { FreeTopicSelectionScreen } from "../features/home/screens/FreeTopicSelectionScreen";
 
 const screenOptions = {headerShown: false, gestureEnabled: false}
 
@@ -23,5 +24,6 @@ export const MainNavigator = () => {
         <Stack.Screen name={MainRoutes.ROUTE_SESSION} component={SessionScreen} options={sessionScreenOptions}/>
         <Stack.Screen name={MainRoutes.ROUTE_SESSION_CLOSING} component={SessionClosingScreen} options={sessionClosingScreenOptions}/>
         <Stack.Screen name={MainRoutes.ROUTE_SESSION_MENU} component={SessionMenuPopupScreen} options={sessionMenuScreenOptions}/>
+        <Stack.Screen name={MainRoutes.ROUTE_FREE_TOPIC_SELECTION} component={FreeTopicSelectionScreen} options={sessionMenuScreenOptions}/>
     </Stack.Navigator>
 }

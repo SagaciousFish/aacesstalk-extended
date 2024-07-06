@@ -32,6 +32,13 @@ class AACessTalkConfig:
             makedirs(p)
         return p
     
+    @classmethod
+    def get_free_topic_image_dir_path(cls, user_id: str, make_if_not_exist: bool = False) -> str:
+        p = path.join(cls.user_data_dir_path, user_id, "freetopic")
+        if not path.exists(p) and make_if_not_exist is True:
+            makedirs(p)
+        return p
+    
 
     cache_dir_path: str = path.join(database_dir_path, "cache")
 

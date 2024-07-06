@@ -176,6 +176,7 @@ VLo71idqvn,action,ignore,무시해요,False
 fQvoeG4dUc,action,ignored,무시했어요,False
 CPTlD4-tHi,action,illustrated,그렸어요,False
 ao7f8fwIUP,action,imagine,상상해요,False
+otowtcBX4W,action,imitate,따라해요,False
 cYvO3EOaVL,action,improve,개선해요,False
 FWsrExL8lN,action,in class,수업 중,False
 j6zL-wHGqV,action,install,설치해요,False
@@ -570,6 +571,7 @@ nGpA0VT7ce,topic,bicycle,자전거,False
 uiMaluvFvG,topic,bike,자전거,True
 O2sjPoUIwA,topic,bike ride,자전거 타기,False
 vtfMVeoV2h,topic,bird,새,True
+9772TkUvuc,topic,birds,새,False
 iTfQW20laa,topic,birthday,생일,False
 hVf-CF8rj8,topic,biscuits,비스킷,False
 2utmg4R8Fg,topic,blanket,담요,False
@@ -682,6 +684,7 @@ AhekrlV-yw,topic,exercising,운동,False
 OqptytpFU2,topic,experiment,실험,True
 plsdpMKgA7,topic,family,가족,False
 7viZZuVxIr,topic,father,아빠,True
+zVoiK5kyn8,topic,favorite,좋아하는,False
 sUYuN93nsf,topic,feeling,기분,False
 -JTtn1mFvY,topic,ferris wheel,관람차,False
 KnMhomaoYv,topic,file,파일,False
@@ -944,6 +947,7 @@ wR6jjqUIMI,topic,trip,여행,False
 TxjIz_Ta9s,topic,tv,TV,True
 ncqGVkfUxd,topic,tv Show,TV 프로그램,False
 8X3xGnZUXJ,topic,tv show,TV 프로그램,False
+o51_iDva4J,topic,tweeting,트윗,False
 2eRmnGqVDZ,topic,tyrannosaurus,티라노사우르스,False
 hX_5In0X6m,topic,uncle,삼촌,False
 k5Zet-Q-dz,topic,vegetables,채소,False

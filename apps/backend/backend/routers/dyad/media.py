@@ -11,8 +11,10 @@ from py_database.model import DyadORM, ChildCardRecommendationResultORM
 from sqlmodel import select
 from py_core.utils.speech import ClovaVoice, ClovaVoiceParams
 from py_core.system.task.card_image_matching import CardType, CardImageMatcher, CardImageMatching
+from py_core.system.storage import UserStorage
+from py_core.config import AACessTalkConfig
 
-from backend.routers.dyad.common import get_card_image_matcher, get_signed_in_dyad_orm
+from backend.routers.dyad.common import get_card_image_matcher, get_signed_in_dyad_orm, get_user_storage
 
 
 router = APIRouter()
@@ -55,3 +57,11 @@ async def get_card_image(card_type: CardType, image_id: str, dyad_orm: Annotated
     image_path = await image_matcher.get_card_image_filepath(card_type, image_id, dyad_orm.parent_type, dyad_orm.child_gender)
     if path.exists(image_path):
         return FileResponse(image_path)
+    
+@router.get('/freetopic_image', response_class=FileResponse)
+async def get_free_topic_image(detail_id: str, user_storage: Annotated[UserStorage, Depends(get_user_storage)]):
+    detail = await user_storage.get_free_topic_detail(detail_id)
+    if detail is not None and detail.topic_image_filename is not None:
+        image_path = path.join(AACessTalkConfig.get_free_topic_image_dir_path(user_storage.user_id, make_if_not_exist=True), detail.topic_image_filename)
+        if path.exists(image_path):
+            return FileResponse(image_path)

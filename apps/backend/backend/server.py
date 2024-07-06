@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request, status, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, PlainTextResponse
-from backend.database import create_test_dyad, engine
+from backend.database import create_test_dyad, create_test_freetopics, engine
 from py_database.database import create_db_and_tables
 from backend.routers import dyad
 
@@ -15,6 +15,7 @@ async def server_lifespan(app: FastAPI):
     print("Server launched.")
     await create_db_and_tables(engine)
     await create_test_dyad()
+    await create_test_freetopics()
 
     yield
 
