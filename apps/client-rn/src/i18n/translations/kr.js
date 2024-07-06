@@ -11,6 +11,10 @@ module.exports = {
     Summary: {
         StarsTitle: "대화로 얻은 별을 확인해 보아요",
         StarsCountUnitTemplate: "{stars}개",
+        Today: "오늘",
+        Yesterday: "어제",
+        DayBeforeYesterday: "그저께",
+        DialogueCountTemplate: "대화 {count}회",
         DateTemplate: "{year}년 {month}월 {date}일",
         DayOfWeek: {
             "0": "일요일",
