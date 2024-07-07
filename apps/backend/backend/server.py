@@ -45,6 +45,10 @@ async def validation_exception_handler(request, exc):
 origins = [
     "http://localhost:3000",
     "localhost:3000",
+    "0.0.0.0:3000",
+    "http://0.0.0.0:3000",
+    "localhost:4200",
+    "http://localhost:4200",
     "http://localhost:8000",
     "localhost:8000",
 ]

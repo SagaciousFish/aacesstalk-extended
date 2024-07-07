@@ -55,6 +55,12 @@ export class Http{
   static ENDPOINT_ADMIN_AUTH = `${Http.ENDPOINT_ADMIN}/auth`
   static ENDPOINT_ADMIN_ACCOUNT_LOGIN = `${Http.ENDPOINT_ADMIN_AUTH}/login`
   static ENDPOINT_ADMIN_ACCOUNT_VERIFY = `${Http.ENDPOINT_ADMIN_AUTH}/token`
+
+  static ENDPOINT_ADMIN_DYADS = `${Http.ENDPOINT_ADMIN}/dyads`
+
+  static ENDPOINT_ADMIN_DYADS_ALL = `${Http.ENDPOINT_ADMIN_DYADS}/all`
+
+  static ENDPOINT_ADMIN_DYADS_NEW = `${Http.ENDPOINT_ADMIN_DYADS}/new`
   
 
 

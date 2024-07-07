@@ -6,6 +6,7 @@ from sqlmodel import select
 
 from py_core.system.model import Dyad
 from py_database.model import DyadORM
+from backend.crud.dyad.account import create_dyad
 from backend.database import with_db_session
 from backend.database.models import DyadLoginCode
 from backend.routers.admin.common import check_admin_credential
@@ -45,3 +46,14 @@ async def update_dyad(dyad_id: str, update: DyadUpdateArgs, db: Annotated[AsyncS
             await db.commit()
             await db.refresh(dyad)
             return dyad
+
+class DyadCreateArgs(BaseModel):
+    alias: str = None
+    child_name: str = None
+    parent_type: str = None
+    child_gender: str = None   
+    
+@router.post("/new", response_model=DyadWithPasscode)
+async def _create_dyad(args:DyadCreateArgs, db: Annotated[AsyncSession, Depends(with_db_session)]):
+    dyad_orm, logincode = await create_dyad(**args.model_dump(), session=db)
+    return DyadWithPasscode(**dyad_orm.model_dump(), passcode=logincode.code)

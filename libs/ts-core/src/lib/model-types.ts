@@ -97,10 +97,17 @@ export enum ParentType{
     Father="father"
 }
 
+
+export enum ChildGender{
+    Boy="boy",
+    Girl="girl"
+}
+
 export interface Dyad{
   id: string
   alias: string
   child_name: string
+  child_genter: ChildGender
   parent_type: ParentType
 }
 

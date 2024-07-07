@@ -1,9 +1,11 @@
 import authReducer from './reducers/auth'
+import dyadsReducer from './reducers/dyads'
 import { Action, Reducer, Store, ThunkAction, ThunkDispatch, combineReducers, configureStore } from '@reduxjs/toolkit';
 import {FLUSH, PAUSE, PERSIST, PURGE, Persistor, REGISTER, REHYDRATE, persistReducer, persistStore} from 'redux-persist'
 
 export type AdminCoreState = {
-  auth: ReturnType<typeof authReducer>
+  auth: ReturnType<typeof authReducer>,
+  dyads: ReturnType<typeof dyadsReducer>
 }
 
 export type AdminCoreAction = Action<string>;
@@ -34,6 +36,7 @@ export function createAdminStore<Additional extends AdditionalReducers, A extend
       storage: persistStorage,
       whitelist: ['jwt']
     }, authReducer),
+    dyads: dyadsReducer,
     ...additionalReducers
   } as any) as any
   

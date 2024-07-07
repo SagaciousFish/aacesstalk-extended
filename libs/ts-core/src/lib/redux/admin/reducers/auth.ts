@@ -4,6 +4,7 @@ import { Http } from '../../../net/http';
 import { jwtDecode } from "jwt-decode";
 import { AxiosError } from 'axios';
 import { AACessTalkErrors } from '../../../errors';
+import { AdminCoreThunk } from '../store';
 
 export interface AdminAuthState {
     isAuthorizing: boolean;
@@ -46,7 +47,7 @@ const authSlice = createSlice({
     }
 });
 
-export function loginAdminThunk(password: string): CoreThunk {
+export function loginAdminThunk(password: string, onSuccess?: ()=>void): AdminCoreThunk {
     return async (dispatch, getState) => {
         dispatch(authSlice.actions._authorizingFlagOn());
 
@@ -71,6 +72,7 @@ export function loginAdminThunk(password: string): CoreThunk {
             dispatch(authSlice.actions._setSignedInUser({
                 token: jwt
             }))
+            onSuccess?.()
 
         } catch (ex) {
             let error = AACessTalkErrors.UnknownError
@@ -88,7 +90,7 @@ export function loginAdminThunk(password: string): CoreThunk {
     };
 }
 
-export function signOutAdminThunk(): CoreThunk {
+export function signOutAdminThunk(): AdminCoreThunk {
     return async (dispatch, getState) => {
         dispatch(authSlice.actions.initialize())
     }
