@@ -13,7 +13,7 @@ import { Action, createEntityAdapter, createSelector, createSlice, EntityAdapter
 import { CoreState, CoreThunk } from '../store';
 import { Http } from '../../net/http';
 import { finishAfterMinimumDelay } from '@aacesstalk/libs/ts-core';
-const group = require('group-array')
+import group from 'group-array'
 
 const parentGuideAdapter = createEntityAdapter<ParentGuideElement>()
 const INITIAL_PARENT_GUIDE_STATE = parentGuideAdapter.getInitialState()
@@ -168,7 +168,7 @@ const sessionSlice = createSlice({
 
     _storeNewChildCardRecommendation: (state, action: PayloadAction<ChildCardRecommendationResult>) => {
 
-      const cardGroupByCategory = group(action.payload.cards, "category")
+      const cardGroupByCategory = group(action.payload.cards, "category") as any
 
       forEachChildCardAdapters((category, adapter) => {
 

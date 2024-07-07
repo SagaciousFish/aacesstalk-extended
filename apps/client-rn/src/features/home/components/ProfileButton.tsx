@@ -5,7 +5,7 @@ import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Alert, View, Text } from "react-native"
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
-import format from "string-template"
+import format from 'pupa'
 
 export const ProfileButton = () => {
     const child_name = useSelector(state => state.auth.dyadInfo?.child_name)

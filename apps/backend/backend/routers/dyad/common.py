@@ -21,12 +21,13 @@ from py_core.system.storage import UserStorage
 from py_core.system.task.card_image_matching.card_image_matcher import CardImageMatcher 
 from py_core.system.model import Dyad, SessionTopicInfo, id_generator
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 class FreeTopicDetailInfo(BaseModel):
     id: str
     subtopic: str
     subtopic_description: str
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 async def get_signed_in_dyad_orm(token: Annotated[str, Depends(oauth2_scheme)], db: Annotated[AsyncSession, Depends(with_db_session)]) -> DyadORM:
     credentials_exception = HTTPException(

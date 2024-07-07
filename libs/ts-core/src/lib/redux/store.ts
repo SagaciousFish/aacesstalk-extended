@@ -20,7 +20,7 @@ export type CoreThunk<ReturnType = void, State = CoreState, A extends Action = C
 >;
 
 
-export type AdditionalReducers = {
+type AdditionalReducers = {
   [key:string]: Reducer<any, Action>
 }
 

@@ -3,7 +3,7 @@ import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Pressable, Text, View, ViewStyle } from "react-native"
 import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated"
-import stringFormat from 'string-template'
+import stringFormat from 'pupa'
 
 export const TopicButton = (props: {
     title: string,

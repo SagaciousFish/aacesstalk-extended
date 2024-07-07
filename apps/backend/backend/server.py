@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, PlainTextResponse
 from backend.database import create_test_dyad, create_test_freetopics, engine
 from py_database.database import create_db_and_tables
-from backend.routers import dyad
+from backend.routers import dyad, admin
 
 
 @asynccontextmanager
@@ -27,6 +27,10 @@ app = FastAPI(lifespan=server_lifespan)
 app.include_router(
     dyad.router,
     prefix="/api/v1/dyad"
+)
+app.include_router(
+    admin.router,
+    prefix="/api/v1/admin"
 )
 
 @app.exception_handler(RequestValidationError)

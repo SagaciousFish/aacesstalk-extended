@@ -2,8 +2,8 @@ import { PayloadAction, createEntityAdapter, createSlice } from "@reduxjs/toolki
 import { ExtendedSessionInfo, TOPIC_CATEGORIES, TopicCategory } from "../../model-types";
 import { CoreState, CoreThunk } from "../store";
 import { Http } from "../../net/http";
-const group = require('group-array')
-const moment = require('moment-timezone')
+import group from 'group-array'
+import moment from 'moment-timezone'
 
 const sessionInfoEntityAdapter = createEntityAdapter<ExtendedSessionInfo>()
 
@@ -50,7 +50,7 @@ const dyadStatusSlice = createSlice({
 
             sessionInfoEntityAdapter.setAll(state.sessionInfoEntityState, action.payload.sessions)
 
-            const grouped = group(action.payload.sessions, "topic.category")
+            const grouped = group(action.payload.sessions, "topic.category") as any
             
             const numSessionsByTopicCategory: {[key: string | TopicCategory] : {today: number, total: number}} = {}
 

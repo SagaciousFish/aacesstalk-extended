@@ -2,7 +2,7 @@ import { SessionTopicInfo, TopicCategory } from "@aacesstalk/libs/ts-core"
 import { useSelector } from "apps/client-rn/src/redux/hooks"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
-import format from "string-template"
+import format from "pupa"
 import {Text} from "react-native"
 import { styleTemplates } from "apps/client-rn/src/styles"
 

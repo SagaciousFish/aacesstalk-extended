@@ -1,11 +1,5 @@
 import axios, { Axios, CreateAxiosDefaults } from 'axios';
-import format = require('string-template');
-import { Env } from '../utils/env';
-
-
-const DEFAULTS: CreateAxiosDefaults<any> = {
-  baseURL: Env.instance.getVariable(Env.KEY_BACKEND_ADDRESS) + "/api/v1"
-}
+import pupa from 'pupa'
 
 export class Http{
 
@@ -54,14 +48,22 @@ export class Http{
 
   static ENDPOINT_DYAD_MEDIA_FREE_TOPIC_IMAGE = `${Http.ENDPOINT_DYAD_MEDIA}/freetopic`
 
+  // Admin endpoints ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+  static ENDPOINT_ADMIN = "/admin"
+
+  static ENDPOINT_ADMIN_AUTH = `${Http.ENDPOINT_ADMIN}/auth`
+  static ENDPOINT_ADMIN_ACCOUNT_LOGIN = `${Http.ENDPOINT_ADMIN_AUTH}/login`
+  static ENDPOINT_ADMIN_ACCOUNT_VERIFY = `${Http.ENDPOINT_ADMIN_AUTH}/token`
+  
+
+
 
   static getTemplateEndpoint(template: string, values: {[key:string]: string}): string {
-    return format(template, values)
+    return pupa(template, values)
   }
 
-  private static axiosInstance: Axios = axios.create({
-    ...DEFAULTS
-  })
+  private static axiosInstance: Axios
 
   private static _getTimezone: () => Promise<string>
   static getTimezone(): Promise<string>{
@@ -70,6 +72,10 @@ export class Http{
   private static isInitialized = false
 
   static get axios(): Axios {
+    if(!this.isInitialized){
+      throw Error("Http.initialize() has not been called.")
+    }
+
     return this.axiosInstance
   }
 
@@ -91,8 +97,13 @@ export class Http{
     }
   }
 
-  static initialize(getTimezone: () => Promise<string>){
+  static initialize(backendAddress: string, getTimezone: () => Promise<string>){
     Http._getTimezone = getTimezone
+
+    this.axiosInstance = axios.create({
+      baseURL: `${backendAddress}/api/v1`
+    })
+
     Http.isInitialized = true
   }
 }

@@ -18,7 +18,6 @@
     "react-redux": "*",
     "axios": "*",
     "tslib": "*",
-    "string-template": "*",
     "@reduxjs/toolkit": "*",
     "jwt-decode": "*",
     "@react-navigation/native": "*",

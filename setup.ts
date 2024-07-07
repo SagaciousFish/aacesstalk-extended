@@ -1,8 +1,6 @@
 import inquirer, { Question, QuestionCollection } from 'inquirer'
 import fs from 'fs-extra'
 import dotenv from 'dotenv'
-
-import {Env} from './libs/ts-core/src/lib/utils/env'
 import path from 'path'
 
 const envPath = path.resolve(process.cwd(), ".env")
@@ -17,7 +15,7 @@ async function setup(){
 
     const questions: Array<Question> = []
 
-    if(env.parsed?.[Env.KEY_BACKEND_ADDRESS] == null){
+    if(env.parsed?.["BACKEND_ADDRESS"] == null){
         questions.push({
                 type: 'input',
                 name: 'hostname',
@@ -36,7 +34,13 @@ async function setup(){
 
     if(questions.length > 0){
         const answers = await inquirer.prompt(questions)
-        newObj[Env.KEY_BACKEND_ADDRESS] = answers["hostname"]
+        newObj["BACKEND_ADDRESS"] = answers["hostname"]
+    }
+
+    for(const key of Object.keys(newObj)){
+        if(key.startsWith("VITE_") == false){
+            newObj[`VITE_${key}`] = newObj[key]
+        }
     }
 
     const envFileContent = Object.entries(newObj)
@@ -44,14 +48,9 @@ async function setup(){
         .join('\n');
 
     fs.writeFileSync(envPath, envFileContent, {encoding:'utf-8'})
-    const jsonEnvPath = path.join(process.cwd(), "/libs/ts-core/src/lib/", "env.json")
 
-
-    if(fs.existsSync(jsonEnvPath) == false){
-        fs.createFileSync(jsonEnvPath)
-    }
-
-    fs.writeJsonSync(jsonEnvPath, newObj)
+    fs.copyFileSync(envPath, path.join(process.cwd(), "/apps/client-rn", ".env"))
+    fs.copyFileSync(envPath, path.join(process.cwd(), "/apps/admin-web", ".env"))
 }
 
 setup().then()

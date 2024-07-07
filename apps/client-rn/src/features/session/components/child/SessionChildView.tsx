@@ -3,7 +3,7 @@ import { LoadingIndicator } from "apps/client-rn/src/components/LoadingIndicator
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { useTranslation } from "react-i18next"
 import { View } from "react-native"
-import format from 'string-template'
+import format from 'pupa'
 import { CardCategoryView, TopicChildCardView } from "./card-views"
 import { SelectedCardDeck } from "./SelectedCardDeck"
 import { useCallback, useEffect, useMemo } from "react"

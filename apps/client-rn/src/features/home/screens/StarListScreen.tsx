@@ -3,13 +3,13 @@ import { PopupMenuScreenFrame } from "apps/client-rn/src/components/PopupMenuScr
 import { MainRoutes } from "apps/client-rn/src/navigation"
 import { useSelector } from "apps/client-rn/src/redux/hooks"
 import { styleTemplates } from "apps/client-rn/src/styles"
-import { useCallback, useMemo, useRef } from "react"
+import { useCallback, useMemo } from "react"
 import { Text, View } from "react-native"
 import { ScrollView } from "react-native-gesture-handler"
 import { dailyStarStatsSelector } from "../selectors"
-import moment, {Moment} from "moment-timezone"
+import moment from "moment-timezone"
 import { useTranslation } from "react-i18next"
-import stringTemplate from 'string-template'
+import stringTemplate from 'pupa'
 import { TurnStar } from "../../session/components/TurnStar"
 
 export const DailySummaryElement = (props: {

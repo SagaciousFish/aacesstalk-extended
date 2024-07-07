@@ -42,7 +42,7 @@ export const App = () => {
   useKeepAwake()
 
   useEffect(()=>{
-    Http.initialize(async () => {return getTimeZone()})
+    Http.initialize(process.env["BACKEND_ADDRESS"], async () => {return getTimeZone()})
   }, [])
 
 

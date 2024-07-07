@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Alert, InteractionManager, Platform, StyleSheet, Text, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
-import format from 'string-template';
+import format from 'pupa';
 import { TopicButton } from "../components/TopicButton"
 import CalendarImage from "../../../assets/images/calendar.svg"
 import LogoImage from "../../../assets/images/logo-extended.svg"
@@ -21,6 +21,7 @@ import {checkMultiple, PERMISSIONS, request} from 'react-native-permissions'
 import { useFocusEffect } from "@react-navigation/native"
 import { fetchSessionInfoSummaries } from "libs/ts-core/src/lib/redux/reducers/dyad-status"
 import { checkBackendStatus, useBackendResponsiveCheck } from "../../system-status/reducer"
+import { useNonNullUpdatedValue } from "apps/client-rn/src/utils/hooks"
 
 const styles = StyleSheet.create({
     topicFreeDimensions: {right: '5%', bottom: '10%', width: '70%', height: '70%'},
@@ -50,12 +51,12 @@ const FreeTopicButton = (props: {style?: any, disabled?: boolean, onPress}) => {
 
     const {t} = useTranslation()
 
-    const child_name = useSelector(state => state.auth.dyadInfo?.child_name)
+    const child_name = useNonNullUpdatedValue(useSelector(state => state.auth.dyadInfo?.child_name))
 
     const sessionCounts = useSessionCounts(TopicCategory.Free)
     
     const label = useMemo(()=>{
-        return format(t("TopicSelection.FreeTemplate"), {child_name})
+        return format(t("TopicSelection.FreeTemplate"), {child_name}, {ignoreMissing: true})
     }, [child_name])
 
     return <TopicButton style={props.style} disabled={props.disabled} title={label} buttonClassName="bg-topicfree-fg" 
@@ -131,7 +132,6 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
                 props.navigation.navigate(MainRoutes.ROUTE_SESSION, { topic })
             }
         }))
-        
     }, [])
 
     const onPressRecallButton = useCallback(async ()=>{

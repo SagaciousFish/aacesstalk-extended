@@ -104,6 +104,10 @@ export interface Dyad{
   parent_type: ParentType
 }
 
+export interface DyadWithPasscode extends Dyad{
+    passcode: number
+}
+
 export enum TopicCategory{
     Plan="plan",
     Recall="recall",
