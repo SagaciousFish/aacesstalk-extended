@@ -54,6 +54,7 @@ async def login_with_code(login_code: str, session: AsyncSession) -> tuple[str, 
             "sub": dyad.id,
             "alias": dyad.alias,
             "child_name": dyad.child_name,
+            "child_gender": dyad.child_gender,
             "parent_type": dyad.parent_type,
             "iat": issued_at/1000,
             "exp": (issued_at + (365 * 24 * 3600 * 1000))/1000  # 1 year

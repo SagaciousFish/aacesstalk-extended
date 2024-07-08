@@ -107,7 +107,7 @@ export interface Dyad{
   id: string
   alias: string
   child_name: string
-  child_genter: ChildGender
+  child_gender: ChildGender
   parent_type: ParentType
 }
 
@@ -129,7 +129,16 @@ export interface SessionTopicInfo{
     subdescription?: string 
 }
 
+
+
 export interface FreeTopicDetail{
+    id: string
+    subtopic: string
+    subtopic_description: string
+    topic_image_filename?: string | undefined
+}
+
+export interface FreeTopicDetailInfo{
     id: string
     subtopic: string
     subtopic_description: string

@@ -60,18 +60,18 @@ SQLSessionStorage.set_session_maker(db_sessionmaker)
 SQLUserStorage.set_session_maker(db_sessionmaker)
 
 @lru_cache(maxsize=20)
-def _get_user_storage(dyad_id: str)->SQLUserStorage:
+def get_user_storage_with_id(dyad_id: str)->SQLUserStorage:
     return SQLUserStorage(dyad_id)
 
 @lru_cache(maxsize=20)
 def _get_card_image_matcher(dyad_id: str) -> CardImageMatcher:
-    return CardImageMatcher(_get_user_storage(dyad_id))
+    return CardImageMatcher(get_user_storage_with_id(dyad_id))
 
 def get_card_image_matcher(dyad_orm: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)]) -> CardImageMatcher:
     return _get_card_image_matcher(dyad_orm.id)
 
 def get_user_storage(dyad_orm: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)]) -> UserStorage:
-    return _get_user_storage(dyad_orm.id)
+    return get_user_storage_with_id(dyad_orm.id)
             
 async def create_moderator_session(dyad: Dyad, topic: SessionTopicInfo, timezone: str) -> ModeratorSession:
     return await ModeratorSession.create(dyad, topic, timezone, SQLSessionStorage(id_generator()))

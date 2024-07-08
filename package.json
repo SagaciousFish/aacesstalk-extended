@@ -9,6 +9,7 @@
   "private": true,
   "dependencies": {
     "@candlefinance/faster-image": "^1.6.1",
+    "@heroicons/react": "^2.1.4",
     "@hookform/resolvers": "^3.9.0",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",

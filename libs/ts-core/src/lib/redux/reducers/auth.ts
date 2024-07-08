@@ -1,4 +1,4 @@
-import { Dyad, FreeTopicDetail, ParentType } from '../../model-types';
+import { ChildGender, Dyad, FreeTopicDetailInfo, ParentType } from '../../model-types';
 import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CoreState, CoreThunk } from '../store';
 import { Http } from '../../net/http';
@@ -7,7 +7,7 @@ import { Axios, AxiosError } from 'axios';
 import { AACessTalkErrors } from '../../errors';
 import { initializeDyadStatus } from './dyad-status';
 
-const freeTopicDetailEntityAdapter = createEntityAdapter<FreeTopicDetail>()
+const freeTopicDetailEntityAdapter = createEntityAdapter<FreeTopicDetailInfo>()
 const INITIAL_FREE_TOPIC_DETAIL_STATE = freeTopicDetailEntityAdapter.getInitialState()
 
 export interface AuthState {
@@ -58,7 +58,7 @@ const authSlice = createSlice({
       state.isLoadingFreeTopicDetails = action.payload
     },
 
-    _setFreeTopicDetails: (state, action: PayloadAction<Array<FreeTopicDetail>>) => {
+    _setFreeTopicDetails: (state, action: PayloadAction<Array<FreeTopicDetailInfo>>) => {
       freeTopicDetailEntityAdapter.setAll(state.freeTopicDetailEntityState, action.payload)
     }
   }
@@ -85,6 +85,7 @@ export function loginDyadThunk(code: string): CoreThunk {
         alias: string,
         child_name: string,
         parent_type: ParentType,
+        child_gender: ChildGender,
         iat: number,
         exp: number}>(jwt)
 
@@ -95,6 +96,7 @@ export function loginDyadThunk(code: string): CoreThunk {
           id: decoded.sub,
           child_name: decoded.child_name,
           parent_type: decoded.parent_type,
+          child_gender: decoded.child_gender,
           alias: decoded.alias
         },
         token: jwt

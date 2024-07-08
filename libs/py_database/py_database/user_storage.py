@@ -78,11 +78,11 @@ class SQLUserStorage(UserStorage, SQLStorageBase):
 
     async def remove_free_topic_detail(self, id: str):
         async with self.get_sessionmaker() as db:
-            db: AsyncSession = db
-            orm = await db.get(FreeTopicDetailORM, id)
-            if orm is not None:
-                async with db.begin():
-                    db.delete(orm)
+            async with db.begin():
+                db: AsyncSession = db
+                orm = await db.get(FreeTopicDetailORM, id)
+                if orm is not None:
+                    await db.delete(orm)
 
     async def get_free_topic_detail(self, id: str) -> FreeTopicDetail | None:
         async with self.get_sessionmaker() as db:

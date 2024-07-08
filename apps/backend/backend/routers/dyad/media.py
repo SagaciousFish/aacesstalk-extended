@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, Form
 from fastapi.responses import FileResponse
 from py_core.system.model import CardIdentity
 from pydantic import BaseModel
+from backend.crud.media import get_free_topic_image
 from backend.database import with_db_session
 from py_database.database import AsyncSession
 from py_database.model import DyadORM, ChildCardRecommendationResultORM
@@ -59,9 +60,5 @@ async def get_card_image(card_type: CardType, image_id: str, dyad_orm: Annotated
         return FileResponse(image_path)
     
 @router.get('/freetopic_image', response_class=FileResponse)
-async def get_free_topic_image(detail_id: str, user_storage: Annotated[UserStorage, Depends(get_user_storage)]):
-    detail = await user_storage.get_free_topic_detail(detail_id)
-    if detail is not None and detail.topic_image_filename is not None:
-        image_path = path.join(AACessTalkConfig.get_free_topic_image_dir_path(user_storage.user_id, make_if_not_exist=True), detail.topic_image_filename)
-        if path.exists(image_path):
-            return FileResponse(image_path)
+async def _get_free_topic_image(detail_id: str, user_storage: Annotated[UserStorage, Depends(get_user_storage)]):
+    return get_free_topic_image(detail_id, user_storage)
