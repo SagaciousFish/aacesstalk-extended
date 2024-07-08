@@ -83,9 +83,9 @@ const FreeTopicDetailCard = (props: {id: string, style?: any}) => {
     }, [applyCardImage])
 
     return <Pressable accessible={false} style={props.style} onPressIn={onPressIn} onPressOut={onPressOut} onPress={onPress}>
-        <Reanimated.View style={containerAnimStyle} className="bg-white w-[25vw] rounded-3xl p-6 border-orange-400 border-4 shadow-lg shadow-black">
+        <Reanimated.View style={containerAnimStyle} className="bg-white w-[14vw] rounded-2xl p-2 border-orange-400 border-[3px] shadow-lg shadow-black">
             <FasterImageView style={styles.imageView} source={imageSource}/>
-            <Text style={styleTemplates.withExtraboldFont} className="text-2xl text-center text-slate-700" numberOfLines={2}>{detailInfo?.subtopic}</Text>
+            <Text style={styleTemplates.withExtraboldFont} className="text-xl text-center text-slate-700" numberOfLines={2}>{detailInfo?.subtopic}</Text>
         </Reanimated.View>
     </Pressable>
 }
@@ -102,8 +102,8 @@ export const FreeTopicSelectionScreen = (props: NativeStackScreenProps<MainRoute
 
     return <PopupMenuScreenFrame dismissOnPressOutside onPop={onPop} backgroundClassName="justify-center p-8" panelClassName={`bg-topicfree-bg pb-8 pt-3 px-3 rounded-3xl w-full max-w-full`}>
         <SessionTitleRibbon category={TopicCategory.Free} containerClassName="self-center"/>
-        <Text style={styleTemplates.withBoldFont} className="text-2xl text-black text-center my-10">{t("Session.FreeTopicSelectCard")}</Text>
-        <View className="flex-row justify-evenly">
+        <Text style={styleTemplates.withBoldFont} className="text-2xl text-black text-center mt-6 mb-0">{t("Session.FreeTopicSelectCard")}</Text>
+        <View className="flex-row flex-wrap gap-6 m-2">
         {
             topicDetailIds.map(id => <FreeTopicDetailCard id={id} key={id}/>)
         }
