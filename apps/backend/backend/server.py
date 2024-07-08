@@ -1,13 +1,16 @@
 from contextlib import asynccontextmanager
+from os import getcwd, path
 from time import perf_counter
 
 from fastapi import FastAPI, Request, status, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse
+from fastapi.staticfiles import StaticFiles
 from backend.database import create_test_dyad, create_test_freetopics, engine
 from py_database.database import create_db_and_tables
 from backend.routers import dyad, admin
+from re import compile
 
 
 @asynccontextmanager
@@ -32,6 +35,31 @@ app.include_router(
     admin.router,
     prefix="/api/v1/admin"
 )
+
+##############
+
+asset_path_regex = compile("\.[a-z][a-z0-9]+$")
+
+static_frontend_path = path.join(getcwd(), "../../dist/apps/admin-web")
+print(static_frontend_path)
+if path.exists(static_frontend_path):
+    @app.get("/{rest_of_path:path}", response_class=HTMLResponse)
+    def redirect_frontend_nested_url(*, rest_of_path: str):
+
+        if len(asset_path_regex.findall(rest_of_path)) > 0:
+            # This is a static asset file path.
+            return FileResponse(path.join(static_frontend_path, rest_of_path))
+        else:
+            return HTMLResponse(
+                status_code=200,
+                content=open(path.join(static_frontend_path, "index.html")).read()
+            )
+
+
+    app.mount("/", StaticFiles(directory=static_frontend_path, html=True), name="static")
+    print("Compiled static frontend file path was found. Mount the file.")
+
+##############
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):
