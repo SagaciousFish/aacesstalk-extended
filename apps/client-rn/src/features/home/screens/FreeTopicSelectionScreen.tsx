@@ -16,7 +16,7 @@ import { checkBackendStatus } from "../../system-status/reducer";
 import { getTimeZone } from "react-native-localize";
 
 const styles = StyleSheet.create({
-    imageView: {aspectRatio: 1, marginBottom: 12}
+    imageView: {aspectRatio: 1, marginBottom: 12, width: '100%', borderRadius: 12}
 })
 
 const FreeTopicDetailCard = (props: {id: string, style?: any}) => {

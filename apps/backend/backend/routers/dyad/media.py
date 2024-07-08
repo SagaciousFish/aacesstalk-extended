@@ -59,6 +59,6 @@ async def get_card_image(card_type: CardType, image_id: str, dyad_orm: Annotated
     if path.exists(image_path):
         return FileResponse(image_path)
     
-@router.get('/freetopic_image', response_class=FileResponse)
+@router.get('/freetopic', response_class=FileResponse)
 async def _get_free_topic_image(detail_id: str, user_storage: Annotated[UserStorage, Depends(get_user_storage)]):
-    return get_free_topic_image(detail_id, user_storage)
+    return await get_free_topic_image(detail_id, user_storage)
