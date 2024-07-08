@@ -36,6 +36,10 @@ app.include_router(
     prefix="/api/v1/admin"
 )
 
+@app.head("/api/v1/ping")
+def ping():
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
 ##############
 
 asset_path_regex = compile("\.[a-z][a-z0-9]+$")
@@ -111,7 +115,3 @@ async def pass_request_ids_header(request: Request, call_next):
         response.headers["X-context-id"] = request.headers["x-context-id"]
 
     return response
-
-@app.head("/api/v1/ping")
-def ping():
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
