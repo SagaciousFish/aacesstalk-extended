@@ -174,3 +174,15 @@ export interface ExtendedSessionInfo{
     
     num_turns: number
 }
+
+export interface UserDefinedCardInfo{
+    id: string
+    label?: string | undefined
+    label_localized: string
+    category: CardCategory
+    
+    image_filename?: string | undefined
+    image_width?: number | undefined
+    image_height?: number | undefined
+}
+

@@ -222,6 +222,9 @@ class InteractionORM(SQLModel, IdTimestampMixin, SessionIdMixin, table=True):
 
 class UserDefinedCardInfoORM(SQLModel, IdTimestampMixin, TimestampColumnMixin, DyadIdMixin, table=True):
     __tablename__:str = "user_defined_card"
+    __table_args__ = (
+        UniqueConstraint("dyad_id", "label_localized", "category", name="label_category_unique_by_dyad_idx"),
+    )
 
     label: Optional[str] = Field(index=True, default=None)
     label_localized: str = Field(index=True)

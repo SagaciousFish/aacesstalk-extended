@@ -32,6 +32,10 @@ class UserStorage(ABC):
         pass
 
     @abstractmethod
+    async def remove_user_defined_card(self, id: str):
+        pass
+
+    @abstractmethod
     async def upsert_free_topic_detail(self, detail: FreeTopicDetail):
         pass
 

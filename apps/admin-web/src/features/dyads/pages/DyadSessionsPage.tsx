@@ -105,5 +105,5 @@ export const DyadSessionsPage = () => {
         }
     }, [dyadId])
 
-    return <Collapse className="m-6" items={collapsableItems} destroyInactivePanel/>
+    return sessions.length > 0 ? <Collapse className="m-6" items={collapsableItems} destroyInactivePanel/> : <div className="p-10">No sessions.</div>
 }

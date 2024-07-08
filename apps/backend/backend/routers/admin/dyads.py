@@ -6,9 +6,9 @@ from pydantic import BaseModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 
-from py_core.system.model import Dyad, FreeTopicDetail, Dialogue
+from py_core.system.model import Dyad, FreeTopicDetail, Dialogue, UserDefinedCardInfo, CardCategory
 from py_core.system.storage import UserStorage
-from py_database.model import DyadORM
+from py_database.model import DyadORM, UserDefinedCardInfoORM
 from backend.crud.dyad.account import create_dyad
 from backend.crud.dyad.session import DialogueSession, ExtendedSessionInfo, get_dialogue, get_session_summaries
 from backend.crud.media import get_free_topic_image, process_uploaded_image
@@ -163,3 +163,40 @@ async def _get_sessions(dyad_id: str, db: Annotated[AsyncSession, Depends(with_d
 async def _get_sessions(dyad_id: str, session_id: str, db: Annotated[AsyncSession, Depends(with_db_session)]):
     return await get_dialogue(session_id, db)
 
+@router.get("/{dyad_id}/custom_cards", response_model=list[UserDefinedCardInfo])
+async def _get_user_defined_cards(dyad_id: str, user_storage: Annotated[UserStorage, Depends(get_user_storage_with_id)]):
+    return await user_storage.get_user_defined_cards()
+
+@router.post("/{dyad_id}/custom_cards/new", response_model=UserDefinedCardInfo)
+async def _add_user_defined_card(dyad_id: str, image: UploadFile, label_localized: Annotated[str, Form()], 
+                                 category: Annotated[CardCategory, Form()], 
+                                 user_storage: Annotated[UserStorage, Depends(get_user_storage_with_id)],
+                                 label: Union[str, None] = Form(None)):
+    info = UserDefinedCardInfoORM(dyad_id=dyad_id, label=label, label_localized=label_localized, category=category, image_filename=None, image_width=512, image_height=512)
+    filename = f"{info.id}_{floor(get_timestamp()/1000)}.png"
+    info.image_filename = filename
+
+    filepath = path.join(AACessTalkConfig.get_user_defined_card_dir_path(dyad_id, True), filename)
+    await process_uploaded_image(image, filepath)
+
+    await user_storage.register_user_defined_card(info.to_data_model())
+    return info
+
+@router.get("/{dyad_id}/custom_cards/{card_id}/image", response_class=FileResponse)
+async def _get_custom_card_image(dyad_id: str, card_id: str, user_storage: Annotated[UserStorage, Depends(get_user_storage_with_id)]):
+    info = await user_storage.get_user_defined_card(card_id)
+    if info.image_filename is not None:
+        image_path = path.join(AACessTalkConfig.get_user_defined_card_dir_path(dyad_id, True), info.image_filename)
+        if path.exists(image_path):
+            return FileResponse(image_path, media_type="image/png") 
+
+@router.delete("/{dyad_id}/custom_cards/{card_id}")
+async def _remove_custom_card(dyad_id: str, card_id: str, user_storage: Annotated[UserStorage, Depends(get_user_storage_with_id)]):
+    info = await user_storage.get_user_defined_card(card_id)
+    if info.image_filename is not None:
+        image_path = path.join(AACessTalkConfig.get_user_defined_card_dir_path(dyad_id, True), info.image_filename)
+        if path.exists(image_path):
+            remove(image_path)
+    await user_storage.remove_user_defined_card(card_id)
+    
+    

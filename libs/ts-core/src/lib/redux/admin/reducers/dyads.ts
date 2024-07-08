@@ -1,5 +1,5 @@
 import { PayloadAction, createEntityAdapter, createSlice } from "@reduxjs/toolkit"
-import { DialogueSession, DyadWithPasscode, ExtendedSessionInfo, FreeTopicDetail } from "../../../model-types"
+import { DialogueSession, DyadWithPasscode, ExtendedSessionInfo, FreeTopicDetail, UserDefinedCardInfo } from "../../../model-types"
 import { AdminCoreState, AdminCoreThunk } from "../store"
 import { Http } from "../../../net/http"
 
@@ -15,6 +15,8 @@ const INITIAL_SESSION_SUMMARY_ENTITY_STATE = sessionSummaryEntityAdapter.getInit
 const dialogueEntityAdapter = createEntityAdapter<DialogueSession>()
 const INITIAL_DIALOGUE_ENTITY_STATE = dialogueEntityAdapter.getInitialState()
 
+const userDefinedCardInfoEntityAdapter = createEntityAdapter<UserDefinedCardInfo>()
+const INITIAL_USER_DEFINED_CARD_ENTITY_STATE = userDefinedCardInfoEntityAdapter.getInitialState()
 
 
 export interface DyadsState {
@@ -22,6 +24,7 @@ export interface DyadsState {
     freeTopicDetailsEntityState: typeof INITIAL_FREE_TOPIC_DETAIL_ENTITY_STATE,
     sessionSummaryEntityState: typeof INITIAL_SESSION_SUMMARY_ENTITY_STATE,
     dialogueEntityState: typeof INITIAL_DIALOGUE_ENTITY_STATE,
+    userDefinedCardInfoEntityState: typeof INITIAL_USER_DEFINED_CARD_ENTITY_STATE,
 
     isLoadingFreeTopics: boolean,
     isLoadingDyadList: boolean,
@@ -29,6 +32,7 @@ export interface DyadsState {
     isLoadingSessionSummaries: boolean,
     isLoadingDialogue: boolean,
     isCreatingDyad: boolean,
+    isLoadingUserDefinedCards: boolean,
     mountedDyadId: string | undefined
 }
 
@@ -37,6 +41,7 @@ const INITIAL_DYADS_STATE: DyadsState = {
     freeTopicDetailsEntityState: INITIAL_FREE_TOPIC_DETAIL_ENTITY_STATE,
     sessionSummaryEntityState: INITIAL_SESSION_SUMMARY_ENTITY_STATE,
     dialogueEntityState: INITIAL_DIALOGUE_ENTITY_STATE,
+    userDefinedCardInfoEntityState: INITIAL_USER_DEFINED_CARD_ENTITY_STATE,
 
     isLoadingFreeTopics: false,
     isLoadingDyadList: false,
@@ -44,6 +49,7 @@ const INITIAL_DYADS_STATE: DyadsState = {
     isLoadingSessionSummaries: false,
     isLoadingDialogue: false,
     isUpdatingFreeTopic: false,
+    isLoadingUserDefinedCards: false,
     mountedDyadId: undefined
 }
 
@@ -70,6 +76,10 @@ const dyadsSlice = createSlice({
         _setLoadingDialogueFlag: (state, action: PayloadAction<boolean>) => {
             state.isLoadingDialogue = action.payload
         },
+        _setLoadingUserDefinedCardsFlag: (state, action: PayloadAction<boolean>) => {
+            state.isLoadingUserDefinedCards = action.payload
+        },
+
         _setLoadedDyads: (state, action: PayloadAction<Array<DyadWithPasscode>>) => {
             dyadEntityAdapter.setAll(state.dyadsEntityState, action.payload)
         },
@@ -104,6 +114,22 @@ const dyadsSlice = createSlice({
             dialogueEntityAdapter.setOne(state.dialogueEntityState, action.payload)
         },
 
+        _setUserDefinedCards: (state, action: PayloadAction<Array<UserDefinedCardInfo>>) => {
+            userDefinedCardInfoEntityAdapter.setAll(state.userDefinedCardInfoEntityState, action.payload)
+        },
+
+        _addOneUserDefinedCard: (state, action: PayloadAction<UserDefinedCardInfo>) => {
+            userDefinedCardInfoEntityAdapter.addOne(state.userDefinedCardInfoEntityState, action.payload)
+        },
+
+        _setOneUserDefinedCard: (state, action: PayloadAction<UserDefinedCardInfo>) => {
+            userDefinedCardInfoEntityAdapter.setOne(state.userDefinedCardInfoEntityState, action.payload)
+        },
+
+        _removeUserDefinedCardById: (state, action: PayloadAction<string>) => {
+            userDefinedCardInfoEntityAdapter.removeOne(state.userDefinedCardInfoEntityState, action.payload)
+        },
+
         clearDyadChildrenEntities: (state) => {
             freeTopicDetailEntityAdapter.removeAll(state.freeTopicDetailsEntityState)
             sessionSummaryEntityAdapter.removeAll(state.sessionSummaryEntityState)
@@ -119,6 +145,8 @@ export const adminFreeTopicDetailsSelectors = freeTopicDetailEntityAdapter.getSe
 export const adminSessionSummarySelectors = sessionSummaryEntityAdapter.getSelectors((state: AdminCoreState) => state.dyads.sessionSummaryEntityState)
 
 export const adminDialogueSelectors = dialogueEntityAdapter.getSelectors((state: AdminCoreState) => state.dyads.dialogueEntityState)
+
+export const userDefinedCardSelectors = userDefinedCardInfoEntityAdapter.getSelectors((state: AdminCoreState) => state.dyads.userDefinedCardInfoEntityState)
 
 export function loadDyads(): AdminCoreThunk {
     return async (dispatch, getState) => {
@@ -312,6 +340,71 @@ export function fetchDialogueOfSession(dyadId: string, sessionId: string): Admin
                 console.log(ex)
             } finally {
                 dispatch(dyadsSlice.actions._setLoadingDialogueFlag(false))
+            }
+        }
+    }
+}
+
+export function fetchUserDefinedCards(dyadId: string): AdminCoreThunk {
+    return async (dispatch, getState) => {
+        const state = getState()
+        if (state.auth.jwt != null && state.dyads.isLoadingDialogue === false) {
+            dispatch(dyadsSlice.actions._setLoadingUserDefinedCardsFlag(true))
+            try {
+                const resp = await Http.axios.get(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID_CUSTOM_CARDS, { dyad_id: dyadId }), {
+                    headers: await Http.getSignedInHeaders(state.auth.jwt)
+                })
+                if (resp.status == 200) {
+                    dispatch(dyadsSlice.actions._setUserDefinedCards(resp.data))
+                }
+            } catch (ex) {
+                console.log(ex)
+            } finally {
+                dispatch(dyadsSlice.actions._setLoadingUserDefinedCardsFlag(false))
+            }
+        }
+    }
+}
+
+export function createUserDefinedCard(dyadId:string, formData: FormData, onSuccess?: () => void): AdminCoreThunk {
+    return async (dispatch, getState) => {
+        const state = getState()
+        if (state.auth.jwt != null) {
+            dispatch(dyadsSlice.actions._setLoadingUserDefinedCardsFlag(true))
+            try {
+                const resp = await Http.axios.postForm(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID_CUSTOM_CARDS_NEW, {dyad_id: dyadId}), formData, {
+                    headers: {
+                        ...(await Http.getSignedInHeaders(state.auth.jwt)),
+                        "Content-Type": 'multipart/form-data'
+                    }
+                })
+                dispatch(dyadsSlice.actions._addOneUserDefinedCard(resp.data))
+                onSuccess?.()
+            } catch (ex) {
+                console.log(ex)
+            } finally{
+                dispatch(dyadsSlice.actions._setLoadingUserDefinedCardsFlag(false))
+            }
+        }
+    }
+}
+
+export function removeUserDefinedCard(dyadId: string, cardId: string): AdminCoreThunk {
+    return async (dispatch, getState) => {
+        const state = getState()
+        if (state.auth.jwt != null) {
+            dispatch(dyadsSlice.actions._setLoadingUserDefinedCardsFlag(true))
+            try {
+                const resp = await Http.axios.delete(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID_CUSTOM_CARDS_ID, { dyad_id: dyadId, card_id: cardId }), {
+                    headers: await Http.getSignedInHeaders(state.auth.jwt)
+                })
+                if (resp.status == 200) {
+                    dispatch(dyadsSlice.actions._removeUserDefinedCardById(cardId))
+                }
+            } catch (ex) {
+                console.log(ex)
+            } finally {
+                dispatch(dyadsSlice.actions._setLoadingUserDefinedCardsFlag(false))
             }
         }
     }

@@ -47,5 +47,6 @@ class OnMemoryUserStorage(UserStorage):
     async def get_free_topic_detail(self, id: str) -> FreeTopicDetail | None:
         return self.__free_topic_details[id] if id in self.__free_topic_details else None
 
-
-
+    async def remove_user_defined_card(self, id: str):
+        self.__user_defined_cards_by_id[id] = None
+        

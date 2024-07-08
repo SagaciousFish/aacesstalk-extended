@@ -1,8 +1,8 @@
-import { FreeTopicDetail, Http, adminFreeTopicDetailsSelectors, createFreeTopicDetail, updateFreeTopicDetail } from "@aacesstalk/libs/ts-core";
+import { adminFreeTopicDetailsSelectors, createFreeTopicDetail, updateFreeTopicDetail } from "@aacesstalk/libs/ts-core";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Form, Input, Modal, ModalProps, Upload, Checkbox } from "antd";
 import { useDispatch, useSelector } from "../../../redux/hooks";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { FormItem } from "react-hook-form-antd";
 import * as yup from 'yup'
@@ -74,7 +74,6 @@ export const FreeTopicModal = (props: Pick<ModalProps, "open"|"onCancel"|"onClos
 
 
     const getFileObjFromImageEvent = useCallback((args: any)=>{
-        console.log(args)
         return args.file.originFileObj
     }, [])
 
@@ -91,7 +90,7 @@ export const FreeTopicModal = (props: Pick<ModalProps, "open"|"onCancel"|"onClos
 
 
     return <Modal title={props.topicId != null ? "Edit Topic" : "New Free Topic"} 
-        open={props.open} onCancel={props.onCancel} maskClosable={false} okButtonProps={{htmlType: "submit", form: "free-topic-form"}}>
+        open={props.open} onCancel={props.onCancel} maskClosable={false} destroyOnClose={true} okButtonProps={{htmlType: "submit", form: "free-topic-form"}}>
         <Form onFinish={handleSubmit(submit)} id="free-topic-form">
             <FormItem control={control} name="subtopic">
                 <Input placeholder="Topic (Korean)"/>
