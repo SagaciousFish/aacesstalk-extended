@@ -1,5 +1,6 @@
-from typing import Annotated, Optional
-from fastapi import APIRouter, Depends
+from os import path
+from typing import Annotated, Optional, Union
+from fastapi import APIRouter, Depends, Form, UploadFile, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -9,11 +10,16 @@ from py_core.system.model import Dyad, FreeTopicDetail
 from py_core.system.storage import UserStorage
 from py_database.model import DyadORM
 from backend.crud.dyad.account import create_dyad
-from backend.crud.media import get_free_topic_image
+from backend.crud.media import get_free_topic_image, process_uploaded_image
 from backend.database import with_db_session
 from backend.database.models import DyadLoginCode
 from backend.routers.admin.common import check_admin_credential
 from backend.routers.dyad.common import get_user_storage_with_id
+from py_core.config import AACessTalkConfig
+from py_database.model import FreeTopicDetailORM
+from chatlib.utils.time import get_timestamp
+from math import floor
+from os import remove
 
 
 router = APIRouter(dependencies=[Depends(check_admin_credential)])
@@ -92,4 +98,56 @@ async def remove_free_topic(detail_id: str, user_storage: Annotated[UserStorage,
 
 @router.get('/{dyad_id}/freetopics/{detail_id}/image', response_class=FileResponse)
 async def _get_free_topic_image(detail_id: str, user_storage: Annotated[UserStorage, Depends(get_user_storage_with_id)]):
-    return get_free_topic_image(detail_id, user_storage)
+    return await get_free_topic_image(detail_id, user_storage)
+
+@router.post("/{dyad_id}/freetopics", response_model=FreeTopicDetail)
+async def _create_free_topic_detail(dyad_id: str, db: Annotated[AsyncSession, Depends(with_db_session)], topic: Annotated[str, Form()], description: Annotated[str, Form()], image: Union[UploadFile, None] = None):
+    
+    orm = FreeTopicDetailORM(dyad_id=dyad_id, subtopic=topic, subtopic_description=description, topic_image_filename=None)
+        
+    if image is not None:
+        local_filename = f"{orm.id}_{floor(get_timestamp()/1000)}.png"
+        local_file_path = path.join(AACessTalkConfig.get_free_topic_image_dir_path(dyad_id, True), local_filename)
+
+        await process_uploaded_image(image, local_file_path)
+        
+        orm.topic_image_filename = local_filename
+    
+    db.add(orm)
+    await db.commit()
+    await db.refresh(orm)
+    
+    return orm.to_data_model()
+
+
+@router.put("/{dyad_id}/freetopics/{detail_id}", response_model=FreeTopicDetail)
+async def _update_free_topic_detail(dyad_id: str, detail_id: str, db: Annotated[AsyncSession, Depends(with_db_session)], 
+                                   topic: Union[str, None] = Form(None), 
+                                   description: Union[str, None] = Form(None), remove_image: Union[bool, None] = Form(None), image: Union[UploadFile, None] = None):
+    
+    orm = await db.get(FreeTopicDetailORM, detail_id)
+    if orm is not None:    
+            if image is not None:
+                local_filename = f"{orm.id}_{floor(get_timestamp()/1000)}.png"
+                local_file_path = path.join(AACessTalkConfig.get_free_topic_image_dir_path(dyad_id, True), local_filename)
+
+                await process_uploaded_image(image, local_file_path)
+                
+                orm.topic_image_filename = local_filename
+            elif remove_image is True:
+                remove(path.join(AACessTalkConfig.get_free_topic_image_dir_path(dyad_id, True), orm.topic_image_filename))
+                orm.topic_image_filename = None
+
+            if topic is not None:
+                orm.subtopic = topic
+                
+            if description is not None:
+                orm.subtopic_description = description
+
+            db.add(orm)
+            await db.commit()
+            await db.refresh(orm)
+            
+            return orm.to_data_model()
+    else:
+            raise HTTPException(404)

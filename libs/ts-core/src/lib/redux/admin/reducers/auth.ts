@@ -75,6 +75,7 @@ export function loginAdminThunk(password: string, onSuccess?: ()=>void): AdminCo
             onSuccess?.()
 
         } catch (ex) {
+            console.log(ex)
             let error = AACessTalkErrors.UnknownError
             if (ex instanceof AxiosError) {
                 if (ex.code == AxiosError.ERR_NETWORK) {

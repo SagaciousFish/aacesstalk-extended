@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "../../../redux/hooks";
 import { Http, adminFreeTopicDetailsSelectors, fetchFreeTopicDetailsOfDyad, removeFreeTopicDetailById } from "@aacesstalk/libs/ts-core";
 import { useMatch } from "react-router-dom";
-import { Button, Card } from "antd";
+import { Button, Card, Image } from "antd";
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/solid'
 import { FreeTopicModal } from "../components/FreeTopicModal";
 
@@ -28,10 +28,19 @@ const FreeTopicDetailElement = (props: { id: string, dyadId: string, onEditClick
                 try {
                     const response = await Http.axios.get(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID_FREE_TOPICS_IMAGE, { dyad_id: props.dyadId, detail_id: props.id }), {
                         headers: await Http.getSignedInHeaders(token),
+                        responseType: 'blob'
                     })
-                    const b64 = Buffer.from(response.data, 'binary').toString('base64')
+
+                    const file = new File([response.data], detail.topic_image_filename!)
+                    var reader = new FileReader()
+                    reader.addEventListener("load", () => {
+                        setImageSource(reader.result!.toString())
+                    })
+                    reader.readAsDataURL(file)
+
+
                 } catch (ex) {
-                    console.log("Image loading error")
+                    console.log("Image loading error - ", ex)
                 }
             }
             loadImage().then()
@@ -51,7 +60,7 @@ const FreeTopicDetailElement = (props: { id: string, dyadId: string, onEditClick
             <Button type="text" className="p-2" onClick={onRemoveClick}><TrashIcon className="w-5 h-5 text-red-400" key="delete" /></Button>
         </div>}
     >
-        {detail?.topic_image_filename == null ? <div className="aspect-square bg-slate-50 mb-3 flex items-center justify-center"><span className="text-gray-400">No images assigned.</span></div> : null}
+        {detail?.topic_image_filename == null ? <div className="aspect-square bg-slate-50 mb-3 flex items-center justify-center"><span className="text-gray-400">No images assigned.</span></div> : <Image src={imageSource!}/>}
         <p className="">{detail?.subtopic_description}</p>
     </Card>
 }
@@ -95,6 +104,6 @@ export const FreeTopicSettingsPage = () => {
             topicIds.map(id => <FreeTopicDetailElement key={id} id={id} dyadId={routeDyadId} onEditClick={onEditClick} />)
         }
     </div> : <div className="p-10">No free topics defined.</div>)} <Button rootClassName="ml-10" onClick={onAddNewClick}>Add New Topic</Button>
-        <FreeTopicModal topicId={topicIdToEdit} open={isModalOpen} onCancel={onModalCloseRequested} onClose={onModalCloseRequested}/>
+        <FreeTopicModal dyadId={routeDyadId} topicId={topicIdToEdit} open={isModalOpen} onCancel={onModalCloseRequested} onClose={onModalCloseRequested}/>
     </div> : null
 }

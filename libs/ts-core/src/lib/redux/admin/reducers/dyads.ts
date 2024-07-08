@@ -9,7 +9,7 @@ const INITIAL_DYAD_ENTITY_STATE = dyadEntityAdapter.getInitialState()
 const freeTopicDetailEntityAdapter = createEntityAdapter<FreeTopicDetail>()
 const INITIAL_FREE_TOPIC_DETAIL_ENTITY_STATE = freeTopicDetailEntityAdapter.getInitialState()
 
-export interface DyadsState{
+export interface DyadsState {
     dyadsEntityState: typeof INITIAL_DYAD_ENTITY_STATE,
     freeTopicDetailsEntityState: typeof INITIAL_FREE_TOPIC_DETAIL_ENTITY_STATE,
     isLoadingFreeTopics: boolean,
@@ -31,7 +31,7 @@ const INITIAL_DYADS_STATE: DyadsState = {
 
 const dyadsSlice = createSlice({
     name: "dyads",
-    initialState: INITIAL_DYADS_STATE, 
+    initialState: INITIAL_DYADS_STATE,
     reducers: {
         _initialize: () => INITIAL_DYADS_STATE,
         _setLoadingDyadsFlag: (state, action: PayloadAction<boolean>) => {
@@ -58,9 +58,15 @@ const dyadsSlice = createSlice({
         _appendDyad: (state, action: PayloadAction<DyadWithPasscode>) => {
             dyadEntityAdapter.addOne(state.dyadsEntityState, action.payload)
         },
-        _setFreeTopicDetails: (state, action: PayloadAction<{dyad_id: string, details: Array<FreeTopicDetail>}>) => {
+        _setFreeTopicDetails: (state, action: PayloadAction<{ dyad_id: string, details: Array<FreeTopicDetail> }>) => {
             state.mountedDyadId = action.payload.dyad_id
             freeTopicDetailEntityAdapter.setAll(state.freeTopicDetailsEntityState, action.payload.details)
+        },
+        _setOneFreeTopicDetail: (state, action: PayloadAction<FreeTopicDetail>) => {
+            freeTopicDetailEntityAdapter.setOne(state.freeTopicDetailsEntityState, action.payload)
+        },
+        _addOneFreeTopicDetail: (state, action: PayloadAction<FreeTopicDetail>) => {
+            freeTopicDetailEntityAdapter.addOne(state.freeTopicDetailsEntityState, action.payload)
         },
         _removeFreeTopicById: (state, action: PayloadAction<string>) => {
             freeTopicDetailEntityAdapter.removeOne(state.freeTopicDetailsEntityState, action.payload)
@@ -75,19 +81,19 @@ export const adminFreeTopicDetailsSelectors = freeTopicDetailEntityAdapter.getSe
 export function loadDyads(): AdminCoreThunk {
     return async (dispatch, getState) => {
         const state = getState()
-        if(state.auth.jwt != null){
+        if (state.auth.jwt != null) {
             dispatch(dyadsSlice.actions._setLoadingDyadsFlag(true))
-            try{
+            try {
                 const resp = await Http.axios.get(Http.ENDPOINT_ADMIN_DYADS_ALL, {
                     headers: await Http.getSignedInHeaders(state.auth.jwt!)
                 })
 
-                const {dyads} = resp.data
+                const { dyads } = resp.data
                 dispatch(dyadsSlice.actions._setLoadedDyads(dyads))
 
-            }catch(ex){
+            } catch (ex) {
                 console.log(ex)
-            }finally{
+            } finally {
                 dispatch(dyadsSlice.actions._setLoadingDyadsFlag(false))
             }
         }
@@ -97,18 +103,18 @@ export function loadDyads(): AdminCoreThunk {
 export function loadOneDyad(id: string): AdminCoreThunk {
     return async (dispatch, getState) => {
         const state = getState()
-        if(state.auth.jwt != null){
+        if (state.auth.jwt != null) {
             dispatch(dyadsSlice.actions._setLoadingDyadsFlag(true))
-            try{
-                const resp = await Http.axios.get(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID, {dyad_id: id}), {
+            try {
+                const resp = await Http.axios.get(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID, { dyad_id: id }), {
                     headers: await Http.getSignedInHeaders(state.auth.jwt!)
                 })
 
                 dispatch(dyadsSlice.actions._setOneDyad(resp.data))
 
-            }catch(ex){
+            } catch (ex) {
                 console.log(ex)
-            }finally{
+            } finally {
                 dispatch(dyadsSlice.actions._setLoadingDyadsFlag(false))
             }
         }
@@ -118,19 +124,19 @@ export function loadOneDyad(id: string): AdminCoreThunk {
 export function createDyad(info: any, onCreated: (dyad: DyadWithPasscode) => void, onError: (error: any) => void): AdminCoreThunk {
     return async (dispatch, getState) => {
         const state = getState()
-        if(state.auth.jwt != null){
+        if (state.auth.jwt != null) {
             dispatch(dyadsSlice.actions._setCreatingDyadFlag(true))
 
-            try{
+            try {
                 const resp = await Http.axios.post(Http.ENDPOINT_ADMIN_DYADS_NEW, info, {
                     headers: await Http.getSignedInHeaders(state.auth.jwt)
                 })
                 dispatch(dyadsSlice.actions._appendDyad(resp.data))
                 onCreated(resp.data)
-            }catch(ex){
+            } catch (ex) {
                 console.log(ex)
                 onError(ex)
-            }finally {
+            } finally {
                 dispatch(dyadsSlice.actions._setCreatingDyadFlag(false))
             }
         }
@@ -139,47 +145,91 @@ export function createDyad(info: any, onCreated: (dyad: DyadWithPasscode) => voi
 
 export function fetchFreeTopicDetailsOfDyad(dyadId: string): AdminCoreThunk {
     return async (dispatch, getState) => {
-      const state = getState()
-      if(state.auth.jwt != null && state.dyads.isLoadingFreeTopics === false) {
-        dispatch(dyadsSlice.actions._setLoadingFreeTopicsFlag(true))
-        try{
-          const resp = await Http.axios.get(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID_FREE_TOPICS, {dyad_id: dyadId}), {
-            headers: await Http.getSignedInHeaders(state.auth.jwt)
-          })
-          if(resp.status == 200){
-            if(resp.data.dyad_id === dyadId){
-                console.log(resp.data)
-                dispatch(dyadsSlice.actions._setFreeTopicDetails(resp.data)) 
-            }
-          }
-        }catch(ex){
-          console.log(ex)
-        }finally{
-          dispatch(dyadsSlice.actions._setLoadingFreeTopicsFlag(false))
-        }
-      }
-    }
-  }
-
-  export function removeFreeTopicDetailById(dyadId: string, detailId: string): AdminCoreThunk {
-    return async (dispatch, getState) => {
         const state = getState()
-        if(state.auth.jwt != null) {
-            dispatch(dyadsSlice.actions._setUpdatingFreeTopicsFlag(true))
-            try{
-                const resp = await Http.axios.delete(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID_FREE_TOPICS_ID, {dyad_id: dyadId, detail_id: detailId}), {
+        if (state.auth.jwt != null && state.dyads.isLoadingFreeTopics === false) {
+            dispatch(dyadsSlice.actions._setLoadingFreeTopicsFlag(true))
+            try {
+                const resp = await Http.axios.get(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID_FREE_TOPICS, { dyad_id: dyadId }), {
                     headers: await Http.getSignedInHeaders(state.auth.jwt)
                 })
-            if(resp.status == 200){
-                dispatch(dyadsSlice.actions._removeFreeTopicById(detailId))
-            }
-            }catch(ex){
+                if (resp.status == 200) {
+                    if (resp.data.dyad_id === dyadId) {
+                        console.log(resp.data)
+                        dispatch(dyadsSlice.actions._setFreeTopicDetails(resp.data))
+                    }
+                }
+            } catch (ex) {
                 console.log(ex)
-            }finally{
+            } finally {
+                dispatch(dyadsSlice.actions._setLoadingFreeTopicsFlag(false))
+            }
+        }
+    }
+}
+
+export function removeFreeTopicDetailById(dyadId: string, detailId: string): AdminCoreThunk {
+    return async (dispatch, getState) => {
+        const state = getState()
+        if (state.auth.jwt != null) {
+            dispatch(dyadsSlice.actions._setUpdatingFreeTopicsFlag(true))
+            try {
+                const resp = await Http.axios.delete(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID_FREE_TOPICS_ID, { dyad_id: dyadId, detail_id: detailId }), {
+                    headers: await Http.getSignedInHeaders(state.auth.jwt)
+                })
+                if (resp.status == 200) {
+                    dispatch(dyadsSlice.actions._removeFreeTopicById(detailId))
+                }
+            } catch (ex) {
+                console.log(ex)
+            } finally {
                 dispatch(dyadsSlice.actions._setUpdatingFreeTopicsFlag(false))
             }
         }
     }
-  }
+}
+
+export function updateFreeTopicDetail(dyadId: string, detailId: string, formData: FormData, onSuccess?: () => void): AdminCoreThunk {
+    return async (dispatch, getState) => {
+        const state = getState()
+        if (state.auth.jwt != null) {
+            dispatch(dyadsSlice.actions._setUpdatingFreeTopicsFlag(true))
+            try {
+                const resp = await Http.axios.putForm(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID_FREE_TOPICS_ID, { dyad_id: dyadId, detail_id: detailId }), formData, {
+                    headers: {
+                        ...(await Http.getSignedInHeaders(state.auth.jwt)),
+                        "Content-Type": 'multipart/form-data'
+                    }
+                })
+                dispatch(dyadsSlice.actions._setOneFreeTopicDetail(resp.data))
+                onSuccess?.()
+            } catch (ex) {
+                console.log(ex)
+            }
+        }
+    }
+}
+
+export function createFreeTopicDetail(dyadId:string, formData: FormData, onSuccess?: () => void): AdminCoreThunk {
+    return async (dispatch, getState) => {
+        const state = getState()
+        if (state.auth.jwt != null) {
+            dispatch(dyadsSlice.actions._setUpdatingFreeTopicsFlag(true))
+            try {
+                const resp = await Http.axios.postForm(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID_FREE_TOPICS, {dyad_id: dyadId}), formData, {
+                    headers: {
+                        ...(await Http.getSignedInHeaders(state.auth.jwt)),
+                        "Content-Type": 'multipart/form-data'
+                    }
+                })
+                dispatch(dyadsSlice.actions._addOneFreeTopicDetail(resp.data))
+                onSuccess?.()
+            } catch (ex) {
+                console.log(ex)
+            } finally{
+                dispatch(dyadsSlice.actions._setUpdatingFreeTopicsFlag(false))
+            }
+        }
+    }
+}
 
 export default dyadsSlice.reducer

@@ -2,7 +2,7 @@ from enum import StrEnum
 from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel
-from sqlmodel import SQLModel, Column, Field, Relationship, JSON
+from sqlmodel import SQLModel, Column, Field, Relationship, JSON, UniqueConstraint
 from sqlalchemy import DateTime, func
 
 from py_core.system.model import (id_generator, DialogueRole, DialogueMessage,
@@ -241,6 +241,9 @@ class UserDefinedCardInfoORM(SQLModel, IdTimestampMixin, TimestampColumnMixin, D
 
 class FreeTopicDetailORM(SQLModel, IdTimestampMixin, DyadIdMixin, table=True):
     __tablename__:str = "free_topic_detail"
+    __table_args__ = (
+        UniqueConstraint("dyad_id", "subtopic", name="subtopic_unique_by_dyad_idx"),
+    )
 
     subtopic: str
     subtopic_description: str
