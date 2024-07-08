@@ -90,7 +90,12 @@ export interface DialogueMessage{
     recommendation_id?: string
 }
 
-type Dialogue = Array<DialogueMessage>
+export type Dialogue = Array<DialogueMessage>
+
+export interface DialogueSession{
+    id: string
+    dialogue: Dialogue
+}
 
 export enum ParentType{
     Mother="mother",

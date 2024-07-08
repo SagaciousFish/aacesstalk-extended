@@ -1,5 +1,5 @@
 import { PayloadAction, createEntityAdapter, createSlice } from "@reduxjs/toolkit"
-import { DyadWithPasscode, FreeTopicDetail } from "../../../model-types"
+import { DialogueSession, DyadWithPasscode, ExtendedSessionInfo, FreeTopicDetail } from "../../../model-types"
 import { AdminCoreState, AdminCoreThunk } from "../store"
 import { Http } from "../../../net/http"
 
@@ -9,12 +9,25 @@ const INITIAL_DYAD_ENTITY_STATE = dyadEntityAdapter.getInitialState()
 const freeTopicDetailEntityAdapter = createEntityAdapter<FreeTopicDetail>()
 const INITIAL_FREE_TOPIC_DETAIL_ENTITY_STATE = freeTopicDetailEntityAdapter.getInitialState()
 
+const sessionSummaryEntityAdapter = createEntityAdapter<ExtendedSessionInfo>()
+const INITIAL_SESSION_SUMMARY_ENTITY_STATE = sessionSummaryEntityAdapter.getInitialState()
+
+const dialogueEntityAdapter = createEntityAdapter<DialogueSession>()
+const INITIAL_DIALOGUE_ENTITY_STATE = dialogueEntityAdapter.getInitialState()
+
+
+
 export interface DyadsState {
     dyadsEntityState: typeof INITIAL_DYAD_ENTITY_STATE,
     freeTopicDetailsEntityState: typeof INITIAL_FREE_TOPIC_DETAIL_ENTITY_STATE,
+    sessionSummaryEntityState: typeof INITIAL_SESSION_SUMMARY_ENTITY_STATE,
+    dialogueEntityState: typeof INITIAL_DIALOGUE_ENTITY_STATE,
+
     isLoadingFreeTopics: boolean,
     isLoadingDyadList: boolean,
     isUpdatingFreeTopic: boolean,
+    isLoadingSessionSummaries: boolean,
+    isLoadingDialogue: boolean,
     isCreatingDyad: boolean,
     mountedDyadId: string | undefined
 }
@@ -22,9 +35,14 @@ export interface DyadsState {
 const INITIAL_DYADS_STATE: DyadsState = {
     dyadsEntityState: INITIAL_DYAD_ENTITY_STATE,
     freeTopicDetailsEntityState: INITIAL_FREE_TOPIC_DETAIL_ENTITY_STATE,
+    sessionSummaryEntityState: INITIAL_SESSION_SUMMARY_ENTITY_STATE,
+    dialogueEntityState: INITIAL_DIALOGUE_ENTITY_STATE,
+
     isLoadingFreeTopics: false,
     isLoadingDyadList: false,
     isCreatingDyad: false,
+    isLoadingSessionSummaries: false,
+    isLoadingDialogue: false,
     isUpdatingFreeTopic: false,
     mountedDyadId: undefined
 }
@@ -45,6 +63,12 @@ const dyadsSlice = createSlice({
         },
         _setUpdatingFreeTopicsFlag: (state, action: PayloadAction<boolean>) => {
             state.isUpdatingFreeTopic = action.payload
+        },
+        _setLoadingSessionSummariesFlag: (state, action: PayloadAction<boolean>) => {
+            state.isLoadingSessionSummaries = action.payload
+        },
+        _setLoadingDialogueFlag: (state, action: PayloadAction<boolean>) => {
+            state.isLoadingDialogue = action.payload
         },
         _setLoadedDyads: (state, action: PayloadAction<Array<DyadWithPasscode>>) => {
             dyadEntityAdapter.setAll(state.dyadsEntityState, action.payload)
@@ -70,6 +94,20 @@ const dyadsSlice = createSlice({
         },
         _removeFreeTopicById: (state, action: PayloadAction<string>) => {
             freeTopicDetailEntityAdapter.removeOne(state.freeTopicDetailsEntityState, action.payload)
+        },
+
+        _setSessionSummaries: (state, action: PayloadAction<Array<ExtendedSessionInfo>>) => {
+            sessionSummaryEntityAdapter.setAll(state.sessionSummaryEntityState, action.payload)
+        },
+
+        _setDialogue: (state, action: PayloadAction<DialogueSession>) => {
+            dialogueEntityAdapter.setOne(state.dialogueEntityState, action.payload)
+        },
+
+        clearDyadChildrenEntities: (state) => {
+            freeTopicDetailEntityAdapter.removeAll(state.freeTopicDetailsEntityState)
+            sessionSummaryEntityAdapter.removeAll(state.sessionSummaryEntityState)
+            dialogueEntityAdapter.removeAll(state.dialogueEntityState)
         }
     }
 })
@@ -77,6 +115,10 @@ const dyadsSlice = createSlice({
 export const dyadsSelectors = dyadEntityAdapter.getSelectors((state: AdminCoreState) => state.dyads.dyadsEntityState)
 
 export const adminFreeTopicDetailsSelectors = freeTopicDetailEntityAdapter.getSelectors((state: AdminCoreState) => state.dyads.freeTopicDetailsEntityState)
+
+export const adminSessionSummarySelectors = sessionSummaryEntityAdapter.getSelectors((state: AdminCoreState) => state.dyads.sessionSummaryEntityState)
+
+export const adminDialogueSelectors = dialogueEntityAdapter.getSelectors((state: AdminCoreState) => state.dyads.dialogueEntityState)
 
 export function loadDyads(): AdminCoreThunk {
     return async (dispatch, getState) => {
@@ -231,5 +273,50 @@ export function createFreeTopicDetail(dyadId:string, formData: FormData, onSucce
         }
     }
 }
+
+export function fetchSessionSummariesOfDyad(dyadId: string): AdminCoreThunk {
+    return async (dispatch, getState) => {
+        const state = getState()
+        if (state.auth.jwt != null && state.dyads.isLoadingSessionSummaries === false) {
+            dispatch(dyadsSlice.actions._setLoadingSessionSummariesFlag(true))
+            try {
+                const resp = await Http.axios.get(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID_SESSIONS, { dyad_id: dyadId }), {
+                    headers: await Http.getSignedInHeaders(state.auth.jwt)
+                })
+                if (resp.status == 200) {
+                    dispatch(dyadsSlice.actions._setSessionSummaries(resp.data))
+                }
+            } catch (ex) {
+                console.log(ex)
+            } finally {
+                dispatch(dyadsSlice.actions._setLoadingSessionSummariesFlag(false))
+            }
+        }
+    }
+}
+
+
+export function fetchDialogueOfSession(dyadId: string, sessionId: string): AdminCoreThunk {
+    return async (dispatch, getState) => {
+        const state = getState()
+        if (state.auth.jwt != null && state.dyads.isLoadingDialogue === false) {
+            dispatch(dyadsSlice.actions._setLoadingDialogueFlag(true))
+            try {
+                const resp = await Http.axios.get(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID_DIALOGUE_ID, { dyad_id: dyadId, session_id: sessionId }), {
+                    headers: await Http.getSignedInHeaders(state.auth.jwt)
+                })
+                if (resp.status == 200) {
+                    dispatch(dyadsSlice.actions._setDialogue(resp.data))
+                }
+            } catch (ex) {
+                console.log(ex)
+            } finally {
+                dispatch(dyadsSlice.actions._setLoadingDialogueFlag(false))
+            }
+        }
+    }
+}
+
+export const { clearDyadChildrenEntities } = dyadsSlice.actions
 
 export default dyadsSlice.reducer

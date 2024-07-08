@@ -6,10 +6,11 @@ from pydantic import BaseModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 
-from py_core.system.model import Dyad, FreeTopicDetail
+from py_core.system.model import Dyad, FreeTopicDetail, Dialogue
 from py_core.system.storage import UserStorage
 from py_database.model import DyadORM
 from backend.crud.dyad.account import create_dyad
+from backend.crud.dyad.session import DialogueSession, ExtendedSessionInfo, get_dialogue, get_session_summaries
 from backend.crud.media import get_free_topic_image, process_uploaded_image
 from backend.database import with_db_session
 from backend.database.models import DyadLoginCode
@@ -151,3 +152,14 @@ async def _update_free_topic_detail(dyad_id: str, detail_id: str, db: Annotated[
             return orm.to_data_model()
     else:
             raise HTTPException(404)
+    
+
+@router.get("/{dyad_id}/sessions", response_model=list[ExtendedSessionInfo])
+async def _get_sessions(dyad_id: str, db: Annotated[AsyncSession, Depends(with_db_session)]):
+    return await get_session_summaries(dyad_id, db, includeOnlyTerminated=False)
+
+
+@router.get("/{dyad_id}/dialogues/{session_id}", response_model=DialogueSession)
+async def _get_sessions(dyad_id: str, session_id: str, db: Annotated[AsyncSession, Depends(with_db_session)]):
+    return await get_dialogue(session_id, db)
+

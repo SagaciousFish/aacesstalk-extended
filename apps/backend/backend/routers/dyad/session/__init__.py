@@ -32,7 +32,7 @@ class SessionInfoListResponse(BaseModel):
 
 @router.get("/list", response_model=SessionInfoListResponse)
 async def _get_session_summaries(dyad: Annotated[DyadORM, Depends(get_signed_in_dyad_orm)], db: Annotated[AsyncSession, Depends(with_db_session)]):
-    summaries = await get_session_summaries(dyad.id, db)
+    summaries = await get_session_summaries(dyad.id, db, includeOnlyTerminated=True)
     return SessionInfoListResponse(dyad_id=dyad.id, sessions=summaries)
 
 
@@ -69,6 +69,7 @@ async def _abort_session(session_id: str, session: Annotated[ModeratorSession, D
         session_orm = await find_session_orm(session_id, dyad.id, db)
         await db.delete(session_orm)
         await dispose_session_instance(session_id)
+        await db.commit()
 
     except ValueError as ex:
         print(ex)

@@ -34,7 +34,7 @@ class MainActivity : ReactActivity() {
         if(event?.action == KeyEvent.ACTION_DOWN){
             GlobalKeyEventModule.getInstance().onKeyDownEvent(event.keyCode, event)
             return true
-        }else if(event?.action == KeyEvent.ACTION_UP){
+        }else if(event?.action == KeyEvent.ACTION_UP) {
             GlobalKeyEventModule.getInstance().onKeyUpEvent(event.keyCode, event)
             return true
 
