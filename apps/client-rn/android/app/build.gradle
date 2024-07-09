@@ -80,8 +80,8 @@ android {
         applicationId "com.naver.ai.aacesstalk.client"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "0.5"
+        versionCode 2
+        versionName "0.5.2"
     }
     signingConfigs {
         debug {
@@ -101,6 +101,14 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+
+    applicationVariants.all {variant ->
+        variant.outputs.all {
+            def flavor = variant.name
+            def versionName = variant.versionName
+            outputFileName = "aacesstalk_${flavor}_${versionName}.apk"
         }
     }
 }
