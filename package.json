@@ -31,6 +31,7 @@
     "pupa": "^3.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-h5-audio-player": "^3.9.3",
     "react-hook-form": "^7.52.1",
     "react-hook-form-antd": "^1.1.0",
     "react-i18next": "^14.1.2",

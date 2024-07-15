@@ -88,6 +88,7 @@ export interface DialogueMessage{
     content_localized?: string
     content: string | Array<CardInfo>
     recommendation_id?: string
+    turn_id?: string
 }
 
 export type Dialogue = Array<DialogueMessage>

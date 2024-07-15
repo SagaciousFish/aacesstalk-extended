@@ -1,14 +1,14 @@
 from os import path
 from typing import Annotated, Optional, Union
-from fastapi import APIRouter, Depends, Form, UploadFile, HTTPException
+from fastapi import APIRouter, Depends, Form, UploadFile, HTTPException, status
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 
-from py_core.system.model import Dyad, FreeTopicDetail, Dialogue, UserDefinedCardInfo, CardCategory
+from py_core.system.model import Dyad, FreeTopicDetail, Dialogue, UserDefinedCardInfo, CardCategory, DialogueRole
 from py_core.system.storage import UserStorage
-from py_database.model import DyadORM, UserDefinedCardInfoORM
+from py_database.model import DyadORM, UserDefinedCardInfoORM, DialogueTurnORM
 from backend.crud.dyad.account import create_dyad
 from backend.crud.dyad.session import DialogueSession, ExtendedSessionInfo, get_dialogue, get_session_summaries
 from backend.crud.media import get_free_topic_image, process_uploaded_image
@@ -162,6 +162,21 @@ async def _get_sessions(dyad_id: str, db: Annotated[AsyncSession, Depends(with_d
 @router.get("/{dyad_id}/dialogues/{session_id}", response_model=DialogueSession)
 async def _get_sessions(dyad_id: str, session_id: str, db: Annotated[AsyncSession, Depends(with_db_session)]):
     return await get_dialogue(session_id, db)
+
+@router.get("/{dyad_id}/dialogues/{session_id}/{turn_id}/audio", response_class=FileResponse)
+async def _get_turn_audio(dyad_id: str, session_id: str, turn_id: str, db: Annotated[AsyncSession, Depends(with_db_session)]):
+    turn_info = await db.get(DialogueTurnORM, turn_id)
+    if turn_info is not None:
+        if turn_info.role == DialogueRole.Parent:
+            if turn_info.audio_filename is not None:
+                file_path = path.join(AACessTalkConfig.get_turn_audio_recording_dir_path(dyad_id, False), turn_info.audio_filename)
+                return FileResponse(file_path, filename=turn_info.audio_filename, media_type="audio/m4a")
+            else:
+                raise HTTPException(status.HTTP_400_BAD_REQUEST)
+        else:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST)
+    else:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
 
 @router.get("/{dyad_id}/custom_cards", response_model=list[UserDefinedCardInfo])
 async def _get_user_defined_cards(dyad_id: str, user_storage: Annotated[UserStorage, Depends(get_user_storage_with_id)]):

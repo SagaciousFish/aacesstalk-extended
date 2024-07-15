@@ -70,6 +70,8 @@ export class Http{
   static ENDPOINT_ADMIN_DYADS_ID_SESSIONS = `${Http.ENDPOINT_ADMIN_DYADS_ID}/sessions`
   static ENDPOINT_ADMIN_DYADS_ID_DIALOGUE_ID = `${Http.ENDPOINT_ADMIN_DYADS_ID}/dialogues/{session_id}`
 
+  static ENDPOINT_ADMIN_DYADS_ID_DIALOGUE_ID_AUDIO = `${Http.ENDPOINT_ADMIN_DYADS_ID}/dialogues/{session_id}/{turn_id}/audio`
+
 
   static ENDPOINT_ADMIN_DYADS_ID_CUSTOM_CARDS = `${Http.ENDPOINT_ADMIN_DYADS_ID}/custom_cards`
 

@@ -1,9 +1,52 @@
-import { CardInfo, DialogueRole, SessionStatus, TopicCategory, adminDialogueSelectors, adminSessionSummarySelectors, fetchDialogueOfSession, fetchSessionSummariesOfDyad } from "@aacesstalk/libs/ts-core"
+import { CardInfo, DialogueRole, Http, SessionStatus, TopicCategory, adminDialogueSelectors, adminSessionSummarySelectors, fetchDialogueOfSession, fetchSessionSummariesOfDyad } from "@aacesstalk/libs/ts-core"
 import { useDispatch, useSelector } from "../../../redux/hooks"
-import { useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useDyadId } from "../hooks"
-import {Button, Collapse, CollapseProps, Timeline} from 'antd'
+import {Button, Collapse, CollapseProps, Space, Switch, Timeline} from 'antd'
 import moment from 'moment-timezone'
+import { SwitchChangeEventHandler } from "antd/es/switch"
+import AudioPlayer from 'react-h5-audio-player';
+import 'react-h5-audio-player/lib/styles.css';
+
+const TurnAudioPlayer = (props: {sessionId: string, turnId: string}) => {
+
+    const dyadId = useDyadId()
+
+    const [audioBlobUrl, setAudioBlobUrl] = useState<string|undefined>(undefined)
+
+    const token = useSelector(state => state.auth.jwt)
+
+    const mountAudioFile = useCallback(async () => {
+        if(dyadId != null && props.sessionId != null && props.turnId != null && token != null){
+            const url = Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID_DIALOGUE_ID_AUDIO, {
+                session_id: props.sessionId,
+                turn_id: props.turnId,
+                dyad_id: dyadId
+            })
+            try{
+                const result = await Http.axios.get(url, {
+                    headers: {...await Http.getSignedInHeaders(token), 
+                        'Content-Type': 'audio/*'},
+                    responseType: 'blob'
+                })
+                setAudioBlobUrl(URL.createObjectURL(result.data))
+            }catch(ex){
+                console.log(ex)
+            }
+        }
+    }, [token, dyadId, props.sessionId, props.turnId
+    ])
+
+    useEffect(() => {
+        return function cleanup() {
+            if (audioBlobUrl != null) {
+                URL.revokeObjectURL(audioBlobUrl)
+            }
+        }
+    })
+
+    return audioBlobUrl != null ? <AudioPlayer className="ml-2" src={audioBlobUrl} autoPlay/> : <Button className="ml-2" size="small" onClick={mountAudioFile}>Play recording</Button>
+}
 
 const SessionElement = (props: {sessionId: string}) => {
 
@@ -11,6 +54,12 @@ const SessionElement = (props: {sessionId: string}) => {
     const dyadId = useDyadId()
 
     const dialogue = useSelector(state => adminDialogueSelectors.selectById(state, props.sessionId))
+
+    const [isRichMode, setRichMode] = useState(false)
+
+    const extendedSwitchHandler = useCallback<SwitchChangeEventHandler>((checked) => {
+        setRichMode(checked)
+    }, [])
 
     const timelineData = useMemo(()=>{
         if(dialogue != null){
@@ -20,17 +69,22 @@ const SessionElement = (props: {sessionId: string}) => {
 
                 switch(message.role){
                     case DialogueRole.Parent:
-                        content = <span>{message.content_localized || message.content as any}</span>
+                        content = <div>
+                                <span>{message.content_localized || message.content as any}</span>
+                                {
+                                    isRichMode === true ? <TurnAudioPlayer sessionId={props.sessionId} turnId={message.turn_id!}/> : null
+                                }
+                            </div>
                         break
                     case DialogueRole.Child:
                         const cards = (message.content as Array<CardInfo>)
-                        content = <span>{cards.map((card, i) => <><span className="ml-1.5 bg-slate-200 p-1 rounded-md">{card.label_localized}</span>{i < cards.length-1 ? <span>,</span> : null}</>)}</span>
+                        content = <div className="ml-[-5px]">{cards.map((card, i) => <><span className="ml-1.5 bg-slate-200 p-1 rounded-md">{card.label_localized}</span>{i < cards.length-1 ? <span>,</span> : null}</>)}</div>
                 }
 
-                return {color: message.role == DialogueRole.Parent ? 'blue' : 'green', children: <div><span className="font-bold">{message.role == DialogueRole.Parent ? "부모": "자녀"}:</span> {content}</div>}
+                return {color: message.role == DialogueRole.Parent ? 'blue' : 'green', children: <div className="flex flex-row items-baseline"><span className="font-bold mr-2">{message.role == DialogueRole.Parent ? "부모": "자녀"}:</span> {content}</div>}
             })
         }
-    }, [dialogue])
+    }, [dialogue, isRichMode])
 
     useEffect(()=>{
         if(dyadId != null){
@@ -41,7 +95,13 @@ const SessionElement = (props: {sessionId: string}) => {
         }
     }, [dyadId, props.sessionId])
 
-    return <Timeline items={timelineData}/>
+    return <div>
+            <div className="flex flex-row items-center mb-5">
+                <Switch id={`switch_${props.sessionId}`} title="Extended" value={isRichMode} onChange={extendedSwitchHandler} size="small"/>
+                <label htmlFor={`switch_${props.sessionId}`} className="ml-2">Rich content mode</label>
+            </div>
+            <Timeline items={timelineData}/>
+        </div>
 }
 
 export const DyadSessionsPage = () => {
