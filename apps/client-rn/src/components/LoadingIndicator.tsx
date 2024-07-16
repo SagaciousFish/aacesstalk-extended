@@ -5,6 +5,9 @@ import { TopicCategory } from "@aacesstalk/libs/ts-core"
 import { useMemo } from "react"
 const colors = require("../styles/colors")
 
+const loadingImages = require("./loading-images.js")
+console.log(loadingImages)
+
 export const LoadingIndicator = (
     props: {
         label: string,

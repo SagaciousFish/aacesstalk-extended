@@ -2,6 +2,7 @@ import inquirer, { Question, QuestionCollection } from 'inquirer'
 import fs from 'fs-extra'
 import dotenv from 'dotenv'
 import path from 'path'
+import axios from 'axios'
 
 const envPath = path.resolve(process.cwd(), ".env")
 
@@ -51,6 +52,51 @@ async function setup(){
 
     fs.copyFileSync(envPath, path.join(process.cwd(), "/apps/client-rn", ".env"))
     fs.copyFileSync(envPath, path.join(process.cwd(), "/apps/admin-web", ".env"))
+
+
+    // Handle loading image
+
+    const loadingImageDirPath = path.resolve(process.cwd(), "apps/client-rn/src/assets/images/loading")
+    const loadingImageCodePath = path.resolve(process.cwd(), "apps/client-rn/src/components/loading-images.js")
+    const loadingImageCodeSamplePath = path.resolve(process.cwd(), "apps/client-rn/src/components/loading-images.sample.js")
+    if(fs.existsSync(loadingImageCodePath) == false){
+        const loadingImagesGoogleDriveId: string | undefined = (await inquirer.prompt({
+            type: 'input',
+            name: "gdrive",
+            message: 'Insert Google drive ID to initialize loading image:'
+        }))['gdrive']
+        if(loadingImagesGoogleDriveId != null && loadingImagesGoogleDriveId.length > 0){
+            const initialUrl = `https://drive.google.com/uc?export=download&id=${loadingImagesGoogleDriveId}`;
+            const response = await axios.get(initialUrl, { responseType: 'stream' });
+            const zipFileDownloadPath = path.resolve(process.cwd(), ".temp.loading-images.zip")
+            const writer = fs.createWriteStream(zipFileDownloadPath);
+            response.data.pipe(writer);
+            writer.on('finish', () => {
+                console.log('Download complete');
+                const unzipper = require('unzipper');
+                fs.createReadStream(zipFileDownloadPath).pipe(unzipper.Extract({ path: loadingImageDirPath }))
+                    .on('close', () => {
+                        console.log('Unzipping complete');
+                        fs.rmSync(zipFileDownloadPath)
+                        const filenames = fs.readdirSync(loadingImageDirPath).filter(name => name.endsWith(".gif") || name.endsWith(".png")  || name.endsWith(".jpg"))
+                        console.log(filenames)
+                        if(filenames.length > 0){
+                            let jsFileContent = "module.exports=["
+
+                            jsFileContent += filenames.map(name  => `\n\trequire('../assets/images/loading/${name}')`).join(",")
+
+                            jsFileContent += "\n]"
+                            console.log(jsFileContent)
+                            fs.writeFileSync(loadingImageCodePath, jsFileContent)
+                        }
+                    });
+                });
+        }else{
+            console.log("No Google Drive ID provided. set dummy code.")
+            fs.copyFileSync(loadingImageCodeSamplePath, loadingImageCodePath)
+        }
+    }
+
 }
 
 setup().then()
