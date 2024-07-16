@@ -45,9 +45,9 @@ export const CardCategoryView = (props: {
                     row.map((id,index) => {
                         const actualIndex = rowIndex * 2 + index
                         return <Animated.View 
-                        key={cardEntities[id].label_localized}
+                        key={id}
                         entering={FlipInYLeft.duration(500).easing(Easing.elastic(0.7)).delay(200 + 200*actualIndex)}
-                        exiting={FlipOutEasyY.duration(200).delay(200*actualIndex)}><TopicChildCardView key={id} id={id} category={props.cardCategory}/></Animated.View>})
+                        exiting={FlipOutEasyY.duration(200).delay(200*actualIndex)}><TopicChildCardView id={id} category={props.cardCategory}/></Animated.View>})
                 }</View>)
             }
     </View>

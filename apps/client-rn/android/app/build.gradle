@@ -80,8 +80,8 @@ android {
         applicationId "com.naver.ai.aacesstalk.client"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
-        versionName "0.5.3"
+        versionCode 4
+        versionName "0.5.4"
     }
     signingConfigs {
         debug {
