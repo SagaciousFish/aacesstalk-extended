@@ -129,7 +129,7 @@ export const SessionParentView = (props: {
         <MultiTapButton numberOfTaps={5} onTapGesture={onTapSecretButton}><View className="absolute top-0 left-0 w-20 h-20 bg-transparent"/></MultiTapButton>
         <View className="flex-1 self-stretch justify-center items-center mb-8 mt-5">
         {
-            isProcessing === true ? <LoadingIndicator colorTopic={topic.category} label={t("Session.LoadingMessage.ParentGuide")}/> : <View className="justify-evenly flex-1">
+            isProcessing === true ? <LoadingIndicator colorTopic={topic.category} label={t("Session.LoadingMessage.ParentGuide")} useImage={true}/> : <View className="justify-evenly flex-1">
                 {parentGuideIds.map((id, i) => <ParentGuideElementView key={id} id={id} order={i}/>)}
             </View>
         }

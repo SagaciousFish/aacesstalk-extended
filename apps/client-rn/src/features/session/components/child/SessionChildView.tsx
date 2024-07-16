@@ -91,7 +91,7 @@ export const SessionChildView = () => {
         </> : null}
         {
             isProcessing === true ? <Animated.View entering={FadeIn.duration(400)} exiting={FadeOut.duration(300)} className={`absolute ${latestChildCardRecommendationId == null ? "top-0" : "top-[14vw]"} bottom-0 left-0 right-0 z-3 bg-white/70 justify-center`}>
-                <LoadingIndicator containerClassName="self-center" colorTopic={topic?.category} label={loadingMessage}/>
+                <LoadingIndicator containerClassName="self-center" colorTopic={topic?.category} label={loadingMessage} useImage={true}/>
             </Animated.View> : null
         }
         </View>
