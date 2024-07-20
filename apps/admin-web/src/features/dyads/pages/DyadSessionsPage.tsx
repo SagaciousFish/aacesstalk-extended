@@ -1,8 +1,8 @@
-import { CardInfo, DialogueRole, Http, SessionStatus, TopicCategory, adminDialogueSelectors, adminSessionSummarySelectors, fetchDialogueOfSession, fetchSessionSummariesOfDyad } from "@aacesstalk/libs/ts-core"
+import { CardInfo, DialogueRole, Http, ParentGuideType, SessionStatus, TopicCategory, adminDialogueSelectors, adminSessionSummarySelectors, fetchDialogueOfSession, fetchSessionSummariesOfDyad } from "@aacesstalk/libs/ts-core"
 import { useDispatch, useSelector } from "../../../redux/hooks"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useDyadId } from "../hooks"
-import {Button, Collapse, CollapseProps, Space, Switch, Timeline} from 'antd'
+import {Button, Card, Collapse, CollapseProps, List, Space, Switch, Timeline, Typography} from 'antd'
 import moment from 'moment-timezone'
 import { SwitchChangeEventHandler } from "antd/es/switch"
 import AudioPlayer from 'react-h5-audio-player';
@@ -72,7 +72,23 @@ const SessionElement = (props: {sessionId: string}) => {
                         content = <div>
                                 <span>{message.content_localized || message.content as any}</span>
                                 {
-                                    isRichMode === true ? <TurnAudioPlayer sessionId={props.sessionId} turnId={message.turn_id!}/> : null
+                                    isRichMode === true ? <><TurnAudioPlayer sessionId={props.sessionId} turnId={message.turn_id!}/>
+                                        <List size="small" dataSource={message.guides} renderItem={(item, index) => {
+                                            return <List.Item className="flex">
+                                                <div className="w-28">
+                                                    <Typography.Text code className="text-xs">{item.category}</Typography.Text>
+                                                </div>
+                                                <div className={`w-80 ${item.type == ParentGuideType.Feedback ? "bg-red-100" : ""}`}>{Array.isArray(item.guide_localized) ? item.guide_localized.join(", ") : item.guide_localized}<br/><span className="text-[#aaa]">({item.guide})</span></div>
+                                                {
+                                                    item.type == ParentGuideType.Messaging ? <div className="flex-1">
+                                                        <span className="italic">"{item.example_localized}"</span> <span className={`ml-1 px-1 text-xs ${item.example_accessed === true? "bg-green-300":'bg-red-200'} rounded-md`}>{item.example_accessed === true ? "Accessed" : "Not Accessed"}</span>
+                                                        <br/>
+                                                        <span className="text-[#aaa]">({item.example})</span>
+                                                    </div> : null
+                                                }
+                                            </List.Item>
+                                        }}/>
+                                    </> : null
                                 }
                             </div>
                         break

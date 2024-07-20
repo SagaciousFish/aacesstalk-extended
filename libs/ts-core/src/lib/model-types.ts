@@ -93,9 +93,24 @@ export interface DialogueMessage{
 
 export type Dialogue = Array<DialogueMessage>
 
+export interface ParentGuideInfo{
+    id: string
+    category: ParentGuideCategory | Array<DialogueInspectionCategory>
+    type: ParentGuideType
+    guide: string
+    guide_localized?: string
+    example?: string
+    example_localized: string
+    example_accessed: boolean
+}
+
+export interface ExtendedMessage extends DialogueMessage {
+    guides?: Array<ParentGuideInfo>
+}
+
 export interface DialogueSession{
     id: string
-    dialogue: Dialogue
+    dialogue: Array<ExtendedMessage>
 }
 
 export enum ParentType{

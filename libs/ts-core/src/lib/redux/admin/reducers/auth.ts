@@ -52,12 +52,14 @@ export function loginAdminThunk(password: string, onSuccess?: ()=>void): AdminCo
         dispatch(authSlice.actions._authorizingFlagOn());
 
         try {
+            console.log("Try getting token..")
             const tokenResponse = await Http.axios.post(Http.ENDPOINT_ADMIN_ACCOUNT_LOGIN,
                 { password }, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
+            console.log("token resp: ", tokenResponse)
 
             const { jwt } = tokenResponse.data
 

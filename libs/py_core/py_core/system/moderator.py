@@ -459,7 +459,7 @@ class ModeratorSession:
             example_message: ParentExampleMessage = await self.__parent_example_generation_tasks.tasks[guide_id].task
             return example_message
         else:
-            example_message: ParentExampleMessage = await self.__storage.get_parent_example_message(recommendation_id,
+            example_message: ParentExampleMessage | None = await self.__storage.get_parent_example_message(recommendation_id,
                                                                                                     guide_id)
             if example_message is None:
                 dialogue = await self.__storage.get_dialogue()
