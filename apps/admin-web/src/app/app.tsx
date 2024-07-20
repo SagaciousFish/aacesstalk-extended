@@ -11,7 +11,6 @@ import moment from 'moment-timezone';
 export function App() {
 
     useEffect(()=>{
-        console.log(import.meta.env.VITE_BACKEND_ADDRESS)
         Http.initialize(import.meta.env.VITE_BACKEND_ADDRESS, async () => { return moment.tz.guess(true) })
     },[])
 
