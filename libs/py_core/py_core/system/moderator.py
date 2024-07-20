@@ -457,7 +457,6 @@ class ModeratorSession:
         if (self.__parent_example_generation_tasks is not None
                 and self.__parent_example_generation_tasks.recommendation_id == recommendation_id):
             example_message: ParentExampleMessage = await self.__parent_example_generation_tasks.tasks[guide_id].task
-            return example_message
         else:
             example_message: ParentExampleMessage | None = await self.__storage.get_parent_example_message(recommendation_id,
                                                                                                     guide_id)
@@ -467,17 +466,17 @@ class ModeratorSession:
                 guide = [guide for guide in recommendation.guides if guide.id == guide_id][0]
                 example_message = await self.__parent_example_generate_func(dialogue, guide, recommendation.id)
 
-            current_turn = await self.storage.get_latest_turn()
+        current_turn = await self.storage.get_latest_turn()
 
-            await self.storage.add_interaction(Interaction(
-                type=InteractionType.RequestParentExampleMessage,
-                turn_id=current_turn.id,
-                metadata=dict(
-                    recommendation_id=recommendation_id,
-                    guide_id=guide_id,
-                    example_message_id=example_message.id
-                )
-            ))
+        await self.storage.add_interaction(Interaction(
+            type=InteractionType.RequestParentExampleMessage,
+            turn_id=current_turn.id,
+            metadata=dict(
+                recommendation_id=recommendation_id,
+                guide_id=guide_id,
+                example_message_id=example_message.id
+            )
+        ))
 
-            return example_message
+        return example_message
 

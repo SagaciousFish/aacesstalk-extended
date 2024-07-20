@@ -79,13 +79,13 @@ const SessionElement = (props: {sessionId: string}) => {
                                                     <Typography.Text code className="text-xs">{item.category}</Typography.Text>
                                                 </div>
                                                 <div className={`w-80 ${item.type == ParentGuideType.Feedback ? "bg-red-100" : ""}`}>{Array.isArray(item.guide_localized) ? item.guide_localized.join(", ") : item.guide_localized}<br/><span className="text-[#aaa]">({item.guide})</span></div>
-                                                {
-                                                    item.type == ParentGuideType.Messaging ? <div className="flex-1">
+                                                <div className="flex-1">{
+                                                    item.type == ParentGuideType.Messaging ? <>
                                                         <span className="italic">"{item.example_localized}"</span> <span className={`ml-1 px-1 text-xs ${item.example_accessed === true? "bg-green-300":'bg-red-200'} rounded-md`}>{item.example_accessed === true ? "Accessed" : "Not Accessed"}</span>
                                                         <br/>
                                                         <span className="text-[#aaa]">({item.example})</span>
-                                                    </div> : null
-                                                }
+                                                    </> : null
+                                                }</div>
                                             </List.Item>
                                         }}/>
                                     </> : null

@@ -70,7 +70,7 @@ async def get_dialogue(session_id: str, db: AsyncSession) -> DialogueSession:
     example_log_results = await db.exec((select(InteractionORM)
                          .where(InteractionORM.type == InteractionType.RequestParentExampleMessage)
                          .where(col(InteractionORM.turn_id).in_({msg.turn_id for msg in messages}))))
-    example_access_logs: list[InteractionORM] = [row.to_data_model() for row in example_log_results]
+    example_access_logs: list[InteractionORM] = example_log_results.all()
 
     extended_messages = [ExtendedMessage(**message.model_dump()) for message in messages]
     for msg in extended_messages:
@@ -84,7 +84,7 @@ async def get_dialogue(session_id: str, db: AsyncSession) -> DialogueSession:
                         if example_message is not None:
                             guide.example = example_message.message
                             guide.example_localized = example_message.message_localized
-                            access_log = next((row for row in example_access_logs if row.turn_id == msg.turn_id and row.metadata["example_message_id"] == example_message.id), None)
+                            access_log = next((row for row in example_access_logs if row.turn_id == msg.turn_id and row.metadata_json["example_message_id"] == example_message.id), None)
                             guide.example_accessed = access_log is not None
                 
                 msg.guides = guides
