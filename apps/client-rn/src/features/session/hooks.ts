@@ -83,7 +83,8 @@ export function useEnterKeyEvent(listening: boolean=true, onKeyPress?: ()=>boole
         
         const upListener = KeyEvent.addKeyUpListener((event) => {
             console.log("Key up event - ", listening, isInteractionEnabled, isKeyInputConsumed.current)
-            if(event.keyCode == 66 && listening == true && isInteractionEnabled){
+            //66 : enter, 160: numpad enter. Support third-party enter buttons
+            if((event.keyCode == 66 || event.keyCode == 160 ) && listening == true && isInteractionEnabled){
                 if(isKeyInputConsumed.current == false){
                     isKeyInputConsumed.current = onKeyPress?.() || false
                 }
