@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict
 from sqlalchemy import func, desc
 from backend.database import AsyncSession
 from py_core.system.model import CardInfo, CardCategory, SessionInfo, Dialogue, DialogueRole, DialogueMessage, ParentGuideElement, ParentGuideCategory, DialogueInspectionCategory, ParentGuideType
-from py_database.model import SessionORM, DialogueMessageORM, DialogueTurnORM, SessionStatus, ParentGuideRecommendationResultORM, ParentExampleMessageORM, InteractionORM, InteractionType
+from py_database.model import DyadORM, SessionORM, DialogueMessageORM, DialogueTurnORM, SessionStatus, ParentGuideRecommendationResultORM, ParentExampleMessageORM, InteractionORM, InteractionType
 from sqlmodel import select, col
 import pandas as pd
 from pandas import DataFrame
@@ -100,6 +100,7 @@ async def get_dialogue(session_id: str, db: AsyncSession) -> DialogueSession:
 _CARD_CATEGORIES = [CardCategory.Topic, CardCategory.Emotion, CardCategory.Action, CardCategory.Core]
 
 async def make_user_dataset_table(dyad_id: str, db: AsyncSession) -> tuple[DataFrame, DataFrame]:
+    dyad = await db.get(DyadORM, dyad_id)
     terminated_sessions: list[SessionORM] = (await db.exec(select(SessionORM).where(SessionORM.dyad_id == dyad_id)
                                          .where(SessionORM.status == SessionStatus.Terminated))).all()
     
@@ -119,12 +120,15 @@ async def make_user_dataset_table(dyad_id: str, db: AsyncSession) -> tuple[DataF
         child_messages = [msg for msg in dialogue_session.dialogue if msg.role == DialogueRole.Child]
         
         session_row = dict(
+            participant=dyad.alias,
             id=session.id,
             date=session_date_string,
             time_of_day=session_time_string,
             duration_sec=(session.ended_timestamp - session.started_timestamp)/1000,
             num_parent_msgs=len(parent_messages),
             num_child_msgs=len(child_messages),
+            topic_category=session.topic_category,
+            subtopic=session.subtopic
         )
         cleaned_sessions.append(session_row)
         
@@ -136,6 +140,7 @@ async def make_user_dataset_table(dyad_id: str, db: AsyncSession) -> tuple[DataF
 
                 row = dict(
                     dialogue_id = session.id,
+                    participant=dyad.alias,
                     dialogue_timestamp = session.started_timestamp,
                     dialogue_date = session_date_string,
                     order = floor(message_i/2),
