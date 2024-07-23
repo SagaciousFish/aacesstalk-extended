@@ -132,7 +132,7 @@ async def make_user_dataset_table(dyad_id: str, db: AsyncSession) -> tuple[DataF
         for message_i, message in enumerate(dialogue_session.dialogue):
             if message.role == DialogueRole.Parent:
 
-                child_message_exists = message_i < len(dialogue_session.dialogue) and dialogue_session.dialogue[message_i+1].role == DialogueRole.Child
+                child_message_exists = message_i < len(dialogue_session.dialogue)-1 and dialogue_session.dialogue[message_i+1].role == DialogueRole.Child
 
                 row = dict(
                     dialogue_id = session.id,
