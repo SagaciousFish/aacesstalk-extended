@@ -146,14 +146,24 @@ async def make_user_dataset_table(dyad_id: str, db: AsyncSession) -> tuple[DataF
 
                 messaging_guides = [gd for gd in message.guides if gd.type == ParentGuideType.Messaging]
                 guides_output = {str(g_i+1):gd.model_dump(include={"category", "guide_localized", "example_localized", "example_accessed"}) for g_i, gd in enumerate(messaging_guides)}
-                print(guides_output)
-
+                
+                
                 feedback = next((gd for gd in message.guides if gd.type == ParentGuideType.Feedback), None)
                 if feedback is not None:
+                    guides_output["3"] = {
+                        "category":"", "guide_localized":"", "example_localized":"", "example_accessed":""
+                    }
+
                     guides_output["feedback"] = dict(
                         category=", ".join(feedback.category),
                         guide_localized = feedback.guide_localized
                     )
+                else:
+                    guides_output["feedback"] = dict(
+                        category= "",
+                        guide_localized=""
+                    )
+
                 row["parent_guides"] = guides_output
 
                 if child_message_exists:
