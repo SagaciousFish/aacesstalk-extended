@@ -159,7 +159,7 @@ async def make_user_dataset_table(dyad_id: str, db: AsyncSession) -> tuple[DataF
                 if child_message_exists:
                     cards: list[CardInfo] = dialogue_session.dialogue[message_i+1].content
                     row["child_cards"] = ", ".join([f"[{card.label_localized}]" for card in cards])
-                    row["child_cards_by_type"] = {category:", ".join([c.label_localized for c in cards if c.category == category]) for category in _CARD_CATEGORIES}
+                    row["child_cards_by_type"] = {category:", ".join([f"[{c.label_localized}]" for c in cards if c.category == category]) for category in _CARD_CATEGORIES}
                     row["child_cards_count_by_type"] = {category:len([c.label_localized for c in cards if c.category == category]) for category in _CARD_CATEGORIES}
                 
                 cleaned_turns.append(row)
