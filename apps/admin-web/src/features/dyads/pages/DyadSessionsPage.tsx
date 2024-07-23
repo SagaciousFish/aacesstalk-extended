@@ -7,6 +7,7 @@ import moment from 'moment-timezone'
 import { SwitchChangeEventHandler } from "antd/es/switch"
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
+import FileSaver from 'file-saver'
 
 const TurnAudioPlayer = (props: {sessionId: string, turnId: string}) => {
 
@@ -128,6 +129,8 @@ export const DyadSessionsPage = () => {
 
     const sessions = useSelector(adminSessionSummarySelectors.selectAll)
 
+    const token = useSelector(state => state.auth.jwt)
+
     const collapsableItems: CollapseProps['items'] = useMemo(()=>{
         return sessions.map(session => {
 
@@ -175,11 +178,29 @@ export const DyadSessionsPage = () => {
         })
     }, [sessions])    
 
+    const onExportClick = useCallback(async ()=>{
+        if(token != null && dyadId != null){
+            try{
+                const resp = await Http.axios.get(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID_EXPORT,{dyad_id: dyadId}), {
+                    headers: await Http.getSignedInHeaders(token),
+                    responseType: 'blob'
+                })
+                FileSaver.saveAs(resp.data)
+
+            }catch(ex){
+                console.log(ex)
+            }
+        }
+    }, [token, dyadId])
+
     useEffect(()=>{
         if(dyadId != null){
             dispatch(fetchSessionSummariesOfDyad(dyadId))
         }
     }, [dyadId])
 
-    return sessions.length > 0 ? <Collapse className="m-6" items={collapsableItems} destroyInactivePanel/> : <div className="p-10">No sessions.</div>
+    return <div className="p-6">
+            <Button type="primary" className="mb-4" onClick={onExportClick}>Export Dataset</Button>
+            {sessions.length > 0 ? <Collapse items={collapsableItems} destroyInactivePanel/> : <div>No sessions.</div>}
+        </div>
 }

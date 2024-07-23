@@ -2,9 +2,13 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import func, desc
 from backend.database import AsyncSession
-from py_core.system.model import SessionInfo, Dialogue, DialogueRole, DialogueMessage, ParentGuideElement, ParentGuideCategory, DialogueInspectionCategory, ParentGuideType
-from py_database.model import SessionORM, DialogueMessageORM, SessionStatus, ParentGuideRecommendationResultORM, ParentExampleMessageORM, InteractionORM, InteractionType
+from py_core.system.model import CardInfo, CardCategory, SessionInfo, Dialogue, DialogueRole, DialogueMessage, ParentGuideElement, ParentGuideCategory, DialogueInspectionCategory, ParentGuideType
+from py_database.model import SessionORM, DialogueMessageORM, DialogueTurnORM, SessionStatus, ParentGuideRecommendationResultORM, ParentExampleMessageORM, InteractionORM, InteractionType
 from sqlmodel import select, col
+import pandas as pd
+from pandas import DataFrame
+from math import floor
+import pendulum
 
 async def find_session_orm(session_id: str, dyad_id: str, db: AsyncSession)-> SessionORM | None:
     statement = (select(SessionORM)
@@ -47,17 +51,17 @@ class ParentGuideInfo(BaseModel):
 class ExtendedMessage(DialogueMessage):
     model_config = ConfigDict(frozen=False)
     guides: Optional[list[ParentGuideInfo]] = None
+    duration_sec: float
 
 class DialogueSession(BaseModel):
     id: str
     dialogue: list[ExtendedMessage]
 
 
-
 async def get_dialogue(session_id: str, db: AsyncSession) -> DialogueSession:
-    messages_result = await db.exec((select(DialogueMessageORM).where(DialogueMessageORM.session_id == session_id)
+    messages_result = await db.exec((select(DialogueMessageORM, DialogueTurnORM).where(DialogueMessageORM.turn_id == DialogueTurnORM.id).where(DialogueMessageORM.session_id == session_id)
         .order_by(DialogueMessageORM.timestamp)))
-    messages : list[DialogueMessageORM] = [row.to_data_model() for row in messages_result.all()]
+    messages : list[tuple[DialogueMessage, DialogueTurnORM]] = [(msg.to_data_model(), turn) for msg, turn in messages_result.all()]
 
     parent_guide_results = await db.exec((select(ParentGuideRecommendationResultORM)
                           .where(ParentGuideRecommendationResultORM.session_id == session_id)))
@@ -69,10 +73,10 @@ async def get_dialogue(session_id: str, db: AsyncSession) -> DialogueSession:
 
     example_log_results = await db.exec((select(InteractionORM)
                          .where(InteractionORM.type == InteractionType.RequestParentExampleMessage)
-                         .where(col(InteractionORM.turn_id).in_({msg.turn_id for msg in messages}))))
+                         .where(col(InteractionORM.turn_id).in_({msg.turn_id for msg, turn in messages}))))
     example_access_logs: list[InteractionORM] = example_log_results.all()
 
-    extended_messages = [ExtendedMessage(**message.model_dump()) for message in messages]
+    extended_messages = [ExtendedMessage(**message.model_dump(), duration_sec=((turn.ended_timestamp - turn.started_timestamp)/1000)) for message, turn in messages]
     for msg in extended_messages:
         if msg.role == DialogueRole.Parent:
             recommendation = next((row for row in guide_sets if row.turn_id == msg.turn_id), None)
@@ -93,3 +97,74 @@ async def get_dialogue(session_id: str, db: AsyncSession) -> DialogueSession:
     return DialogueSession(id=session_id, 
                            dialogue=extended_messages)
 
+_CARD_CATEGORIES = [CardCategory.Topic, CardCategory.Emotion, CardCategory.Action, CardCategory.Core]
+
+async def make_user_dataset_table(dyad_id: str, db: AsyncSession) -> tuple[DataFrame, DataFrame]:
+    terminated_sessions: list[SessionORM] = (await db.exec(select(SessionORM).where(SessionORM.dyad_id == dyad_id)
+                                         .where(SessionORM.status == SessionStatus.Terminated))).all()
+    
+    cleaned_sessions: list[dict] = []
+    cleaned_turns: list[dict] = []
+    
+    for session in terminated_sessions:
+        dialogue_session = await get_dialogue(session.id, db)
+
+        time = pendulum.from_timestamp(session.started_timestamp/1000, session.local_timezone)
+        session_date_string = time.format("YYYY-MM-DD")
+        session_time_string = time.format("HH:mm:ss")
+        
+
+        # Make session rows
+        parent_messages = [msg for msg in dialogue_session.dialogue if msg.role == DialogueRole.Parent]
+        child_messages = [msg for msg in dialogue_session.dialogue if msg.role == DialogueRole.Child]
+        
+        session_row = dict(
+            id=session.id,
+            date=session_date_string,
+            time_of_day=session_time_string,
+            duration_sec=(session.ended_timestamp - session.started_timestamp)/1000,
+            num_parent_msgs=len(parent_messages),
+            num_child_msgs=len(child_messages),
+        )
+        cleaned_sessions.append(session_row)
+        
+        # Make dialogue rows
+        for message_i, message in enumerate(dialogue_session.dialogue):
+            if message.role == DialogueRole.Parent:
+
+                child_message_exists = message_i < len(dialogue_session.dialogue) and dialogue_session.dialogue[message_i+1].role == DialogueRole.Child
+
+                row = dict(
+                    dialogue_id = session.id,
+                    dialogue_timestamp = session.started_timestamp,
+                    dialogue_date = session_date_string,
+                    order = floor(message_i/2),
+                    parent_duration_sec = message.duration_sec,
+                    child_duration_sec = dialogue_session.dialogue[message_i+1].duration_sec if child_message_exists else None,
+                    message = message.content_localized or message.content
+                )
+
+                messaging_guides = [gd for gd in message.guides if gd.type == ParentGuideType.Messaging]
+                guides_output = {str(g_i+1):gd.model_dump(include={"category", "guide_localized", "example_localized", "example_accessed"}) for g_i, gd in enumerate(messaging_guides)}
+                print(guides_output)
+
+                feedback = next((gd for gd in message.guides if gd.type == ParentGuideType.Feedback), None)
+                if feedback is not None:
+                    guides_output["feedback"] = dict(
+                        category=", ".join(feedback.category),
+                        guide_localized = feedback.guide_localized
+                    )
+                row["parent_guides"] = guides_output
+
+                if child_message_exists:
+                    cards: list[CardInfo] = dialogue_session.dialogue[message_i+1].content
+                    row["child_cards"] = ", ".join([f"[{card.label_localized}]" for card in cards])
+                    row["child_cards_by_type"] = {category:", ".join([c.label_localized for c in cards if c.category == category]) for category in _CARD_CATEGORIES}
+                    row["child_cards_count_by_type"] = {category:len([c.label_localized for c in cards if c.category == category]) for category in _CARD_CATEGORIES}
+                
+                cleaned_turns.append(row)
+    
+    turn_table = pd.json_normalize(cleaned_turns)
+    session_table = pd.json_normalize(cleaned_sessions)
+
+    return session_table, turn_table
