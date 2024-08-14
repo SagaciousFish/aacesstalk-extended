@@ -1,19 +1,16 @@
-from io import BytesIO
 from os import path
 from typing import Annotated, Optional, Union
-from fastapi import APIRouter, Depends, Form, Response, UploadFile, HTTPException, status
+from fastapi import APIRouter, Depends, Form, UploadFile, HTTPException, status
 from fastapi.responses import FileResponse
-import pendulum
 from pydantic import BaseModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
-from zipfile import ZipFile, ZIP_DEFLATED
 
-from py_core.system.model import Dyad, FreeTopicDetail, Dialogue, UserDefinedCardInfo, CardCategory, DialogueRole
+from py_core.system.model import Dyad, FreeTopicDetail, UserDefinedCardInfo, CardCategory, DialogueRole
 from py_core.system.storage import UserStorage
 from py_database.model import DyadORM, UserDefinedCardInfoORM, DialogueTurnORM
 from backend.crud.dyad.account import create_dyad
-from backend.crud.dyad.session import DialogueSession, ExtendedSessionInfo, get_dialogue, get_session_summaries, make_user_dataset_table
+from backend.crud.dyad.session import DialogueSession, ExtendedSessionInfo, get_dialogue, get_session_summaries
 from backend.crud.media import get_free_topic_image, process_uploaded_image
 from backend.database import with_db_session
 from backend.database.models import DyadLoginCode
@@ -165,35 +162,6 @@ async def _get_sessions(dyad_id: str, db: Annotated[AsyncSession, Depends(with_d
 @router.get("/{dyad_id}/dialogues/{session_id}", response_model=DialogueSession)
 async def _get_sessions(dyad_id: str, session_id: str, db: Annotated[AsyncSession, Depends(with_db_session)]):
     return await get_dialogue(session_id, db)
-
-
-@router.get("/{dyad_id}/export")
-async def _export_data(dyad_id: str, db: Annotated[AsyncSession, Depends(with_db_session)]):
-    
-    dyad = await db.get(DyadORM, dyad_id)
-
-    print(dyad_id, dyad)
-    
-    session_table, turn_table = await make_user_dataset_table(dyad_id, db)
-
-    zip_buffer = BytesIO()
-    with ZipFile(zip_buffer, 'w', ZIP_DEFLATED) as zip_file:
-        session_table_buff = BytesIO()
-        session_table.to_csv(session_table_buff, index=False)
-        zip_file.writestr(f"sessions-{dyad.alias}.csv", session_table_buff.getvalue())
-
-        turn_table_buff = BytesIO()
-        turn_table.to_csv(turn_table_buff, index=False)
-        zip_file.writestr(f"turns-{dyad.alias}.csv", turn_table_buff.getvalue())
-    
-    zip_buffer.seek(0)
-
-    dt = pendulum.now().format("YYYY-MM-DD-HH-mm-ss")
-
-    return Response(
-        content=zip_buffer.getvalue(),
-        media_type="application/x-zip-compressed"
-    )
 
 
 @router.get("/{dyad_id}/dialogues/{session_id}/{turn_id}/audio", response_class=FileResponse)

@@ -56,6 +56,13 @@ export class Http{
   static ENDPOINT_ADMIN_ACCOUNT_LOGIN = `${Http.ENDPOINT_ADMIN_AUTH}/login`
   static ENDPOINT_ADMIN_ACCOUNT_VERIFY = `${Http.ENDPOINT_ADMIN_AUTH}/token`
 
+  static ENDPOINT_ADMIN_DATA = `${Http.ENDPOINT_ADMIN}/data`
+
+  static ENDPOINT_ADMIN_DATA_EXPORT = `${Http.ENDPOINT_ADMIN_DATA}/export`
+
+  static ENDPOINT_ADMIN_DATA_EXPORT_ALL = `${Http.ENDPOINT_ADMIN_DATA_EXPORT}/all`
+  static ENDPOINT_ADMIN_DATA_EXPORT_ID = `${Http.ENDPOINT_ADMIN_DATA_EXPORT}/{dyad_id}`
+
   static ENDPOINT_ADMIN_DYADS = `${Http.ENDPOINT_ADMIN}/dyads`
 
   static ENDPOINT_ADMIN_DYADS_ALL = `${Http.ENDPOINT_ADMIN_DYADS}/all`
@@ -69,7 +76,6 @@ export class Http{
 
   static ENDPOINT_ADMIN_DYADS_ID_SESSIONS = `${Http.ENDPOINT_ADMIN_DYADS_ID}/sessions`
 
-  static ENDPOINT_ADMIN_DYADS_ID_EXPORT = `${Http.ENDPOINT_ADMIN_DYADS_ID}/export`
   static ENDPOINT_ADMIN_DYADS_ID_DIALOGUE_ID = `${Http.ENDPOINT_ADMIN_DYADS_ID}/dialogues/{session_id}`
 
   static ENDPOINT_ADMIN_DYADS_ID_DIALOGUE_ID_AUDIO = `${Http.ENDPOINT_ADMIN_DYADS_ID}/dialogues/{session_id}/{turn_id}/audio`

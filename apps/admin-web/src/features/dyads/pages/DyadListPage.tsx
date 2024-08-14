@@ -1,10 +1,11 @@
 import { useDispatch, useSelector } from "../../../redux/hooks"
 import { useCallback, useEffect, useState } from "react"
-import { DyadWithPasscode, dyadsSelectors, loadDyads } from '@aacesstalk/libs/ts-core'
+import { DyadWithPasscode, Http, dyadsSelectors, loadDyads } from '@aacesstalk/libs/ts-core'
 import { Button, Card, Space, Table } from "antd"
 import { ColumnsType } from "antd/es/table"
 import { Link } from "react-router-dom"
 import { CreateDyadModal } from "../components/CreateDyadModal"
+import FileSaver from "file-saver"
 
 const columns: ColumnsType<DyadWithPasscode> = [{
     title: "Alias",
@@ -43,6 +44,7 @@ export const DyadListPage = () => {
     const dispatch = useDispatch()
 
     const dyads = useSelector(dyadsSelectors.selectAll)
+    const token = useSelector(state => state.auth.jwt)
 
     const [isCreationModalOpen, setIsCreationModalOpen] = useState<boolean>(false)
 
@@ -50,6 +52,20 @@ export const DyadListPage = () => {
         setIsCreationModalOpen(true)
     }, [])
 
+    const onExportClick = useCallback(async ()=>{
+        if(token != null){
+            try{
+                const resp = await Http.axios.get(Http.ENDPOINT_ADMIN_DATA_EXPORT_ALL, {
+                    headers: await Http.getSignedInHeaders(token),
+                    responseType: 'blob'
+                })
+                FileSaver.saveAs(resp.data)
+
+            }catch(ex){
+                console.log(ex)
+            }
+        }
+    }, [token])
 
     const closeCreateDyadModal = useCallback(()=>{
         setIsCreationModalOpen(false)
@@ -61,6 +77,7 @@ export const DyadListPage = () => {
 
     return <div className='container mx-auto px-10 py-10 flex flex-col'>
         <div className="text-lg font-bold mb-3 ml-1">Dyads</div>
+        <Button className="self-start mb-2" onClick={onExportClick}>Export all sessions</Button>
         <Table dataSource={dyads} columns={columns}/>
         <Button className="self-start" onClick={onCreateDyadClick}>Create Dyad</Button>
         <CreateDyadModal open={isCreationModalOpen} onClose={closeCreateDyadModal}/>

@@ -4,7 +4,9 @@ from sqlalchemy import func, desc
 from backend.database import AsyncSession
 from py_core.system.model import CardInfo, CardCategory, SessionInfo, Dialogue, DialogueRole, DialogueMessage, ParentGuideElement, ParentGuideCategory, DialogueInspectionCategory, ParentGuideType
 from py_database.model import DyadORM, SessionORM, DialogueMessageORM, DialogueTurnORM, SessionStatus, ParentGuideRecommendationResultORM, ParentExampleMessageORM, InteractionORM, InteractionType
+from py_database.utils import query_count
 from sqlmodel import select, col
+from sqlmodel.sql.expression import SelectOfScalar
 import pandas as pd
 from pandas import DataFrame
 from math import floor
@@ -99,7 +101,7 @@ async def get_dialogue(session_id: str, db: AsyncSession) -> DialogueSession:
 
 _CARD_CATEGORIES = [CardCategory.Topic, CardCategory.Emotion, CardCategory.Action, CardCategory.Core]
 
-async def make_user_dataset_table(dyad_id: str, db: AsyncSession) -> tuple[DataFrame, DataFrame]:
+async def make_user_dataset_table_rows(dyad_id: str, db: AsyncSession) -> tuple[dict, dict]:
     dyad = await db.get(DyadORM, dyad_id)
     terminated_sessions: list[SessionORM] = (await db.exec(select(SessionORM).where(SessionORM.dyad_id == dyad_id)
                                          .where(SessionORM.status == SessionStatus.Terminated))).all()
@@ -176,10 +178,31 @@ async def make_user_dataset_table(dyad_id: str, db: AsyncSession) -> tuple[DataF
                     row["child_cards"] = ", ".join([f"[{card.label_localized}]" for card in cards])
                     row["child_cards_by_type"] = {category:", ".join([f"[{c.label_localized}]" for c in cards if c.category == category]) for category in _CARD_CATEGORIES}
                     row["child_cards_count_by_type"] = {category:len([c.label_localized for c in cards if c.category == category]) for category in _CARD_CATEGORIES}
-                
+                    
+                    row["child_card_refresh_count"] = await query_count(db, select(InteractionORM).where(InteractionORM.turn_id == message.turn_id)
+                                                                        .where(InteractionORM.type == InteractionType.RefreshChildCards))
+
                 cleaned_turns.append(row)
     
-    turn_table = pd.json_normalize(cleaned_turns)
-    session_table = pd.json_normalize(cleaned_sessions)
+    return cleaned_sessions, cleaned_turns
 
-    return session_table, turn_table
+    #turn_table = pd.json_normalize(cleaned_turns)
+    #session_table = pd.json_normalize(cleaned_sessions)
+
+    #return session_table, turn_table
+
+async def make_user_dataset_table(dyad_id: str, db: AsyncSession) -> tuple[DataFrame, DataFrame]:
+    sesison_rows, turn_rows = await make_user_dataset_table_rows(dyad_id, db)
+    return pd.json_normalize(sesison_rows), pd.json_normalize(turn_rows)
+
+async def make_dataset_table_all_dyads(db: AsyncSession) -> tuple[DataFrame, DataFrame]:
+    dyads = (await db.exec(select(DyadORM))).all()
+    session_rows = []
+    turn_rows = []
+
+    for dyad in dyads:
+        dyad_session_rows, dyad_turn_rows = await make_user_dataset_table_rows(dyad.id, db)
+        session_rows.extend(dyad_session_rows)
+        turn_rows.extend(dyad_turn_rows)
+    
+    return pd.json_normalize(session_rows), pd.json_normalize(turn_rows)
