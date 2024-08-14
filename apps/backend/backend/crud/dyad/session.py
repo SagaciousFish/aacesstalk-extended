@@ -179,8 +179,11 @@ async def make_user_dataset_table_rows(dyad_id: str, db: AsyncSession) -> tuple[
                     row["child_cards_by_type"] = {category:", ".join([f"[{c.label_localized}]" for c in cards if c.category == category]) for category in _CARD_CATEGORIES}
                     row["child_cards_count_by_type"] = {category:len([c.label_localized for c in cards if c.category == category]) for category in _CARD_CATEGORIES}
                     
+                    
                     row["child_card_refresh_count"] = len((await db.exec(select(InteractionORM).where(InteractionORM.turn_id == message.turn_id)
                                                                         .where(InteractionORM.type == InteractionType.RefreshChildCards))).all())
+                    assert row["child_card_refresh_count"] == len({card.recommendation_id for card in cards})
+
 
                 cleaned_turns.append(row)
     

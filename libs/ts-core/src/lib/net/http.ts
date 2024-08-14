@@ -62,6 +62,8 @@ export class Http{
 
   static ENDPOINT_ADMIN_DATA_EXPORT_ALL = `${Http.ENDPOINT_ADMIN_DATA_EXPORT}/all`
   static ENDPOINT_ADMIN_DATA_EXPORT_ID = `${Http.ENDPOINT_ADMIN_DATA_EXPORT}/{dyad_id}`
+  static ENDPOINT_ADMIN_DATA_DB_DOWNLOAD = `${Http.ENDPOINT_ADMIN_DATA}/db/download`
+  
 
   static ENDPOINT_ADMIN_DYADS = `${Http.ENDPOINT_ADMIN}/dyads`
 

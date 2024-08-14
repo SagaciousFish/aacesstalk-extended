@@ -67,6 +67,22 @@ export const DyadListPage = () => {
         }
     }, [token])
 
+    const onDownloadDb = useCallback(async ()=>{
+        if(token != null){
+            try{
+                const resp = await Http.axios.get(Http.ENDPOINT_ADMIN_DATA_DB_DOWNLOAD, {
+                    headers: await Http.getSignedInHeaders(token),
+                    responseType: 'blob'
+                })
+                FileSaver.saveAs(resp.data, "aacesstalk.sqlite3")
+
+            }catch(ex){
+                console.log(ex)
+            }
+        }
+    }, [token])
+
+
     const closeCreateDyadModal = useCallback(()=>{
         setIsCreationModalOpen(false)
     }, [])
@@ -77,7 +93,10 @@ export const DyadListPage = () => {
 
     return <div className='container mx-auto px-10 py-10 flex flex-col'>
         <div className="text-lg font-bold mb-3 ml-1">Dyads</div>
-        <Button className="self-start mb-2" onClick={onExportClick}>Export all sessions</Button>
+        <div className="flex flex-wrap gap-2 mb-2">
+            <Button onClick={onExportClick}>Export all sessions</Button>
+            <Button onClick={onDownloadDb}>Download database</Button>
+        </div>
         <Table dataSource={dyads} columns={columns}/>
         <Button className="self-start" onClick={onCreateDyadClick}>Create Dyad</Button>
         <CreateDyadModal open={isCreationModalOpen} onClose={closeCreateDyadModal}/>

@@ -3,8 +3,9 @@ from py_core.system.model import ParentType, ChildGender
 from py_database.database import AsyncSession, make_async_session_maker, create_database_engine
 from sqlmodel import select
 from py_database.model import DyadORM, FreeTopicDetailORM
+from py_core.config import AACessTalkConfig
 
-engine = create_database_engine("database.db", verbose=True)
+engine = create_database_engine(AACessTalkConfig.database_file_path, verbose=True)
 
 db_sessionmaker = make_async_session_maker(engine)
 

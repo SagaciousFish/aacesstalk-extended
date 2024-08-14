@@ -1,10 +1,12 @@
 from io import BytesIO
 from typing import Annotated
 from fastapi import APIRouter, Depends, Response
+from fastapi.responses import FileResponse
 import pendulum
 from sqlmodel.ext.asyncio.session import AsyncSession
 from zipfile import ZipFile, ZIP_DEFLATED
 
+from py_core.config import AACessTalkConfig
 from py_database.model import DyadORM
 from backend.crud.dyad.session import make_user_dataset_table, make_dataset_table_all_dyads
 from backend.database import with_db_session
@@ -12,6 +14,13 @@ from backend.database import with_db_session
 
 router = APIRouter()
 
+
+@router.get("/db/download")
+async def _download_db():
+    return FileResponse(
+        path=AACessTalkConfig.database_file_path,
+        media_type="application/octet-stream"
+    )
 
 @router.get("/export/all")
 async def _export_data_all(db: Annotated[AsyncSession, Depends(with_db_session)]):
