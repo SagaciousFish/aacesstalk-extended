@@ -55,7 +55,7 @@ export const DyadListPage = () => {
     const onExportClick = useCallback(async ()=>{
         if(token != null){
             try{
-                const resp = await Http.axios.get(Http.ENDPOINT_ADMIN_DATA_EXPORT_ALL, {
+                const resp = await Http.axios.get(Http.ENDPOINT_ADMIN_DATA_DIALOGUES, {
                     headers: await Http.getSignedInHeaders(token),
                     responseType: 'blob'
                 })
@@ -83,6 +83,25 @@ export const DyadListPage = () => {
     }, [token])
 
 
+    const onDownloadCards = useCallback(async ()=>{
+        if(token != null){
+            try{
+                const resp = await Http.axios.get(Http.ENDPOINT_ADMIN_DATA_CARDS, {
+                    headers: await Http.getSignedInHeaders(token),
+                    responseType: 'blob'
+                })
+                const blob = new Blob([resp.data], { type: 'text/csv;charset=utf-8;' });
+
+                FileSaver.saveAs(blob, "child_cards.csv")
+
+            }catch(ex){
+                console.log(ex)
+            }
+        }
+    }, [token])
+
+
+
     const closeCreateDyadModal = useCallback(()=>{
         setIsCreationModalOpen(false)
     }, [])
@@ -96,6 +115,8 @@ export const DyadListPage = () => {
         <div className="flex flex-wrap gap-2 mb-2">
             <Button onClick={onExportClick}>Export all sessions</Button>
             <Button onClick={onDownloadDb}>Download database</Button>
+
+            <Button onClick={onDownloadCards}>Download card dataset</Button>
         </div>
         <Table dataSource={dyads} columns={columns}/>
         <Button className="self-start" onClick={onCreateDyadClick}>Create Dyad</Button>

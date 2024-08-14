@@ -181,7 +181,7 @@ export const DyadSessionsPage = () => {
     const onExportClick = useCallback(async ()=>{
         if(token != null && dyadId != null){
             try{
-                const resp = await Http.axios.get(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DATA_EXPORT_ID,{dyad_id: dyadId}), {
+                const resp = await Http.axios.get(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DATA_DIALOGUES_ID,{dyad_id: dyadId}), {
                     headers: await Http.getSignedInHeaders(token),
                     responseType: 'blob'
                 })

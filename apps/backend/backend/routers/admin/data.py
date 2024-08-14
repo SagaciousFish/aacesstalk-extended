@@ -8,7 +8,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 
 from py_core.config import AACessTalkConfig
 from py_database.model import DyadORM
-from backend.crud.dyad.session import make_user_dataset_table, make_dataset_table_all_dyads
+from backend.crud.dyad.session import make_user_dataset_table, make_dataset_table_all_dyads, get_cards_dataset
 from backend.database import with_db_session
 
 
@@ -22,7 +22,20 @@ async def _download_db():
         media_type="application/octet-stream"
     )
 
-@router.get("/export/all")
+
+@router.get("/cards")
+async def _export_card_dataset(db: Annotated[AsyncSession, Depends(with_db_session)]):
+    card_table = await get_cards_dataset(db)
+
+    csv_buffer = BytesIO()
+    card_table.to_csv(csv_buffer, index=False)
+
+    return Response(
+        content=csv_buffer.getvalue(),
+        media_type="text/csv"
+    )
+
+@router.get("/dialogues")
 async def _export_data_all(db: Annotated[AsyncSession, Depends(with_db_session)]):
         
     session_table, turn_table = await make_dataset_table_all_dyads(db)
@@ -47,7 +60,7 @@ async def _export_data_all(db: Annotated[AsyncSession, Depends(with_db_session)]
     )
 
 
-@router.get("/export/{dyad_id}")
+@router.get("/dialogues/{dyad_id}")
 async def _export_data_of_dyad(dyad_id: str, db: Annotated[AsyncSession, Depends(with_db_session)]):
     
     dyad = await db.get(DyadORM, dyad_id)

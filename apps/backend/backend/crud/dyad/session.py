@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict
 from sqlalchemy import func, desc
 from backend.database import AsyncSession
 from py_core.system.model import CardInfo, CardCategory, SessionInfo, Dialogue, DialogueRole, DialogueMessage, ParentGuideElement, ParentGuideCategory, DialogueInspectionCategory, ParentGuideType
-from py_database.model import DyadORM, SessionORM, DialogueMessageORM, DialogueTurnORM, SessionStatus, ParentGuideRecommendationResultORM, ParentExampleMessageORM, InteractionORM, InteractionType
+from py_database.model import DyadORM, SessionORM, DialogueMessageORM, DialogueTurnORM, SessionStatus, ParentGuideRecommendationResultORM, ParentExampleMessageORM, InteractionORM, InteractionType, ChildCardRecommendationResultORM
 from py_database.utils import query_count
 from sqlmodel import select, col
 from sqlmodel.sql.expression import SelectOfScalar
@@ -174,32 +174,26 @@ async def make_user_dataset_table_rows(dyad_id: str, db: AsyncSession) -> tuple[
                 row["parent_guides"] = guides_output
 
                 if child_message_exists:
-                    cards: list[CardInfo] = dialogue_session.dialogue[message_i+1].content
+                    child_message = dialogue_session.dialogue[message_i+1]
+                    cards: list[CardInfo] = child_message.content
                     row["child_cards"] = ", ".join([f"[{card.label_localized}]" for card in cards])
                     row["child_cards_by_type"] = {category:", ".join([f"[{c.label_localized}]" for c in cards if c.category == category]) for category in _CARD_CATEGORIES}
                     row["child_cards_count_by_type"] = {category:len([c.label_localized for c in cards if c.category == category]) for category in _CARD_CATEGORIES}
-                    
-                    
-                    row["child_card_refresh_count"] = len((await db.exec(select(InteractionORM).where(InteractionORM.turn_id == message.turn_id)
+
+                    row["child_cards_refresh_count"] = len((await db.exec(select(InteractionORM).where(InteractionORM.turn_id == child_message.turn_id)
                                                                         .where(InteractionORM.type == InteractionType.RefreshChildCards))).all())
-                    assert row["child_card_refresh_count"] == len({card.recommendation_id for card in cards})
 
 
                 cleaned_turns.append(row)
     
     return cleaned_sessions, cleaned_turns
 
-    #turn_table = pd.json_normalize(cleaned_turns)
-    #session_table = pd.json_normalize(cleaned_sessions)
-
-    #return session_table, turn_table
-
 async def make_user_dataset_table(dyad_id: str, db: AsyncSession) -> tuple[DataFrame, DataFrame]:
     sesison_rows, turn_rows = await make_user_dataset_table_rows(dyad_id, db)
     return pd.json_normalize(sesison_rows), pd.json_normalize(turn_rows)
 
 async def make_dataset_table_all_dyads(db: AsyncSession) -> tuple[DataFrame, DataFrame]:
-    dyads = (await db.exec(select(DyadORM))).all()
+    dyads = (await db.exec(select(DyadORM).where(DyadORM.alias != 'test'))).all()
     session_rows = []
     turn_rows = []
 
@@ -209,3 +203,37 @@ async def make_dataset_table_all_dyads(db: AsyncSession) -> tuple[DataFrame, Dat
         turn_rows.extend(dyad_turn_rows)
     
     return pd.json_normalize(session_rows), pd.json_normalize(turn_rows)
+
+
+async def get_cards_dataset(db: AsyncSession) -> DataFrame:
+    dyads = (await db.exec(select(DyadORM).where(DyadORM.alias != 'test'))).all()
+    
+    sessions = (await db.exec(select(SessionORM).where(col(SessionORM.dyad_id).in_([dyad.id for dyad in dyads])))).all()
+
+    rows = []
+
+    child_messages = (await db.exec(select(DialogueMessageORM).where(col(DialogueMessageORM.session_id).in_([session.id for session in sessions])).where(DialogueMessageORM.role == DialogueRole.Child))).all()
+    child_selected_cards: dict[str, CardInfo] = {card.id:card for msg in child_messages for card in msg.to_data_model().content}
+
+
+
+    card_recommendations = await db.exec(select(ChildCardRecommendationResultORM, SessionORM, DyadORM)
+                                         .join(SessionORM, ChildCardRecommendationResultORM.session_id == SessionORM.id)
+                                         .join(DyadORM, SessionORM.dyad_id == DyadORM.id)
+                                         .where(col(ChildCardRecommendationResultORM.session_id).in_([session.id for session in sessions])))
+    for recommendation, session, dyad in card_recommendations:
+        for card in recommendation.cards:
+            card = CardInfo(**card) if isinstance(card, dict) else card
+            rows.append({
+                "dyad": dyad.alias,
+                "session": session.id,
+                "id": card.id,
+                "label_eng": card.label,
+                "label_kor": card.label_localized,
+                "category": card.category,
+                "recommendation": card.recommendation_id,
+                "selected": card.id in child_selected_cards
+            })
+
+    return pd.json_normalize(rows)
+
