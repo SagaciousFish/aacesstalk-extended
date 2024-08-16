@@ -217,16 +217,27 @@ async def get_cards_dataset(db: AsyncSession) -> DataFrame:
 
 
 
+
     card_recommendations = await db.exec(select(ChildCardRecommendationResultORM, SessionORM, DyadORM)
                                          .join(SessionORM, ChildCardRecommendationResultORM.session_id == SessionORM.id)
                                          .join(DyadORM, SessionORM.dyad_id == DyadORM.id)
                                          .where(col(ChildCardRecommendationResultORM.session_id).in_([session.id for session in sessions])))
     for recommendation, session, dyad in card_recommendations:
-        for card in recommendation.cards:
+        session_turns: list[DialogueTurnORM] = (await db.exec(select(DialogueTurnORM).where(DialogueTurnORM.session_id == session.id).where(DialogueTurnORM.role == DialogueRole.Child).order_by(DialogueTurnORM.started_timestamp))).all()
+        match_turns = [t for t in session_turns if t.id == recommendation.turn_id]
+        
+        if len(match_turns) >= 0:
+            turn_index = session_turns.index(match_turns[0])
+        else: turn_index = -1
+
+        print(turn_index)
+
+        for card in recommendation.cards:    
             card = CardInfo(**card) if isinstance(card, dict) else card
             rows.append({
                 "dyad": dyad.alias,
                 "session": session.id,
+                "turn_index": turn_index,
                 "id": card.id,
                 "label_eng": card.label,
                 "label_kor": card.label_localized,

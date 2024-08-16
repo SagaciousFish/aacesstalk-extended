@@ -8,7 +8,7 @@ from sqlmodel import select
 
 from py_core.system.model import Dyad, FreeTopicDetail, UserDefinedCardInfo, CardCategory, DialogueRole
 from py_core.system.storage import UserStorage
-from py_database.model import DyadORM, UserDefinedCardInfoORM, DialogueTurnORM
+from py_database.model import DyadORM, UserDefinedCardInfoORM, DialogueTurnORM, SessionORM
 from backend.crud.dyad.account import create_dyad
 from backend.crud.dyad.session import DialogueSession, ExtendedSessionInfo, get_dialogue, get_session_summaries
 from backend.crud.media import get_free_topic_image, process_uploaded_image
@@ -158,6 +158,13 @@ async def _update_free_topic_detail(dyad_id: str, detail_id: str, db: Annotated[
 async def _get_sessions(dyad_id: str, db: Annotated[AsyncSession, Depends(with_db_session)]):
     return await get_session_summaries(dyad_id, db, includeOnlyTerminated=False)
 
+@router.delete("/{dyad_id}/sessions/{session_id}")
+async def _delete_session(dyad_id: str, session_id: str, db: Annotated[AsyncSession, Depends(with_db_session)]):
+    session = await db.get(SessionORM, session_id)
+    if session is not None:
+        print("Delete session")
+        await db.delete(session)
+        await db.commit()
 
 @router.get("/{dyad_id}/dialogues/{session_id}", response_model=DialogueSession)
 async def _get_sessions(dyad_id: str, session_id: str, db: Annotated[AsyncSession, Depends(with_db_session)]):

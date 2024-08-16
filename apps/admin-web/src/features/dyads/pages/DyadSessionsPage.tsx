@@ -1,4 +1,4 @@
-import { CardInfo, DialogueRole, Http, ParentGuideType, SessionStatus, TopicCategory, adminDialogueSelectors, adminSessionSummarySelectors, fetchDialogueOfSession, fetchSessionSummariesOfDyad } from "@aacesstalk/libs/ts-core"
+import { CardInfo, DialogueRole, Http, ParentGuideType, SessionStatus, TopicCategory, adminDialogueSelectors, adminSessionSummarySelectors, deleteUserSession, fetchDialogueOfSession, fetchSessionSummariesOfDyad } from "@aacesstalk/libs/ts-core"
 import { useDispatch, useSelector } from "../../../redux/hooks"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useDyadId } from "../hooks"
@@ -171,12 +171,19 @@ export const DyadSessionsPage = () => {
                         <div className="w-[25%]">
                             <span className={`text-sm`}>{session.num_turns} turn(s)</span>
                         </div>
+                        <div className="flex-1 text-right"><Button danger size={"small"} onClick={(ev)=>{
+                            ev.stopPropagation()
+                            if(confirm("Delete this session?") && dyadId != null)
+                            {
+                                dispatch(deleteUserSession(dyadId, session.id))
+                            }
+                        }}>Delete</Button></div>
                     </div>,
                 children: <SessionElement sessionId={session.id}/>,
                 collapsible: session.num_turns === 0 ? 'disabled' : 'header'
             }
         })
-    }, [sessions])    
+    }, [dyadId, sessions])    
 
     const onExportClick = useCallback(async ()=>{
         if(token != null && dyadId != null){

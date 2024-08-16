@@ -110,6 +110,10 @@ const dyadsSlice = createSlice({
             sessionSummaryEntityAdapter.setAll(state.sessionSummaryEntityState, action.payload)
         },
 
+        _removeSessionSummary: (state, action: PayloadAction<string>) => {
+            sessionSummaryEntityAdapter.removeOne(state.sessionSummaryEntityState, action.payload)
+        },
+
         _setDialogue: (state, action: PayloadAction<DialogueSession>) => {
             dialogueEntityAdapter.setOne(state.dialogueEntityState, action.payload)
         },
@@ -405,6 +409,24 @@ export function removeUserDefinedCard(dyadId: string, cardId: string): AdminCore
                 console.log(ex)
             } finally {
                 dispatch(dyadsSlice.actions._setLoadingUserDefinedCardsFlag(false))
+            }
+        }
+    }
+}
+
+export function deleteUserSession(dyadId: string, sessionId: string): AdminCoreThunk {
+    return async (dispatch, getState) => {
+        const state = getState()
+        if (state.auth.jwt != null) {
+            try {
+                const resp = await Http.axios.delete(Http.getTemplateEndpoint(Http.ENDPOINT_ADMIN_DYADS_ID_SESSIONS_ID, {dyad_id: dyadId, session_id: sessionId}), {
+                    headers: await Http.getSignedInHeaders(state.auth.jwt)
+                })
+                if (resp.status == 200){
+                    dispatch(dyadsSlice.actions._removeSessionSummary(sessionId))
+                }
+            }catch(ex){
+                console.log(ex)
             }
         }
     }
