@@ -48,7 +48,7 @@ async def match_card_images(recommendation_id: str, db: Annotated[AsyncSession, 
     t_start = perf_counter()
     card_recommendation = await db.get(ChildCardRecommendationResultORM, recommendation_id)
     card_recommendation = card_recommendation.to_data_model()
-    matches = await image_matcher.match_card_images(card_recommendation.cards, dyad_orm.parent_type, dyad_orm.child_gender)
+    matches = await image_matcher.match_card_images(card_recommendation.cards, dyad_orm.parent_type, dyad_orm.child_gender, locale=dyad_orm.locale)
     t_end = perf_counter()
     print(f"Card matching took {t_end - t_start} sec.")
     return CardImageMatchingResult(matchings=matches)

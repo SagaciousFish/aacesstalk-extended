@@ -211,7 +211,7 @@ class ModeratorSession:
         if len(dialogue) == 0:
             message = self.__static_guide_factory.get_example_message(await self.session_topic(), self.__dyad, guide, recommendation_id)
         else:
-            message = await self.__parent_example_generator.generate(dialogue, guide, recommendation_id)
+            message = await self.__parent_example_generator.generate(self.__dyad.locale, dialogue, guide, recommendation_id)
 
         await self.__storage.add_parent_example_message(message)
         return message
@@ -305,6 +305,7 @@ class ModeratorSession:
             next_turn = await self._switch_turn()
 
             recommendation = await self.__child_card_recommender.generate(topic_info=session_topic,
+                                                                          locale=self.__dyad.locale,
                                                                           parent_type=self.__dyad.parent_type,
                                                                           dialogue=dialogue, interim_cards=None,
                                                                           previous_recommendation=None,
@@ -347,6 +348,7 @@ class ModeratorSession:
             session_topic = await self.session_topic()
 
             recommendation = await self.__child_card_recommender.generate(current_turn.id,
+                                                                          self.__dyad.locale,
                                                                           self.__dyad.parent_type, session_topic, dialogue, interim_cards, prev_recommendation)
 
             await self.__storage.add_card_recommendation_result(recommendation)

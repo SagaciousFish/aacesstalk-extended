@@ -3,7 +3,7 @@ from os import path
 
 from pydantic import BaseModel, Field, validate_call
 
-from py_core.system.model import CardInfo, ChildGender, ParentType, id_generator
+from py_core.system.model import CardInfo, ChildGender, ParentType, UserLocale, id_generator
 from py_core.system.storage import UserStorage
 from py_core.system.task.card_image_matching.card_image_db_retriever import CardImageDBRetriever
 
@@ -42,7 +42,7 @@ class CardImageMatcher:
         self.__user_storage = user_storage
         self._init_class_vars()
 
-    async def match_card_images(self, card_info_list: list[CardInfo], parent_type: ParentType, child_gender: ChildGender) -> list[CardImageMatching]:
+    async def match_card_images(self, card_info_list: list[CardInfo], parent_type: ParentType, child_gender: ChildGender, locale: UserLocale) -> list[CardImageMatching]:
 
         result = [None] * len(card_info_list)
 
@@ -55,7 +55,7 @@ class CardImageMatcher:
         # Look up default cards
         for i, card_info in enumerate(card_info_list):
             if result[i] is None:
-                default_card = find_default_card(card_info.label_localized, card_info.category, parent_type)
+                default_card = find_default_card(card_info.label_localized, card_info.category, parent_type, locale)
                 print(f"Default card for {card_info.category}, {card_info.label_localized}: {default_card}")
                 if default_card is not None:
                     image_filename = default_card.get_image_path_for_dyad(parent_type=parent_type, child_gender=child_gender)

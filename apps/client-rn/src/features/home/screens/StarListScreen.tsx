@@ -49,7 +49,7 @@ export const DailySummaryElement = (props: {
                 isToday === true ? <Text style={styleTemplates.withBoldFont} className="text-white bg-red-400 p-1.5 py-1 ml-3 rounded-lg text-lg">{t("Summary.Today")}</Text> : null
             }            
         </View>
-        <Text style={styleTemplates.withSemiboldFont} className="text-2xl w-[12%]">{countText}</Text>
+        <Text style={styleTemplates.withSemiboldFont} className="text-2xl w-[25%]">{countText}</Text>
         <View className="flex-row flex-wrap gap-2 items-center">{
             numStarsLoopArray.map((_,i) =>  <TurnStar key={i} starClassName="w-10 h-10"/>)}</View>
     </View>

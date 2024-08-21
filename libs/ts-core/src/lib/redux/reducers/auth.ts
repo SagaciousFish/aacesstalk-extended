@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import { Axios, AxiosError } from 'axios';
 import { AACessTalkErrors } from '../../errors';
 import { initializeDyadStatus } from './dyad-status';
+import i18next from 'i18next';
 
 const freeTopicDetailEntityAdapter = createEntityAdapter<FreeTopicDetailInfo>()
 const INITIAL_FREE_TOPIC_DETAIL_STATE = freeTopicDetailEntityAdapter.getInitialState()
@@ -82,12 +83,8 @@ export function loginDyadThunk(code: string): CoreThunk {
 
       const decoded = jwtDecode<{
         sub: string,
-        alias: string,
-        child_name: string,
-        parent_type: ParentType,
-        child_gender: ChildGender,
         iat: number,
-        exp: number}>(jwt)
+        exp: number} & Omit<Dyad, 'id'>>(jwt)
 
       console.log(free_topics)
 
@@ -97,10 +94,13 @@ export function loginDyadThunk(code: string): CoreThunk {
           child_name: decoded.child_name,
           parent_type: decoded.parent_type,
           child_gender: decoded.child_gender,
-          alias: decoded.alias
+          alias: decoded.alias,
+          locale: decoded.locale
         },
         token: jwt
       }));
+
+      await i18next.changeLanguage(decoded.locale)
 
       if(free_topics != null){
         dispatch(authSlice.actions._setFreeTopicDetails(free_topics))

@@ -8,7 +8,7 @@ from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapperParams, Cha
 from pydantic import BaseModel
 
 from py_core.system.guide_categories import ParentGuideCategory
-from py_core.system.model import ParentGuideElement, ParentExampleMessage, Dialogue, DialogueMessage, CardCategory
+from py_core.system.model import ParentGuideElement, ParentExampleMessage, Dialogue, DialogueMessage, CardCategory, UserLocale
 from py_core.system.task.parent_guide_recommendation.example_translator import ParentExampleMessageTranslator
 from py_core.system.task.dialogue_conversion import DialogueToStrConversionFunction
 from py_core.utils.vector_db import VectorDB
@@ -87,16 +87,16 @@ class ParentExampleMessageGenerator:
 
         self.__translator = ParentExampleMessageTranslator(vector_db)
 
-    async def generate(self, dialogue: Dialogue, guide: ParentGuideElement,
+    async def generate(self, locale: UserLocale, dialogue: Dialogue, guide: ParentGuideElement,
                        recommendation_id: str) -> ParentExampleMessage:
         t_start = perf_counter()
         utterance = await self.__mapper.run(_EXAMPLES,
                                             ParentExampleMessageGenerationInput(dialogue=dialogue, guide=guide),
                                             ChatCompletionFewShotMapperParams(model=ChatGPTModel.GPT_4_0613,
                                                                               api_params={}))
-        translated_utterance = await self.__translator.translate_example(utterance)
+        translated_utterance = None if locale == UserLocale.English else await self.__translator.translate_example(utterance)
         t_end = perf_counter()
         # print(f"Example generation took {t_end - t_start} sec - {utterance} ({guide.category} - {guide.guide})")
 
         return ParentExampleMessage(recommendation_id=recommendation_id, guide_id=guide.id, message=utterance,
-                                    message_localized=translated_utterance)
+                                    message_localized=utterance if locale == UserLocale.English else translated_utterance)
