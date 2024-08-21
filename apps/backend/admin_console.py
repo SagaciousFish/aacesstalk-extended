@@ -1,5 +1,6 @@
 import asyncio
 from enum import StrEnum
+from py_core.system.model import UserLocale
 import questionary
 from chatlib.utils.cli import make_non_empty_string_validator
 from backend.crud.dyad.account import create_dyad, get_dyad_list
@@ -27,11 +28,13 @@ async def _create_dyad():
         parent_type = await questionary.select("Select parent type.", ["Mother", "Father"], "Mother").ask_async()
 
         child_gender = await questionary.select("Select child gender.", ["Boy", "Girl"], "Boy").ask_async()
+
+        user_locale = await questionary.select("Select locale.", ["Korean", "English"], "Korean").ask_async()
         
         confirm = await questionary.confirm(f"Create a dyad with alias \"{alias}\" and a {child_gender} named \"{child_name}\", and {parent_type}?").ask_async()
 
         if confirm:
-            dyad, dyad_code = await create_dyad(alias, child_name, parent_type, child_gender, session)
+            dyad, dyad_code = await create_dyad(alias, child_name, parent_type, child_gender, UserLocale.Korean if user_locale == "Korean" else UserLocale.English, session)
             print(f"Created a dyad {dyad.alias} (Child: {dyad.child_name}, Parent type: {dyad.parent_type}). Code: {dyad_code.code}")
 
 async def _list_dyad():

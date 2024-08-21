@@ -33,11 +33,16 @@ class ChildGender(StrEnum):
     Boy="boy"
     Girl="girl"
 
+class UserLocale(StrEnum):
+    Korean="kr"
+    English="en"
+
 class Dyad(ModelWithId):
     alias: str = Field(min_length=1, unique=True)
     child_name: str = Field(min_length=1)
     parent_type: ParentType = Field(nullable=False)
     child_gender: ChildGender = Field(nullable=False)
+    locale: UserLocale = Field(nullable=False, default=UserLocale.Korean)
 
 class SessionStatus(StrEnum):
     Initial="initial"

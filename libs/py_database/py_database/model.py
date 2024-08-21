@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from sqlmodel import SQLModel, Column, Field, Relationship, JSON, UniqueConstraint
 from sqlalchemy import DateTime, func
 
-from py_core.system.model import (id_generator, DialogueRole, DialogueMessage,
+from py_core.system.model import (UserLocale, id_generator, DialogueRole, DialogueMessage,
                                   CardInfoListTypeAdapter, CardInfo,
                                   ChildCardRecommendationResult,
                                   InterimCardSelection,
@@ -49,6 +49,7 @@ class DyadORM(SQLModel, IdTimestampMixin, table=True):
     child_name: str = Field(min_length=1)
     child_gender: ChildGender = Field(nullable=False)
     parent_type: ParentType = Field(nullable=False)
+    locale: UserLocale = Field(nullable=False, default=UserLocale.Korean)
 
     sessions: list['SessionORM'] = Relationship(back_populates='dyad')
 

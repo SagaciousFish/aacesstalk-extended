@@ -1,5 +1,6 @@
 from chatlib.utils import env_helper
 from chatlib.utils.time import get_timestamp
+from py_core.system.model import UserLocale
 import jwt
 from sqlmodel import select
 
@@ -15,8 +16,8 @@ async def get_dyad_list(session: AsyncSession) -> list[tuple[DyadORM, DyadLoginC
     return [row for row in results]
 
 
-async def create_dyad(alias: str, child_name: str, parent_type: ParentType, child_gender: ChildGender, session: AsyncSession) -> tuple[DyadORM, DyadLoginCode]:
-    dyad = DyadORM(alias=alias, child_name=child_name, parent_type=parent_type, child_gender=child_gender)
+async def create_dyad(alias: str, child_name: str, parent_type: ParentType, child_gender: ChildGender, locale: UserLocale | None, session: AsyncSession) -> tuple[DyadORM, DyadLoginCode]:
+    dyad = DyadORM(alias=alias, child_name=child_name, parent_type=parent_type, child_gender=child_gender, locale=locale)
 
     print(dyad)
 
