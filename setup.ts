@@ -20,7 +20,8 @@ async function setup(){
         questions.push({
                 type: 'input',
                 name: 'hostname',
-                message: 'Insert Backend hostname including port number (e.g., http://0.0.0.0:3000)',
+                message: 'Insert Backend hostname including port number (e.g., http://localhost:3000)',
+                default: 'http://localhost:3000',
                 validate: (input: string) => {
                     if(input == null || input.trim().length == 0){
                         return "Please enter valid hostname."

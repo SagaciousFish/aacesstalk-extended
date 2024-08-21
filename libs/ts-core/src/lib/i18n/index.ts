@@ -21,6 +21,9 @@ export function initializeI18n(defaultLanguage: string = "kr",
         resources: merge.recursive(false, {
             kr: {
                 translation: require("./translations/kr")
+            },
+            en: {
+                translation: require("./translations/en")
             }
         }, options?.resources),
         react: {
