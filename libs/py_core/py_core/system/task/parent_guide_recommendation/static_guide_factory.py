@@ -4,7 +4,7 @@ from py_core.config import AACessTalkConfig
 import yaml
 
 from py_core.system.guide_categories import ParentGuideCategory
-from py_core.system.model import Dyad, ParentExampleMessage, ParentGuideElement, ParentGuideRecommendationResult
+from py_core.system.model import Dyad, ParentExampleMessage, ParentGuideElement, ParentGuideRecommendationResult, UserLocale
 from py_core.system.session_topic import SessionTopicCategory, SessionTopicInfo
 
 
@@ -36,7 +36,7 @@ class StaticGuideFactory:
         guides = [ParentGuideElement.messaging_guide(
             category=guide_info.guide_category, 
             guide=guide_info.guide.format(subtopic=topic.subtopic, child_name=dyad.child_name),
-            guide_localized=guide_info.guide_localized.format(subtopic=topic.subtopic, child_name=dyad.child_name),
+            guide_localized= None if dyad.locale == UserLocale.English else guide_info.guide_localized.format(subtopic=topic.subtopic, child_name=dyad.child_name),
             is_generated=False,
             static_guide_key=guide_info.key) for guide_info in self.__guide_dict[topic.category]]
         return ParentGuideRecommendationResult(guides=guides, turn_id=turn_id)
@@ -47,6 +47,6 @@ class StaticGuideFactory:
             guide_info = [g for g in self.__guide_dict[topic.category] if g.key == guide.static_guide_key][0]
             return ParentExampleMessage(recommendation_id=recommendation_id, guide_id=guide.id, 
                                         message=guide_info.example.format(subtopic=topic.subtopic, child_name=dyad.child_name),
-                                        message_localized=guide_info.example_localized.format(subtopic=topic.subtopic, child_name=dyad.child_name))
+                                        message_localized= None if dyad.locale == UserLocale.English else guide_info.example_localized.format(subtopic=topic.subtopic, child_name=dyad.child_name))
         else:
             raise Exception("Only static guides with a static guide key can yield an example message.")

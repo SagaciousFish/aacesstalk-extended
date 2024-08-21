@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "../../../redux/hooks"
 import { useCallback, useEffect, useState } from "react"
-import { DyadWithPasscode, Http, dyadsSelectors, loadDyads } from '@aacesstalk/libs/ts-core'
+import { DyadWithPasscode, Http, UserLocale, dyadsSelectors, loadDyads } from '@aacesstalk/libs/ts-core'
 import { Button, Card, Space, Table } from "antd"
 import { ColumnsType } from "antd/es/table"
 import { Link } from "react-router-dom"
@@ -23,6 +23,13 @@ const columns: ColumnsType<DyadWithPasscode> = [{
     title: 'Parent Type',
     dataIndex: 'parent_type',
     key:'parent_type'
+}, {
+    title: 'Locale',
+    dataIndex: 'locale',
+    key:'locale',
+    render: (value, dyad) => {
+        return <span>{value == UserLocale.Korean ? "Korean" : "English"}</span>
+    }
 }, {
     title: 'Passcode',
     dataIndex: 'passcode',

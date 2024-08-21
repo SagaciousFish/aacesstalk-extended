@@ -3,6 +3,7 @@ import sessionReducer from './reducers/session'
 import dyadStatusReducer from './reducers/dyad-status'
 import { Action, Reducer, Store, ThunkAction, ThunkDispatch, combineReducers, configureStore } from '@reduxjs/toolkit';
 import {FLUSH, PAUSE, PERSIST, PURGE, Persistor, REGISTER, REHYDRATE, persistReducer, persistStore} from 'redux-persist'
+import i18next from 'i18next';
 
 export type CoreState = {
   auth: ReturnType<typeof authReducer>,
@@ -50,9 +51,14 @@ export function createStore<Additional extends AdditionalReducers, A extends Act
           ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     })
-  }) as any
+  })
 
-  const persistor = persistStore(store)
+  const persistor = persistStore(store, null, async () => {
+    const state: RootState = store.getState()
+    if(state.auth.dyadInfo?.locale){
+      await i18next.changeLanguage(state.auth.dyadInfo?.locale)
+    }
+  })
 
-  return {store, persistor}
+  return {store: store as any, persistor}
 }

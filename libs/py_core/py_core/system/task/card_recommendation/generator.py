@@ -6,12 +6,12 @@ from chatlib.llm.integration import GPTChatCompletionAPI, ChatGPTModel
 from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompletionFewShotMapperParams
 
 from py_core.config import AACessTalkConfig
-from py_core.system.model import Dialogue, CardInfo, ChildCardRecommendationResult, ParentType, id_generator, CardCategory
+from py_core.system.model import Dialogue, CardInfo, ChildCardRecommendationResult, ParentType, UserLocale, id_generator, CardCategory
 from py_core.system.session_topic import SessionTopicInfo
 from py_core.system.task.card_recommendation.common import ChildCardRecommendationAPIResult
 from py_core.system.task.card_recommendation.translator import CardTranslator
 from py_core.system.task.dialogue_conversion import DialogueInput, DialogueInputToStrConversionFunction
-from py_core.utils.default_cards import DEFAULT_CORE_CARDS, DEFAULT_EMOTION_CARDS
+from py_core.utils.default_cards import DEFAULT_CORE_CARDS, DEFAULT_EMOTION_CARDS, DefaultCardInfo
 from py_core.utils.vector_db import VectorDB
 
 str_output_converter, output_str_converter = generate_pydantic_converter(ChildCardRecommendationAPIResult, 'yaml')
@@ -65,6 +65,7 @@ class ChildCardRecommendationGenerator:
 
     async def generate(self,
                        turn_id: str,
+                       locale: UserLocale,
                        parent_type: ParentType,
                        topic_info: SessionTopicInfo,
                        dialogue: Dialogue,
@@ -85,7 +86,7 @@ class ChildCardRecommendationGenerator:
 
         print(f"English cards generated: {t_trans - t_start} sec.")
 
-        translated_keywords = await self.__translator.translate(recommendation)
+        translated_keywords = None if locale == UserLocale.English else await self.__translator.translate(recommendation)
 
         t_end = perf_counter()
 
@@ -97,7 +98,7 @@ class ChildCardRecommendationGenerator:
         keyword_category_list = [(word, CardCategory.Topic) for word in recommendation.topics] + [
             (word, CardCategory.Action) for word in recommendation.actions]
         
-        selected_emotion_cards = []
+        selected_emotion_cards: list[DefaultCardInfo] = []
         for emotion in recommendation.emotions:
             matched = [c for c in DEFAULT_EMOTION_CARDS if c.label.lower().strip() == emotion.lower().strip()]
             if len(matched) > 0:
@@ -106,8 +107,8 @@ class ChildCardRecommendationGenerator:
                 print(f"Emotion not matched - {emotion}")
 
         return ChildCardRecommendationResult(id=rec_id, turn_id=turn_id, cards=[
-            CardInfo(label=word, label_localized=translated_keywords[i], category=category,
+            CardInfo(label=word, label_localized=translated_keywords[i] if locale != UserLocale.English else word, category=category,
                      recommendation_id=rec_id) for i, (word, category) in
-            enumerate(keyword_category_list)] + [CardInfo(label=c.get_label_for_parent(parent_type), label_localized=c.get_label_localized_for_parent(parent_type), 
+            enumerate(keyword_category_list)] + [CardInfo(label=c.get_label_for_parent(parent_type), label_localized=c.get_label_localized_for_parent(locale, parent_type), 
                                                           recommendation_id=rec_id, category=c.category
                                                           ) for c in (selected_emotion_cards + DEFAULT_CORE_CARDS)])
