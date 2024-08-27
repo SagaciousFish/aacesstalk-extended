@@ -44,13 +44,31 @@ class VectorDB:
         return self.__client.get_or_create_collection(name, embedding_function=self.__decode)
 
     def upsert(self, collection: str | Collection, dictionary_row: DictionaryRow | list[DictionaryRow]) -> ndarray | list[ndarray]:
+        
         rows = [dictionary_row] if isinstance(dictionary_row, DictionaryRow) else dictionary_row
 
-        (collection if isinstance(collection, Collection) else self.get_collection(collection)).upsert(
-            ids=[row.id for row in rows],
-            metadatas=[row.model_dump(include={"category", "localized"}) for row in rows],
-            documents=[row.english for row in rows]
-        )
+        try:
+            (collection if isinstance(collection, Collection) else self.get_collection(collection)).upsert(
+                ids=[row.id for row in rows],
+                metadatas=[row.model_dump(include={"category", "localized"}) for row in rows],
+                documents=[row.english for row in rows]
+            )
+        except Exception as ex:
+            print(ex)
+            print("Dictionary initialization error. Try row by row skipping erroneous rows.")
+
+            for row in rows:
+                try:
+                    (collection if isinstance(collection, Collection) else self.get_collection(collection)).upsert(
+                        ids=row.id,
+                        metadatas=row.model_dump(include={"category", "localized"}),
+                        documents=row.english
+                    )
+                except Exception as row_ex:
+                    print(row_ex)
+                    print(f"Skip the erroneous row: {row}")
+                    continue
+
 
     def query_similar_rows(self, collection: str | Collection, word: str | list[str], category: str | None, k: int = 5) -> list[DictionaryRow]:
         #print(f"Query similar cards: {word}, {category}")
