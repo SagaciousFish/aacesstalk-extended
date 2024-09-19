@@ -6,7 +6,7 @@ from chatlib.utils.jinja_utils import convert_to_jinja_template
 from time import perf_counter
 
 from py_core.system.guide_categories import ParentGuideCategory
-from py_core.system.model import CardCategory, DialogueMessage, ParentGuideRecommendationResult, Dialogue, ParentGuideElement, ParentType, Dyad
+from py_core.system.model import CardCategory, DialogueMessage, ParentGuideRecommendationResult, Dialogue, ParentGuideElement, ParentType, Dyad, UserLocale
 from py_core.system.task.parent_guide_recommendation.common import ParentGuideRecommendationAPIResult, \
     DialogueInspectionResult
 from py_core.system.task.parent_guide_recommendation.guide_translator import GuideTranslator
@@ -133,10 +133,9 @@ class ParentGuideRecommendationGenerator:
         else:
             guide_list = guide_list[:3]
 
-        print(guide_list)
         t_trans = perf_counter()
         print(f"Mapping took {t_trans - t_start} sec. Start translation...")
-        translated_guide_list: ParentGuideRecommendationAPIResult = await self.__translator.translate(guide_list)
+        translated_guide_list: ParentGuideRecommendationAPIResult = guide_list if dyad.locale == UserLocale.English else await self.__translator.translate(guide_list)
         t_end = perf_counter()
         print(f"Translation took {t_end - t_trans} sec.")
         print(f"Total latency: {t_end - t_start} sec.")

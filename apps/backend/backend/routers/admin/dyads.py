@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 
-from py_core.system.model import Dyad, FreeTopicDetail, UserDefinedCardInfo, CardCategory, DialogueRole
+from py_core.system.model import Dyad, FreeTopicDetail, UserDefinedCardInfo, CardCategory, DialogueRole, UserLocale
 from py_core.system.storage import UserStorage
 from py_database.model import DyadORM, UserDefinedCardInfoORM, DialogueTurnORM, SessionORM
 from backend.crud.dyad.account import create_dyad
@@ -34,6 +34,7 @@ class DyadUpdateArgs(BaseModel):
     child_name: Optional[str] = None
     parent_type: Optional[str] = None
     child_gender: Optional[str] = None
+    locale: Optional[str] = None
 
 
 class DyadsResult(BaseModel):
@@ -73,7 +74,8 @@ class DyadCreateArgs(BaseModel):
     alias: str = None
     child_name: str = None
     parent_type: str = None
-    child_gender: str = None   
+    child_gender: str = None
+    locale: str = None
     
 @router.post("/new", response_model=DyadWithPasscode)
 async def _create_dyad(args:DyadCreateArgs, db: Annotated[AsyncSession, Depends(with_db_session)]):

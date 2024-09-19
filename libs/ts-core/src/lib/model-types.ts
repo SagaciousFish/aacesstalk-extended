@@ -124,12 +124,18 @@ export enum ChildGender{
     Girl="girl"
 }
 
+export enum UserLocale{
+    Korean="kr",
+    English="en"
+}
+
 export interface Dyad{
   id: string
   alias: string
   child_name: string
   child_gender: ChildGender
   parent_type: ParentType
+  locale: UserLocale
 }
 
 export interface DyadWithPasscode extends Dyad{

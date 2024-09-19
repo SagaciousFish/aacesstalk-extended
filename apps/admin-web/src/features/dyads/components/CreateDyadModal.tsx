@@ -1,4 +1,4 @@
-import { ChildGender, ParentType, createDyad } from '@aacesstalk/libs/ts-core'
+import { ChildGender, ParentType, UserLocale, createDyad } from '@aacesstalk/libs/ts-core'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Modal, Form, Input, Select, ButtonProps } from 'antd'
 import { useDispatch, useSelector } from '../../../redux/hooks'
@@ -7,16 +7,16 @@ import { useForm } from 'react-hook-form'
 import { FormItem } from 'react-hook-form-antd'
 import * as yup from 'yup'
 
-const CHILD_GENDERS = [ChildGender.Girl, ChildGender.Boy]
-const CHILD_GENDERS_OPTIONS = CHILD_GENDERS.map(g => ({value: g, label: <span className='capitalize'>{g}</span>}))
-const PARENT_TYPES = [ParentType.Mother, ParentType.Father]
-const PARENT_TYPES_OPTIONS = PARENT_TYPES.map(g => ({value: g, label: <span className='capitalize'>{g}</span>}))
+const CHILD_GENDERS_OPTIONS = Object.keys(ChildGender).map(g => ({value: (ChildGender as any)[g], label: <span className='capitalize'>{g}</span>}))
+const PARENT_TYPES_OPTIONS = Object.keys(ParentType).map(g => ({value: (ParentType as any)[g], label: <span className='capitalize'>{g}</span>}))
+const LOCALE_OPTIONS = Object.keys(UserLocale).map(g => ({value: (UserLocale as any)[g], label: <span className='capitalize'>{g}</span>}))
 
 const creationSchema = yup.object().shape({
     alias: yup.string().required().trim().min(1).matches(/[a-zA-Z0-9\-_]+/, {message: "Alias should consist of alphanumeric letters, hyphens, and underscores."}),
     child_name: yup.string().required().trim().min(1),
-    child_gender: yup.string().required().oneOf(CHILD_GENDERS),
-    parent_type: yup.string().required().oneOf(PARENT_TYPES)
+    child_gender: yup.mixed().required().oneOf(Object.keys(ChildGender).map(n => (ChildGender as any)[n])),
+    parent_type: yup.mixed().required().oneOf(Object.keys(ParentType).map(n => (ParentType as any)[n])),
+    locale: yup.mixed().required().oneOf(Object.keys(UserLocale).map(n => (UserLocale as any)[n]))
 })
 
 export const CreateDyadModal = (props: {
@@ -77,6 +77,11 @@ export const CreateDyadModal = (props: {
 
             <FormItem control={control} name="parent_type" label="Parent Type">
                 <Select options={PARENT_TYPES_OPTIONS} defaultValue={PARENT_TYPES_OPTIONS[0]}/>
+            </FormItem>
+
+
+            <FormItem control={control} name="locale" label="User Locale">
+                <Select options={LOCALE_OPTIONS} defaultValue={LOCALE_OPTIONS[0]}/>
             </FormItem>
 
             {

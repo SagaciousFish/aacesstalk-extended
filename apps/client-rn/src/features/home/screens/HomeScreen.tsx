@@ -57,7 +57,7 @@ const FreeTopicButton = (props: {style?: any, disabled?: boolean, onPress}) => {
     
     const label = useMemo(()=>{
         return format(t("TopicSelection.FreeTemplate"), {child_name}, {ignoreMissing: true})
-    }, [t, child_name])
+    }, [child_name, t])
 
     return <TopicButton style={props.style} disabled={props.disabled} title={label} buttonClassName="bg-topicfree-fg" 
                 imageComponent={<StarImage/>}

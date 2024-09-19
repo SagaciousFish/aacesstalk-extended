@@ -5,7 +5,7 @@ import yaml
 
 from py_core.config import AACessTalkConfig
 from os import path
-from py_core.system.model import CardCategory, ChildGender, ParentType
+from py_core.system.model import CardCategory, ChildGender, ParentType, UserLocale
 
 
 class DefaultCardInfo(BaseModel):
@@ -21,11 +21,14 @@ class DefaultCardInfo(BaseModel):
         else:
             return self.label[parent_type]
     
-    def get_label_localized_for_parent(self, parent_type: ParentType)->str:
-        if isinstance(self.label_localized, str):
-            return self.label_localized
+    def get_label_localized_for_parent(self, locale: UserLocale, parent_type: ParentType)->str:
+        if locale == UserLocale.English:
+            return self.get_label_for_parent(parent_type)
         else:
-            return self.label_localized[parent_type]
+            if isinstance(self.label_localized, str):
+                return self.label_localized
+            else:
+                return self.label_localized[parent_type]
         
     def get_image_path_for_dyad(self, parent_type: ParentType, child_gender: ChildGender)->str | None:
         if self.image is not None:
@@ -60,8 +63,8 @@ DEFAULT_CARDS = DEFAULT_EMOTION_CARDS + DEFAULT_CORE_CARDS
 
 DEFAULT_CARDS_BY_ID: dict[str, DefaultCardInfo] = {c.id:c for c in DEFAULT_CARDS}
 
-def find_default_card(label_localized: str, category: CardCategory, parent_type: ParentType) -> DefaultCardInfo | None:
-    filtered = [c for c in DEFAULT_CARDS if c.category == category and c.get_label_localized_for_parent(parent_type=parent_type) == label_localized]
+def find_default_card(label_localized: str, category: CardCategory, parent_type: ParentType, locale: UserLocale) -> DefaultCardInfo | None:
+    filtered = [c for c in DEFAULT_CARDS if c.category == category and c.get_label_localized_for_parent(locale=locale, parent_type=parent_type) == label_localized]
     if len(filtered) > 0:
         return filtered[0]
     else:
