@@ -11,13 +11,13 @@ export const ProfileButton = () => {
     const child_name = useSelector(state => state.auth.dyadInfo?.child_name)
     const parent_type = useSelector(state => state.auth.dyadInfo?.parent_type)
 
-    const {t} = useTranslation()
+    const [t] = useTranslation()
 
     const dispatch = useDispatch()
 
     const label = useMemo(()=>{
         return format(t("DyadInfo.FamilyLabelTemplate"), {child_name, parent_type: t(`DyadInfo.ParentType.${parent_type}`)})
-    }, [t, child_name, parent_type])
+    }, [t, child_name, parent_type, t])
 
     const onTripplePress = useCallback(()=>{
         Alert.alert(t("SignIn.ConfirmSignOut"), null, [{text: t("SignIn.Cancel"), style: 'cancel'}, {text: t("SignIn.SignOut"), onPress: () => {
