@@ -16,7 +16,7 @@ export const ProfileButton = () => {
     const dispatch = useDispatch()
 
     const label = useMemo(()=>{
-        return format(t("DyadInfo.FamilyLabelTemplate"), {child_name, parent_type: t(`DyadInfo.ParentType.${parent_type}`)})
+        return format(t("DyadInfo.FamilyLabelTemplate"), {child_name: child_name || "", parent_type: t(`DyadInfo.ParentType.${parent_type}`)})
     }, [t, child_name, parent_type, t])
 
     const onTripplePress = useCallback(()=>{
