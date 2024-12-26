@@ -111,7 +111,7 @@ export const SessionParentView = (props: {
         <SessionTitleRibbon containerClassName="mt-12" category={topic?.category} />
         <RecordingIndicator/>
         {
-            numTurns == 0 ? <SessionStartingMessage topic={topic} containerClassName='mt-14' /> : <View pointerEvents='none' className='mt-12 flex-row space-x-3'>
+            numTurns == 0 ? <SessionStartingMessage topic={topic} containerClassName='mt-14' /> : <View pointerEvents='none' className='mt-12 flex-row gap-x-3'>
                 {
                     numStarsLoopArray.map((_, index) => {
                         if(index < numStarsLoopArray.length - 1){

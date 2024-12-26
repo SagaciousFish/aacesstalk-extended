@@ -129,3 +129,6 @@ yarn-error.log
 !.yarn/versions
 
 .env.json
+
+.nx/cache
+.nx/workspace-data

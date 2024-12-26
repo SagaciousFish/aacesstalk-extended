@@ -219,7 +219,7 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
         <SafeAreaView className="flex-1 self-stretch items-center justify-center">
             <LogoImage width={200} height={80}/>
             <Text className="text-3xl text-slate-800 text-center" style={styleTemplates.withBoldFont}>{t("TopicSelection.Title")}</Text>
-            <View className="flex-row space-x-12 mt-24 mb-20">
+            <View className="flex-row gap-x-12 mt-24 mb-20">
                
                 <PlanTopicButton disabled={!permissionsGranted} onPress={onPressPlanButton}/>
                 <RecallTopicButton disabled={!permissionsGranted} onPress={onPressRecallButton}/>

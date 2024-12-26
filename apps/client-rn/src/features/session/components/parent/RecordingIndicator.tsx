@@ -64,7 +64,7 @@ export const RecordingIndicator = () => {
         labelAnimValue.value = withRepeat(withTiming(0, {duration: 1000}), null, true)
     }, [])
 
-    return <Reanimated.View style={containerAnimStyle} pointerEvents="none" className={`absolute top-5 left-5 px-3 py-1.5 bg-white/80 rounded-lg flex-row items-center space-x-2 ${shown ? '' : 'hidden'}`}>
+    return <Reanimated.View style={containerAnimStyle} pointerEvents="none" className={`absolute top-5 left-5 px-3 py-1.5 bg-white/80 rounded-lg flex-row items-center gap-x-2 ${shown ? '' : 'hidden'}`}>
         <View className="bg-transparent w-6 h-6 rounded-full border-[1.5px] border-red-300 items-center justify-center">
             <Reanimated.View className="w-6 h-6 bg-red-400 rounded-full scale-50" style={meteringAnimStyle}/>
         </View>
