@@ -50,7 +50,10 @@
     "merge": "*",
     "react-native-toast-message": "*",
     "react-native-global-keyevent": "*",
-    "moment-timezone": "*"
+    "moment-timezone": "*",
+    "pupa": "*",
+    "fast-shuffle": "*",
+    "@react-navigation/core": "*"
   },
   "devDependencies": {}
 }
