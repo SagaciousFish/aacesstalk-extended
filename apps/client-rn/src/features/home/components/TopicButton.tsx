@@ -45,7 +45,7 @@ export const TopicButton = (props: {
 
     const imageContainerStyle = useAnimatedStyle(() => {
         return {
-            position: 'absolute', zIndex: -1,
+            position: 'absolute',
             width: '55%', 
             height: '55%',
             opacity: 0.1,
@@ -76,10 +76,10 @@ export const TopicButton = (props: {
 
     return <Pressable accessible={false} style={props.style} onPressIn={onPressIn} onPressOut={onPressOut} onPress={props.onPress} disabled={props.disabled}>
             <Animated.View className={`w-[32vh] h-[32vh] rounded-[28px] border-[5px] border-white shadow-2xl shadow-slate-600 bg-teal-400 block ${props.buttonClassName} relative px-5 py-6 pb-4 overflow-hidden ${props.disabled === true ? 'opacity-50' : ''}`} style={containerAnimStyle}>
-                <Text style={styleTemplates.withExtraboldFont} className="text-white text-2xl flex-1" numberOfLines={3}>{props.title}</Text>
                 <Animated.View style={imageContainerStyle} className="bottom-[25%]">
                     {props.imageComponent}
                 </Animated.View>
+                <Text style={styleTemplates.withExtraboldFont} className="text-white text-2xl flex-1" numberOfLines={3}>{props.title}</Text>
                 {
                     (props.numSessionsToday != null || props.numSessionsTotal != null) ? <View className="absolute bottom-4 left-4">
                         { props.numSessionsToday != null && (props.numSessionsTotal != null && props.numSessionsTotal > 0) ? <Text style={styleTemplates.withSemiboldFont} className="text-white text-md">{todayCountText}</Text> : null}

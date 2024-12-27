@@ -81,7 +81,7 @@ export const SignInScreen = () => {
                         rippleColor="#f0f0f080"
                         disabled={!isValid}
                         disabledButtonStyleClassName="bg-[#e0e0e0]"
-                        buttonStyleClassName="bg-[#F9AA33]"
+                        buttonStyleClassName="bg-[#f9aa33]"
                         onPress={onSubmit}
                         />
                 </Fragment>

@@ -1,7 +1,7 @@
 import {Text, View} from 'react-native'
 import { SessionTopicInfo, TopicCategory } from "@aacesstalk/libs/ts-core"
 import { useSelector } from "apps/client-rn/src/redux/hooks"
-import { useMemo } from "react"
+import { Fragment, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import format from "pupa"
 import { styleTemplates } from 'apps/client-rn/src/styles'
@@ -23,9 +23,9 @@ function RibbonEnd(props:{svgClassName?:string, fgColor?: string, direction: "le
       viewBox="0 0 78 58"
       fill="none"
     >
-      {props.direction == "left" ? <><Path
+      {props.direction == "left" ? <Fragment><Path
         d="M10.64 17.559C6.455 9.574 12.246 0 21.26 0h44.184c6.623 0 11.992 5.369 11.992 11.992v34.016c0 6.623-5.37 11.992-11.992 11.992H21.261c-9.015 0-14.806-9.574-10.621-17.559L16.637 29 10.64 17.559z"
-        fill={props.fgColor || "#78AAFC"}
+        fill={props.fgColor || "#78aafc"}
       />
       <Mask
         id="a"
@@ -46,10 +46,10 @@ function RibbonEnd(props:{svgClassName?:string, fgColor?: string, direction: "le
           fill="#000"
           fillOpacity={0.4}
         />
-      </G></> : <>
+      </G></Fragment> : <Fragment>
       <Path
         d="M67.36 17.559C71.545 9.574 65.754 0 56.739 0H12.555C5.932 0 .563 5.369.563 11.992v34.016C.563 52.631 5.932 58 12.555 58h44.184c9.015 0 14.806-9.574 10.62-17.559L61.364 29l5.997-11.441z"
-        fill={props.fgColor || "#78AAFC"}
+        fill={props.fgColor || "#78aafc"}
       />
       <Mask
         id="a"
@@ -70,7 +70,7 @@ function RibbonEnd(props:{svgClassName?:string, fgColor?: string, direction: "le
           fill="#000"
           fillOpacity={0.4}
         />
-      </G></>}
+      </G></Fragment>}
       <Defs>
         <LinearGradient
           id="paint0_linear_130_1665"
@@ -80,8 +80,8 @@ function RibbonEnd(props:{svgClassName?:string, fgColor?: string, direction: "le
           y2={58.0001}
           gradientUnits="userSpaceOnUse"
         >
-          <Stop stopColor="#F05" />
-          <Stop offset={1} stopColor="#C70042" />
+          <Stop stopColor="#f05" />
+          <Stop offset={1} stopColor="#c70042" />
         </LinearGradient>
       </Defs>
     </Svg>
