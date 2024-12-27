@@ -9,7 +9,7 @@ from chatlib.utils.time import get_timestamp
 from py_core.system.model import ChildCardRecommendationResult, DialogueMessage, DialogueRole, CardInfo, \
     CardIdentity, DialogueTurn, Interaction, InteractionType, \
     ParentGuideRecommendationResult, Dialogue, ParentGuideType, ParentExampleMessage, ParentGuideElement, \
-    InterimCardSelection, Dyad, SessionInfo, SessionStatus
+    InterimCardSelection, Dyad, SessionInfo, SessionStatus, UserLocale
 from py_core.system.session_topic import SessionTopicInfo
 from py_core.system.storage import SessionStorage
 from py_core.system.task import ChildCardRecommendationGenerator
@@ -86,6 +86,14 @@ class ModeratorSession:
     @property
     def storage(self) -> SessionStorage:
         return self.__storage
+    
+    @property
+    def dyad(self) -> Dyad:
+        return self.__dyad
+    
+    @property
+    def locale(self) -> UserLocale:
+        return self.__dyad.locale
 
     @storage.setter
     def storage(self, storage: SessionStorage):
@@ -229,7 +237,7 @@ class ModeratorSession:
 
         current_turn = await self.storage.get_latest_turn()
 
-        dialogue = await self.__storage.get_dialogue()
+        dialogue = await self.storage.get_dialogue()
 
         # Join a dialogue inspection task
         dialogue_inspection_result = None
@@ -266,14 +274,17 @@ class ModeratorSession:
             # Clear if there is a pending example generation task.
             self.__clear_parent_example_generation_tasks()
 
-            print("Translate parent message..")
-            message_eng = await self.__deepl_translator.translate(
-                text=parent_message,
-                source_lang="KO", target_lang="EN-US",
-                context="The message is from a parent to their child."
-            )
+            if self.locale == UserLocale.English:
+                message_eng = parent_message
+            else:
+                print("Translate parent message..")
+                message_eng = await self.__deepl_translator.translate(
+                    text=parent_message,
+                    source_lang="KO", target_lang="EN-US",
+                    context="The message is from a parent to their child."
+                )
 
-            print("Translated parent message.")
+                print("Translated parent message.")
 
             current_guide = await self.storage.get_latest_parent_guide_recommendation(turn_id=current_turn.id)
             if current_guide is None:
