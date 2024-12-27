@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { Fragment, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { styleTemplates } from "apps/client-rn/src/styles"
 import { useTranslation } from "react-i18next";
@@ -107,7 +107,7 @@ export const SessionParentView = (props: {
 
     const topic = useNonNullUpdatedValue(props.topic)
     
-    return <>
+    return <Fragment>
         <SessionTitleRibbon containerClassName="mt-12" category={topic?.category} />
         <RecordingIndicator/>
         {
@@ -137,5 +137,5 @@ export const SessionParentView = (props: {
         {
             isTextInputOn ? <ParentMessageTextInputView onPopTextInput={onPopTextInput}/> : null
         }
-    </>
+    </Fragment>
 }

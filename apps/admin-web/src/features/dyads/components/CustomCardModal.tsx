@@ -43,7 +43,6 @@ export const CustomCardModal = (props: Pick<ModalProps, "open"|"onCancel"|"onClo
     }, [props.onCancel])
 
     const submit = useCallback(async (values: any) => {
-        console.log(values)
 
         if(props.cardId != null){
             //Edit mode

@@ -40,8 +40,6 @@ export const CustomCardsPage = () => {
 
     const cardIds = useSelector(userDefinedCardSelectors.selectIds)
 
-    console.log(cardIds)
-
     const [cardIdToEdit, setCardIdToEdit] = useState<string|undefined>(undefined)
     const [isModalOpen, setIsModalOpen] = useState(false)
 

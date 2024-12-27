@@ -92,8 +92,6 @@ export const HillBackgroundView = (props: {
         }
     }, [width])
 
-    console.log(width, height, hillHeight)
-
     useEffect(()=>{
         cloud1PositionCycle.value = withRepeat(withTiming(1, {duration: 16000, easing: Easing.linear}), -1, false)
 

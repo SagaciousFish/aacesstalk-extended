@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Provider } from 'react-redux';
 import { store, persistor } from '../redux/store';
-import { BackHandler, Text, View } from 'react-native';
+import { BackHandler, Platform, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { NativeStackNavigationOptions, createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SignInScreen } from '../features/auth/screens/SignInScreen';
@@ -15,6 +15,7 @@ import { Http } from '@aacesstalk/libs/ts-core';
 import { getTimeZone } from 'react-native-localize';
 import { useKeepAwake } from '@sayem314/react-native-keep-awake';
 import Toast from 'react-native-toast-message';
+import DeviceInfo from 'react-native-device-info';
 import { toastConfig } from '../components/toast';
 
 const Stack = createNativeStackNavigator()
@@ -29,7 +30,7 @@ const GlobalNavigator = () => {
     return state.auth.jwt != null
   })
 
-  return <Stack.Navigator screenOptions={screenOptions}>
+  return <Stack.Navigator screenOptions={screenOptions} id={undefined}>
   {
     isSignedIn ? (<Stack.Screen name="Home" component={MainNavigator}/>) : 
     (<Stack.Screen name="Auth" component={SignInScreen}/>)
@@ -42,7 +43,12 @@ export const App = () => {
   useKeepAwake()
 
   useEffect(()=>{
-    Http.initialize(process.env["BACKEND_ADDRESS"], async () => {return getTimeZone()})
+    const isEmulator = DeviceInfo.isEmulatorSync()
+    const isAndroid = Platform.OS == 'android'
+    if(isEmulator && isAndroid){
+      console.log("Running on Android emulator. Use the host address http://10.0.2.2:3000")  
+    }
+    Http.initialize(isEmulator && isAndroid ? "http://10.0.2.2:3000" : process.env["BACKEND_ADDRESS"], async () => {return getTimeZone()})
   }, [])
 
 

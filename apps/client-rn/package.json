@@ -53,7 +53,8 @@
     "pupa": "*",
     "fast-shuffle": "*",
     "@react-navigation/core": "*",
-    "react-native-mmkv":"*"
+    "react-native-mmkv":"*",
+    "react-native-device-info":"*"
   },
   "devDependencies": {}
 }
