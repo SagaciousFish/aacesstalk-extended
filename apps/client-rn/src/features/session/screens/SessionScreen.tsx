@@ -58,7 +58,7 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
                 console.log("Parent turn finished.")
             }
         }
-    }, [currentTurn, sessionId, turnId])
+    }, [pTurn, currentTurn, sessionId, turnId])
 
     useEffect(() => {
         if (isInitializing == false && sessionId != null) {

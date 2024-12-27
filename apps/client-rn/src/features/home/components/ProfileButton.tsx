@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next"
 import { Alert, View, Text } from "react-native"
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import format from 'pupa'
+import { runOnJS } from "react-native-reanimated"
 
 export const ProfileButton = () => {
     const child_name = useSelector(state => state.auth.dyadInfo?.child_name)
@@ -26,7 +27,7 @@ export const ProfileButton = () => {
     }, [t, dispatch])
 
     const tripleTap = useMemo(()=>Gesture.Tap().maxDuration(600).numberOfTaps(3)
-    .onStart(onTripplePress), [onTripplePress])
+    .onStart(runOnJS(onTripplePress)), [onTripplePress])
     
     return <GestureDetector gesture={tripleTap}><View className="absolute right-5 top-5">
             <Text className={`text-lg text-center text-slate-400`} style={styleTemplates.withSemiboldFont}>{label}</Text>
