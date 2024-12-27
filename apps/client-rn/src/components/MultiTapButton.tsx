@@ -1,5 +1,6 @@
 import { useMemo } from "react"
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
+import { runOnJS } from "react-native-reanimated"
 
 export const MultiTapButton = (props: {
     numberOfTaps: number,
@@ -8,7 +9,7 @@ export const MultiTapButton = (props: {
 }) => {
 
     const tripleTap = useMemo(()=>Gesture.Tap().maxDuration(600).numberOfTaps(props.numberOfTaps)
-    .onStart(props.onTapGesture), [props.onTapGesture])
+    .onStart(runOnJS(props.onTapGesture)), [props.onTapGesture])
     
     return <GestureDetector gesture={tripleTap}>{props.children}</GestureDetector>
 }

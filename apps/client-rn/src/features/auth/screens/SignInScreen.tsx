@@ -8,7 +8,7 @@ import { TailwindButton } from "apps/client-rn/src/components/tailwind-component
 import { Control, useController, useForm } from "react-hook-form"
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useMemo } from "react"
+import { Fragment, useMemo } from "react"
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { loginDyadThunk } from "@aacesstalk/libs/ts-core"
 
@@ -71,7 +71,7 @@ export const SignInScreen = () => {
         <View className="items-stretch">
             <LogoImage className="justify-self-center" width={400} height={150}/>
             {
-                isAuthorizing === true ? <Text className="text-center text-lg text-slate-500" style={styleTemplates.withBoldFont}>{t("SignIn.Authorizing")}</Text> : <>
+                isAuthorizing === true ? <Text className="text-center text-lg text-slate-500" style={styleTemplates.withBoldFont}>{t("SignIn.Authorizing")}</Text> : <Fragment>
                     {
                         authorizationError ? <Text className="text-center text-lg text-red-400 mt-4" style={styleTemplates.withBoldFont}>{t(`SignIn.Errors.${authorizationError}`)}</Text> : null
                     }
@@ -81,10 +81,10 @@ export const SignInScreen = () => {
                         rippleColor="#f0f0f080"
                         disabled={!isValid}
                         disabledButtonStyleClassName="bg-[#e0e0e0]"
-                        buttonStyleClassName="bg-[#F9AA33]"
+                        buttonStyleClassName="bg-[#f9aa33]"
                         onPress={onSubmit}
                         />
-                </>
+                </Fragment>
             }
             
         </View>

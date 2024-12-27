@@ -5,7 +5,6 @@ import { stopRecording } from "../audio/reducer";
 import Toast from "react-native-toast-message";
 import { useTranslation } from "react-i18next";
 import KeyEvent from 'react-native-global-keyevent';
-import { usePrevious } from "../../utils/hooks";
 
 export function useMoveNextTurn(
     onGoNext?: (currentTurn: DialogueRole) => void,

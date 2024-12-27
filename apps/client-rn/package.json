@@ -38,7 +38,6 @@
     "yup": "*",
     "nativewind": "*",
     "redux-persist": "*",
-    "react-native-mmkv-storage": "*",
     "react-native-gesture-handler": "*",
     "react-native-localize": "*",
     "@sayem314/react-native-keep-awake": "*",
@@ -53,7 +52,9 @@
     "moment-timezone": "*",
     "pupa": "*",
     "fast-shuffle": "*",
-    "@react-navigation/core": "*"
+    "@react-navigation/core": "*",
+    "react-native-mmkv":"*",
+    "react-native-device-info":"*"
   },
   "devDependencies": {}
 }

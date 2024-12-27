@@ -147,7 +147,7 @@ const ParentMessageGuideElementView = (props: Props) => {
                         <Animated.View className="absolute self-center" style={exampleMessageLoadingIndicatorAnimStyle}><LoadingIndicator color="white" titleClassName="text-white" label={t("Session.LoadingMessage.ParentExample")} horizontal/></Animated.View>
                     </Animated.View>
                     <Animated.View style={[styles.guideFrame, exampleMessageAnimStyle]} className={`${GUIDE_FRAME_CLASSNAME} ${exampleMessageFrameBackgroundClassName}`}>
-                        <Text style={styleTemplates.withHandwritingFont} className={`${TEXT_MESSAGE_CLASSNAME} text-black text-3xl`}>"{exampleMessage?.message_localized || exampleMessage?.message}"</Text>
+                        <Text style={styleTemplates.withHandwritingFont} className={`${TEXT_MESSAGE_CLASSNAME} !text-black text-3xl`}>"{exampleMessage?.message_localized || exampleMessage?.message}"</Text>
                     </Animated.View>
                 </Animated.View>
             </Pressable>
@@ -163,7 +163,7 @@ const ParentFeedbackElementView = (props: Props) => {
         <FeedbackLegImage style={styles.feedbackLegLeft}/> 
         <FeedbackLegImage style={styles.feedbackLegRight}/>   
         <View className={`bg-[#f2d359] rounded-2xl border-[#daba3e] border-2 border-b-[7px] justify-center ${GUIDE_FRAME_DIMENSION_CLASSNAME} shadow-lg shadow-black`}>
-            <Text style={styleTemplates.withSemiboldFont} className={`${TEXT_MESSAGE_CLASSNAME} text-black px-6`}>{guideMessage}</Text>
+            <Text style={styleTemplates.withSemiboldFont} className={`${TEXT_MESSAGE_CLASSNAME} !text-black px-6`}>{guideMessage}</Text>
         </View>    
     </View>
 }

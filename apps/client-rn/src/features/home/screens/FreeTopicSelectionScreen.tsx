@@ -90,20 +90,22 @@ const FreeTopicDetailCard = (props: {id: string, style?: any}) => {
     </Pressable>
 }
 
-export const FreeTopicSelectionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigatorParamList, "free-topic-selection">) => {
+export const FreeTopicSelectionScreen = () => {
 
     const [t] = useTranslation()
 
+    const navigation = useNavigation<NativeStackNavigationProp<MainRoutes.MainNavigatorParamList, "free-topic-selection">>()
+
     const onPop = useCallback(()=>{
-        props.navigation.popToTop()
-    },[props.navigation])
+        navigation.popToTop()
+    },[navigation])
 
     const topicDetailIds = useSelector(freeTopicDetailSelectors.selectIds)
 
     return <PopupMenuScreenFrame dismissOnPressOutside onPop={onPop} backgroundClassName="justify-center p-8" panelClassName={`bg-topicfree-bg pb-8 pt-3 px-3 rounded-3xl w-full max-w-full`}>
         <SessionTitleRibbon category={TopicCategory.Free} containerClassName="self-center"/>
         <Text style={styleTemplates.withBoldFont} className="text-2xl text-black text-center mt-6 mb-0">{t("Session.FreeTopicSelectCard")}</Text>
-        <View className="flex-row flex-wrap gap-3 m-2">
+        <View className="flex-row flex-wrap gap-4 m-2 justify-center">
         {
             topicDetailIds.map(id => <FreeTopicDetailCard id={id} key={id}/>)
         }

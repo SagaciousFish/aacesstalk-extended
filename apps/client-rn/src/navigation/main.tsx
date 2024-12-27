@@ -18,7 +18,7 @@ const sessionMenuScreenOptions: NativeStackNavigationOptions = {...sharedScreenO
 const Stack = createNativeStackNavigator<MainRoutes.MainNavigatorParamList>()
 
 export const MainNavigator = () => {
-    return <Stack.Navigator screenOptions={screenOptions} initialRouteName={MainRoutes.ROUTE_HOME}>
+    return <Stack.Navigator screenOptions={screenOptions} initialRouteName={MainRoutes.ROUTE_HOME} id={undefined}>
         <Stack.Screen name={MainRoutes.ROUTE_HOME} component={HomeScreen} options={sharedScreenOptions}/>
         <Stack.Screen name={MainRoutes.ROUTE_STAR_LIST} component={StarListScreen} options={sessionMenuScreenOptions}/>
         <Stack.Screen name={MainRoutes.ROUTE_SESSION} component={SessionScreen} options={sessionScreenOptions}/>

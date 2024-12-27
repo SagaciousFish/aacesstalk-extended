@@ -33,7 +33,6 @@ export const FreeTopicModal = (props: Pick<ModalProps, "open"|"onCancel"|"onClos
     }, [props.onClose])
 
     const submit = useCallback(async (values: any) => {
-        console.log(values)
 
         if(props.topicId != null){
             //Edit mode
