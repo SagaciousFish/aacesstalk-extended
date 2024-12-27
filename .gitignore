@@ -44,6 +44,7 @@ Thumbs.db
 unittests/
 
 .env
+.xcode.env.local
 __pycache__/
 .coverage
 coverage.xml
