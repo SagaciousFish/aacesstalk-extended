@@ -8,25 +8,21 @@ import { useEffect } from "react"
 
 const styles = StyleSheet.create({
     hill: {
-        zIndex: -1,
         position: 'absolute',
         bottom: 0
     },
     cloud1: {
         position: 'absolute',
-        zIndex: -2,
         right:50,
         top: '40%'
     },
     cloud2: {
         position: 'absolute',
-        zIndex: -3,
         left: 40,
         top: '20%'
     },
     cloud3: {
         position: 'absolute',
-        zIndex: -4,
         opacity: 0.7,
         left: '45%',
         top: '-50%',
@@ -46,8 +42,7 @@ export const HillBackgroundView = (props: {
     const cloud2PositionCycle = useSharedValue(0);
 
     const cloud3PositionCycle = useSharedValue(0);
-    
-   
+
     const cloud1Style = useAnimatedStyle(() => {
         return {
             ...styles.cloud1,
@@ -97,6 +92,8 @@ export const HillBackgroundView = (props: {
         }
     }, [width])
 
+    console.log(width, height, hillHeight)
+
     useEffect(()=>{
         cloud1PositionCycle.value = withRepeat(withTiming(1, {duration: 16000, easing: Easing.linear}), -1, false)
 
@@ -108,7 +105,6 @@ export const HillBackgroundView = (props: {
     const HillComponent = props.hillComponentClass || HillImage
 
     return <View className={`flex-1 bg-[#EDFAFF] ${props.containerClassName}`}>
-        {props.children}
         <HillComponent width={width} height={hillHeight} pointerEvents={"none"} style={styles.hill}/>
         <Reanimated.View style={cloud1Style} pointerEvents={"none"}>
             <Cloud1Image width={344} height={230} />
@@ -131,5 +127,6 @@ export const HillBackgroundView = (props: {
         <Reanimated.View style={cloud3_1Style} pointerEvents={"none"}>
             <Cloud1Image width={600} height={500} />
         </Reanimated.View>
+        {props.children}
     </View>
 }
