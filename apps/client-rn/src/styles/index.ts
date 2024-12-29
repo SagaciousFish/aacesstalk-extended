@@ -1,13 +1,13 @@
 import { TopicCategory } from "@aacesstalk/libs/ts-core";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 const colors = require('./colors')
 
 export const fontFamilyByWeight = {
-    light: "NanumSquareNeo-Light",
-    regular: "NanumSquareNeo-Regular",
-    semibold: "NanumSquareNeo-Bold",
-    bold: "NanumSquareNeo-Extrabold",
-    extrabold: "NanumSquareNeo-Heavy",
+    light: "NanumSquareNeo-aLt",
+    regular: "NanumSquareNeo-bRg",
+    semibold: "NanumSquareNeo-cBd",
+    bold: "NanumSquareNeo-dEb",
+    extrabold: "NanumSquareNeo-eHv",
   };
 
 export const styleTemplates = StyleSheet.create({

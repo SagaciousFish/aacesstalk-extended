@@ -44,11 +44,18 @@ export const App = () => {
 
   useEffect(()=>{
     const isEmulator = DeviceInfo.isEmulatorSync()
-    const isAndroid = Platform.OS == 'android'
-    if(isEmulator && isAndroid){
-      console.log("Running on Android emulator. Use the host address http://10.0.2.2:3000")  
+    let host: string
+    if(isEmulator){
+      if(Platform.OS == 'android'){
+        console.log("Running on Android emulator. Use the host address http://10.0.2.2:3000")  
+        host = "http://10.0.2.2:3000"
+      }else{
+        host = "http://localhost:3000"
+      }
+    }else{
+      host = process.env["BACKEND_ADDRESS"]
     }
-    Http.initialize(isEmulator && isAndroid ? "http://10.0.2.2:3000" : process.env["BACKEND_ADDRESS"], async () => {return getTimeZone()})
+    Http.initialize(host, async () => {return getTimeZone()})
   }, [])
 
 
