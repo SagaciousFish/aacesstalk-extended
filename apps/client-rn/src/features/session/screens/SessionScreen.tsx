@@ -99,6 +99,7 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
     }, [])
 
     return <HillBackgroundView containerClassName={`items-center ${BG_COLOR_BY_TOPIC_CATEGORY[props.route.params.topic.category]}`} hillComponentClass={HillView} hillImageHeight={165}>
+        
         {
             isInitializing === true ? <LoadingIndicator colorTopic={props.route.params.topic.category} label={t("Session.LoadingMessage.Initializing")} useImage={true} containerClassName='absolute justify-center self-center left-0 right-0 top-0 bottom-0'/> : null
         }

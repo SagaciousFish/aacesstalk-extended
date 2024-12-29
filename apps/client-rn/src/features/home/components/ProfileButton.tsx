@@ -6,9 +6,10 @@ import { useTranslation } from "react-i18next"
 import { Alert, View, Text } from "react-native"
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import format from 'pupa'
-import { runOnJS } from "react-native-reanimated"
 
-export const ProfileButton = () => {
+export const ProfileButton = (props: {
+    containerClassName?: string
+}) => {
     const child_name = useSelector(state => state.auth.dyadInfo?.child_name)
     const parent_type = useSelector(state => state.auth.dyadInfo?.parent_type)
 
@@ -26,10 +27,10 @@ export const ProfileButton = () => {
         }, style: 'destructive'}], {cancelable: true})
     }, [t, dispatch])
 
-    const tripleTap = useMemo(()=>Gesture.Tap().maxDuration(600).numberOfTaps(3)
-    .onStart(runOnJS(onTripplePress)), [onTripplePress])
+    const tripleTap = useMemo(()=>Gesture.Tap().runOnJS(true).maxDuration(600).numberOfTaps(3)
+    .onStart(onTripplePress), [onTripplePress])
     
-    return <GestureDetector gesture={tripleTap}><View className="absolute right-5 top-5">
+    return <GestureDetector gesture={tripleTap}><View className={props.containerClassName}>
             <Text className={`text-lg text-center text-slate-400`} style={styleTemplates.withSemiboldFont}>{label}</Text>
         </View></GestureDetector>
 }

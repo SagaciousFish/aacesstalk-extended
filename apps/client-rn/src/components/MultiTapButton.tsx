@@ -8,8 +8,8 @@ export const MultiTapButton = (props: {
     children?: any
 }) => {
 
-    const tripleTap = useMemo(()=>Gesture.Tap().maxDuration(600).numberOfTaps(props.numberOfTaps)
-    .onStart(runOnJS(props.onTapGesture)), [props.onTapGesture])
+    const tripleTap = useMemo(()=>Gesture.Tap().runOnJS(true).maxDuration(600).numberOfTaps(props.numberOfTaps)
+    .onStart(props.onTapGesture), [props.onTapGesture])
     
     return <GestureDetector gesture={tripleTap}>{props.children}</GestureDetector>
 }

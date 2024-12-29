@@ -6,10 +6,11 @@ import { SessionMenuPopupScreen } from "../features/session/screens/SessionMenuP
 import { SessionClosingScreen } from "../features/session/screens/SessionClosingScreen";
 import { StarListScreen } from "../features/home/screens/StarListScreen";
 import { FreeTopicSelectionScreen } from "../features/home/screens/FreeTopicSelectionScreen";
+import { Platform } from "react-native";
 
 const screenOptions = {headerShown: false, gestureEnabled: false}
 
-const sharedScreenOptions: NativeStackNavigationOptions = {statusBarHidden: true, gestureEnabled: false}
+const sharedScreenOptions: NativeStackNavigationOptions = {statusBarHidden: Platform.OS == 'android' ? true : false, gestureEnabled: false}
 
 const sessionScreenOptions: NativeStackNavigationOptions = {...sharedScreenOptions, animation: 'fade'}
 const sessionClosingScreenOptions: NativeStackNavigationOptions = {...sharedScreenOptions, animation: 'none'}

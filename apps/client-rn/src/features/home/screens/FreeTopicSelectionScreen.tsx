@@ -4,7 +4,7 @@ import { PopupMenuScreenFrame } from "apps/client-rn/src/components/PopupMenuScr
 import { MainRoutes } from "apps/client-rn/src/navigation";
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks";
 import { useCallback, useEffect, useState } from "react";
-import { Text, View, StyleSheet, Pressable } from "react-native";
+import { Text, View, StyleSheet, Pressable, SafeAreaView } from "react-native";
 import { SessionTitleRibbon } from "../../session/components/SessionTitleRibbon";
 import { getTopicColorClassNames, styleTemplates } from "apps/client-rn/src/styles";
 import { useTranslation } from "react-i18next";

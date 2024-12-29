@@ -5,7 +5,7 @@ import { styleTemplates } from "apps/client-rn/src/styles"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Alert, InteractionManager, Platform, StyleSheet, Text, View } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import format from 'pupa';
 import { TopicButton } from "../components/TopicButton"
 import CalendarImage from "../../../assets/images/calendar.svg"
@@ -22,6 +22,7 @@ import { useFocusEffect } from "@react-navigation/native"
 import { fetchSessionInfoSummaries } from "libs/ts-core/src/lib/redux/reducers/dyad-status"
 import { checkBackendStatus, useBackendResponsiveCheck } from "../../system-status/reducer"
 import { useNonNullUpdatedValue } from "apps/client-rn/src/utils/hooks"
+import { twMerge } from "tailwind-merge"
 
 const styles = StyleSheet.create({
     topicFreeDimensions: {right: '5%', bottom: '10%', width: '70%', height: '70%'},
@@ -214,9 +215,20 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
             fetchSessionSummaries()
         }
     }, [isServerResponsive, fetchSessionSummaries])
+    
+    const safeAreaInsets = useSafeAreaInsets()
+
+    const profileButtonClassName = useMemo(()=>{
+        return twMerge("absolute right-5", safeAreaInsets.top == 0 ? "top-5" : "top-3")
+    }, [safeAreaInsets.top])
+
+
+    const starButtonClassName = useMemo(()=>{
+        return twMerge("absolute right-5", safeAreaInsets.bottom == 0 ? "bottom-5" : "bottom-2")
+    }, [safeAreaInsets.bottom])
 
     return <HillBackgroundView containerClassName="items-center justify-center">
-        <SafeAreaView className="flex-1 self-stretch items-center justify-center">
+        <SafeAreaView className="flex-1 self-stretch items-center justify-center" mode='margin'>
             <LogoImage width={200} height={80}/>
             <Text className="text-3xl text-slate-800 text-center" style={styleTemplates.withBoldFont}>{t("TopicSelection.Title")}</Text>
             <View className="flex-row gap-x-12 mt-24 mb-20">
@@ -225,8 +237,8 @@ export const HomeScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigato
                 <RecallTopicButton disabled={!permissionsGranted} onPress={onPressRecallButton}/>
                 <FreeTopicButton disabled={!permissionsGranted} onPress={onPressFreeTopicButton}/>
             </View>
-            <ProfileButton/>
-            <TailwindButton containerClassName="absolute right-5 bottom-5" buttonStyleClassName="py-5 px-12" roundedClassName="rounded-full" 
+            <ProfileButton containerClassName={profileButtonClassName}/>
+            <TailwindButton containerClassName={starButtonClassName} buttonStyleClassName="py-5 px-12" roundedClassName="rounded-full" 
                 title={t("TopicSelection.StarCount")} onPress={onPressStarsButton}/>
         </SafeAreaView>       
         <BackendConnectionCheckerOverlay/> 

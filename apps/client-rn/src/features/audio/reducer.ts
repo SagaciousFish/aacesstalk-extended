@@ -88,6 +88,7 @@ export function startRecording(recordingStartedTimestamp: number = Date.now()): 
                 dispatch(parentAudioRecordingSlice.actions.setRecordingArgs(args))
             })
             await recorder.get().startRecorder( audioFilePath , DEFAULT_AUDIO_SETTINGS, true)
+            console.log("Recorder successfully started.")
             dispatch(parentAudioRecordingSlice.actions.setRecordingStartTimestamp(recordingStartedTimestamp))
             dispatch(parentAudioRecordingSlice.actions.setRecordingStatus(RecordingStatus.Recording))
         }
