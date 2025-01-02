@@ -7,7 +7,7 @@ import HillFreeImage from '../../../assets/images/hill_free.svg'
 import { HillBackgroundView } from 'apps/client-rn/src/components/HillBackgroundView'
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'apps/client-rn/src/redux/hooks'
-import { Fragment, useCallback, useEffect, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo } from 'react'
 import { SessionParentView } from '../components/parent/SessionParentView'
 import { TailwindButton } from 'apps/client-rn/src/components/tailwind-components'
 import { MenuIcon } from 'apps/client-rn/src/components/vector-icons'
@@ -17,8 +17,10 @@ import { SessionChildView } from '../components/child/SessionChildView'
 import { TailwindClasses } from 'apps/client-rn/src/styles'
 import { useDisableBack, usePrevious } from 'apps/client-rn/src/utils/hooks'
 import { startRecording, stopRecording } from '../../audio/reducer'
-import { InteractionManager, Text } from 'react-native'
+import { InteractionManager } from 'react-native'
 import { useEnterKeyEvent, useMoveNextTurn } from '../hooks'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
+import { twMerge } from 'tailwind-merge'
 
 const BG_COLOR_BY_TOPIC_CATEGORY = {
     [TopicCategory.Plan]: 'bg-topicplan-bg',
@@ -98,8 +100,17 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
         props.navigation.navigate('session-menu')
     }, [])
 
-    return <HillBackgroundView containerClassName={`items-center ${BG_COLOR_BY_TOPIC_CATEGORY[props.route.params.topic.category]}`} hillComponentClass={HillView} hillImageHeight={165}>
-        
+    const insets = useSafeAreaInsets()
+
+
+    const menuButtonClassName = useMemo(()=>{
+        return twMerge("absolute left-5", insets.bottom == 0 ? "bottom-5" : "bottom-2")
+    }, [insets.bottom])
+
+    return <HillBackgroundView containerClassName={`items-center ${BG_COLOR_BY_TOPIC_CATEGORY[props.route.params.topic.category]}`} 
+        hillComponentClass={HillView} hillImageHeight={165}>
+
+        <SafeAreaView className="flex-1 self-stretch items-center justify-center" mode='margin'>
         {
             isInitializing === true ? <LoadingIndicator colorTopic={props.route.params.topic.category} label={t("Session.LoadingMessage.Initializing")} useImage={true} containerClassName='absolute justify-center self-center left-0 right-0 top-0 bottom-0'/> : null
         }
@@ -111,10 +122,10 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
         
         {
             (!isInitializing && !isLoadingRecommendation) ?
-            <Animated.View className='absolute left-5 bottom-5' entering={menuButtonEnteringAnim}>
+            <Animated.View className={menuButtonClassName} entering={menuButtonEnteringAnim}>
                 <TailwindButton onPress={onMenuButtonPress} roundedClassName='rounded-xl' buttonStyleClassName={`p-3 ${TailwindClasses.ICON_BUTTON_SIZES}`}><MenuIcon width={32} height={32} fill={"#575757"} /></TailwindButton>
             </Animated.View> : null
         } 
-        
+        </SafeAreaView>
     </HillBackgroundView>
 }

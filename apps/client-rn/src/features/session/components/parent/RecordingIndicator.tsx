@@ -4,7 +4,9 @@ import { RecordingStatus } from "../../../audio/reducer"
 import { useTranslation } from "react-i18next"
 import { styleTemplates } from "apps/client-rn/src/styles"
 import Reanimated, { Easing, Extrapolation, interpolate, runOnJS, useAnimatedStyle, useSharedValue, withRepeat, withSpring, withTiming } from "react-native-reanimated"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { twMerge } from "tailwind-merge"
 
 export const RecordingIndicator = () => {
 
@@ -43,6 +45,13 @@ export const RecordingIndicator = () => {
         }
     }, [])
 
+    const insets = useSafeAreaInsets()
+    const containerClassName = useMemo(()=>{
+        return twMerge('absolute left-5 px-3 py-1.5 bg-white/80 rounded-lg flex-row items-center gap-x-2', 
+            insets.top > 0 ? 'top-2': 'top-5',
+            shown ? '' : 'hidden')
+    }, [insets.top, shown])
+
     useEffect(()=>{
         meteringValue.value = withTiming(audioRecordingMeter, {duration: 100, easing: Easing.elastic(0.1)})
     }, [audioRecordingMeter])
@@ -64,7 +73,7 @@ export const RecordingIndicator = () => {
         labelAnimValue.value = withRepeat(withTiming(0, {duration: 1000}), null, true)
     }, [])
 
-    return <Reanimated.View style={containerAnimStyle} pointerEvents="none" className={`absolute top-5 left-5 px-3 py-1.5 bg-white/80 rounded-lg flex-row items-center gap-x-2 ${shown ? '' : 'hidden'}`}>
+    return <Reanimated.View style={containerAnimStyle} pointerEvents="none" className={containerClassName}>
         <View className="bg-transparent w-6 h-6 rounded-full border-[1.5px] border-red-300 items-center justify-center">
             <Reanimated.View className="w-6 h-6 bg-red-400 rounded-full scale-50" style={meteringAnimStyle}/>
         </View>
