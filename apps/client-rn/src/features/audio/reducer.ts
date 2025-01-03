@@ -1,11 +1,12 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { AudioEncoderAndroidType, AudioSet, AudioSourceAndroidType, OutputFormatAndroidType } from 'react-native-audio-recorder-player'
+import { AudioEncoderAndroidType, AudioSet, AudioSourceAndroidType, AVEncoderAudioQualityIOSType, AVEncodingOption, AVModeIOSOption, OutputFormatAndroidType } from 'react-native-audio-recorder-player'
 import { Lazy } from "../../utils/lazy";
 import AudioRecorderPlayer, { RecordBackType } from "react-native-audio-recorder-player";
 import { ClientThunk } from "../../redux/store";
 import { Dirs, FileSystem } from "react-native-file-access";
 import { CoreThunk, Http, makeSubmitParentMessageAudioThunk } from "@aacesstalk/libs/ts-core";
 import ReactNativeBlobUtil from 'react-native-blob-util';
+import { Platform } from "react-native";
 
 
 export enum RecordingStatus{
@@ -58,6 +59,10 @@ const DEFAULT_AUDIO_SETTINGS: AudioSet = {
     AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
     AudioSourceAndroid: AudioSourceAndroidType.MIC,
     OutputFormatAndroid: OutputFormatAndroidType.MPEG_4,
+    AVModeIOS: AVModeIOSOption.measurement,
+    AVEncoderAudioQualityKeyIOS: AVEncoderAudioQualityIOSType.high,
+    AVFormatIDKeyIOS: AVEncodingOption.mp4,
+    AVNumberOfChannelsKeyIOS: 2
 }
 
 const recorder = new Lazy(() => {
@@ -81,13 +86,14 @@ export function startRecording(recordingStartedTimestamp: number = Date.now()): 
         const audioFilePath = audioDirPath + `/${sessionId}_${turnId}_${Date.now()}.m4a`
 
         if(isRecordingActive == false && state.parentAudioRecording.status == RecordingStatus.Initial){
-            console.log("Recording started.")
+            console.log("Start recording")
             isRecordingActive = true
             dispatch(parentAudioRecordingSlice.actions.setRecordingStatus(RecordingStatus.Preparing))
             recorder.get().addRecordBackListener((args) => {
                 dispatch(parentAudioRecordingSlice.actions.setRecordingArgs(args))
             })
-            await recorder.get().startRecorder( audioFilePath , DEFAULT_AUDIO_SETTINGS, true)
+            //await recorder.get().startRecorder()
+            await recorder.get().startRecorder( Platform.OS == 'android' ? audioFilePath : undefined , DEFAULT_AUDIO_SETTINGS, true)
             console.log("Recorder successfully started.")
             dispatch(parentAudioRecordingSlice.actions.setRecordingStartTimestamp(recordingStartedTimestamp))
             dispatch(parentAudioRecordingSlice.actions.setRecordingStatus(RecordingStatus.Recording))

@@ -10,10 +10,12 @@ import Animated ,{ Easing, ZoomIn, interpolate, interpolateColor, useAnimatedSty
 
 const styles = StyleSheet.create({
     guideFrame: {
-        shadowColor: "rgba(0,0,50,0.5)",
-        shadowOffset: {width: 10, height: 10},
+        shadowColor: "rgba(0,0,0)",
+        shadowOpacity: 0.3,
+        shadowOffset: {width: 0, height: 10},
         shadowRadius: 10,
-        elevation: 10
+        elevation: 10,
+        //boxShadow: "0 15 15 rgba(0,0,50,0.1)"
     },
 
     feedbackLegLeft: {
@@ -109,13 +111,14 @@ const ParentMessageGuideElementView = (props: Props) => {
             shadowColor: interpolateColor(exampleTransitionAnimProgress.value,[0, 0.2], ["rgba(0,0,50,0.3)", "rgba(0,0,50,0)"], "RGB"),
             transform: [
                 {rotateY: `${interpolate(exampleTransitionAnimProgress.value,[0, 1], [0, 180])}deg`}
-            ]
+            ],
+            opacity: exampleTransitionAnimProgress.value > 0.5 ? 0 : 1,
         }
     }, [])
 
     const exampleMessageAnimStyle = useAnimatedStyle(()=>{
         return {
-            opacity: interpolate(exampleTransitionAnimProgress.value, [0,1], [0,1], 'clamp'),
+            opacity: exampleTransitionAnimProgress.value > 0.5 ? 1 : 0,
             shadowColor: interpolateColor(exampleTransitionAnimProgress.value,[0.8, 1], ["rgba(0,0,50,0)", "rgba(0,0,50,0.3)"], "RGB"),
             transform: [
                 {rotateY: `${interpolate(exampleTransitionAnimProgress.value,[0, 1], [180, 360])}deg`}
