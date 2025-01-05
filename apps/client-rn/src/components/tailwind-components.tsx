@@ -1,4 +1,4 @@
-import { ButtonProps, Pressable, View, Text, ViewStyle, PressableAndroidRippleConfig, PressableProps } from "react-native";
+import { ButtonProps, Pressable, View, Text, PressableProps } from "react-native";
 import { styleTemplates } from "../styles";
 import { useMemo } from "react";
 import { twMerge } from 'tailwind-merge'

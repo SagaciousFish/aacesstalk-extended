@@ -55,6 +55,7 @@ export const App = () => {
     }else{
       host = process.env["BACKEND_ADDRESS"]
     }
+    console.log("Host address: ", host)
     Http.initialize(host, async () => {return getTimeZone()})
   }, [])
 
