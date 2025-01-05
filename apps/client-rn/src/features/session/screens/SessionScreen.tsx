@@ -17,7 +17,7 @@ import { SessionChildView } from '../components/child/SessionChildView'
 import { TailwindClasses } from 'apps/client-rn/src/styles'
 import { useDisableBack, usePrevious } from 'apps/client-rn/src/utils/hooks'
 import { startRecording, stopRecording } from '../../audio/reducer'
-import { InteractionManager } from 'react-native'
+import { InteractionManager, View } from 'react-native'
 import { useEnterKeyEvent, useMoveNextTurn } from '../hooks'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { twMerge } from 'tailwind-merge'
@@ -27,8 +27,6 @@ const BG_COLOR_BY_TOPIC_CATEGORY = {
     [TopicCategory.Recall]: 'bg-topicrecall-bg',
     [TopicCategory.Free]: 'bg-topicfree-bg',
 }
-
-const menuButtonEnteringAnim = SlideInDown.duration(500).delay(300).easing(Easing.elastic(0.7))
 
 export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavigatorParamList, "session">) => {
 
@@ -122,9 +120,9 @@ export const SessionScreen = (props: NativeStackScreenProps<MainRoutes.MainNavig
         
         {
             (!isInitializing && !isLoadingRecommendation) ?
-            <Animated.View className={menuButtonClassName} entering={menuButtonEnteringAnim}>
-                <TailwindButton onPress={onMenuButtonPress} roundedClassName='rounded-xl' buttonStyleClassName={`p-3 ${TailwindClasses.ICON_BUTTON_SIZES}`}><MenuIcon width={32} height={32} fill={"#575757"} /></TailwindButton>
-            </Animated.View> : null
+            <View className={menuButtonClassName}>
+                <TailwindButton className={menuButtonClassName} onPress={onMenuButtonPress} roundedClassName='rounded-xl' buttonStyleClassName={`p-3 ${TailwindClasses.ICON_BUTTON_SIZES}`}><MenuIcon width={32} height={32} fill={"#575757"} /></TailwindButton>
+            </View> : null
         } 
         </SafeAreaView>
     </HillBackgroundView>
