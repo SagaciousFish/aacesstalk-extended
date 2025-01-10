@@ -13,7 +13,9 @@ from nanoid import generate
 if __name__ == "__main__":
     GlobalConfig.is_cli_mode = True
 
-    ModeratorSession.assert_authorize()
+    use_korean = questionary.confirm("Support the Korean language?", default = True).ask()
+
+    ModeratorSession.assert_authorize(use_korean)
 
     env_file = find_dotenv()
     if not path.exists(env_file):

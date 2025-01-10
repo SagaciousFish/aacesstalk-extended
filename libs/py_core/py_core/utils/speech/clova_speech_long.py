@@ -1,16 +1,15 @@
-import tempfile
 from time import perf_counter
-import os
 from typing import Any
-from chatlib.utils.integration import APIAuthorizationVariableSpec, APIAuthorizationVariableSpecPresets, APIAuthorizationVariableType, IntegrationService
+from chatlib.utils.integration import APIAuthorizationVariableSpec, APIAuthorizationVariableSpecPresets, IntegrationService
 import httpx
-from pydub import AudioSegment
-from retry import retry
+from py_core.utils.speech.speech_recognizer_base import SpeechRecognizerBase
 import json
+
+from py_core.system.model import UserLocale
 
 # https://api.ncloud-docs.com/docs/ai-application-service-clovaspeech-shortsentence
 
-class ClovaLongSpeech(IntegrationService):
+class ClovaLongSpeech(SpeechRecognizerBase, IntegrationService):
     __url_spec = APIAuthorizationVariableSpec("invoke_url", "Invoke URL")
     __secret_spec = APIAuthorizationVariableSpecPresets.Secret
 
@@ -26,8 +25,7 @@ class ClovaLongSpeech(IntegrationService):
     def _authorize_impl(cls, variables: dict[APIAuthorizationVariableSpec, Any]) -> bool:
         return True
     
-    @retry(tries=5, delay=0.5)
-    async def recognize_speech(self, file_name: str, file, content_type: str) -> str:
+    async def recognize_speech(self, file_name: str, file, content_type: str, locale: UserLocale, child_name: str) -> str:
         self.assert_authorize()
         
         invoke_url = self.get_auth_variable_for_spec(self.__url_spec)
@@ -43,7 +41,7 @@ class ClovaLongSpeech(IntegrationService):
 
             form_data = {
                 "params": json.dumps({
-                    "language": "ko-KR",
+                    "language": "ko-KR" if locale == UserLocale.Korean else "en-US",
                     "completion": "sync",
                 })
             }

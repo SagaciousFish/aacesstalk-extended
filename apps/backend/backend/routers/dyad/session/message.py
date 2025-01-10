@@ -2,6 +2,8 @@ import asyncio
 from typing import Annotated
 
 import aiofiles
+from py_core.utils.speech.speech_recognizer_base import SpeechRecognizerBase
+from py_core.utils.speech.whisper import WhisperSpeechRecognizer
 from pydantic import BaseModel
 from os import path
 
@@ -9,7 +11,7 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, R
 from py_core import ModeratorSession
 from chatlib.utils.time import get_timestamp
 from py_core.system.model import Dialogue, ParentGuideRecommendationResult, CardIdentity, ChildCardRecommendationResult, \
-    CardInfo, ParentExampleMessage
+    CardInfo, ParentExampleMessage, UserLocale
 
 from py_core.system.task.parent_guide_recommendation.punctuator import Punctuator
 
@@ -17,13 +19,13 @@ from py_core.config import AACessTalkConfig
 
 from py_core.utils.speech import ClovaLongSpeech
 
-from py_database.model import DyadORM
-
 from backend.routers.dyad.common import get_signed_in_dyad_orm, retrieve_moderator_session
 
 from typing import TypeVar, Generic
 
 from backend.routers.errors import ErrorType
+from py_database.model import DyadORM
+
 T = TypeVar('T')
 
 class ResponseWithTurnId(BaseModel, Generic[T]):
@@ -33,7 +35,8 @@ class ResponseWithTurnId(BaseModel, Generic[T]):
 router = APIRouter()
 
 
-asr_engine = ClovaLongSpeech()
+clova_asr: SpeechRecognizerBase = ClovaLongSpeech()
+whisper_asr: SpeechRecognizerBase = WhisperSpeechRecognizer()
 
 punctuator = Punctuator()
 
@@ -84,7 +87,9 @@ async def send_parent_message_audio(file: Annotated[UploadFile, File()], turn_id
         
         await asyncio.gather(write_file_task(), write_turn_info())
 
-        text = await asr_engine.recognize_speech(file.filename, open(target_file_path, 'rb'), file.content_type)
+        asr_engine = clova_asr if dyad.locale == UserLocale.Korean and ClovaLongSpeech.assert_authorize() else whisper_asr
+
+        text = await asr_engine.recognize_speech(file.filename, open(target_file_path, 'rb'), file.content_type, dyad.locale, dyad.child_name)
         if len(text) > 0:
             processed_text = await punctuator.punctuate(text)
             print(text, processed_text)

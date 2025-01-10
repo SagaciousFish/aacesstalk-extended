@@ -103,10 +103,10 @@
         "cwd": "libs/py_core"
       }
     }, 
-    "test_clova_speech": {
+    "test_asr": {
       "executor": "@nxlv/python:run-commands",
       "options": {
-        "command": "poetry run python test_clova_speech.py",
+        "command": "poetry run python test_asr.py",
         "cwd": "libs/py_core"
       }
     },

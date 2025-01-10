@@ -109,12 +109,15 @@ class ModeratorSession:
 
 
     @classmethod
-    def assert_authorize(cls):
+    def assert_authorize(cls, support_korean: bool = True):
         GPTChatCompletionAPI.assert_authorize()
-        DeepLTranslator.assert_authorize()
-        ClovaVoice.assert_authorize()
-        #ClovaSpeech.assert_authorize()
-        ClovaLongSpeech.assert_authorize()
+
+        if support_korean:
+            DeepLTranslator.assert_authorize()
+            ClovaVoice.assert_authorize()
+            #ClovaSpeech.assert_authorize()
+            ClovaLongSpeech.assert_authorize()
+
 
     @classmethod
     async def create(cls, dyad: Dyad, topic: SessionTopicInfo,
