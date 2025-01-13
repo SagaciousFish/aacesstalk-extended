@@ -3,11 +3,11 @@ import { Platform, StyleSheet } from "react-native";
 const colors = require('./colors')
 
 export const fontFamilyByWeight = {
-    light: "NanumSquareNeo-aLt",
-    regular: "NanumSquareNeo-bRg",
-    semibold: "NanumSquareNeo-cBd",
-    bold: "NanumSquareNeo-dEb",
-    extrabold: "NanumSquareNeo-eHv",
+    light: "NanumSquareNeoTTF-aLt",
+    regular: "NanumSquareNeoTTF-bRg",
+    semibold: "NanumSquareNeoTTF-cBd",
+    bold: "NanumSquareNeoTTF-dEb",
+    extrabold: "NanumSquareNeoTTF-eHv",
   };
 
 export const styleTemplates = StyleSheet.create({
