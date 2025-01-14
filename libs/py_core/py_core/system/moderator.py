@@ -21,7 +21,7 @@ from py_core.utils.deepl_translator import DeepLTranslator
 from py_core.utils.models import AsyncTaskInfo
 from chatlib.llm.integration import GPTChatCompletionAPI
 
-from py_core.utils.speech import ClovaVoice, ClovaSpeech
+from py_core.utils.speech import ClovaVoice
 
 from py_core.utils.speech.clova_speech_long import ClovaLongSpeech
 from py_core.utils.vector_db import VectorDB

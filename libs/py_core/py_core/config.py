@@ -16,6 +16,7 @@ class AACessTalkConfig:
 
     database_dir_path: str = path.join(getcwd(), "../../database")
 
+
     database_file_path: str = path.join(database_dir_path, "aacesstalk.sqlite3")
 
     user_data_dir_path: str = path.join(database_dir_path, 'user_data/')

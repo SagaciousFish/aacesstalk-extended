@@ -20,17 +20,28 @@ and Young-Ho Kim
 ## Get Started
 ### Prerequisite
 * Node >= 22 (Recommend using `nvm` https://github.com/nvm-sh/nvm)
+    ```sh
+    > nvm instal --lts
+    ```
 * Install `NX` 
     ```sh
     > npm i nx -g nx
     ```
 * Python ^= 3.11.8 (Recommend using `pyenv` https://github.com/pyenv/pyenv)
+    
+    (Using Homebrew on MacOS)
+    ```
+    > brew install pyenv
+    ... //set up script in shell configuration
+    > pyenv install 3.11.8
+    ```
 * Install `Poetry` (https://python-poetry.org/)
 * In the repository root, install dependencies for further actions.
   ```sh
   > npm install
   > nx run backend:install
   ```
+
 * Prepare API credentials in advance:
   * **OpenAI API Key** - used to run the AI pipelines.
   * **CLOVA Voice API** (https://api.ncloud-docs.com/docs/en/ai-naver-clovavoice) - used to generate voice-over for child cards.
