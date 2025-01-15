@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import { View, Text, TextInput } from "react-native"
+import { View, Text, TextInput, Platform } from "react-native"
 import LogoImage from '../../../assets/images/logo-extended.svg'
 import { styleTemplates } from "apps/client-rn/src/styles"
 import { HillBackgroundView } from "apps/client-rn/src/components/HillBackgroundView"
@@ -11,6 +11,9 @@ import * as yup from "yup";
 import { Fragment, useMemo } from "react"
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { loginDyadThunk } from "@aacesstalk/libs/ts-core"
+import { twMerge } from "tailwind-merge"
+
+const passcodeInputClassName = twMerge("mt-4 text-xl text-center bg-white rounded-xl border-[#11111345] border-2 focus:border-teal-500 focus:border-[3px]", (Platform.OS == 'android' ? "py-3" : "pt-2.5 pb-3.5"))
 
 const PasscodeInput = (props: {
     control: Control,
@@ -29,7 +32,7 @@ const PasscodeInput = (props: {
     textAlign="center"
     multiline={true}
     numberOfLines={1}
-    className="mt-4 py-3 text-xl text-center bg-white rounded-xl border-[#11111345] border-2 focus:border-teal-500 focus:border-[3px]"
+    className={passcodeInputClassName}
     keyboardType="numeric"
     inputMode="numeric"
     autoCapitalize="none"

@@ -82,7 +82,7 @@ export const SelectedCardDeck = (props: {
         </ScrollView></LayoutAnimationConfig>
         {
             selectedCardIds.length >= 1 ?<View className='absolute right-0 top-0 bottom-0'><TailwindButton containerClassName='self-center' disabled={!isInteractionEnabled} buttonStyleClassName='self-stretch flex-1 bg-transparent' onPress={onPressRemove}>
-                <RemoveCardIcon fill={removeButtonColor}/>
+                <RemoveCardIcon fill={'white'}/>
             </TailwindButton></View> : null
         }
     </View>

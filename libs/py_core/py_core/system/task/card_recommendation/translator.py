@@ -5,12 +5,15 @@ from chatlib.llm.integration import GPTChatCompletionAPI, ChatGPTModel
 from chatlib.tool.converter import generate_type_converter
 from chatlib.tool.versatile_mapper import ChatCompletionFewShotMapper, ChatCompletionFewShotMapperParams
 from chatlib.utils.jinja_utils import convert_to_jinja_template
+from chatlib.utils import env_helper
 
 from py_core.config import AACessTalkConfig
 from py_core.utils.lookup_translator import LookupTranslator
 from py_core.utils.models import DictionaryRow
 from py_core.utils.vector_db import VectorDB
 from .common import ChildCardRecommendationAPIResult
+
+from  py_core import env_variables
 
 
 class ChildCardTranslationParams(ChatCompletionFewShotMapperParams):
@@ -54,6 +57,9 @@ class CardTranslator:
     def __init__(self, vector_db: VectorDB | None):
         api = GPTChatCompletionAPI()
         api.config().verbose = False
+
+        auto_update_dictionary = env_helper.get_env_variable(env_variables.AUTO_UPDATE_CARD_TRANSLATIONS) or "false"
+        self.__auto_update_dictionary = auto_update_dictionary.lower() == 'true'
 
         self.__nlp = spacy.load("en_core_web_sm")
 
@@ -122,10 +128,12 @@ class CardTranslator:
             for i, translated in enumerate(result):
                 localized_words[indices_to_translate[i]] = translated
 
-                # Update dictionary for future reuse
-                word, category = word_list[indices_to_translate[i]]
-                self.__dictionary.update(word, category, translated)
+                if self.__auto_update_dictionary is True:
+                    # Update dictionary for future reuse
+                    word, category = word_list[indices_to_translate[i]]
+                    self.__dictionary.update(word, category, translated)
 
-            self.__dictionary.write_to_file()
+            if self.__auto_update_dictionary is True:
+                self.__dictionary.write_to_file()
 
         return localized_words
