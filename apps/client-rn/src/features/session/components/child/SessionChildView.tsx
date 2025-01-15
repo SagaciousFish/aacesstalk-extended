@@ -6,7 +6,7 @@ import { View } from "react-native"
 import format from 'pupa'
 import { CardCategoryView, TopicChildCardView } from "./card-views"
 import { SelectedCardDeck } from "./SelectedCardDeck"
-import { useCallback, useEffect, useMemo } from "react"
+import { Fragment, useCallback, useEffect, useMemo } from "react"
 import Animated, { FadeIn, FadeOut, LayoutAnimationConfig } from 'react-native-reanimated'
 import { TailwindButton } from "apps/client-rn/src/components/tailwind-components"
 import { RefreshIcon } from "apps/client-rn/src/components/vector-icons"
@@ -77,7 +77,7 @@ export const SessionChildView = () => {
     }, [])
 
     return <View className="flex-1 self-stretch items-center justify-between pb-4">
-        {latestChildCardRecommendationId != null ? <>
+        {latestChildCardRecommendationId != null ? <Fragment>
             <SelectedCardDeck topicCategory={topic.category}/>
             <View id="main-category-cards" className="flex-row self-stretch justify-evenly px-14">
                 <LayoutAnimationConfig skipExiting={true}>{
@@ -88,7 +88,7 @@ export const SessionChildView = () => {
             </View>
             <CoreCardsDeck/>
             <RefreshButton/>
-        </> : null}
+        </Fragment> : null}
         {
             isProcessing === true ? <Animated.View entering={FadeIn.duration(400)} exiting={FadeOut.duration(300)} className={`absolute ${latestChildCardRecommendationId == null ? "top-0" : "top-[14vw]"} bottom-0 left-0 right-0 z-3 bg-white/70 justify-center`}>
                 <LoadingIndicator containerClassName="self-center" colorTopic={topic?.category} label={loadingMessage} useImage={true}/>

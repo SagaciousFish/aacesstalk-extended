@@ -7,13 +7,20 @@ import { useNonNullUpdatedValue } from "apps/client-rn/src/utils/hooks"
 import React, { useEffect, useState } from "react"
 import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
-import { Pressable, StyleSheet, Text, View } from "react-native"
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native"
 import Animated, { Easing, FlipInYLeft, FlipOutEasyY, interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated"
 import { FasterImageView, ImageOptions } from '@candlefinance/faster-image';
 
 
 const styles = StyleSheet.create({
-    imageView: {aspectRatio: 1, flex:1, alignSelf: 'center'}
+    cardFrame: {
+        shadowColor: "rgba(10,10,10)",
+        shadowOpacity: 0.2,
+        shadowOffset: {width: 0, height: 5},
+        shadowRadius: 2.6,
+        elevation: 4,
+    },
+    imageView: {aspectRatio: 1, flex:1, alignSelf: 'center', borderRadius: 8, overflow: 'hidden'}
 })
 
 export const CardCategoryView = (props: {
@@ -45,14 +52,15 @@ export const CardCategoryView = (props: {
                     row.map((id,index) => {
                         const actualIndex = rowIndex * 2 + index
                         return <Animated.View 
-                        key={id}
-                        entering={FlipInYLeft.duration(500).easing(Easing.elastic(0.7)).delay(200 + 200*actualIndex)}
-                        exiting={FlipOutEasyY.duration(200).delay(200*actualIndex)}><TopicChildCardView id={id} category={props.cardCategory}/></Animated.View>})
+                                    key={id}
+                                    entering={FlipInYLeft.duration(500).easing(Easing.elastic(0.7)).delay(200 + 200*actualIndex)}
+                                    exiting={FlipOutEasyY.duration(200).delay(200*actualIndex)}>
+                                    <TopicChildCardView id={id} category={props.cardCategory}/>
+                            </Animated.View>})
                 }</View>)
             }
     </View>
 }
-
 
 export const TopicChildCardView = (props:{
     category: CardCategory,
@@ -95,8 +103,17 @@ export const ChildCardView = React.memo((props:{
         pressAnimProgress.value = withSpring(0, {duration: 500})
     }, [])
 
-    const containerAnimStyle = useAnimatedStyle(() => {
+    const cardFrameAnimStyle = useAnimatedStyle(() => {
+        const shadowStyle = Platform.OS == 'ios' ? {
+            ...styles.cardFrame,
+            shadowOffset: {width: 0, height: interpolate(pressAnimProgress.value, [0, 1], [styles.cardFrame.shadowOffset.height, 2])},
+            shadowRadius: interpolate(pressAnimProgress.value, [0, 1], [styles.cardFrame.shadowRadius, 1]),
+        } : {
+            elevation: interpolate(pressAnimProgress.value, [0, 1], [styles.cardFrame.elevation, 1]),
+        }
+        
         return {
+            ...shadowStyle,            
             transform: [
                 {scale: interpolate(pressAnimProgress.value, [0, 1], [1, 0.95])},
                 {translateY: interpolate(pressAnimProgress.value, [0, 1], [0, 10])}
@@ -131,8 +148,9 @@ export const ChildCardView = React.memo((props:{
     }, [props.imageQueryId, applyCardImage])
 
     return <Pressable accessible={false} disabled={props.disabled} onPressIn={onPressIn} onPressOut={onPressOut} onPress={onPress}><Animated.View
-        style={containerAnimStyle} className={`rounded-xl shadow-lg shadow-black/80 border-2 border-slate-200 p-0 pb-[3px] bg-white w-[11vw] h-[11vw] m-1.5 ${props.cardClassName}`}>
+        style={cardFrameAnimStyle} className={`rounded-xl border-2 border-slate-200 pt-1 pb-[3px] bg-white w-[11vw] h-[11vw] m-1.5 ${props.cardClassName}`}>
         <FasterImageView style={styles.imageView} source={imageSource}/>
+        
         <Text className="self-center mt-2 text-black/80 text-center" style={styleTemplates.withBoldFont}>{props.label}</Text>
     </Animated.View></Pressable>
 })
