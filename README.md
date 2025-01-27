@@ -4,7 +4,7 @@ This is a monorepo of an artifact of research paper, "**AACessTalk: Fostering Co
 
 Website: https://naver-ai.github.io/aacesstalk
 
-[<img src="https://github.com/naver-ai/aacesstalk-monorepo/blob/main/accesstalk_demo_loop.gif"/>](https://github.com/naver-ai/aacesstalk-monorepo/blob/main/aacesstalk_demo_loop.gif)
+<img src="https://github.com/naver-ai/aacesstalk-monorepo/blob/main/aacesstalk_demo_loop.gif"/>
 
 ## Tech Stack
 
