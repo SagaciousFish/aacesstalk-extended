@@ -103,7 +103,7 @@ Website: https://naver-ai.github.io/aacesstalk
 
 Dasom Choi, SoHyun Park, Kyungah Lee, Hwajung Hong, and Young-Ho Kim. 2025. AACessTalk: Fostering Communication between Minimally Verbal Autistic Children and Parents with Contextual Guidance and Card Recommendation. In CHI Conference on Human Factors in Computing Systems (CHI ’25), April 26-May 1, 2025, Yokohama, Japan. ACM, New York, NY, USA, 25 pages. <https://doi.org/10.1145/3706598.3713792>
 
-### BibTex
+### BibTeX
 
 ```bibtex
   @inproceedings{choi2025aacesstalk,
