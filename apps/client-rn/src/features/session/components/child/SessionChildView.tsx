@@ -1,4 +1,4 @@
-import { CardCategory, DialogueRole, refreshCards } from "@aacesstalk/libs/ts-core"
+import { CardCategory, refreshCards } from "@aacesstalk/libs/ts-core"
 import { LoadingIndicator } from "apps/client-rn/src/components/LoadingIndicator"
 import { useDispatch, useSelector } from "apps/client-rn/src/redux/hooks"
 import { useTranslation } from "react-i18next"
@@ -22,7 +22,7 @@ const CoreCardsDeck = () => {
     const coreCardIds = useSelector(state => state.session.childCardEntityStateByCategory[CardCategory.Core].ids)
     
     return <View className="flex-row justify-center">{
-        coreCardIds.map(id => <TopicChildCardView key={id} id={id} category={CardCategory.Core} cardClassName="w-[10vw] h-[10vw]"/>)
+        coreCardIds.map((id, index) => <TopicChildCardView key={index} id={id} category={CardCategory.Core} cardClassName="w-[10vw] h-[10vw]" useFlipAnim={false}/>)
         }</View>
 }
 
@@ -80,11 +80,11 @@ export const SessionChildView = () => {
         {latestChildCardRecommendationId != null ? <Fragment>
             <SelectedCardDeck topicCategory={topic.category}/>
             <View id="main-category-cards" className="flex-row self-stretch justify-evenly px-14">
-                <LayoutAnimationConfig skipExiting={true}>{
+                {
                     MAIN_CATEGORIES.map(cardCategory => {
                         return <CardCategoryView key={cardCategory} topicCategory={topic.category} cardCategory={cardCategory}/>
                     })
-                }</LayoutAnimationConfig>
+                }
             </View>
             <CoreCardsDeck/>
             <RefreshButton/>

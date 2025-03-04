@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'apps/client-rn/src/redux/hooks'
 import { getTopicColorClassNames, getTopicColors, styleTemplates } from 'apps/client-rn/src/styles'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import {View} from 'react-native'
-import { ChildCardView } from './card-views'
+import { ClickableChildCardView } from './card-views'
 import { TailwindButton } from 'apps/client-rn/src/components/tailwind-components'
 import { RemoveCardIcon } from 'apps/client-rn/src/components/vector-icons'
 import Animated, { Easing, FlipInXUp, FlipOutXDown, LayoutAnimationConfig, LinearTransition } from 'react-native-reanimated'
@@ -28,7 +28,7 @@ const SelectedCardView = (props: {
         await VoiceOverManager.instance.placeVoiceoverFetchTask(cardInfo, token)
     }, [cardInfo?.id, cardInfo?.recommendation_id, token])
 
-    return <ChildCardView label={cardInfo?.label_localized} imageQueryId={props.id} disabled={props.disabled} onPress={onPress}/>
+    return <ClickableChildCardView label={cardInfo?.label_localized} imageQueryId={props.id} disabled={props.disabled} onPress={onPress}/>
 }
 
 const selectedCardEnteringAnim = FlipInXUp.duration(300).springify()
