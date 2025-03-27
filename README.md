@@ -1,6 +1,8 @@
-# AACessTalk: Tablet application for fostering communication between parents and minimally verbal autistic children
+# 🏆AACessTalk: Tablet application for fostering communication between parents and minimally verbal autistic children
 
 This is a monorepo of an artifact of research paper, "**AACessTalk: Fostering Communication between Minimally Verbal Autistic Children and Parents with Contextual Guidance and Card Recommendation**" at ACM CHI 2025.
+
+This work received a **🏆 Best Paper Award** at **ACM CHI 2025**.
 
 Website: https://naver-ai.github.io/aacesstalk
 
