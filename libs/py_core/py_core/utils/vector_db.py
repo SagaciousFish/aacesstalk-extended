@@ -54,6 +54,7 @@ class VectorDB:
                 documents=[row.english for row in rows]
             )
         except Exception as ex:
+            print("Erroneous row:", dictionary_row)
             print(ex)
             print("Dictionary initialization error. Try row by row skipping erroneous rows.")
 
